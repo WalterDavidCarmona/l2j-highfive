@@ -20,7 +20,7 @@ https://www.sites.google.com/site/l2clientdev/opcode/patch-notes/high-five-p4
 
 ## Changes to epic bosses
 - Changes to epic bosses:
-- Antaras' HP and abilities have been reduced
+- Antharas' HP and abilities have been reduced
 - Valakas' HP, stats and skill casting time have been adjusted
 - Other bosses (Baium, Freya, Glakias) have had their HP reduced
 
@@ -77,7 +77,7 @@ https://www.sites.google.com/site/l2clientdev/opcode/patch-notes/high-five-p3
 - New skills added for classes like Hierophant, Bladedancer, Overlord and Warcryer.
 - Changes to existing skills, including adjustments to skill usage, cooldowns and effects for classes like Fortune Seeker, Soul Hound and Humans (Duelist, Dreadnought, Phoenix Knight and Hell Knight).
 - Changes have been made to various skills across different classes, including Sagittarius, Archmage, Soultaker, Arcana Lord, Eva's Templar, Sword Muse, Moonlight Sentinel, Mystic Muse and Elemental Master.
-- Skills affected include Judgment, Shield Strike, Flame Hawk, Seven Arrow, Multiple Shot, Death Shot, Meteor, Flame Armor, Arcane Shield, Mass Gloom, Curse Gloom, Vampiric Mist, Servitor Share, Agression, Aura of Hate, Shield Fortress, Ultimate Defense, Tribunal, Sword Symphony, Psycho Symphony, Arrow Rain, Star Fall and Frost Armor.
+- Skills affected include Judgment, Shield Strike, Flame Hawk, Seven Arrow, Multiple Shot, Death Shot, Meteor, Flame Armor, Arcane Shield, Mass Gloom, Curse Gloom, Vampiric Mist, Servitor Share, Aggression, Aura of Hate, Shield Fortress, Ultimate Defense, Tribunal, Sword Symphony, Psycho Symphony, Arrow Rain, Star Fall and Frost Armor.
 - Changes include increased skill power, added effects such as hate and damage over time, reduced casting and reuse times and altered MP consumption.
 - Changes have been made to various skills across different classes, including Judgment, Spirit of Shilen, Shield Strike, Dance of Medusa and Demonic Blade Dance.
 - Classes affected include Spectral Dancer, Ghost Sentinel, Storm Screamer, Spectral Master, Shilien Saint, Titan, Grand Khavatari, Overlord, Doomcryer, Fortune Seeker, Maestro, Doombringer and Soul Hound.
