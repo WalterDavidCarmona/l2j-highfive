@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+	<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+	<!-- === ELEGIA HEAVY SET === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Elegia Breastplate -->
+		<production count="1" id="15575" enchantmentLevel="16"/>
+		<!-- Elegia Gaiter -->
+		<production count="1" id="15578" enchantmentLevel="16"/>
+		<!-- Elegia Gauntlet -->
+		<production count="1" id="15581" enchantmentLevel="16"/>
+		<!-- Elegia Boots -->
+		<production count="1" id="15584" enchantmentLevel="16"/>
+		<!-- Elegia Helmet -->
+		<production count="1" id="15572" enchantmentLevel="16"/>
+	</item>
+	<!-- === ELEGIA LIGHT SET === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Elegia Leather Breastplate -->
+		<production count="1" id="15576" enchantmentLevel="16"/>
+		<!-- Elegia Leather Legging -->
+		<production count="1" id="15579" enchantmentLevel="16"/>
+		<!-- Elegia Leather Gloves -->
+		<production count="1" id="15582" enchantmentLevel="16"/>
+		<!-- Elegia Leather Boots -->
+		<production count="1" id="15585" enchantmentLevel="16"/>
+		<!-- Elegia Leather Helmet -->
+		<production count="1" id="15573" enchantmentLevel="16"/>
+	</item>
+	<!-- === ELEGIA ROBE SET === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Elegia Tunic -->
+		<production count="1" id="15577" enchantmentLevel="16"/>
+		<!-- Elegia Stockings -->
+		<production count="1" id="15580" enchantmentLevel="16"/>
+		<!-- Elegia Gloves -->
+		<production count="1" id="15583" enchantmentLevel="16"/>
+		<!-- Elegia Shoes -->
+		<production count="1" id="15586" enchantmentLevel="16"/>
+		<!-- Elegia Circlet -->
+		<production count="1" id="15574" enchantmentLevel="16"/>
+	</item>
+	<!-- === ELEGIA SHIELD === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Elegia Shield -->
+		<production count="1" id="15587" enchantmentLevel="16"/>
+	</item>
+	<!-- === ELEGIA SIGIL === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Elegia Sigil -->
+		<production count="1" id="15588" enchantmentLevel="16"/>
+	</item>
+	<!-- === ELEGIA JEWELRY === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Elegia Ring -->
+		<production count="1" id="15717" enchantmentLevel="16"/>
+		<!-- Elegia Earring -->
+		<production count="1" id="15718" enchantmentLevel="16"/>
+		<!-- Elegia Necklace -->
+		<production count="1" id="15719" enchantmentLevel="16"/>
+	</item>
+	<!-- === VORPAL HEAVY SET === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vorpal Breastplate -->
+		<production count="1" id="15592" enchantmentLevel="16"/>
+		<!-- Vorpal Gaiter -->
+		<production count="1" id="15595" enchantmentLevel="16"/>
+		<!-- Vorpal Gauntlet -->
+		<production count="1" id="15598" enchantmentLevel="16"/>
+		<!-- Vorpal Boots -->
+		<production count="1" id="15601" enchantmentLevel="16"/>
+		<!-- Vorpal Helmet -->
+		<production count="1" id="15589" enchantmentLevel="16"/>
+	</item>
+	<!-- === VORPAL LIGHT SET === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vorpal Leather Breastplate -->
+		<production count="1" id="15593" enchantmentLevel="16"/>
+		<!-- Vorpal Leather Legging -->
+		<production count="1" id="15596" enchantmentLevel="16"/>
+		<!-- Vorpal Leather Gloves -->
+		<production count="1" id="15599" enchantmentLevel="16"/>
+		<!-- Vorpal Leather Boots -->
+		<production count="1" id="15602" enchantmentLevel="16"/>
+		<!-- Vorpal Leather Helmet -->
+		<production count="1" id="15590" enchantmentLevel="16"/>
+	</item>
+	<!-- === VORPAL ROBE SET === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vorpal Tunic -->
+		<production count="1" id="15594" enchantmentLevel="16"/>
+		<!-- Vorpal Stockings -->
+		<production count="1" id="15597" enchantmentLevel="16"/>
+		<!-- Vorpal Gloves -->
+		<production count="1" id="15600" enchantmentLevel="16"/>
+		<!-- Vorpal Shoes -->
+		<production count="1" id="15603" enchantmentLevel="16"/>
+		<!-- Vorpal Circlet -->
+		<production count="1" id="15591" enchantmentLevel="16"/>
+	</item>
+	<!-- === VORPAL SHIELD === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vorpal Shield -->
+		<production count="1" id="15604" enchantmentLevel="16"/>
+	</item>
+	<!-- === VORPAL SIGIL === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vorpal Sigil -->
+		<production count="1" id="15605" enchantmentLevel="16"/>
+	</item>
+	<!-- === VORPAL JEWELRY === -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vorpal Ring -->
+		<production count="1" id="15720" enchantmentLevel="16"/>
+		<!-- Vorpal Earring -->
+		<production count="1" id="15721" enchantmentLevel="16"/>
+		<!-- Vorpal Necklace -->
+		<production count="1" id="15722" enchantmentLevel="16"/>
+	</item>
+</list>

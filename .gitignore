@@ -1,0 +1,16 @@
+# Claude Code internal files
+.claude/
+
+# Large binary geodata files
+game/data/geodata/
+
+# Server logs
+game/log/
+login/log/
+
+# Database backups
+backup/
+
+# Windows OS files
+Thumbs.db
+Desktop.ini

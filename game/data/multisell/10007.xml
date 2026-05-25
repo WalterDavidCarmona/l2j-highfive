@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Vorpal Jewels -->
+<!-- © 2010 by mathuza -->
+
+<list>
+	<!-- Freya Jewels -->
+	<item id="1">
+		<production id="15725" count="1" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="2">
+		<production id="15724" count="2" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="3">
+		<production id="15723" count="2" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="4">
+		<production id="15719" count="1" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="5">
+		<production id="15718" count="2" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="6">
+		<production id="15717" count="2" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="7">
+		<production id="15722" count="1" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="8">
+		<production id="15721" count="2" />
+	</item>
+	<!-- Freya Jewels -->
+	<item id="9">
+		<production id="15720" count="2" />
+	</item>
+
+</list>

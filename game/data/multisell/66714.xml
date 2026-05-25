@@ -1,0 +1,614 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<!-- Accessory -->
+<!-- © 2011 by 007Florin -->
+
+<list maintainEnchantment="true">
+
+  <!-- valakas slayer -->
+  <item id="18">
+    <ingredient id="57" count="1000000"/>
+    <production id="8567" count="1"/>
+  </item>
+
+  <!-- demon circlet -->
+  <item id="20">
+    <ingredient id="57" count="1000000"/>
+    <production id="8921" count="1"/>
+  </item>
+
+  <!-- ketra kram -->
+  <item id="25">
+    <ingredient id="57" count="1000000"/>
+    <production id="13235" count="1"/>
+  </item>
+
+  <!-- varka kram -->
+  <item id="26">
+    <ingredient id="57" count="1000000"/>
+    <production id="13234" count="1"/>
+  </item>
+
+  <!-- Santas Hat -->
+  <item id="1">
+    <ingredient id="57" count="1000000"/>
+    <production id="9138" count="1"/>
+  </item>
+
+  <!-- Santas Antlers -->
+  <item id="2">
+    <ingredient id="57" count="1000000"/>
+    <production id="8936" count="1"/>
+  </item>
+
+  <!-- cat ear -->
+  <item id="8">
+    <ingredient id="57" count="1000000"/>
+    <production id="6843" count="1"/>
+  </item>
+
+  <!-- raccoon ears -->
+  <item id="9">
+    <ingredient id="57" count="1000000"/>
+    <production id="7680" count="1"/>
+  </item>
+
+  <!-- rabbit ears -->
+  <item id="10">
+    <ingredient id="57" count="1000000"/>
+    <production id="7683" count="1"/>
+  </item>
+
+  <!-- demon horns -->
+  <item id="12">
+    <ingredient id="57" count="1000000"/>
+    <production id="8187" count="1"/>
+  </item>
+
+  <!-- romantic chapeau -->
+  <item id="16">
+    <ingredient id="57" count="1000000"/>
+    <production id="8565" count="1"/>
+  </item>
+
+  <!-- feathered hat -->
+  <item id="17">
+    <ingredient id="57" count="1000000"/>
+    <production id="8185" count="1"/>
+  </item>
+
+  <!-- dapper cap -->
+  <item id="18">
+    <ingredient id="57" count="1000000"/>
+    <production id="8564" count="1"/>
+  </item>
+
+  <!-- artisans googles -->
+  <item id="19">
+    <ingredient id="57" count="1000000"/>
+    <production id="8186" count="1"/>
+  </item>
+
+  <!-- wizard hat -->
+  <item id="20">
+    <ingredient id="57" count="1000000"/>
+    <production id="8563" count="1"/>
+  </item>
+
+  <!-- jester hat -->
+  <item id="21">
+    <ingredient id="57" count="1000000"/>
+    <production id="8562" count="1"/>
+  </item>
+
+  <!-- explorer hat -->
+  <item id="26">
+    <ingredient id="57" count="1000000"/>
+    <production id="10250" count="1"/>
+  </item>
+
+  <!-- straw hat -->
+  <item id="27">
+    <ingredient id="57" count="1000000"/>
+    <production id="10248" count="1"/>
+  </item>
+
+  <!-- pirate hat -->
+  <item id="28">
+    <ingredient id="57" count="1000000"/>
+    <production id="8922" count="1"/>
+  </item>
+
+  <!-- first mates hat -->
+  <item id="29">
+    <ingredient id="57" count="1000000"/>
+    <production id="8919" count="1"/>
+  </item>
+
+  <!-- leather cap -->
+  <item id="30">
+    <ingredient id="57" count="1000000"/>
+    <production id="8918" count="1"/>
+  </item>
+
+  <!-- olmahum hat -->
+  <item id="42">
+    <ingredient id="57" count="1000000"/>
+    <production id="12781" count="1"/>
+  </item>
+
+  <!-- wolf hat -->
+  <item id="43">
+    <ingredient id="57" count="1000000"/>
+    <production id="12785" count="1"/>
+  </item>
+
+  <!-- ant hat -->
+  <item id="44">
+    <ingredient id="57" count="1000000"/>
+    <production id="12784" count="1"/>
+  </item>
+
+  <!-- kai the cat -->
+  <item id="45">
+    <ingredient id="57" count="1000000"/>
+    <production id="13333" count="1"/>
+  </item>
+
+  <!-- feline king hat -->
+  <item id="46">
+    <ingredient id="57" count="1000000"/>
+    <production id="13332" count="1"/>
+  </item>
+
+  <!-- Ornithomimus Hat -->
+  <item id="47">
+    <ingredient id="57" count="1000000"/>
+    <production id="13331" count="1"/>
+  </item>
+
+  <!-- fungus hat -->
+  <item id="48">
+    <ingredient id="57" count="1000000"/>
+    <production id="13329" count="1"/>
+  </item>
+
+  <!-- brown bear hat -->
+  <item id="49">
+    <ingredient id="57" count="1000000"/>
+    <production id="13328" count="1"/>
+  </item>
+
+  <!-- monster eye hat -->
+  <item id="50">
+    <ingredient id="57" count="1000000"/>
+    <production id="13327" count="1"/>
+  </item>
+
+  <!-- feline queen hat -->
+  <item id="51">
+    <ingredient id="57" count="1000000"/>
+    <production id="13326" count="1"/>
+  </item>
+
+  <!-- kat the cat hat -->
+  <item id="52">
+    <ingredient id="57" count="1000000"/>
+    <production id="20031" count="1"/>
+  </item>
+
+  <!-- skull hat -->
+  <item id="53">
+    <ingredient id="57" count="1000000"/>
+    <production id="20032" count="1"/>
+  </item>
+
+  <!-- visor -->
+  <item id="54">
+    <ingredient id="57" count="1000000"/>
+    <production id="20024" count="1"/>
+  </item>
+
+  <!-- horn rimmed glasses -->
+  <item id="55">
+    <ingredient id="57" count="1000000"/>
+    <production id="20016" count="1"/>
+  </item>
+
+  <!-- ribbon hairband -->
+  <item id="56">
+    <ingredient id="57" count="1000000"/>
+    <production id="20023" count="1"/>
+  </item>
+
+  <!-- bamboo hat -->
+  <item id="57">
+    <ingredient id="57" count="1000000"/>
+    <production id="20021" count="1"/>
+  </item>
+
+  <!-- uniform hat -->
+  <item id="58">
+    <ingredient id="57" count="1000000"/>
+    <production id="20020" count="1"/>
+  </item>
+ 
+   <!-- formal wear -->
+  <item id="1">
+    <ingredient id="57" count="1000000"/>
+    <production id="6408" count="1"/>
+  </item>
+
+<!-- red flame of valakas -->
+<item id="3">
+    <ingredient id="57" count="1000000"/>
+<production id="20725" count="1" enchant="0"/>
+</item>
+
+<item id="9">
+    <ingredient id="57" count="1000000"/>
+<production id="20723" count="1" enchant="0"/>
+</item>
+
+<item id="13">
+    <ingredient id="57" count="1000000"/>
+<production id="20670" count="1" enchant="0"/>
+</item>
+
+<item id="14">
+    <ingredient id="57" count="1000000"/>
+<production id="20672" count="1" enchant="0"/>
+</item>
+
+<item id="15">
+    <ingredient id="57" count="1000000"/>
+<production id="20674" count="1" enchant="0"/>
+</item>
+
+<item id="16">
+    <ingredient id="57" count="1000000"/>
+<production id="20676" count="1" enchant="0"/>
+</item>
+
+<item id="17">
+    <ingredient id="57" count="1000000"/>
+<production id="20678" count="1" enchant="0"/>
+</item>
+
+  <!-- Ice Watermelon Hat - Event -->
+  <item id="24">
+    <ingredient id="57" count="1000000"/>
+    <production id="17288" count="1"/>
+  </item>
+
+  <!-- Ice Watermelon Hat -->
+  <item id="25">
+    <ingredient id="57" count="1000000"/>
+    <production id="17289" count="1"/>
+  </item>
+
+  <!-- Warm Bear Hat -->
+  <item id="26">
+    <ingredient id="57" count="1000000"/>
+    <production id="21108" count="1"/>
+  </item>
+
+  <!-- Warm Bear Paws -->
+  <item id="27">
+    <ingredient id="57" count="1000000"/>
+    <production id="21110" count="1"/>
+  </item>
+
+  <!-- Stag Beetle Hat -->
+  <item id="28">
+    <ingredient id="57" count="1000000"/>
+    <production id="21112" count="1"/>
+  </item>
+
+  <!-- Beetle Hat -->
+  <item id="29">
+    <ingredient id="57" count="1000000"/>
+    <production id="21114" count="1"/>
+  </item>
+
+  <!-- Ladybug Hat -->
+  <item id="30">
+    <ingredient id="57" count="1000000"/>
+    <production id="21116" count="1"/>
+  </item>
+
+  <!-- Preying Mantis Hat -->
+  <item id="31">
+    <ingredient id="57" count="1000000"/>
+    <production id="21118" count="1"/>
+  </item>
+
+  <!-- Grasshopper Hat -->
+  <item id="32">
+    <ingredient id="57" count="1000000"/>
+    <production id="21120" count="1"/>
+  </item>
+
+  <!-- Gold-rimmed Glasses -->
+  <item id="33">
+    <ingredient id="57" count="1000000"/>
+    <production id="21122" count="1"/>
+  </item>
+
+  <!-- White Uniform Hat -->
+  <item id="34">
+    <ingredient id="57" count="1000000"/>
+    <production id="21124" count="1"/>
+  </item>
+
+  <!-- Warrior's Helmet -->
+  <item id="35">
+    <ingredient id="57" count="1000000"/>
+    <production id="21126" count="1"/>
+  </item>
+
+  <!-- Wedding Veil -->
+  <item id="38">
+    <ingredient id="57" count="1000000"/>
+    <production id="21162" count="1"/>
+  </item>
+
+  <!-- Wedding Bouquet -->
+  <item id="39">
+    <ingredient id="57" count="1000000"/>
+    <production id="21163" count="1"/>
+  </item>
+
+  <!-- Brown Bear Hat -->
+  <item id="40">
+    <ingredient id="57" count="1000000"/>
+    <production id="21433" count="1"/>
+  </item>
+
+  <!-- Chicken Hat -->
+  <item id="41">
+    <ingredient id="57" count="1000000"/>
+    <production id="21445" count="1"/>
+  </item>
+
+  <!-- Coronet -->
+  <item id="42">
+    <ingredient id="57" count="1000000"/>
+    <production id="21457" count="1"/>
+  </item>
+
+  <!-- White Sheep Hat -->
+  <item id="43">
+    <ingredient id="57" count="1000000"/>
+    <production id="21469" count="1"/>
+  </item>
+
+  <!-- Frog Hat -->
+  <item id="44">
+    <ingredient id="57" count="1000000"/>
+    <production id="21481" count="1"/>
+  </item>
+
+  <!-- Kat the Cat Hat -->
+  <item id="45">
+    <ingredient id="57" count="1000000"/>
+    <production id="21493" count="1"/>
+  </item>
+
+  <!-- Feline Queen Hat -->
+  <item id="46">
+    <ingredient id="57" count="1000000"/>
+    <production id="21517" count="1"/>
+  </item>
+
+  <!-- Feline King Hat -->
+  <item id="47">
+    <ingredient id="57" count="1000000"/>
+    <production id="21529" count="1"/>
+  </item>
+
+  <!-- Ribbon Hairband -->
+  <item id="48">
+    <ingredient id="57" count="1000000"/>
+    <production id="21541" count="1"/>
+  </item>
+
+  <!-- Refined Dapper Cap -->
+  <item id="49">
+    <ingredient id="57" count="1000000"/>
+    <production id="21553" count="1"/>
+  </item>
+
+  <!-- Valkyrie Circlet -->
+  <item id="50">
+    <ingredient id="57" count="1000000"/>
+    <production id="21565" count="1"/>
+  </item>
+
+  <!-- Plastic Hair -->
+  <item id="51">
+    <ingredient id="57" count="1000000"/>
+    <production id="21577" count="1"/>
+  </item>
+
+  <!-- Manor Scholar's Hat -->
+  <item id="53">
+    <ingredient id="57" count="1000000"/>
+    <production id="21755" count="1"/>
+  </item>
+
+  <!-- Rank 1 Scholar's Hat -->
+  <item id="54">
+    <ingredient id="57" count="1000000"/>
+    <production id="21756" count="1"/>
+  </item>
+
+  <!-- Clownfish Hat -->
+  <item id="57">
+    <ingredient id="57" count="1000000"/>
+    <production id="21981" count="1"/>
+  </item>
+
+  <!-- Refined Angel Ring -->
+  <item id="58">
+    <ingredient id="57" count="1000000"/>
+    <production id="21982" count="1"/>
+  </item>
+
+  <!-- Refined Wizard Hat -->
+  <item id="59">
+    <ingredient id="57" count="1000000"/>
+    <production id="21983" count="1"/>
+  </item>
+
+  <!-- Refined Jester Hat -->
+  <item id="60">
+    <ingredient id="57" count="1000000"/>
+    <production id="21984" count="1"/>
+  </item>
+
+  <!-- Refined Romantic Chapeau -->
+  <item id="61">
+    <ingredient id="57" count="1000000"/>
+    <production id="21985" count="1"/>
+  </item>
+
+  <!-- Pirate King Hat -->
+  <item id="62">
+    <ingredient id="57" count="1000000"/>
+    <production id="21892" count="1"/>
+  </item>
+
+  <!-- Halisha's Helmet -->
+  <item id="63">
+    <ingredient id="57" count="1000000"/>
+    <production id="21893" count="1"/>
+  </item>
+
+  <!-- Ice Queen's Tiara -->
+  <item id="64">
+    <ingredient id="57" count="1000000"/>
+    <production id="21894" count="1"/>
+  </item>
+
+  <!-- Graduation Cap -->
+  <item id="65">
+    <ingredient id="57" count="1000000"/>
+    <production id="22183" count="1"/>
+  </item>
+
+  <!-- Admiral's Hat -->
+  <item id="66">
+    <ingredient id="57" count="1000000"/>
+    <production id="22184" count="1"/>
+  </item>
+
+  <!-- Child's Hat - Boy -->
+  <item id="67">
+    <ingredient id="57" count="1000000"/>
+    <production id="22189" count="1"/>
+  </item>
+
+  <!-- Ferrum Accessory -->
+  <item id="67">
+    <ingredient id="57" count="100000000"/>
+    <production id="43124" count="1"/>
+  </item>
+
+  <!-- baguette sword -->
+  <item id="8">
+    <ingredient id="57" count="1000000"/>
+    <production id="20255" count="1"/>
+  </item>
+
+  <!-- baguette dagger -->
+  <item id="9">
+    <ingredient id="57" count="1000000"/>
+    <production id="20256" count="1"/>
+  </item>
+
+  <!-- baguette two-handed sword -->
+  <item id="10">
+    <ingredient id="57" count="1000000"/>
+    <production id="20257" count="1"/>
+  </item>
+
+  <!-- baguette mace -->
+  <item id="11">
+    <ingredient id="57" count="1000000"/>
+    <production id="20258" count="1"/>
+  </item>
+
+  <!-- baguette heavy hammer -->
+  <item id="12">
+    <ingredient id="57" count="1000000"/>
+    <production id="20259" count="1"/>
+  </item>
+
+  <!-- baguette spear -->
+  <item id="13">
+    <ingredient id="57" count="1000000"/>
+    <production id="20260" count="1"/>
+  </item>
+
+  <!-- baguette bow -->
+  <item id="14">
+    <ingredient id="57" count="1000000"/>
+    <production id="20261" count="1"/>
+  </item>
+
+  <!-- baguette fist -->
+  <item id="15">
+    <ingredient id="57" count="1000000"/>
+    <production id="20262" count="1"/>
+  </item>
+
+  <!-- baguette magic sword -->
+  <item id="16">
+    <ingredient id="57" count="1000000"/>
+    <production id="20263" count="1"/>
+  </item>
+
+  <!-- baguette staff -->
+  <item id="17">
+    <ingredient id="57" count="1000000"/>
+    <production id="20264" count="1"/>
+  </item>
+
+  <!-- baguette great staff -->
+  <item id="18">
+    <ingredient id="57" count="1000000"/>
+    <production id="20265" count="1"/>
+  </item>
+
+  <!-- baguette shield -->
+  <item id="19">
+    <ingredient id="57" count="1000000"/>
+    <production id="20266" count="1"/>
+  </item>
+
+  <!-- baguette rapier -->
+  <item id="20">
+    <ingredient id="57" count="1000000"/>
+    <production id="20267" count="1"/>
+  </item>
+
+  <!-- baguette ancient sword -->
+  <item id="21">
+    <ingredient id="57" count="1000000"/>
+    <production id="20268" count="1"/>
+  </item>
+
+  <!-- baguette crossbow -->
+  <item id="22">
+    <ingredient id="57" count="1000000"/>
+    <production id="20269" count="1"/>
+  </item>
+
+  <!-- baguette two-handed sword -->
+  <item id="23">
+    <ingredient id="57" count="1000000"/>
+    <production id="20270" count="1"/>
+  </item>
+
+</list>

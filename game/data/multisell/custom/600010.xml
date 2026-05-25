@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+	<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+
+	<!-- ===== RINGS ===== -->
+	<!-- Ring of Queen Ant -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Ring of Queen Ant -->
+		<production count="1" id="6660" enchantmentLevel="16"/>
+	</item>
+	<!-- Ring of Baium -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Ring of Baium -->
+		<production count="1" id="6658" enchantmentLevel="16"/>
+	</item>
+	<!-- Ring of Core -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Ring of Core -->
+		<production count="1" id="6662" enchantmentLevel="16"/>
+	</item>
+	<!-- Ring of Beleth -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Ring of Beleth -->
+		<production count="1" id="10314" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== EARRINGS ===== -->
+	<!-- Earring of Zaken -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Earring of Zaken -->
+		<production count="1" id="6659" enchantmentLevel="16"/>
+	</item>
+	<!-- Earring of Antharas -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Earring of Antharas -->
+		<production count="1" id="6656" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== NECKLACES ===== -->
+	<!-- Necklace of Frintezza -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Necklace of Frintezza -->
+		<production count="1" id="8191" enchantmentLevel="16"/>
+	</item>
+	<!-- Necklace of Freya -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Necklace of Freya -->
+		<production count="1" id="16025" enchantmentLevel="16"/>
+	</item>
+	<!-- Necklace of Valakas -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Necklace of Valakas -->
+		<production count="1" id="6657" enchantmentLevel="16"/>
+	</item>
+
+</list>

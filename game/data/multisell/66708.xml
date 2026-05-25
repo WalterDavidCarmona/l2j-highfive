@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<!-- S-84 Weapon -->
+<!-- © 2010 by mathuza -->
+
+<list maintainEnchantment="true">
+
+  <!-- Ferrum Necklace -->
+  <item id="1">
+    <ingredient id="3470" count="200"/>
+    <production id="43121" count="1"/>
+  </item>
+
+  <!-- Ferrum Ring -->
+  <item id="2">
+    <ingredient id="3470" count="200"/>
+    <production id="43123" count="1"/>
+  </item>
+
+  <!-- Ferrum Earning -->
+  <item id="3">
+    <ingredient id="3470" count="200"/>
+    <production id="43122" count="1"/>
+  </item>
+
+
+</list>

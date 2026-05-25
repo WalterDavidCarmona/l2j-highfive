@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../xsd/npcs.xsd">
+	<!--
+		NPC: Guardián de la Zona PvP
+		ID: 30999
+		type="Merchant" → abre el HTML directamente al hacer click (sin menú Quest)
+		displayId="30080" → usa el modelo visual del NPC de Giran (visible en el cliente)
+		INSTALACIÓN: game/data/stats/npcs/custom/rotating_pvp_npc.xml
+	-->
+	<npc id="30999" type="Merchant" name="Guardián PvP" usingServerSideName="true" displayId="30080" level="85" exp="0" sp="0">
+		<race>HUMAN</race>
+		<sex>MALE</sex>
+		<stats>
+			<vitals hp="2444" hpRegen="7.5" mp="1345" mpRegen="2.7"/>
+			<attack physical="788" magical="526" random="10" critical="4" attackSpeed="253" type="SWORD" range="40" distance="40" width="0"/>
+			<defence physical="295" magical="220" evasion="10" shield="0" shieldRate="0"/>
+			<speed>
+				<run ground="120" water="50" air="0"/>
+				<walk ground="50" water="30" air="0"/>
+			</speed>
+			<hittime>600</hittime>
+		</stats>
+		<ai aiType="FIGHTER" aggroRange="0" clanHelpRange="0" isChaos="false" isAggressive="false">
+			<clanlist/>
+		</ai>
+		<collision>
+			<radius normal="9" grown="9"/>
+			<height normal="23.5" grown="23.5"/>
+		</collision>
+	</npc>
+</list>

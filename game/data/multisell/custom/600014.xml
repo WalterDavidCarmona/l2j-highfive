@@ -1,0 +1,1541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+	<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+
+	<!-- ===== SWORD (1H) ===== -->
+	<!-- Archangel Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Archangel Sword -->
+		<production count="1" id="15553" enchantmentLevel="16"/>
+	</item>
+	<!-- Archangel Sword - Acumen [Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Archangel Sword - Acumen -->
+		<production count="1" id="15900" enchantmentLevel="16"/>
+	</item>
+	<!-- Archangel Sword - Mana Up [Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Archangel Sword - Mana Up -->
+		<production count="1" id="15899" enchantmentLevel="16"/>
+	</item>
+	<!-- Eternal Core Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eternal Core Sword -->
+		<production count="1" id="15544" enchantmentLevel="16"/>
+	</item>
+	<!-- Eternal Core Sword - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eternal Core Sword - Focus -->
+		<production count="1" id="15871" enchantmentLevel="16"/>
+	</item>
+	<!-- Eternal Core Sword - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eternal Core Sword - Haste -->
+		<production count="1" id="15872" enchantmentLevel="16"/>
+	</item>
+	<!-- Eternal Core Sword - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eternal Core Sword - Health -->
+		<production count="1" id="15873" enchantmentLevel="16"/>
+	</item>
+	<!-- Feather Eye Blade [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Feather Eye Blade -->
+		<production count="1" id="15562" enchantmentLevel="16"/>
+	</item>
+	<!-- Feather Eye Blade - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Feather Eye Blade - Focus -->
+		<production count="1" id="15842" enchantmentLevel="16"/>
+	</item>
+	<!-- Feather Eye Blade - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Feather Eye Blade - Haste -->
+		<production count="1" id="15843" enchantmentLevel="16"/>
+	</item>
+	<!-- Feather Eye Blade - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Feather Eye Blade - Health -->
+		<production count="1" id="15841" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade [Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade -->
+		<production count="1" id="21919" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Focus [Special Ability: Focus | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Focus -->
+		<production count="1" id="21922" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Haste [Special Ability: Haste | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Haste -->
+		<production count="1" id="21920" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Health [Special Ability: Health | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Health -->
+		<production count="1" id="21921" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Lightning [Sword of Critical Chance | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Lightning -->
+		<production count="1" id="21927" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Lightning - Focus [Sword of Critical Chance | Special Ability: Health | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Lightning - Focus -->
+		<production count="1" id="21930" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Lightning - Haste [Sword of Critical Chance | Special Ability: Haste | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Lightning - Haste -->
+		<production count="1" id="21928" enchantmentLevel="16"/>
+	</item>
+	<!-- Hellblade - Lightning - Health [Sword of Critical Chance | Special Ability: Health | Hellblade] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Hellblade - Lightning - Health -->
+		<production count="1" id="21929" enchantmentLevel="16"/>
+	</item>
+	<!-- Lava Saw [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Lava Saw -->
+		<production count="1" id="15548" enchantmentLevel="16"/>
+	</item>
+	<!-- Lava Saw - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Lava Saw - Focus -->
+		<production count="1" id="15883" enchantmentLevel="16"/>
+	</item>
+	<!-- Lava Saw - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Lava Saw - Haste -->
+		<production count="1" id="15884" enchantmentLevel="16"/>
+	</item>
+	<!-- Lava Saw - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Lava Saw - Health -->
+		<production count="1" id="15885" enchantmentLevel="16"/>
+	</item>
+	<!-- Periel Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Periel Sword -->
+		<production count="1" id="15558" enchantmentLevel="16"/>
+	</item>
+	<!-- Periel Sword - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Periel Sword - Focus -->
+		<production count="1" id="15830" enchantmentLevel="16"/>
+	</item>
+	<!-- Periel Sword - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Periel Sword - Haste -->
+		<production count="1" id="15831" enchantmentLevel="16"/>
+	</item>
+	<!-- Periel Sword - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Periel Sword - Health -->
+		<production count="1" id="15829" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Blade [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Blade -->
+		<production count="1" id="15676" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Magic Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Magic Sword -->
+		<production count="1" id="15685" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Two Hand Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Two Hand Sword -->
+		<production count="1" id="15680" enchantmentLevel="16"/>
+	</item>
+	<!-- Veniplant Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Veniplant Sword -->
+		<production count="1" id="15567" enchantmentLevel="16"/>
+	</item>
+	<!-- Veniplant Sword - Acumen [Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Veniplant Sword - Acumen -->
+		<production count="1" id="15856" enchantmentLevel="16"/>
+	</item>
+	<!-- Veniplant Sword - Mana Up [Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Veniplant Sword - Mana Up -->
+		<production count="1" id="15858" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Buster [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Buster -->
+		<production count="1" id="13459" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Buster - Acumen [Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Buster - Acumen -->
+		<production count="1" id="14125" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Buster - Cleverness [Sword of Mana Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Buster - Cleverness -->
+		<production count="1" id="16044" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Buster - Cleverness - Acumen [Sword of Mana Regeneration | Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Buster - Cleverness - Acumen -->
+		<production count="1" id="16063" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Buster - Cleverness - Mana Up [Sword of Mana Regeneration | Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Buster - Cleverness - Mana Up -->
+		<production count="1" id="16062" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Buster - Mana Up [Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Buster - Mana Up -->
+		<production count="1" id="14124" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter -->
+		<production count="1" id="13457" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Focus -->
+		<production count="1" id="14120" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Haste -->
+		<production count="1" id="14118" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Health -->
+		<production count="1" id="14119" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Thunder [Sword of Critical Chance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Thunder -->
+		<production count="1" id="16042" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Thunder - Focus [Sword of Critical Chance | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Thunder - Focus -->
+		<production count="1" id="16058" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Thunder - Haste [Sword of Critical Chance | Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Thunder - Haste -->
+		<production count="1" id="16056" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Cutter - Thunder - Health [Sword of Critical Chance | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Cutter - Thunder - Health -->
+		<production count="1" id="16057" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher -->
+		<production count="1" id="13458" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Focus -->
+		<production count="1" id="14123" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Gale [Two-handed Sword of Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Gale -->
+		<production count="1" id="16043" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Gale - Focus [Two-handed Sword of Haste | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Gale - Focus -->
+		<production count="1" id="16061" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Gale - Haste [Two-handed Sword of Haste | Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Gale - Haste -->
+		<production count="1" id="16059" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Gale - Health [Two-handed Sword of Haste | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Gale - Health -->
+		<production count="1" id="16060" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Haste -->
+		<production count="1" id="14121" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Slasher - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Slasher - Health -->
+		<production count="1" id="14122" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== BLUNT (1H) ===== -->
+	<!-- Black Visage [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Black Visage -->
+		<production count="1" id="15566" enchantmentLevel="16"/>
+	</item>
+	<!-- Black Visage - Empower [Special Ability: Empower] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Black Visage - Empower -->
+		<production count="1" id="15855" enchantmentLevel="16"/>
+	</item>
+	<!-- Black Visage - MP Regeneration [Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Black Visage - MP Regeneration -->
+		<production count="1" id="15853" enchantmentLevel="16"/>
+	</item>
+	<!-- Claw of Destruction [Claw of Destruction] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Claw of Destruction -->
+		<production count="1" id="21939" enchantmentLevel="16"/>
+	</item>
+	<!-- Contristo Hammer [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Contristo Hammer -->
+		<production count="1" id="15547" enchantmentLevel="16"/>
+	</item>
+	<!-- Contristo Hammer - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Contristo Hammer - HP Drain -->
+		<production count="1" id="15880" enchantmentLevel="16"/>
+	</item>
+	<!-- Contristo Hammer - HP Regeneration [Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Contristo Hammer - HP Regeneration -->
+		<production count="1" id="15881" enchantmentLevel="16"/>
+	</item>
+	<!-- Contristo Hammer - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Contristo Hammer - Health -->
+		<production count="1" id="15882" enchantmentLevel="16"/>
+	</item>
+	<!-- Cyclic Cane [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Cyclic Cane -->
+		<production count="1" id="15552" enchantmentLevel="16"/>
+	</item>
+	<!-- Cyclic Cane - Empower [Special Ability: Empower] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Cyclic Cane - Empower -->
+		<production count="1" id="15896" enchantmentLevel="16"/>
+	</item>
+	<!-- Cyclic Cane - MP Regeneration [Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Cyclic Cane - MP Regeneration -->
+		<production count="1" id="15897" enchantmentLevel="16"/>
+	</item>
+	<!-- Devilish Maul [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Devilish Maul -->
+		<production count="1" id="15561" enchantmentLevel="16"/>
+	</item>
+	<!-- Devilish Maul - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Devilish Maul - HP Drain -->
+		<production count="1" id="15839" enchantmentLevel="16"/>
+	</item>
+	<!-- Devilish Maul - HP Regeneration [Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Devilish Maul - HP Regeneration -->
+		<production count="1" id="15840" enchantmentLevel="16"/>
+	</item>
+	<!-- Devilish Maul - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Devilish Maul - Health -->
+		<production count="1" id="15838" enchantmentLevel="16"/>
+	</item>
+	<!-- Eversor Mace [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eversor Mace -->
+		<production count="1" id="15546" enchantmentLevel="16"/>
+	</item>
+	<!-- Eversor Mace - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eversor Mace - HP Drain -->
+		<production count="1" id="15878" enchantmentLevel="16"/>
+	</item>
+	<!-- Eversor Mace - HP Regeneration [Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eversor Mace - HP Regeneration -->
+		<production count="1" id="15877" enchantmentLevel="16"/>
+	</item>
+	<!-- Eversor Mace - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eversor Mace - Health -->
+		<production count="1" id="15879" enchantmentLevel="16"/>
+	</item>
+	<!-- Rising Star [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Rising Star -->
+		<production count="1" id="15565" enchantmentLevel="16"/>
+	</item>
+	<!-- Rising Star - Acumen [Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Rising Star - Acumen -->
+		<production count="1" id="15852" enchantmentLevel="16"/>
+	</item>
+	<!-- Rising Star - MP Regeneration [Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Rising Star - MP Regeneration -->
+		<production count="1" id="15850" enchantmentLevel="16"/>
+	</item>
+	<!-- Rising Star - Mana Up [Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Rising Star - Mana Up -->
+		<production count="1" id="15851" enchantmentLevel="16"/>
+	</item>
+	<!-- Sacredium [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Sacredium -->
+		<production count="1" id="15551" enchantmentLevel="16"/>
+	</item>
+	<!-- Sacredium - Acumen [Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Sacredium - Acumen -->
+		<production count="1" id="15893" enchantmentLevel="16"/>
+	</item>
+	<!-- Sacredium - MP Regeneration [Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Sacredium - MP Regeneration -->
+		<production count="1" id="15894" enchantmentLevel="16"/>
+	</item>
+	<!-- Sacredium - Mana Up [Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Sacredium - Mana Up -->
+		<production count="1" id="15892" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Crusher [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Crusher -->
+		<production count="1" id="15679" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Hammer [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Hammer -->
+		<production count="1" id="15678" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Staff [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Staff -->
+		<production count="1" id="15683" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Two Hand Staff [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Two Hand Staff -->
+		<production count="1" id="15684" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger -->
+		<production count="1" id="13463" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - HP Drain -->
+		<production count="1" id="14136" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - HP Regeneration [Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - HP Regeneration -->
+		<production count="1" id="14138" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - Health -->
+		<production count="1" id="14137" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - Landslide [Blunt Weapon of Stun] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - Landslide -->
+		<production count="1" id="16048" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - Landslide - HP Drain [Blunt Weapon of Stun | Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - Landslide - HP Drain -->
+		<production count="1" id="16074" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - Landslide - HP Regeneration [Blunt Weapon of Stun | Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - Landslide - HP Regeneration -->
+		<production count="1" id="16076" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Avenger - Landslide - Health [Blunt Weapon of Stun | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Avenger - Landslide - Health -->
+		<production count="1" id="16075" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster -->
+		<production count="1" id="13465" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - Acumen [Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - Acumen -->
+		<production count="1" id="14142" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - Cleverness [Sword of Mana Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - Cleverness -->
+		<production count="1" id="16050" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - Cleverness - Acumen [Sword of Mana Regeneration | Special Ability: Acumen] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - Cleverness - Acumen -->
+		<production count="1" id="16080" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - Cleverness - MP Regeneration [Sword of Mana Regeneration | Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - Cleverness - MP Regeneration -->
+		<production count="1" id="16081" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - Cleverness - Mana Up [Sword of Mana Regeneration | Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - Cleverness - Mana Up -->
+		<production count="1" id="16082" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - MP Regeneration [Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - MP Regeneration -->
+		<production count="1" id="14143" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Caster - Mana Up [Special Ability: Mana Up] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Caster - Mana Up -->
+		<production count="1" id="14144" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer -->
+		<production count="1" id="13464" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - Gale [Two-handed Blunt Weapon of Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - Gale -->
+		<production count="1" id="16049" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - Gale - HP Drain [Two-handed Blunt Weapon of Haste | Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - Gale - HP Drain -->
+		<production count="1" id="16079" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - Gale - HP Regeneration [Two-handed Blunt Weapon of Haste | Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - Gale - HP Regeneration -->
+		<production count="1" id="16077" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - Gale - Health [Two-handed Blunt Weapon of Haste | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - Gale - Health -->
+		<production count="1" id="16078" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - HP Drain -->
+		<production count="1" id="14141" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - HP Regeneration [Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - HP Regeneration -->
+		<production count="1" id="14139" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Retributer - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Retributer - Health -->
+		<production count="1" id="14140" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Singer [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Singer -->
+		<production count="1" id="13466" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Singer - Empower [Special Ability: Empower] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Singer - Empower -->
+		<production count="1" id="14145" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Singer - Hail [Staff of Empower] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Singer - Hail -->
+		<production count="1" id="16051" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Singer - Hail - Empower [Staff of Empower | Special Ability: Empower] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Singer - Hail - Empower -->
+		<production count="1" id="16083" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Singer - Hail - MP Regeneration [Staff of Empower | Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Singer - Hail - MP Regeneration -->
+		<production count="1" id="16084" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Singer - MP Regeneration [Special Ability: MP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Singer - MP Regeneration -->
+		<production count="1" id="14146" enchantmentLevel="16"/>
+	</item>
+	<!-- Vigwik Axe [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vigwik Axe -->
+		<production count="1" id="15560" enchantmentLevel="16"/>
+	</item>
+	<!-- Vigwik Axe - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vigwik Axe - HP Drain -->
+		<production count="1" id="15837" enchantmentLevel="16"/>
+	</item>
+	<!-- Vigwik Axe - HP Regeneration [Special Ability: HP Regeneration] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vigwik Axe - HP Regeneration -->
+		<production count="1" id="15836" enchantmentLevel="16"/>
+	</item>
+	<!-- Vigwik Axe - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vigwik Axe - Health -->
+		<production count="1" id="15835" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== DAGGER ===== -->
+	<!-- Mamba Edge [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Mamba Edge -->
+		<production count="1" id="15545" enchantmentLevel="16"/>
+	</item>
+	<!-- Mamba Edge - Critical Damage [Special Ability: Crtical Damage] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Mamba Edge - Critical Damage -->
+		<production count="1" id="15875" enchantmentLevel="16"/>
+	</item>
+	<!-- Mamba Edge - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Mamba Edge - HP Drain -->
+		<production count="1" id="15876" enchantmentLevel="16"/>
+	</item>
+	<!-- Mamba Edge - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Mamba Edge - Haste -->
+		<production count="1" id="15874" enchantmentLevel="16"/>
+	</item>
+	<!-- Skull Edge [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Skull Edge -->
+		<production count="1" id="15559" enchantmentLevel="16"/>
+	</item>
+	<!-- Skull Edge - Critical Damage [Special Ability: Crtical Damage] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Skull Edge - Critical Damage -->
+		<production count="1" id="15834" enchantmentLevel="16"/>
+	</item>
+	<!-- Skull Edge - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Skull Edge - HP Drain -->
+		<production count="1" id="15832" enchantmentLevel="16"/>
+	</item>
+	<!-- Skull Edge - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Skull Edge - Haste -->
+		<production count="1" id="15833" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Dagger [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Dagger -->
+		<production count="1" id="15677" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper -->
+		<production count="1" id="13460" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - Critical Damage [Special Ability: Crtical Damage] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - Critical Damage -->
+		<production count="1" id="14127" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - Gale [Dagger of Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - Gale -->
+		<production count="1" id="16045" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - Gale - Critical Damage [Dagger of Haste | Special Ability: Crtical Damage] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - Gale - Critical Damage -->
+		<production count="1" id="16065" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - Gale - HP Drain [Dagger of Haste | Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - Gale - HP Drain -->
+		<production count="1" id="16066" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - Gale - Haste [Dagger of Haste | Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - Gale - Haste -->
+		<production count="1" id="16067" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - HP Drain [Special Ability: HP Drain] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - HP Drain -->
+		<production count="1" id="14128" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shaper - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shaper - Haste -->
+		<production count="1" id="14129" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== DUAL SWORD ===== -->
+	<!-- Eternal Core Dual Sword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Eternal Core Dual Sword -->
+		<production count="1" id="16158" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== DUAL DAGGER ===== -->
+	<!-- Mamba Edge Dual Daggers [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Mamba Edge Dual Daggers -->
+		<production count="1" id="16156" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== DUAL FIST ===== -->
+	<!-- Jade Claw [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Jade Claw -->
+		<production count="1" id="15549" enchantmentLevel="16"/>
+	</item>
+	<!-- Jade Claw - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Jade Claw - Focus -->
+		<production count="1" id="15887" enchantmentLevel="16"/>
+	</item>
+	<!-- Jade Claw - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Jade Claw - Health -->
+		<production count="1" id="15888" enchantmentLevel="16"/>
+	</item>
+	<!-- Octo Claw [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Octo Claw -->
+		<production count="1" id="15563" enchantmentLevel="16"/>
+	</item>
+	<!-- Octo Claw - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Octo Claw - Focus -->
+		<production count="1" id="15846" enchantmentLevel="16"/>
+	</item>
+	<!-- Octo Claw - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Octo Claw - Health -->
+		<production count="1" id="15844" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Jamadhr [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Jamadhr -->
+		<production count="1" id="15681" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Fighter [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Fighter -->
+		<production count="1" id="13461" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Fighter - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Fighter - Focus -->
+		<production count="1" id="14130" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Fighter - Gale [Fist Weapon of Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Fighter - Gale -->
+		<production count="1" id="16046" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Fighter - Gale - Focus [Fist Weapon of Haste | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Fighter - Gale - Focus -->
+		<production count="1" id="16068" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Fighter - Gale - Health [Fist Weapon of Haste | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Fighter - Gale - Health -->
+		<production count="1" id="16069" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Fighter - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Fighter - Health -->
+		<production count="1" id="14131" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== POLEARM ===== -->
+	<!-- Demitelum - Guidance [Special Ability: Guidance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Demitelum - Guidance -->
+		<production count="1" id="15891" enchantmentLevel="16"/>
+	</item>
+	<!-- Demitelum - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Demitelum - Haste -->
+		<production count="1" id="15889" enchantmentLevel="16"/>
+	</item>
+	<!-- Demitelum - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Demitelum - Health -->
+		<production count="1" id="15890" enchantmentLevel="16"/>
+	</item>
+	<!-- Doubletop Spear - Guidance [Special Ability: Guidance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Doubletop Spear - Guidance -->
+		<production count="1" id="15847" enchantmentLevel="16"/>
+	</item>
+	<!-- Doubletop Spear - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Doubletop Spear - Haste -->
+		<production count="1" id="15848" enchantmentLevel="16"/>
+	</item>
+	<!-- Doubletop Spear - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Doubletop Spear - Health -->
+		<production count="1" id="15849" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Guidance [Special Ability: Guidance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Guidance -->
+		<production count="1" id="14134" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Haste -->
+		<production count="1" id="14135" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Health -->
+		<production count="1" id="14133" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Thunder [Polearm of Critical Chance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Thunder -->
+		<production count="1" id="16047" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Thunder - Guidance [Polearm of Critical Chance | Special Ability: Guidance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Thunder - Guidance -->
+		<production count="1" id="16072" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Thunder - Haste [Polearm of Critical Chance | Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Thunder - Haste -->
+		<production count="1" id="16073" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Stormer - Thunder - Health [Polearm of Critical Chance | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Stormer - Thunder - Health -->
+		<production count="1" id="16071" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== RAPIER ===== -->
+	<!-- Gemtail Rapier [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Gemtail Rapier -->
+		<production count="1" id="15569" enchantmentLevel="16"/>
+	</item>
+	<!-- Gemtail Rapier - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Gemtail Rapier - Focus -->
+		<production count="1" id="15863" enchantmentLevel="16"/>
+	</item>
+	<!-- Gemtail Rapier - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Gemtail Rapier - Haste -->
+		<production count="1" id="15864" enchantmentLevel="16"/>
+	</item>
+	<!-- Gemtail Rapier - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Gemtail Rapier - Health -->
+		<production count="1" id="15862" enchantmentLevel="16"/>
+	</item>
+	<!-- Heavenstare Rapier [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Heavenstare Rapier -->
+		<production count="1" id="15555" enchantmentLevel="16"/>
+	</item>
+	<!-- Heavenstare Rapier - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Heavenstare Rapier - Focus -->
+		<production count="1" id="15904" enchantmentLevel="16"/>
+	</item>
+	<!-- Heavenstare Rapier - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Heavenstare Rapier - Haste -->
+		<production count="1" id="15905" enchantmentLevel="16"/>
+	</item>
+	<!-- Heavenstare Rapier - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Heavenstare Rapier - Health -->
+		<production count="1" id="15906" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer -->
+		<production count="1" id="13468" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Focus -->
+		<production count="1" id="14153" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Haste -->
+		<production count="1" id="14151" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Health -->
+		<production count="1" id="14152" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Thunder [Rapier of Critical Chance] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Thunder -->
+		<production count="1" id="16053" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Thunder - Focus [Rapier of Critical Chance | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Thunder - Focus -->
+		<production count="1" id="16091" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Thunder - Haste [Rapier of Critical Chance | Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Thunder - Haste -->
+		<production count="1" id="16089" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Pincer - Thunder - Health [Rapier of Critical Chance | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Pincer - Thunder - Health -->
+		<production count="1" id="16090" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== ANCIENT SWORD ===== -->
+	<!-- Finale Blade [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Finale Blade -->
+		<production count="1" id="15570" enchantmentLevel="16"/>
+	</item>
+	<!-- Finale Blade - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Finale Blade - Focus -->
+		<production count="1" id="15866" enchantmentLevel="16"/>
+	</item>
+	<!-- Finale Blade - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Finale Blade - Haste -->
+		<production count="1" id="15867" enchantmentLevel="16"/>
+	</item>
+	<!-- Finale Blade - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Finale Blade - Health -->
+		<production count="1" id="15865" enchantmentLevel="16"/>
+	</item>
+	<!-- Pyseal Blade [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Pyseal Blade -->
+		<production count="1" id="15556" enchantmentLevel="16"/>
+	</item>
+	<!-- Pyseal Blade - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Pyseal Blade - Focus -->
+		<production count="1" id="15907" enchantmentLevel="16"/>
+	</item>
+	<!-- Pyseal Blade - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Pyseal Blade - Haste -->
+		<production count="1" id="15908" enchantmentLevel="16"/>
+	</item>
+	<!-- Pyseal Blade - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Pyseal Blade - Health -->
+		<production count="1" id="15909" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Ancientsword [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Ancientsword -->
+		<production count="1" id="15688" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan -->
+		<production count="1" id="13470" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Focus -->
+		<production count="1" id="14159" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Gale [Ancient Sword of Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Gale -->
+		<production count="1" id="16055" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Gale - Focus [Ancient Sword of Haste | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Gale - Focus -->
+		<production count="1" id="16097" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Gale - Haste [Ancient Sword of Haste | Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Gale - Haste -->
+		<production count="1" id="16095" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Gale - Health [Ancient Sword of Haste | Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Gale - Health -->
+		<production count="1" id="16096" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Haste [Special Ability: Haste] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Haste -->
+		<production count="1" id="14157" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Nagan - Health [Special Ability: Health] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Nagan - Health -->
+		<production count="1" id="14158" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== BOW ===== -->
+	<!-- Recurve Thorne Bow [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Recurve Thorne Bow -->
+		<production count="1" id="15554" enchantmentLevel="16"/>
+	</item>
+	<!-- Recurve Thorne Bow - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Recurve Thorne Bow - Focus -->
+		<production count="1" id="15903" enchantmentLevel="16"/>
+	</item>
+	<!-- Skull Carnium Bow [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Skull Carnium Bow -->
+		<production count="1" id="15568" enchantmentLevel="16"/>
+	</item>
+	<!-- Skull Carnium Bow - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Skull Carnium Bow - Focus -->
+		<production count="1" id="15859" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Bow [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Bow -->
+		<production count="1" id="15686" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Thrower [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Thrower -->
+		<production count="1" id="13467" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Thrower - Clairvoyance [Bow of Long Shot] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Thrower - Clairvoyance -->
+		<production count="1" id="16052" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Thrower - Clairvoyance - Focus [Bow of Long Shot | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Thrower - Clairvoyance - Focus -->
+		<production count="1" id="16087" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Thrower - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Thrower - Focus -->
+		<production count="1" id="14149" enchantmentLevel="16"/>
+	</item>
+
+	<!-- ===== CROSSBOW ===== -->
+	<!-- Dominion Crossbow [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Dominion Crossbow -->
+		<production count="1" id="15571" enchantmentLevel="16"/>
+	</item>
+	<!-- Dominion Crossbow - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Dominion Crossbow - Focus -->
+		<production count="1" id="15868" enchantmentLevel="16"/>
+	</item>
+	<!-- Thorne Crossbow [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Thorne Crossbow -->
+		<production count="1" id="15557" enchantmentLevel="16"/>
+	</item>
+	<!-- Thorne Crossbow - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Thorne Crossbow - Focus -->
+		<production count="1" id="15912" enchantmentLevel="16"/>
+	</item>
+	<!-- Triumph Crossbow [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Triumph Crossbow -->
+		<production count="1" id="15689" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shooter [No SA] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shooter -->
+		<production count="1" id="13469" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shooter - Clairvoyance [Crossbow of Long Shot] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shooter - Clairvoyance -->
+		<production count="1" id="16054" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shooter - Clairvoyance - Focus [Crossbow of Long Shot | Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shooter - Clairvoyance - Focus -->
+		<production count="1" id="16093" enchantmentLevel="16"/>
+	</item>
+	<!-- Vesper Shooter - Focus [Special Ability: Focus] -->
+	<item>
+		<!-- Adena -->
+		<ingredient count="1" id="57" />
+		<!-- Vesper Shooter - Focus -->
+		<production count="1" id="14155" enchantmentLevel="16"/>
+	</item>
+
+</list>

@@ -1,0 +1,62 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+
+<!-- © 2010 by mathuza -->
+
+<list maintainEnchantment="true">
+
+  <!-- Elegia Necklace -->
+  <item id="1">
+    <ingredient id="3470" count="150"/>
+    <production id="15719" count="1"/>
+  </item>
+
+  <!-- Elegia Earring -->
+  <item id="2">
+    <ingredient id="3470" count="100"/>
+    <production id="15718" count="1"/>
+  </item>
+
+  <!-- Elegia Ring -->
+  <item id="3">
+    <ingredient id="3470" count="100"/>
+    <production id="15717" count="1"/>
+  </item>
+
+  <!-- Vorpal Necklace -->
+  <item id="1">
+    <ingredient id="3470" count="100"/>
+    <production id="15722" count="1"/>
+  </item>
+
+  <!-- Vorpal Earring -->
+  <item id="2">
+    <ingredient id="3470" count="50"/>
+    <production id="15721" count="1"/>
+  </item>
+
+  <!-- Vorpal Ring -->
+  <item id="3">
+    <ingredient id="3470" count="50"/>
+    <production id="15720" count="1"/>
+  </item>
+
+  <!-- Vesper Necklace -->
+  <item id="1">
+    <ingredient id="3470" count="100"/>
+    <production id="14164" count="1"/>
+  </item>
+
+  <!-- Vesper Earring -->
+  <item id="2">
+    <ingredient id="3470" count="50"/>
+    <production id="14163" count="1"/>
+  </item>
+
+  <!-- Vesper Ring -->
+  <item id="3">
+    <ingredient id="3470" count="50"/>
+    <production id="14165" count="1"/>
+  </item>
+
+
+</list>

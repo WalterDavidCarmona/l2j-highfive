@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- Shots -->
+<!-- © 2010 by mathuza -->
+
+<list maintainEnchantment="true" enchantmentLevel="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+
+ <!-- Soulshot: S-grade -->
+  <item id="1">
+    <production id="1467" count="1000"/>
+  </item>
+
+  <!-- Soulshot: A-grade -->
+  <item id="2">
+    <production id="1466" count="1000"/>
+  </item>
+
+  <!-- Soulshot: B-grade -->
+  <item id="3">
+    <production id="1465" count="1000"/>
+  </item>
+
+  <!-- Soulshot: C-grade -->
+  <item id="4">
+    <production id="1464" count="1000"/>
+  </item>
+
+  <!-- Soulshot: D-grade -->
+  <item id="5">
+    <production id="1463" count="1000"/>
+  </item>
+
+  <!-- Soulshot: No Grade -->
+  <item id="6">
+    <production id="1835" count="1000"/>
+  </item>
+
+  <!-- Blessed Spiritshot: S Grade -->
+  <item id="7">
+    <production id="3952" count="1000"/>
+  </item>
+
+  <!-- Blessed Spiritshot: A-Grade -->
+  <item id="8">
+    <production id="3951" count="1000"/>
+  </item>
+
+  <!-- Blessed Spiritshot: B-Grade -->
+  <item id="9">
+    <production id="3950" count="1000"/>
+  </item>
+
+  <!-- Blessed Spiritshot: C-Grade -->
+  <item id="10">
+    <production id="3949" count="1000"/>
+  </item>
+
+  <!-- Blessed Spiritshot: D-Grade -->
+  <item id="11">
+    <production id="3948" count="1000"/>
+  </item>
+
+  <!-- Blessed Spiritshot: No Grade -->
+  <item id="12">
+    <production id="3947" count="1000"/>
+  </item>
+
+  <!-- Spiritshot: S-grade -->
+  <item id="13">
+    <production id="2514" count="1000"/>
+  </item>
+
+  <!-- Spiritshot: A-grade -->
+  <item id="14">
+    <production id="2513" count="1000"/>
+  </item>
+
+  <!-- Spiritshot: B-grade -->
+  <item id="15">
+    <production id="2512" count="1000"/>
+  </item>
+
+  <!-- Spiritshot: C-grade -->
+  <item id="16">
+    <production id="2511" count="1000"/>
+  </item>
+
+  <!-- Spiritshot: D-grade -->
+  <item id="17">
+    <production id="2510" count="1000"/>
+  </item>
+
+  <!-- Spiritshot: No Grade -->
+  <item id="18">
+    <production id="2509" count="1000"/>
+  </item>
+  
+  <!-- Soulshot Large Pack - S grade -->
+  <item id="18">
+    <production id="22123" count="1"/>
+  </item>
+  
+   <!-- Soulshot Large Pack - A grade -->
+  <item id="2">
+    <production id="22122" count="1"/>
+  </item>
+  
+  <!-- Soulshot Large Pack - B grade -->
+  <item id="3">
+    <production id="22121" count="1"/>
+  </item>
+  
+  <!-- Soulshot Large Pack - C grade -->
+  <item id="4">
+    <production id="22120" count="1"/>
+  </item>
+  
+  <!-- Soulshot Large Pack - D grade -->
+  <item id="5">
+    <production id="22119" count="1"/>
+  </item>
+
+  <!-- Beast Soulshot -->
+  <item id="19">
+    <production id="6645" count="1000"/>
+  </item>
+  
+  <!-- Blessed Spiritshot Large Pack - S grade -->
+  <item id="7">
+    <production id="22113" count="1"/>
+  </item>
+  
+  <!-- Blessed Spiritshot Large Pack - A grade -->
+  <item id="8">
+    <production id="22112" count="1"/>
+  </item>
+  
+  <!-- Blessed Spiritshot Large Pack - B grade -->
+  <item id="9">
+    <production id="22111" count="1"/>
+  </item>
+  
+  <!-- Blessed Spiritshot Large Pack - C grade -->
+  <item id="10">
+    <production id="22110" count="1"/>
+  </item>
+  
+  <!-- Blessed Spiritshot Large Pack - D grade -->
+  <item id="11">
+    <production id="22109" count="1"/>
+  </item>
+
+  <!-- Blessed Beast Spiritshot -->
+  <item id="20">
+    <production id="6647" count="1000"/>
+  </item>
+  
+  <!-- Spiritshot Large Pack - S grade -->
+  <item id="13">
+    <production id="22118" count="1"/>
+  </item>
+  
+  <!-- Spiritshot Large Pack - A grade -->
+  <item id="14">
+    <production id="22117" count="1"/>
+  </item>
+  
+  <!-- Spiritshot Large Pack - B grade -->
+  <item id="15">
+    <production id="22116" count="1"/>
+  </item>
+  
+  <!-- Spiritshot Large Pack - C grade -->
+  <item id="16">
+    <production id="22115" count="1"/>
+  </item>
+  
+  <!-- Spiritshot Large Pack - D grade -->
+  <item id="17">
+    <production id="22114" count="1"/>
+  </item>
+  
+  
+
+</list>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- B-Grade Jewels -->
+
+<list maintainEnchantment="true" enchantmentLevel="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+
+  <!-- Necklace of Black Ore -->
+  <item id="1">
+    <production id="926" count="1"/>
+  </item>
+
+  <!-- Earring of Black Ore -->
+  <item id="2">
+    <production id="864" count="1"/>
+  </item>
+
+  <!-- Ring of Black Ore -->
+  <item id="3">
+    <production id="895" count="1"/>
+  </item>
+
+</list>

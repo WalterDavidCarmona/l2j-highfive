@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Belts -->
+
+<list maintainEnchantment="true">
+
+	<!-- Top-grade Magic Ornament Mithril Belt -->
+	<item id="1">
+		<ingredient id="3470" count="2" />
+		<production id="14953" count="1" />
+	</item>
+
+	<!-- Top-grade Magic Ornament Mithril Belt -->
+	<item id="2">
+		<ingredient id="3470" count="2" />
+		<production id="14957" count="1" />
+	</item>
+
+	<!-- Top-grade Magic Ornament Mithril Belt -->
+	<item id="3">
+		<ingredient id="3470" count="2" />
+		<production id="14961" count="1" />
+	</item>
+
+  <!-- Mithril Bracelet -->
+  <item id="4">
+    <production id="9592" count="1"/>     
+	<ingredient id="3470" count="2"/>
+  </item>
+
+  <!-- Dawn's Bracelet -->
+  <item id="5">
+    <production id="15312" count="1"/>     
+	<ingredient id="3470" count="2"/>
+  </item>
+
+</list>

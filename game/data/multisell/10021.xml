@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!-- Crystals -->
+<!-- © 2010 by mathuza -->
+
+<list maintainEnchantment="true" enchantmentLevel="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+
+  <!-- Crystal: S Grade -->
+  <item id="1">
+    <production id="1462" count="100"/>
+  </item>
+
+  <!-- Crystal: A-Grade -->
+  <item id="2">
+    <production id="1461" count="200"/>
+  </item>
+
+  <!-- Crystal: B-Grade -->
+  <item id="3">
+    <production id="1460" count="200"/>
+  </item>
+
+  <!-- Crystal: C-Grade -->
+  <item id="4">
+    <production id="1459" count="1000"/>
+  </item>
+
+  <!-- Crystal: D-Grade -->
+  <item id="5">
+    <production id="1458" count="1000"/>
+  </item>
+
+
+</list>
