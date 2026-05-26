@@ -112,6 +112,8 @@ public class PvpZone extends Script
 	private static final Set<Integer> INTERNAL_TELEPORT = ConcurrentHashMap.newKeySet();
 	/** Backup of clan data per player (objectId -> backup) for restore on zone exit */
 	private static final Map<Integer, ClanBackup> CLAN_BACKUPS = new ConcurrentHashMap<Integer, ClanBackup>();
+	/** Original personal title of each participant, saved on entry and restored on exit */
+	private static final Map<Integer, String> ORIGINAL_TITLES = new ConcurrentHashMap<Integer, String>();
 
 	private static final int NPC_ID = 30999;
 	private static final int NOBLESSE_BLESSING_ID = 1323;
@@ -147,7 +149,7 @@ public class PvpZone extends Script
 			if (clan != null)
 			{
 				player.setClan(clan);
-				player.setTitle(title);
+				// Note: personal title is restored separately via ORIGINAL_TITLES map.
 				player.setPledgeType(pledgeType);
 				player.setPowerGrade(powerGrade);
 				player.setLvlJoinedAcademy(lvlJoinedAcademy);
@@ -258,6 +260,7 @@ public class PvpZone extends Script
 		RESPAWN_DELAY = Integer.parseInt(props.getProperty("RespawnDelay", "5").trim());
 		TOP_KILLER_REWARD_ITEM_ID = Integer.parseInt(props.getProperty("TopKillerRewardItemId", "0").trim());
 		TOP_KILLER_REWARD_COUNT = Integer.parseInt(props.getProperty("TopKillerRewardCount", "1").trim());
+		ZONE_TITLE = props.getProperty("ZoneTitle", "Lineage2IA").trim();
 		HIDE_CLAN = Boolean.parseBoolean(props.getProperty("HideClan", "True").trim());
 		BLOCK_PARTY = Boolean.parseBoolean(props.getProperty("BlockParty", "True").trim());
 		RETURN_X = Integer.parseInt(props.getProperty("ReturnX", "83400").trim());
@@ -463,6 +466,16 @@ public class PvpZone extends Script
 		ZONE_KILL_NAMES.put(player.getObjectId(), realName);
 		ZONE_KILL_CLASSES.put(player.getObjectId(), className);
 
+		// Save original personal title and apply the zone title (works for all players,
+		// regardless of clan membership or HideClan setting).
+		final String originalTitle = player.getTitle();
+		ORIGINAL_TITLES.put(player.getObjectId(), originalTitle);
+		player.getVariables().set("PVPZ_REAL_TITLE", originalTitle);
+		if (!ZONE_TITLE.isEmpty())
+		{
+			player.setTitle(ZONE_TITLE);
+		}
+
 		// Backup and hide clan identity (crest, title, privileges).
 		// With clanId = 0 clan buff/heal skills won't affect other clan members.
 		if (HIDE_CLAN && (player.getClan() != null))
@@ -636,12 +649,20 @@ public class PvpZone extends Script
 		ZONE_KILL_NAMES.remove(player.getObjectId());
 		ZONE_KILL_CLASSES.remove(player.getObjectId());
 
-		// Restore clan identity (crest, title, privileges)
+		// Restore clan identity (crest, privileges)
 		final ClanBackup clanBackup = CLAN_BACKUPS.remove(player.getObjectId());
 		if (clanBackup != null)
 		{
 			clanBackup.restore(player);
 		}
+
+		// Restore original personal title (applies to all players regardless of clan)
+		final String originalTitle = ORIGINAL_TITLES.remove(player.getObjectId());
+		if (originalTitle != null)
+		{
+			player.setTitle(originalTitle);
+		}
+		player.getVariables().remove("PVPZ_REAL_TITLE");
 
 		// Restore original name
 		if (restoreName)
@@ -1403,6 +1424,18 @@ public class PvpZone extends Script
 						cb.restore(player);
 					}
 
+					// Restore original title
+					String originalTitle = ORIGINAL_TITLES.remove(player.getObjectId());
+					if (originalTitle == null)
+					{
+						originalTitle = player.getVariables().getString("PVPZ_REAL_TITLE", null);
+					}
+					if (originalTitle != null)
+					{
+						player.setTitle(originalTitle);
+					}
+					player.getVariables().remove("PVPZ_REAL_TITLE");
+
 					String realName = ORIGINAL_NAMES.get(player.getObjectId());
 					if (realName == null)
 					{
@@ -1451,19 +1484,32 @@ public class PvpZone extends Script
 		{
 			return;
 		}
+		boolean needsBroadcast = false;
+
 		final String backupName = player.getVariables().getString("PVPZ_REAL_NAME", null);
 		if ((backupName != null) && !backupName.isEmpty() && !backupName.equals(player.getName()))
 		{
 			player.setName(backupName);
-			player.broadcastUserInfo();
-			player.getVariables().remove("PVPZ_REAL_NAME");
-			player.getVariables().storeMe();
+			needsBroadcast = true;
 			LOGGER.info("PvpZone: Restored real name '" + backupName + "' on login for objectId " + player.getObjectId());
 		}
-		else if (backupName != null)
+		if (backupName != null)
 		{
-			// Name already correct, just clean the variable
 			player.getVariables().remove("PVPZ_REAL_NAME");
+		}
+
+		// Restore original title if crash/logout happened while inside the zone
+		final String backupTitle = player.getVariables().getString("PVPZ_REAL_TITLE", null);
+		if (backupTitle != null)
+		{
+			player.setTitle(backupTitle);
+			needsBroadcast = true;
+			player.getVariables().remove("PVPZ_REAL_TITLE");
+		}
+
+		if (needsBroadcast)
+		{
+			player.broadcastUserInfo();
 			player.getVariables().storeMe();
 		}
 	}
