@@ -1,6 +1,6 @@
 <html>
 <body>
-<title>Guardián PvP</title>
+<title>Guardian PvP</title>
 
 <table width="270" cellspacing="0">
 <tr>
@@ -12,7 +12,7 @@
 
 <table width="270" border="0">
 <tr><td align="center">
-<font color="LEVEL">⚔ Zona PvP Rotativa ⚔</font>
+<font color="LEVEL">Zona PvP Rotativa</font>
 </td></tr>
 </table>
 <br>
@@ -21,15 +21,14 @@
 <tr><td>
 Bienvenido, guerrero.<br>
 La <font color="FF6347">Zona PvP</font> cambia de lugar cada hora.<br>
-Dentro, el PvP está <font color="FF0000">siempre activo</font><br>
-y cada kill te da <font color="FFDF00">Adena</font> como recompensa.<br><br>
+Dentro, el PvP esta <font color="FF0000">siempre activo</font><br>
+y cada kill te da recompensas.<br><br>
 
-¡Las rachas de kills multiplican tu recompensa!
+Las rachas de kills multiplican tu recompensa!
 </td></tr>
 </table>
 <br>
 
-<!-- Info dinámica (estática en el HTML, actualizada por bypass) -->
 <table width="270" border="0" bgcolor="000000">
 <tr>
 <td width="130" align="right"><font color="aaaaaa">Zona actual:</font></td>
@@ -40,12 +39,8 @@ y cada kill te da <font color="FFDF00">Adena</font> como recompensa.<br><br>
 <td width="130"><font color="FFDF00">%pvpzone_players%</font></td>
 </tr>
 <tr>
-<td width="130" align="right"><font color="aaaaaa">Próxima rotación:</font></td>
+<td width="130" align="right"><font color="aaaaaa">Proxima rotacion:</font></td>
 <td width="130"><font color="FF6347">%pvpzone_timer% min</font></td>
-</tr>
-<tr>
-<td width="130" align="right"><font color="aaaaaa">Reward base:</font></td>
-<td width="130"><font color="FFDF00">50,000 Adena</font></td>
 </tr>
 </table>
 <br>
@@ -53,12 +48,17 @@ y cada kill te da <font color="FFDF00">Adena</font> como recompensa.<br><br>
 <table width="270">
 <tr>
 <td align="center">
-<button value="  ⚔ Entrar a la Zona PvP  " action="bypass -h pvpzone_teleport" width="200" height="26" back="L2UI_ct1.button_df" fore="L2UI_ct1.button_df">
+<button value="Entrar a la Zona PvP" action="bypass -h pvpzone_teleport" width="200" height="26" back="L2UI_ct1.button_df" fore="L2UI_ct1.button_df">
 </td>
 </tr>
 <tr>
 <td align="center">
-<button value="  ℹ Ver información  " action="bypass -h pvpzone_info" width="150" height="22" back="L2UI_ct1.button_df" fore="L2UI_ct1.button_df">
+<button value="Ver informacion" action="bypass -h pvpzone_info" width="150" height="22" back="L2UI_ct1.button_df" fore="L2UI_ct1.button_df">
+</td>
+</tr>
+<tr>
+<td align="center">
+<button value="Salir de la Zona PvP" action="bypass -h pvpzone_leave" width="180" height="22" back="L2UI_ct1.button_df" fore="L2UI_ct1.button_df">
 </td>
 </tr>
 </table>
@@ -68,11 +68,9 @@ y cada kill te da <font color="FFDF00">Adena</font> como recompensa.<br><br>
 <tr><td>
 <font color="808080">Sistema de Rachas:</font><br>
 <font color="aaaaaa">
-Kill 1: 50,000 Adena<br>
-Kill 2: 60,000 Adena<br>
-Kill 3: 70,000 Adena<br>
-Kill 4: 80,000 Adena<br>
-Kill 5+: 90,000 Adena<br>
+Consigue kills seguidas para<br>
+multiplicar tu recompensa.<br>
+Al llegar a 5 kills: Hero status!<br>
 </font>
 </td></tr>
 </table>

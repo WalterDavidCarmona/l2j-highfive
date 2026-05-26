@@ -71,10 +71,16 @@
 		<buff id="1007" level="1" price="0" desc="Increases P. Atk." /> <!-- Chant of Battle -->
 		<buff id="1009" level="1" price="0" desc="Increases P. Def." /> <!-- Chant of Shielding -->
 		<buff id="1362" level="1" price="0" desc="Increases resistance to Cancel attack." /> <!-- Chant of Spirit -->
+		<buff id="1364" level="1" price="0" desc="Eye of paagrio." /> <!-- Chant of Spirit -->
 		<buff id="1310" level="1" price="0" desc="Restores HP using inflicted damage." /> <!-- Chant of Vampiric -->
 		<buff id="1309" level="1" price="0" desc="Increases Accuracy." /> <!-- Chant of Eagle -->
 		<buff id="1308" level="1" price="0" desc="Increases critical attack rate." /> <!-- Chant of Predator -->
 		<buff id="1461" level="1" price="0" desc="Decreases the critical damage received." /> <!-- Chant of Protection -->
+		<buff id="1517" level="1" price="0" desc="Increase Patk and Pdef." /> <!-- Chant of Combat -->
+		<buff id="1518" level="1" price="0" desc="Increase Critical." /> <!-- Chant of Critical Attack -->
+		<buff id="1519" level="1" price="0" desc="Atk speed and Drain." /> <!-- Chant of Blood Awakening -->
+		<buff id="1535" level="1" price="0" desc="Mov Speed." /> <!-- Chant of Movement -->
+		<buff id="1391" level="1" price="0" desc="Earth Chant." /> <!-- Chant of Movement -->		
 	</category>
 	<category type="Special">
 		<buff id="1355" level="1" price="0" desc="Increases all mage abilities." /> <!-- Prophecy of Water -->
@@ -86,6 +92,10 @@
 		<buff id="4703" level="1" price="0" desc="Decreases re-use time of magic skills" /> <!-- Gift of Seraphim -->
 		<buff id="4700" level="1" price="0" desc="Increases P. Atk. and Accuracy" /> <!-- Gift of Queen -->
 		<buff id="4699" level="1" price="0" desc="Increases critical chance and power" /> <!-- Blessing of Queen -->
+		<buff id="1414" level="1" price="0" desc="Special." /> <!-- Victory of Paagrio -->
+		<buff id="1416" level="1" price="0" desc="Paagrio Fist." /> <!-- Paagrio Fist -->	
+		<buff id="1501" level="1" price="0" desc="Max HP and Max MP." /> <!-- Improved Condition -->
+		<buff id="1499" level="1" price="0" desc="Patk and Mdef." /> <!-- Improved Combat -->
 	</category>
 	<category type="Resist">
 		<buff id="1259" level="1" price="0" desc="Increases resistance to stun attack." /> <!-- Resist Shock -->
@@ -95,7 +105,8 @@
 		<buff id="1182" level="1" price="0" desc="Increases tolerance to attack by water" /> <!-- Resist Aqua -->
 		<buff id="1189" level="1" price="0" desc="Increases resistance to attack by wind" /> <!-- Resist Wind -->
 		<buff id="1191" level="1" price="0" desc="increases resistance to attacks by fire" /> <!-- Resist Fire -->
-		<buff id="1352" level="1" price="0" desc="Increases resistance to atures." /> <!-- Elemental Protection -->
+		<buff id="1548" level="1" price="0" desc="increases resistance to attacks by earth" /> <!-- Resist Earth -->
+		<buff id="1352" level="1" price="0" desc="Increases resistance to creatures." /> <!-- Elemental Protection -->
 		<buff id="1353" level="1" price="0" desc="Increases resistance to dark attack." /> <!-- Divine Protection -->
 		<buff id="1354" level="1" price="0" desc="Increases resistance to de-buff attack." /> <!-- Arcane Protection -->
 		<buff id="1032" level="1" price="0" desc="increases resistance to bleeding" /> <!-- Invigor -->

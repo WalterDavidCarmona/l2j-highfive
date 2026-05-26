@@ -423,6 +423,7 @@
 		<node X="57669" Y="221683" />
 		<node X="50773" Y="221632" />
 	</zone>
+	<!-- DISABLED for PvP Zone usage
 	<zone name="no_bookmark_antaras_no_restart" type="ConditionZone" shape="NPoly" minZ="-8380" maxZ="-4880">
 		<stat name="NoBookmark" val="true" />
 		<node X="173469" Y="110431" />
@@ -430,6 +431,7 @@
 		<node X="188132" Y="119249" />
 		<node X="173386" Y="119391" />
 	</zone>
+	-->
 	<zone name="no_bookmark_valakas_no_restart" type="ConditionZone" shape="NPoly" minZ="-2572" maxZ="5428">
 		<stat name="NoBookmark" val="true" />
 		<node X="196866" Y="-130845" />

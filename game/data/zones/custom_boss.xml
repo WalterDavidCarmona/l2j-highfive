@@ -70,7 +70,6 @@
 		<node X="-18176" Y="-54972" />
 		<node X="-14614" Y="-51620" />
 	</zone>
-	<!-- Beleth's Chamber -->
 	<zone name="Beleth's Chamber" id="12018" type="BossZone" shape="NPoly" minZ="-10412" maxZ="-5112">
 		<stat name="InvadeTime" val="1800000" />
 		<node X="11214" Y="205578" />

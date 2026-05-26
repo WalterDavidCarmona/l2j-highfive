@@ -9,7 +9,8 @@
 		<node X="57669" Y="221683" />
 		<node X="50773" Y="221632" />
 	</zone>
-	<zone name="antaras_no_restart" id="70050" type="NoRestartZone" shape="NPoly" minZ="-8380" maxZ="-4880"> <!-- 25_21 -->
+	<!-- DISABLED for PvP Zone usage
+	<zone name="antaras_no_restart" id="70050" type="NoRestartZone" shape="NPoly" minZ="-8380" maxZ="-4880">
 		<stat name="restartTime" val="1800" />
 		<stat name="restartAllowedTime" val="600" />
 		<node X="173469" Y="110431" />
@@ -17,6 +18,7 @@
 		<node X="188132" Y="119249" />
 		<node X="173386" Y="119391" />
 	</zone>
+	-->
 	<zone name="baium_no_restart" id="70051" type="NoRestartZone" shape="NPoly" minZ="10061" maxZ="11061"> <!-- 23_18 -->
 		<stat name="restartTime" val="1800" />
 		<stat name="restartAllowedTime" val="600" />

@@ -5,7 +5,9 @@
 <!-- © 2011 by 007Florin (H5) -->
 
 <list maintainEnchantment="true">
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Ring of Queen Ant -->
   <item id="1">
     <production id="6660" count="1" enchantmentLevel="16"/>

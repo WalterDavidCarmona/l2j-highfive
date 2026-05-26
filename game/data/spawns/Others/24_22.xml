@@ -202,5 +202,6 @@
 		<npc id="22267" x="160064" y="155056" z="-3752" heading="0" respawnDelay="310" /> <!-- Dark Water Dragon -->
 		<npc id="22267" x="160080" y="152320" z="-3440" heading="29922" respawnDelay="310" /> <!-- Dark Water Dragon -->
 		<npc id="32282" x="139904" y="150368" z="-3104" heading="18501" respawnDelay="60" /> <!-- Yiyen -->
+		<npc id="30999" x="144003" y="142773" z="-11880" heading="19096" respawnDelay="60" /> <!-- Guardian PvP - Zona PvP -->
 	</spawn>
 </list>

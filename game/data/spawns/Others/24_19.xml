@@ -23,7 +23,5 @@
 		<npc id="31745" x="143200" y="44000" z="-3040" heading="0" respawnDelay="60" /> <!-- Lady of the Lake -->
 		<npc id="32573" x="138476" y="61269" z="-3660" heading="40960" respawnDelay="60" /> <!-- Tess -->
 		<npc id="32574" x="142807" y="46493" z="-3380" heading="24576" respawnDelay="60" /> <!-- Kuta -->
-		<npc id="30999" x="148938" y="46212" z="-3408" heading="44633" respawnDelay="60" /> <!-- Guardián PvP -->
-		<npc id="30120" x="148884" y="46135" z="-3408" heading="3538" respawnDelay="60" /> <!-- Maximilian - High Priest -->
 	</spawn>
 </list>

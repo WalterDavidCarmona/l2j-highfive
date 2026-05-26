@@ -1,0 +1,48 @@
+<html><body>
+Augment Master:<br>
+<img src="L2UI.SquareGray" width="270" height="1"><br>
+Greetings, adventurer!<br>
+I can bind powerful augmentations<br1>
+to your currently equipped weapon.<br>
+Replacing an existing augment costs<br1>
+the same as applying a new one.<br>
+<br>
+<img src="L2UI.SquareGray" width="270" height="1"><br>
+<br>
+<center>
+<table width=268 cellpadding=2 cellspacing=2>
+<tr>
+<td>
+<button value="Active Skills" action="bypass -h Script AugmentMaster cat_ACTIVE" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+<td>
+<button value="Passive Skills" action="bypass -h Script AugmentMaster cat_PASSIVE" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+</tr>
+<tr>
+<td>
+<button value="Chance: Attack" action="bypass -h Script AugmentMaster cat_CHANCE_ATTACK" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+<td>
+<button value="Chance: Critical" action="bypass -h Script AugmentMaster cat_CHANCE_CRITICAL" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+</tr>
+<tr>
+<td>
+<button value="Chance: Magic" action="bypass -h Script AugmentMaster cat_CHANCE_MAGIC" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+<td>
+<button value="Chance: Defense" action="bypass -h Script AugmentMaster cat_CHANCE_DEFENSE" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+</tr>
+<tr>
+<td colspan=2 align=center>
+<button value="Stat Bonuses" action="bypass -h Script AugmentMaster cat_STATS" width=130 height=25 back="L2UI_CT1.Button_DF_Down" fore="L2UI_CT1.Button_DF">
+</td>
+</tr>
+</table>
+</center>
+<br>
+<img src="L2UI.SquareGray" width="270" height="1"><br>
+<center><a action="bypass -h Script AugmentMaster remove"><font color="FF6666">Remove Current Augment</font></a></center>
+</body></html>

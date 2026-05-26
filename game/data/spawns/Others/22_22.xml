@@ -110,10 +110,10 @@
 		<npc id="35459" x="81920" y="151968" z="-3520" heading="0" respawnDelay="60" /> <!-- Regina -->
 		<npc id="35460" x="81808" y="151776" z="-3536" heading="32000" respawnDelay="60" /> <!-- Trey -->
 		<npc id="50008" x="83304" y="148610" z="-3431" heading="29314" respawnDelay="60" /> <!-- Thiago - Scheme Buffer -->
-		<npc id="30085" x="83420" y="148600" z="-3431" heading="20560" respawnDelay="60" /> <!-- Stanford - Wizard-use Weapon Merchant -->
 		<npc id="30120" x="83358" y="148654" z="-3431" heading="14815" respawnDelay="60" /> <!-- Maximilian - High Priest -->
 		<npc id="30999" x="83462" y="148805" z="-3400" heading="25871" respawnDelay="60" /> <!-- Guardián PvP -->
 		<npc id="30999" x="83558" y="148793" z="-3400" heading="8559" respawnDelay="60" /> <!-- Guardián PvP -->
 		<npc id="30999" x="83661" y="148613" z="-3400" heading="36643" respawnDelay="60" /> <!-- Guardián PvP -->
+		<npc id="30085" x="83303" y="148520" z="-3400" heading="35308" respawnDelay="60" /> <!-- Stanford - Wizard-use Weapon Merchant -->
 	</spawn>
 </list>

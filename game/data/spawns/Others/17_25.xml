@@ -85,5 +85,6 @@
 		<npc id="31776" x="-86080" y="241488" z="-3728" heading="57000" respawnDelay="60" /> <!-- Adventure Guildsman -->
 		<npc id="32478" x="-81920" y="243360" z="-3728" heading="40000" respawnDelay="60" /> <!-- Dimensional Merchant -->
 		<npc id="35103" x="-83536" y="243280" z="-3728" heading="24400" respawnDelay="60" /> <!-- Manor Manager -->
+		<npc id="30999" x="-83944" y="243501" z="-3728" heading="47557" respawnDelay="60" /> <!-- Guardian PvP - Zona PvP -->
 	</spawn>
 </list>
