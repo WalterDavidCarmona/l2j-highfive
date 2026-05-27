@@ -37,6 +37,7 @@
     <li><a href="#" data-nav="rankings"><span class="icon">🏆</span> Rankings</a></li>
     <li><a href="#" data-nav="news"    ><span class="icon">📰</span> Noticias</a></li>
     <li><a href="#" data-nav="shop"    ><span class="icon">🛒</span> Tienda</a></li>
+    <li><a href="#" data-nav="recharge"><span class="icon">💳</span> Recargar</a></li>
     <li><a href="#" data-nav="panel"   ><span class="icon">👤</span> Mi Panel</a></li>
   </ul>
 
@@ -291,6 +292,64 @@
     </div>
   </section>
 
+  <!-- ──── RECARGAR ──── -->
+  <section id="section-recharge" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">💳</span> Recargar Monedas</h2>
+        <div class="coins-display">🪙 <span id="recharge-coins">0</span> Monedas</div>
+      </div>
+
+      <!-- Aviso login -->
+      <div id="recharge-guest" class="hidden">
+        <div class="card" style="text-align:center;padding:3rem;max-width:480px;margin:0 auto">
+          <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+          <h3 style="margin-bottom:.75rem">Iniciá sesión para recargar</h3>
+          <p class="text-muted" style="margin-bottom:1.5rem">Necesitás una cuenta activa para comprar monedas.</p>
+          <button class="btn btn-primary" onclick="openModal('login')">Iniciar Sesión</button>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div id="recharge-content">
+
+        <!-- Cómo funciona -->
+        <div class="recharge-how" style="margin-bottom:2.5rem">
+          <div class="recharge-step">
+            <div class="recharge-step-icon">1️⃣</div>
+            <div><strong>Elegí un paquete</strong><br><span class="text-muted" style="font-size:.85rem">Seleccioná la cantidad de monedas que querés</span></div>
+          </div>
+          <div class="recharge-step-arrow">→</div>
+          <div class="recharge-step">
+            <div class="recharge-step-icon">2️⃣</div>
+            <div><strong>Elegí el método de pago</strong><br><span class="text-muted" style="font-size:.85rem">MercadoPago (ARS) o PayPal (USD)</span></div>
+          </div>
+          <div class="recharge-step-arrow">→</div>
+          <div class="recharge-step">
+            <div class="recharge-step-icon">3️⃣</div>
+            <div><strong>Monedas acreditadas</strong><br><span class="text-muted" style="font-size:.85rem">Se acreditan automáticamente al pagar</span></div>
+          </div>
+        </div>
+
+        <!-- Paquetes -->
+        <div id="packages-grid" class="packages-grid">
+          <div class="flex-center" style="padding:3rem;grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+
+        <!-- Historial de recargas -->
+        <div style="margin-top:3.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h3 style="color:var(--text-dim)">📋 Historial de recargas</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadPaymentHistory()">Cargar</button>
+          </div>
+          <div id="payment-history"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ──── PANEL ──── -->
   <section id="section-panel" class="section">
     <div class="container">
@@ -429,6 +488,110 @@
     </form>
     <div class="modal-divider">¿Ya tienes cuenta?</div>
     <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- ── Modal: Elegir método de pago ── -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal modal-payment">
+    <div class="modal-header">
+      <h3 class="modal-title">💳 Confirmar Recarga</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Resumen del paquete -->
+    <div class="payment-pkg-summary" id="payment-pkg-summary">
+      <div class="payment-pkg-coins"><span class="coin-icon">🪙</span> <span id="pay-pkg-coins">—</span> WebCoins</div>
+      <div class="payment-pkg-name" id="pay-pkg-name">—</div>
+      <div class="payment-pkg-bonus hidden" id="pay-pkg-bonus-wrap">
+        🎁 Incluye <strong id="pay-pkg-bonus">0</strong>% bonus
+      </div>
+    </div>
+
+    <!-- Selector de método -->
+    <p style="font-size:.85rem;color:var(--text-dim);margin-bottom:1rem;text-align:center">Elegí cómo querés pagar:</p>
+
+    <div class="payment-methods">
+
+      <!-- MercadoPago -->
+      <button class="payment-method-btn" id="btn-pay-mp" onclick="startPayment('mp')">
+        <div class="pm-logo pm-logo-mp">
+          <svg viewBox="0 0 48 48" width="32" height="32" fill="none">
+            <circle cx="24" cy="24" r="24" fill="#00B1EA"/>
+            <path d="M10 24c0-7.73 6.27-14 14-14s14 6.27 14 14-6.27 14-14 14S10 31.73 10 24z" fill="#00B1EA"/>
+            <path d="M24 14c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm1 14.5h-2v-6h2v6zm0-8h-2v-2h2v2z" fill="white"/>
+          </svg>
+        </div>
+        <div class="pm-info">
+          <div class="pm-name">MercadoPago</div>
+          <div class="pm-desc">Tarjetas, débito, efectivo · <strong id="pay-price-ars">—</strong></div>
+        </div>
+        <div class="pm-arrow">→</div>
+      </button>
+
+      <!-- PayPal -->
+      <button class="payment-method-btn" id="btn-pay-pp" onclick="startPayment('paypal')">
+        <div class="pm-logo pm-logo-pp">
+          <svg viewBox="0 0 48 48" width="32" height="32">
+            <rect width="48" height="48" rx="8" fill="#003087"/>
+            <path d="M32.5 16.5c.5 3.5-2 7-6.5 7H23l-1.5 9H17l3.5-20h8c2.5 0 3.5 1.5 4 4z" fill="#009CDE"/>
+            <path d="M34 20c.5 3-1.5 6-5.5 6.5L26 27l-1.5 8.5H20l3.5-20h7c2.5 0 3.5 1.5 3.5 4.5z" fill="white" opacity=".6"/>
+          </svg>
+        </div>
+        <div class="pm-info">
+          <div class="pm-name">PayPal</div>
+          <div class="pm-desc">Tarjetas internacionales · <strong id="pay-price-usd">—</strong></div>
+        </div>
+        <div class="pm-arrow">→</div>
+      </button>
+
+    </div>
+
+    <p style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:1.25rem">
+      🔒 Pago seguro · Las monedas se acreditan automáticamente al confirmar el pago
+    </p>
+  </div>
+</div>
+
+<!-- ── Modal: Procesando pago ── -->
+<div class="modal-overlay" id="modal-processing">
+  <div class="modal" style="text-align:center;padding:2.5rem">
+    <div class="spinner" style="margin:0 auto 1.5rem"></div>
+    <h3 style="margin-bottom:.5rem">Procesando pago…</h3>
+    <p class="text-muted" id="processing-msg">Esperá mientras confirmamos tu pago con PayPal.</p>
+  </div>
+</div>
+
+<!-- ── Página: Pago exitoso ── -->
+<div class="payment-result-overlay hidden" id="result-success">
+  <div class="payment-result-card">
+    <div class="result-icon result-ok">✅</div>
+    <h2>¡Pago Exitoso!</h2>
+    <p class="text-muted" id="result-success-msg">Tus monedas fueron acreditadas.</p>
+    <div class="result-coins-box">
+      🪙 <span id="result-coins-amount">—</span> WebCoins acreditadas
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="closePaymentResult()">Ir a la Tienda 🛒</button>
+  </div>
+</div>
+
+<!-- ── Página: Pago fallido ── -->
+<div class="payment-result-overlay hidden" id="result-failure">
+  <div class="payment-result-card">
+    <div class="result-icon result-fail">❌</div>
+    <h2>Pago no completado</h2>
+    <p class="text-muted">El pago fue cancelado o rechazado. No se realizó ningún cobro.</p>
+    <button class="btn btn-secondary btn-lg" onclick="closePaymentResult()" style="margin-top:1.5rem">Volver a intentar</button>
+  </div>
+</div>
+
+<!-- ── Página: Pago pendiente ── -->
+<div class="payment-result-overlay hidden" id="result-pending">
+  <div class="payment-result-card">
+    <div class="result-icon result-pending">⏳</div>
+    <h2>Pago en revisión</h2>
+    <p class="text-muted">Tu pago está siendo procesado. Las monedas se acreditarán automáticamente cuando se confirme.</p>
+    <button class="btn btn-secondary btn-lg" onclick="closePaymentResult()" style="margin-top:1.5rem">Entendido</button>
   </div>
 </div>
 

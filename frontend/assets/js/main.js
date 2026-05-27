@@ -35,6 +35,7 @@ function navigate(sectionId) {
     case 'rankings':  loadRankings();   break;
     case 'news':      loadNews();       break;
     case 'shop':      loadShop();       break;
+    case 'recharge':  loadRecharge();   break;
     case 'panel':     loadPanel();      break;
     case 'home':      loadHome();       break;
   }
@@ -47,7 +48,7 @@ document.querySelectorAll('[data-nav]').forEach(el => {
     const target = el.getAttribute('data-nav');
 
     // Secciones protegidas
-    if ((target === 'panel' || target === 'shop') && !api.isLoggedIn) {
+    if ((target === 'panel' || target === 'shop' || target === 'recharge') && !api.isLoggedIn) {
       openModal('login');
       showToast('Inicia sesión para continuar', 'warning');
       return;
@@ -554,6 +555,251 @@ document.getElementById('form-change-pass')?.addEventListener('submit', async e 
 });
 
 /* ====================================================================
+   RECHARGE — Paquetes de Monedas
+   ==================================================================== */
+let selectedPackage = null;
+
+async function loadRecharge() {
+  // Mostrar/ocultar según login
+  const guest   = document.getElementById('recharge-guest');
+  const content = document.getElementById('recharge-content');
+  if (!api.isLoggedIn) {
+    guest?.classList.remove('hidden');
+    content?.classList.add('hidden');
+    return;
+  }
+  guest?.classList.add('hidden');
+  content?.classList.remove('hidden');
+
+  // Balance actualizado
+  try {
+    const bal = await api.getShopBalance();
+    const el  = document.getElementById('recharge-coins');
+    if (el) el.textContent = (bal.coins || 0).toLocaleString();
+  } catch {}
+
+  // Cargar paquetes
+  const grid = document.getElementById('packages-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="flex-center" style="padding:3rem;grid-column:1/-1"><div class="spinner"></div></div>';
+
+  try {
+    const packages = await api.getCoinPackages();
+    if (!packages.length) {
+      grid.innerHTML = '<p class="text-muted text-center" style="grid-column:1/-1;padding:2rem">No hay paquetes disponibles.</p>';
+      return;
+    }
+    grid.innerHTML = packages.map(pkg => renderPackageCard(pkg)).join('');
+  } catch (err) {
+    grid.innerHTML = `<p class="text-red text-center" style="grid-column:1/-1;padding:2rem">Error: ${err.message}</p>`;
+  }
+}
+
+function renderPackageCard(pkg) {
+  const coins = (pkg.coins || 0).toLocaleString();
+  const hasBonus = pkg.bonus_pct > 0;
+  const priceArs = pkg.price_ars ? `$${parseFloat(pkg.price_ars).toLocaleString('es-AR')} ARS` : null;
+  const priceUsd = pkg.price_usd ? `U$D ${parseFloat(pkg.price_usd).toFixed(2)}` : null;
+
+  return `
+  <div class="package-card ${pkg.featured ? 'featured' : ''}" onclick="openPaymentModal(${JSON.stringify(pkg).replace(/"/g,'&quot;')})">
+    ${pkg.featured ? '<div class="pkg-badge">⭐ Popular</div>' : ''}
+    <div class="pkg-icon">🪙</div>
+    <div class="pkg-name">${escHtml(pkg.name)}</div>
+    ${pkg.description ? `<div class="pkg-desc">${escHtml(pkg.description)}</div>` : ''}
+    <div class="pkg-coins">🪙 ${coins}</div>
+    <div class="pkg-coins-label">WebCoins</div>
+    ${hasBonus ? `<div class="pkg-bonus">🎁 +${pkg.bonus_pct}% BONUS</div>` : ''}
+    <div class="pkg-prices">
+      ${priceArs ? `
+      <div class="pkg-price-row">
+        <div class="pkg-price-provider">🇦🇷 MercadoPago</div>
+        <div class="price-val">${priceArs}</div>
+      </div>` : ''}
+      ${priceUsd ? `
+      <div class="pkg-price-row">
+        <div class="pkg-price-provider">🌎 PayPal</div>
+        <div class="price-val">${priceUsd}</div>
+      </div>` : ''}
+    </div>
+    <button class="btn-buy-package">Comprar ahora →</button>
+  </div>`;
+}
+
+function openPaymentModal(pkg) {
+  if (!api.isLoggedIn) { openModal('login'); return; }
+  selectedPackage = pkg;
+
+  // Rellenar resumen
+  document.getElementById('pay-pkg-coins').textContent = (pkg.coins || 0).toLocaleString();
+  document.getElementById('pay-pkg-name').textContent  = pkg.name;
+
+  const bonusWrap = document.getElementById('pay-pkg-bonus-wrap');
+  if (pkg.bonus_pct > 0) {
+    document.getElementById('pay-pkg-bonus').textContent = pkg.bonus_pct;
+    bonusWrap?.classList.remove('hidden');
+  } else {
+    bonusWrap?.classList.add('hidden');
+  }
+
+  const arsEl = document.getElementById('pay-price-ars');
+  const usdEl = document.getElementById('pay-price-usd');
+  if (arsEl) arsEl.textContent = pkg.price_ars ? `$${parseFloat(pkg.price_ars).toLocaleString('es-AR')} ARS` : 'No disp.';
+  if (usdEl) usdEl.textContent = pkg.price_usd ? `U$D ${parseFloat(pkg.price_usd).toFixed(2)}` : 'No disp.';
+
+  // Deshabilitar botón si no hay precio
+  const btnMp = document.getElementById('btn-pay-mp');
+  const btnPp = document.getElementById('btn-pay-pp');
+  if (btnMp) btnMp.disabled = !pkg.price_ars;
+  if (btnPp) btnPp.disabled = !pkg.price_usd;
+
+  openModal('payment');
+}
+window.openPaymentModal = openPaymentModal;
+
+async function startPayment(provider) {
+  if (!selectedPackage) return;
+  closeAllModals();
+
+  try {
+    if (provider === 'mp') {
+      // MercadoPago: redirige al checkout de MP
+      const res = await api.createMpPayment(selectedPackage.id);
+      if (res.initPoint) {
+        window.location.href = res.initPoint;
+      } else {
+        showToast('Error al crear la preferencia de pago', 'error');
+      }
+
+    } else if (provider === 'paypal') {
+      // PayPal: abre la URL de aprobación
+      const res = await api.createPaypalOrder(selectedPackage.id);
+      if (res.approveUrl) {
+        // Abrir PayPal en popup (o mismo tab si falla el popup)
+        const popup = window.open(res.approveUrl, 'paypal_checkout',
+          'width=500,height=700,scrollbars=yes');
+
+        if (popup) {
+          // Esperar que el popup cierre (retorno via URL) y luego capturar
+          document.getElementById('modal-processing')?.classList.add('open');
+          document.getElementById('processing-msg').textContent =
+            'Completá el pago en la ventana de PayPal y esperá la confirmación.';
+
+          const interval = setInterval(async () => {
+            if (popup.closed) {
+              clearInterval(interval);
+              closeAllModals();
+              // Intentar capturar con los datos guardados
+              try {
+                const capture = await api.capturePaypalOrder(res.paypalOrderId, res.orderId);
+                showPaymentResult(capture.status === 'approved' ? 'success' : 'failure',
+                  capture.coins, capture.message);
+              } catch {
+                showPaymentResult('failure');
+              }
+            }
+          }, 1000);
+        } else {
+          // Popup bloqueado → redirigir
+          window.location.href = res.approveUrl;
+        }
+      } else {
+        showToast('Error al crear la orden PayPal', 'error');
+      }
+    }
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+window.startPayment = startPayment;
+
+function showPaymentResult(type, coins = 0, msg = '') {
+  // Ocultar todos los resultados
+  ['success','failure','pending'].forEach(t =>
+    document.getElementById(`result-${t}`)?.classList.add('hidden')
+  );
+
+  const el = document.getElementById(`result-${type}`);
+  if (!el) return;
+
+  if (type === 'success') {
+    document.getElementById('result-coins-amount').textContent = (coins || 0).toLocaleString();
+    document.getElementById('result-success-msg').textContent =
+      msg || '¡Tus WebCoins fueron acreditadas automáticamente!';
+    // Refrescar balance en navbar
+    api.getShopBalance().then(b => {
+      document.getElementById('recharge-coins').textContent = (b.coins || 0).toLocaleString();
+      document.getElementById('shop-coins').textContent     = (b.coins || 0).toLocaleString();
+      document.getElementById('panel-coins').textContent    = (b.coins || 0).toLocaleString();
+    }).catch(() => {});
+  }
+
+  el.classList.remove('hidden');
+}
+window.showPaymentResult = showPaymentResult;
+
+function closePaymentResult() {
+  ['success','failure','pending'].forEach(t =>
+    document.getElementById(`result-${t}`)?.classList.add('hidden')
+  );
+  navigate('shop');
+}
+window.closePaymentResult = closePaymentResult;
+
+async function loadPaymentHistory() {
+  const el = document.getElementById('payment-history');
+  if (!el || !api.isLoggedIn) return;
+  el.innerHTML = '<div class="flex-center" style="padding:1rem"><div class="spinner"></div></div>';
+  try {
+    const rows = await api.getPaymentHistory();
+    if (!rows.length) { el.innerHTML = '<p class="text-muted" style="padding:1rem">Sin recargas aún.</p>'; return; }
+
+    const statusLabel = { approved:'Aprobado', pending:'Pendiente', rejected:'Rechazado', cancelled:'Cancelado' };
+    el.innerHTML = `<div class="table-wrap" style="margin-top:1rem">
+      <table class="ranking-table payment-history-table"><thead><tr>
+        <th>Paquete</th><th>Monedas</th><th>Monto</th><th>Método</th><th>Estado</th><th>Fecha</th>
+      </tr></thead><tbody>
+      ${rows.map(r => `<tr>
+        <td>${escHtml(r.package_name)}</td>
+        <td class="text-gold">🪙 ${(r.coins||0).toLocaleString()}</td>
+        <td><strong>${r.currency === 'ARS' ? '$' : 'U$D'} ${parseFloat(r.amount).toLocaleString()}</strong></td>
+        <td><span class="ph-provider-badge ${r.provider === 'mercadopago' ? 'mp' : 'paypal'}">
+          ${r.provider === 'mercadopago' ? '🇦🇷 MP' : '🌎 PayPal'}</span></td>
+        <td><span class="ph-status-badge ${r.status}">${statusLabel[r.status] || r.status}</span></td>
+        <td class="text-muted">${formatDate(r.created_at)}</td>
+      </tr>`).join('')}
+      </tbody></table></div>`;
+  } catch (err) {
+    el.innerHTML = `<p class="text-red" style="padding:1rem">Error: ${err.message}</p>`;
+  }
+}
+window.loadPaymentHistory = loadPaymentHistory;
+
+/* ── Manejar retorno de MercadoPago (redirect de vuelta) ── */
+function checkPaymentReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const provider = params.get('provider');
+  if (!provider) return;
+
+  // Limpiar URL
+  window.history.replaceState({}, '', '/');
+
+  if (provider === 'mp') {
+    const status = params.get('status') || params.get('collection_status');
+    if (status === 'approved') {
+      navigate('recharge');
+      showPaymentResult('success', 0, 'Pago aprobado. Las monedas serán acreditadas en instantes.');
+    } else if (status === 'pending' || status === 'in_process') {
+      navigate('recharge');
+      showPaymentResult('pending');
+    } else {
+      navigate('recharge');
+      showPaymentResult('failure');
+    }
+  }
+}
+
+/* ====================================================================
    PARTICLES (canvas background)
    ==================================================================== */
 function initParticles() {
@@ -641,6 +887,7 @@ async function init() {
   initParticles();
   updateAuthUI();
   await fetchCurrentUser();
+  checkPaymentReturn();   // detectar retorno de MP/PayPal
   navigate('home');
 }
 

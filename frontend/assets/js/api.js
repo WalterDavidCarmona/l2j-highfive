@@ -82,6 +82,16 @@ class L2Api {
     });
   }
   getShopHistory() { return this._fetch('/shop/history'); }
+
+  // ── Payments ──────────────────────────────────────────────────────
+  getCoinPackages()             { return this._fetch('/payments/packages'); }
+  createMpPayment(packageId)    { return this._fetch('/payments/mp/create',     { method:'POST', body: JSON.stringify({ packageId }) }); }
+  getMpOrderStatus(orderId)     { return this._fetch(`/payments/mp/status/${orderId}`); }
+  createPaypalOrder(packageId)  { return this._fetch('/payments/paypal/create',  { method:'POST', body: JSON.stringify({ packageId }) }); }
+  capturePaypalOrder(paypalOrderId, orderId) {
+    return this._fetch('/payments/paypal/capture', { method:'POST', body: JSON.stringify({ paypalOrderId, orderId }) });
+  }
+  getPaymentHistory()           { return this._fetch('/payments/history'); }
 }
 
 window.api = new L2Api();
