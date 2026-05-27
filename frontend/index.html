@@ -561,10 +561,45 @@
         <input type="password" id="login-pass" class="form-input" required
                placeholder="••••••••" autocomplete="current-password">
       </div>
+
+      <!-- CAPTCHA Matemático -->
+      <div class="form-group captcha-container">
+        <label class="form-label">Verifica que no eres un bot</label>
+        <div class="captcha-question" id="captcha-question">¿Cuánto es 5 + 3?</div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="login-captcha" class="form-input" required
+                 placeholder="Tu respuesta" style="flex:1;">
+          <button type="button" class="btn-icon" id="btn-captcha-refresh" title="Refrescar pregunta">🔄</button>
+        </div>
+        <div id="captcha-error" class="form-error hidden"></div>
+      </div>
+
       <button type="submit" class="btn btn-primary btn-full btn-lg">INICIAR SESIÓN</button>
     </form>
     <div class="modal-divider">¿No tienes cuenta?</div>
     <button class="btn btn-secondary btn-full" onclick="openModal('register')">Crear cuenta gratis</button>
+  </div>
+</div>
+
+<!-- Inactivity Warning Modal -->
+<div class="modal-overlay" id="modal-inactivity-warning">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">⏰ Sesión por vencer</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <div style="padding:0.5rem 0; text-align:center;">
+      <p style="font-size:0.95rem; color:#ddd; margin-bottom:1rem;">
+        Tu sesión vence en <strong id="inactivity-countdown">120</strong> segundos por inactividad.
+      </p>
+      <p style="font-size:0.85rem; color:#999; margin-bottom:1.5rem;">
+        Haz clic en <strong>Extender sesión</strong> para continuar o <strong>Salir</strong> para cerrar sesión.
+      </p>
+    </div>
+    <div style="display:flex; gap:1rem;">
+      <button class="btn btn-secondary btn-full" onclick="closeModal('inactivity-warning'); logout()">Salir</button>
+      <button class="btn btn-primary btn-full" onclick="closeModal('inactivity-warning'); window.inactivityManager?.resetTimer()">Extender sesión</button>
+    </div>
   </div>
 </div>
 

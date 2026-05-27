@@ -16,6 +16,139 @@ function showToast(message, type = 'info', icon = null) {
 }
 
 /* ====================================================================
+   CAPTCHA MATEMÁTICO
+   ==================================================================== */
+let currentCaptchaAnswer = 0;
+
+function generateCaptcha() {
+  const num1 = Math.floor(Math.random() * 20) + 1;
+  const num2 = Math.floor(Math.random() * 20) + 1;
+  currentCaptchaAnswer = num1 + num2;
+
+  document.getElementById('captcha-question').textContent = `¿Cuánto es ${num1} + ${num2}?`;
+  document.getElementById('login-captcha').value = '';
+  document.getElementById('captcha-error').textContent = '';
+  document.getElementById('captcha-error').classList.add('hidden');
+}
+
+function validateCaptcha() {
+  const userAnswer = parseInt(document.getElementById('login-captcha').value.trim());
+  const errorEl = document.getElementById('captcha-error');
+
+  if (isNaN(userAnswer)) {
+    errorEl.textContent = 'Por favor, ingresa un número';
+    errorEl.classList.remove('hidden');
+    return false;
+  }
+
+  if (userAnswer !== currentCaptchaAnswer) {
+    errorEl.textContent = 'Respuesta incorrecta, intenta de nuevo';
+    errorEl.classList.remove('hidden');
+    generateCaptcha(); // Generar nueva pregunta
+    return false;
+  }
+
+  return true;
+}
+
+/* ====================================================================
+   INACTIVITY MANAGER
+   ==================================================================== */
+class InactivityManager {
+  constructor(timeoutMinutes = 10, warningMinutes = 8) {
+    this.timeoutMs = timeoutMinutes * 60 * 1000;
+    this.warningMs = warningMinutes * 60 * 1000;
+    this.timeoutId = null;
+    this.warningId = null;
+    this.countdownId = null;
+    this.isActive = false;
+    this.lastActivityTime = Date.now();
+
+    // Eventos a monitorear
+    this.events = ['mousemove', 'keydown', 'click', 'touchstart'];
+  }
+
+  start() {
+    if (this.isActive) return;
+    this.isActive = true;
+    this.lastActivityTime = Date.now();
+    this.resetTimer();
+    this.attachListeners();
+  }
+
+  stop() {
+    if (!this.isActive) return;
+    this.isActive = false;
+    clearTimeout(this.timeoutId);
+    clearTimeout(this.warningId);
+    clearInterval(this.countdownId);
+    this.detachListeners();
+  }
+
+  resetTimer() {
+    if (!this.isActive) return;
+
+    // Cerrar modal de advertencia si está abierto
+    const warningModal = document.getElementById('modal-inactivity-warning');
+    if (warningModal?.classList.contains('open')) {
+      closeAllModals();
+    }
+
+    clearTimeout(this.timeoutId);
+    clearTimeout(this.warningId);
+    clearInterval(this.countdownId);
+
+    this.lastActivityTime = Date.now();
+
+    // Configurar advertencia en 8 minutos
+    this.warningId = setTimeout(() => this.showWarning(), this.warningMs);
+
+    // Configurar logout en 10 minutos
+    this.timeoutId = setTimeout(() => this.logout(), this.timeoutMs);
+  }
+
+  showWarning() {
+    openModal('inactivity-warning');
+    let remainingSeconds = Math.ceil((this.timeoutMs - this.warningMs) / 1000);
+
+    // Actualizar countdown cada segundo
+    this.countdownId = setInterval(() => {
+      remainingSeconds--;
+      document.getElementById('inactivity-countdown').textContent = remainingSeconds;
+
+      if (remainingSeconds <= 0) {
+        clearInterval(this.countdownId);
+      }
+    }, 1000);
+  }
+
+  logout() {
+    if (!this.isActive) return;
+    this.stop();
+    api.logout();
+    currentUser = null;
+    updateAuthUI();
+    navigate('home');
+    showToast('Tu sesión expiró por inactividad', 'warning');
+  }
+
+  attachListeners() {
+    this.events.forEach(event => {
+      document.addEventListener(event, () => this.resetTimer(), { passive: true });
+    });
+  }
+
+  detachListeners() {
+    this.events.forEach(event => {
+      document.removeEventListener(event, () => this.resetTimer());
+    });
+  }
+}
+
+// Instancia global
+window.inactivityManager = null;
+
+/* ====================================================================
    NAVIGATION (SPA)
    ==================================================================== */
 function navigate(sectionId) {
@@ -74,6 +207,11 @@ document.querySelector('.hamburger')?.addEventListener('click', () => {
 function openModal(type) {
   closeAllModals();
   document.getElementById(`modal-${type}`)?.classList.add('open');
+
+  // Generar CAPTCHA cuando se abre el modal de login
+  if (type === 'login') {
+    generateCaptcha();
+  }
 }
 function closeAllModals() {
   document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
@@ -112,10 +250,22 @@ async function fetchCurrentUser() {
   try {
     currentUser = await api.getMe();
     updateAuthUI();
-  } catch {
+
+    // Iniciar monitoreo de inactividad cuando login es exitoso
+    if (!window.inactivityManager) {
+      window.inactivityManager = new InactivityManager(10, 8); // 10 min timeout, 8 min warning
+    }
+    window.inactivityManager.start();
+  } catch (err) {
+    // Token expirado o inválido
     api.logout();
     currentUser = null;
     updateAuthUI();
+
+    // Detener monitoreo de inactividad
+    if (window.inactivityManager) {
+      window.inactivityManager.stop();
+    }
   }
 }
 
@@ -151,6 +301,11 @@ document.getElementById('form-login')?.addEventListener('submit', async e => {
   const login = document.getElementById('login-user').value.trim();
   const pass  = document.getElementById('login-pass').value;
 
+  // Validar CAPTCHA primero
+  if (!validateCaptcha()) {
+    return;
+  }
+
   btn.disabled = true; btn.textContent = 'Iniciando sesión...';
   try {
     const res = await api.login(login, pass);
@@ -161,9 +316,17 @@ document.getElementById('form-login')?.addEventListener('submit', async e => {
     navigate('panel');
   } catch (err) {
     showToast(err.message, 'error');
+    generateCaptcha(); // Refrescar CAPTCHA si hay error
   } finally {
     btn.disabled = false; btn.textContent = 'INICIAR SESIÓN';
   }
+});
+
+/* ────────── CAPTCHA REFRESH ────────── */
+document.getElementById('btn-captcha-refresh')?.addEventListener('click', e => {
+  e.preventDefault();
+  generateCaptcha();
+  showToast('Nueva pregunta generada', 'info');
 });
 
 /* ────────── LOGOUT ────────── */
@@ -173,6 +336,10 @@ document.getElementById('btn-logout')?.addEventListener('click', () => {
   updateAuthUI();
   navigate('home');
   showToast('Sesión cerrada correctamente', 'info');
+  // Detener monitoreo de inactividad si está activo
+  if (window.inactivityManager) {
+    window.inactivityManager.stop();
+  }
 });
 
 /* ====================================================================
