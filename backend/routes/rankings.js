@@ -51,8 +51,9 @@ router.get('/pvp', async (req, res) => {
               c.pvpkills, c.pkkills, c.title, c.title_color,
               c.online, cl.clan_name
        FROM characters c
+       JOIN accounts a ON a.login = c.account_name
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
-       WHERE c.deletetime = 0 AND c.accesslevel >= 0
+       WHERE c.deletetime = 0 AND c.accesslevel >= 0 AND a.accessLevel < 100
        ORDER BY c.pvpkills DESC
        LIMIT ?`,
       [limit]
@@ -73,8 +74,9 @@ router.get('/pk', async (req, res) => {
               c.pvpkills, c.pkkills, c.title, c.title_color, c.online,
               cl.clan_name
        FROM characters c
+       JOIN accounts a ON a.login = c.account_name
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
-       WHERE c.deletetime = 0 AND c.accesslevel >= 0
+       WHERE c.deletetime = 0 AND c.accesslevel >= 0 AND a.accessLevel < 100
        ORDER BY c.pkkills DESC
        LIMIT ?`,
       [limit]
@@ -102,7 +104,9 @@ router.get('/pvpzone', async (req, res) => {
                 cl.clan_name
          FROM pvp_zone_kills z
          JOIN characters c ON c.char_name = z.char_name AND c.deletetime = 0
+         JOIN accounts a ON a.login = c.account_name
          LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
+         WHERE a.accessLevel < 100
          ORDER BY z.kills DESC
          LIMIT ?`,
         [limit]
@@ -117,7 +121,8 @@ router.get('/pvpzone', async (req, res) => {
                 NULL AS last_kill
          FROM characters c
          LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
-         WHERE c.deletetime = 0 AND c.pvpkills > 0 AND c.accesslevel >= 0
+         JOIN accounts a ON a.login = c.account_name
+         WHERE c.deletetime = 0 AND c.pvpkills > 0 AND c.accesslevel >= 0 AND a.accessLevel < 100
          ORDER BY c.pvpkills DESC
          LIMIT ?`,
         [limit]
@@ -143,7 +148,9 @@ router.get('/clans', async (req, res) => {
               leader.char_name AS leader_name
        FROM clan_data cl
        LEFT JOIN characters c ON c.clanid = cl.clan_id AND c.deletetime = 0
-       LEFT JOIN characters leader ON leader.charId = cl.leader_id
+       JOIN characters leader ON leader.charId = cl.leader_id
+       JOIN accounts la ON la.login = leader.account_name
+       WHERE la.accessLevel < 100
        GROUP BY cl.clan_id
        ORDER BY cl.reputation_score DESC, total_pvp DESC
        LIMIT ?`,
@@ -164,7 +171,8 @@ router.get('/online', async (req, res) => {
               cl.clan_name
        FROM characters c
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
-       WHERE c.online = 1 AND c.deletetime = 0 AND c.accesslevel >= 0
+       JOIN accounts a ON a.login = c.account_name
+       WHERE c.online = 1 AND c.deletetime = 0 AND c.accesslevel >= 0 AND a.accessLevel < 100
        ORDER BY c.level DESC
        LIMIT 100`
     );
@@ -186,8 +194,10 @@ router.get('/olympiad', async (req, res) => {
               CASE WHEN h.charId IS NOT NULL THEN 1 ELSE 0 END AS is_hero
        FROM olympiad_nobles o
        JOIN characters c ON c.charId = o.charId AND c.deletetime = 0
+       JOIN accounts a ON a.login = c.account_name
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
        LEFT JOIN heroes h ON h.charId = c.charId AND h.played = 1
+       WHERE a.accessLevel < 100
        ORDER BY o.olympiad_points DESC
        LIMIT ?`,
       [limit]
