@@ -1041,6 +1041,284 @@ main { padding-top: 64px; position: relative; z-index: 1; }
 .ph-status-badge.cancelled { background: rgba(100,116,139,.15);color: var(--text-muted); }
 
 /* ====================================================================
+   APUESTAS OLIMPIADA
+   ==================================================================== */
+
+/* Badge EN VIVO */
+.bets-live-badge {
+  display: flex; align-items: center; gap: .5rem;
+  background: rgba(239,68,68,.12);
+  border: 1px solid rgba(239,68,68,.3);
+  border-radius: 20px; padding: .35rem .9rem;
+  font-size: .78rem; font-weight: 700;
+  color: var(--red); text-transform: uppercase; letter-spacing: 1px;
+}
+.bets-live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--red);
+  animation: livePulse 1.4s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .4; transform: scale(1.4); }
+}
+
+/* Banner de temporada */
+.bets-season-banner {
+  background: linear-gradient(135deg, rgba(124,58,237,.2), rgba(245,158,11,.1));
+  border: 1px solid rgba(124,58,237,.35);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.bsb-label {
+  font-size: .72rem; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--purple); margin-bottom: .3rem;
+}
+.bsb-name  { font-family: var(--font-title); font-size: 1.25rem; }
+.bsb-status{ font-size: .85rem; color: var(--text-muted); margin-top: .25rem; }
+.bsb-stats { display: flex; gap: 2rem; }
+.bsb-stat  { text-align: center; }
+.bsb-stat-val { font-family: var(--font-title); font-size: 1.4rem; }
+.bsb-stat-lbl { font-size: .75rem; color: var(--text-muted); margin-top: .15rem; }
+
+/* Cómo funciona */
+.bets-rules {
+  display: flex; flex-direction: column; gap: .6rem;
+  margin-bottom: 2rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem 1.5rem;
+}
+.bets-rule {
+  display: flex; align-items: flex-start; gap: .85rem;
+  font-size: .88rem; color: var(--text-dim);
+}
+.bets-rule > span:first-child { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+
+/* Mi apuesta activa */
+.bets-my-bet-card {
+  display: flex; align-items: center; gap: 1.25rem;
+  background: linear-gradient(135deg, rgba(34,197,94,.12), rgba(0,212,255,.06));
+  border: 1px solid rgba(34,197,94,.3);
+  border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+.bmb-icon { font-size: 2rem; flex-shrink: 0; }
+.bmb-body { flex: 1; }
+.bmb-label{ font-size: .7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--green); }
+.bmb-char { font-family: var(--font-title); font-size: 1.2rem; margin-top: .2rem; }
+.bmb-detail{ font-size: .82rem; color: var(--text-muted); margin-top: .15rem; }
+.bmb-payout { text-align: center; }
+.bmb-pay-label { font-size: .72rem; color: var(--text-muted); }
+.bmb-pay-val   { font-family: var(--font-title); font-size: 1.4rem; color: var(--gold); margin-top: .2rem; }
+
+/* Grid de candidatos */
+.bets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.1rem;
+}
+
+/* Tarjeta de candidato */
+.bet-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex; flex-direction: column; gap: .75rem;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.bet-card::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--purple-dim), transparent);
+  opacity: 0; transition: opacity .3s; pointer-events: none;
+}
+.bet-card:hover { border-color: var(--purple); transform: translateY(-3px); box-shadow: 0 0 20px var(--purple-dim); }
+.bet-card:hover::after { opacity: 1; }
+.bet-card.is-hero   { border-color: var(--gold); }
+.bet-card.is-hero::after { background: linear-gradient(135deg, var(--gold-dim), transparent); opacity: 1; }
+.bet-card.my-pick   { border-color: var(--green); }
+.bet-card.my-pick::after { background: linear-gradient(135deg, rgba(34,197,94,.12), transparent); opacity: 1; }
+
+.bet-card-header {
+  display: flex; align-items: center; gap: .85rem;
+}
+.bet-card-avatar {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: var(--purple-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; flex-shrink: 0;
+}
+.bet-card.is-hero .bet-card-avatar { background: var(--gold-dim); }
+.bet-card-name  { font-family: var(--font-title); font-size: 1rem; }
+.bet-card-class { font-size: .78rem; color: var(--text-muted); margin-top: .15rem; }
+.bet-card-title { font-size: .72rem; margin-top: .1rem; }
+
+.bet-hero-crown {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 1.2rem;
+}
+.bet-my-pick-badge {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--green); color: #000;
+  font-size: .65rem; font-weight: 700;
+  padding: .18rem .5rem; border-radius: 20px;
+  text-transform: uppercase;
+}
+
+/* Stats del candidato */
+.bet-card-stats {
+  display: flex; gap: .5rem; flex-wrap: wrap;
+}
+.bet-stat-chip {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: .2rem .65rem;
+  font-size: .78rem; color: var(--text-dim);
+  display: flex; align-items: center; gap: .3rem;
+}
+
+/* Barra de apuestas */
+.bet-bar-row {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: .82rem; margin-bottom: .3rem;
+}
+.bet-bar-wrap {
+  height: 6px; background: var(--bg-glass);
+  border-radius: 3px; overflow: hidden;
+}
+.bet-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--cyan));
+  border-radius: 3px;
+  transition: width .6s ease;
+}
+.bet-card.is-hero .bet-bar-fill { background: linear-gradient(90deg, var(--gold), #f97316); }
+
+/* Odds badge */
+.bet-odds-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .78rem; font-weight: 700;
+  padding: .22rem .65rem; border-radius: 20px;
+  border: 1px solid;
+}
+.bet-odds-badge.hot  { background: rgba(239,68,68,.12); color: var(--red);  border-color: rgba(239,68,68,.3); }
+.bet-odds-badge.mid  { background: rgba(245,158,11,.12); color: var(--gold); border-color: rgba(245,158,11,.3); }
+.bet-odds-badge.cold { background: rgba(34,197,94,.12);  color: var(--green);border-color: rgba(34,197,94,.3); }
+
+/* Botón apostar */
+.btn-bet {
+  width: 100%; padding: .6rem;
+  background: linear-gradient(135deg, var(--purple), #5b21b6);
+  color: #fff; border: none; border-radius: 10px;
+  font-family: var(--font-title); font-size: .88rem;
+  cursor: pointer; transition: opacity .2s;
+  position: relative; z-index: 1;
+}
+.btn-bet:hover   { opacity: .85; }
+.btn-bet:disabled{ opacity: .4; cursor: not-allowed; }
+.btn-bet.my-pick-btn {
+  background: linear-gradient(135deg, var(--green), #15803d);
+  color: #000;
+}
+.bet-card.is-hero .btn-bet { background: linear-gradient(135deg, var(--gold), #d97706); color: #000; }
+
+/* ── Modal de apuesta ── */
+.modal-bet { max-width: 460px; }
+
+.bet-candidate-summary {
+  display: flex; align-items: center; gap: 1rem;
+  background: linear-gradient(135deg, var(--purple-dim), transparent);
+  border: 1px solid rgba(124,58,237,.3);
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.bcs-avatar { font-size: 2.2rem; flex-shrink: 0; }
+.bcs-info   { flex: 1; }
+.bcs-name   { font-family: var(--font-title); font-size: 1.1rem; }
+.bcs-class  { font-size: .82rem; color: var(--text-muted); margin-top: .15rem; }
+.bcs-stats  { font-size: .78rem; color: var(--text-dim);  margin-top: .15rem; }
+.bcs-odds   { text-align: center; }
+.bcs-odds-label { font-size: .7rem; color: var(--text-muted); }
+.bcs-odds-val   { font-family: var(--font-title); font-size: 1.5rem; color: var(--gold); margin-top: .2rem; }
+
+/* Selector de monedas */
+.bet-coins-selector {
+  display: flex; gap: .6rem; margin-top: .5rem;
+}
+.bet-coin-btn {
+  flex: 1; padding: .65rem .5rem;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text-main);
+  font-family: var(--font-title); font-size: .95rem;
+  cursor: pointer; transition: border-color .2s, background .2s;
+}
+.bet-coin-btn:hover  { border-color: var(--purple); background: var(--purple-dim); }
+.bet-coin-btn.active { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); font-weight: 700; }
+
+/* Estimación de payout */
+.bet-payout-estimate {
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem 1.25rem;
+  display: flex; flex-direction: column; gap: .6rem;
+  margin-bottom: 1.25rem;
+}
+.bpe-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .88rem; color: var(--text-dim);
+}
+
+/* Historial de apuestas personales */
+.my-bet-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: .75rem;
+}
+.mbi-icon   { font-size: 1.8rem; flex-shrink: 0; }
+.mbi-body   { flex: 1; }
+.mbi-season { font-size: .75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
+.mbi-char   { font-family: var(--font-title); font-size: 1.05rem; margin-top: .15rem; }
+.mbi-detail { font-size: .82rem; color: var(--text-dim); margin-top: .1rem; }
+.mbi-result { text-align: right; flex-shrink: 0; }
+.mbi-won    { font-family: var(--font-title); font-size: 1.2rem; color: var(--green); }
+.mbi-lost   { font-family: var(--font-title); font-size: 1.2rem; color: var(--red); }
+.mbi-pend   { font-family: var(--font-title); font-size: 1.2rem; color: var(--gold); }
+
+/* Historial de temporadas */
+.bets-history-season {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  margin-bottom: .75rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  flex-wrap: wrap;
+}
+.bhs-name   { font-family: var(--font-title); font-size: .95rem; margin-bottom: .3rem; }
+.bhs-winner { display: flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--gold); }
+.bhs-stats  { display: flex; gap: 1.5rem; flex-shrink: 0; }
+.bhs-stat   { text-align: center; }
+.bhs-stat-v { font-family: var(--font-title); font-size: 1.1rem; }
+.bhs-stat-l { font-size: .72rem; color: var(--text-muted); }
+
+/* SSE flash al recibir nueva apuesta */
+@keyframes betFlash {
+  0%  { box-shadow: 0 0 0 0 rgba(0,212,255,.6); }
+  70% { box-shadow: 0 0 0 12px rgba(0,212,255,0); }
+  100%{ box-shadow: 0 0 0 0 rgba(0,212,255,0); }
+}
+.bet-card.flash { animation: betFlash .6s ease; }
+
+/* ====================================================================
    SPINNER
    ==================================================================== */
 .spinner {

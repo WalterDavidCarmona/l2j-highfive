@@ -92,6 +92,15 @@ class L2Api {
     return this._fetch('/payments/paypal/capture', { method:'POST', body: JSON.stringify({ paypalOrderId, orderId }) });
   }
   getPaymentHistory()           { return this._fetch('/payments/history'); }
+
+  // ── Bets ──────────────────────────────────────────────────────────
+  getBetSeason()                       { return this._fetch('/bets/season'); }
+  placeBet(charBet, coinsBet)          { return this._fetch('/bets/place', { method:'POST', body: JSON.stringify({ charBet, coinsBet }) }); }
+  getMyBets()                          { return this._fetch('/bets/my'); }
+  getBetHistory()                      { return this._fetch('/bets/history'); }
+  adminResolveBets(seasonId, winnerChar){ return this._fetch('/bets/admin/resolve',    { method:'POST', body: JSON.stringify({ seasonId, winnerChar }) }); }
+  adminNewSeason(name)                 { return this._fetch('/bets/admin/new-season',  { method:'POST', body: JSON.stringify({ name }) }); }
+  adminCloseSeason(seasonId)           { return this._fetch('/bets/admin/close',       { method:'POST', body: JSON.stringify({ seasonId }) }); }
 }
 
 window.api = new L2Api();

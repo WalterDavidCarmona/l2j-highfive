@@ -30,11 +30,15 @@ function navigate(sectionId) {
 
   window.scrollTo({ top: 0 });
 
+  // Cerrar SSE si salimos de apuestas
+  if (sectionId !== 'bets' && betsSSE) { betsSSE.close(); betsSSE = null; }
+
   // Lazy load del contenido
   switch (sectionId) {
     case 'rankings':  loadRankings();   break;
     case 'news':      loadNews();       break;
     case 'shop':      loadShop();       break;
+    case 'bets':      loadBets();       break;
     case 'recharge':  loadRecharge();   break;
     case 'panel':     loadPanel();      break;
     case 'home':      loadHome();       break;
@@ -553,6 +557,450 @@ document.getElementById('form-change-pass')?.addEventListener('submit', async e 
     btn.disabled = false; btn.textContent = 'Cambiar Contraseña';
   }
 });
+
+/* ====================================================================
+   APUESTAS OLIMPIADA — Tiempo Real via SSE
+   ==================================================================== */
+let betsSeasonData   = null;   // { season, candidates, myBet, totals }
+let betSelectedChar  = null;   // candidato elegido para apostar
+let betSelectedCoins = 2;      // monedas a apostar (default 2)
+let betsSSE          = null;   // EventSource activo
+let currentBetsTab   = 'candidates';
+
+/* ── Tabs ── */
+document.querySelectorAll('[data-bets-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-bets-tab]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentBetsTab = btn.dataset.betsTab;
+    ['candidates','my-bets','history'].forEach(t =>
+      document.getElementById(`bets-tab-${t}`)?.classList.toggle('hidden', t !== currentBetsTab)
+    );
+    if (currentBetsTab === 'my-bets')  loadMyBets();
+    if (currentBetsTab === 'history')  loadBetsHistory();
+  });
+});
+
+/* ── Cargar sección principal ── */
+async function loadBets() {
+  try {
+    const data = await api.getBetSeason();
+    betsSeasonData = data;
+    renderBetsSeason(data);
+    renderBetsCandidates(data.candidates || [], data.myBet, data.totals);
+    startBetsSSE();
+
+    // Admin panel
+    const adminPanel = document.getElementById('bets-admin-panel');
+    if (adminPanel && currentUser?.account?.accessLevel >= 100) {
+      adminPanel.classList.remove('hidden');
+    }
+  } catch (err) {
+    document.getElementById('bets-candidates-grid').innerHTML =
+      `<p class="text-red" style="grid-column:1/-1;padding:2rem">Error: ${err.message}</p>`;
+  }
+}
+
+/* ── Banner de temporada ── */
+function renderBetsSeason({ season, myBet, totals }) {
+  if (!season) {
+    document.getElementById('bets-season-name').textContent   = 'Sin temporada activa';
+    document.getElementById('bets-season-status').textContent = 'Esperá la próxima temporada.';
+    return;
+  }
+
+  document.getElementById('bets-season-name').textContent = season.name;
+
+  const statusMap = { open:'🟢 Apuestas abiertas', closed:'🔴 Apuestas cerradas', resolved:'✅ Resuelta' };
+  document.getElementById('bets-season-status').textContent = statusMap[season.status] || season.status;
+
+  document.getElementById('bets-total-bets').textContent = (totals?.total_bets || 0).toLocaleString();
+  document.getElementById('bets-total-pool').textContent = `${(totals?.total_pool || 0).toLocaleString()} 🪙`;
+
+  // Mi apuesta activa
+  const myCard = document.getElementById('bets-my-bet-card');
+  if (myBet && myCard) {
+    myCard.classList.remove('hidden');
+    document.getElementById('bmb-char-name').textContent = myBet.char_bet;
+    document.getElementById('bmb-detail').textContent =
+      `${myBet.coins_bet} 🪙 apostadas · ${myBet.won === null ? 'Pendiente' : myBet.won ? '¡Ganaste!' : 'Perdiste'}`;
+    document.getElementById('bets-my-pick').textContent = myBet.char_bet;
+
+    // Payout estimado
+    const total   = totals?.total_bets || 1;
+    const onPick  = (betsSeasonData?.candidates || []).find(c => c.char_name === myBet.char_bet)?.bets_count || 1;
+    const est     = Math.min(20, Math.max(1, Math.floor(total / onPick) * myBet.coins_bet));
+    document.getElementById('bmb-pay-val').textContent = `🪙 ${est}`;
+  } else if (myCard) {
+    myCard.classList.add('hidden');
+    document.getElementById('bets-my-pick').textContent = '—';
+  }
+}
+
+/* ── Candidatos ── */
+function renderBetsCandidates(candidates, myBet, totals) {
+  const grid = document.getElementById('bets-candidates-grid');
+  if (!grid) return;
+
+  if (!candidates.length) {
+    grid.innerHTML = '<p class="text-muted text-center" style="grid-column:1/-1;padding:3rem">No hay datos de Olimpiada disponibles.</p>';
+    return;
+  }
+
+  const totalBets   = parseInt(totals?.total_bets) || 0;
+  const maxBets     = Math.max(...candidates.map(c => parseInt(c.bets_count) || 0), 1);
+  const season      = betsSeasonData?.season;
+  const isOpen      = season?.status === 'open';
+  const alreadyBet  = !!myBet;
+
+  grid.innerHTML = candidates.map(c => {
+    const betsCount  = parseInt(c.bets_count) || 0;
+    const barPct     = maxBets > 0 ? Math.round((betsCount / maxBets) * 100) : 0;
+    const isHero     = !!c.is_current_hero;
+    const isMyPick   = myBet?.char_bet === c.char_name;
+    const odds       = totalBets > 0 && betsCount > 0 ? Math.floor(totalBets / betsCount) : '∞';
+    const oddsClass  = typeof odds === 'number' ? (odds <= 2 ? 'hot' : odds <= 5 ? 'mid' : 'cold') : 'cold';
+    const oddsLabel  = typeof odds === 'number' ? (odds <= 2 ? '🔥 Favorito' : odds <= 5 ? '⚡ Popular' : '💎 Underdog') : '💎 Underdog';
+    const estPayout  = typeof odds === 'number' ? Math.min(20, Math.max(1, odds * 2)) : 20;
+    const classIcon  = getClassIcon(c.classid);
+    const titleColor = c.title_color ? '#' + parseInt(c.title_color).toString(16).padStart(6,'0') : '#aaa';
+
+    let btnHtml = '';
+    if (isMyPick) {
+      btnHtml = `<button class="btn-bet my-pick-btn" disabled>✅ Tu apuesta</button>`;
+    } else if (alreadyBet || !isOpen) {
+      btnHtml = `<button class="btn-bet" disabled>${isOpen ? '(Ya apostaste)' : '(Cerrado)'}</button>`;
+    } else {
+      btnHtml = `<button class="btn-bet" onclick="openBetModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">⚔️ Apostar</button>`;
+    }
+
+    return `
+    <div class="bet-card ${isHero ? 'is-hero' : ''} ${isMyPick ? 'my-pick' : ''}" id="bet-card-${escHtml(c.char_name).replace(/\s/g,'_')}">
+      ${isHero  ? '<div class="bet-hero-crown">👑</div>'    : ''}
+      ${isMyPick? '<div class="bet-my-pick-badge">Mi pick</div>' : ''}
+      <div class="bet-card-header">
+        <div class="bet-card-avatar">${classIcon}</div>
+        <div>
+          <div class="bet-card-name">${escHtml(c.char_name)}</div>
+          <div class="bet-card-class">${CLASS_NAMES[c.classid] || `Clase ${c.classid}`}</div>
+          ${c.title ? `<div class="bet-card-title" style="color:${titleColor}">${escHtml(c.title)}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="bet-card-stats">
+        <span class="bet-stat-chip">🏅 ${(c.olympiad_points||0).toLocaleString()} pts</span>
+        <span class="bet-stat-chip">⚔️ ${c.competitions_won||0}W</span>
+        ${c.clan_name ? `<span class="bet-stat-chip">🛡️ ${escHtml(c.clan_name)}</span>` : ''}
+        ${isHero ? '<span class="bet-stat-chip" style="color:var(--gold)">👑 Héroe actual</span>' : ''}
+      </div>
+
+      <div>
+        <div class="bet-bar-row">
+          <span style="font-size:.82rem;color:var(--text-dim)">
+            <strong id="bet-count-${escHtml(c.char_name).replace(/\s/g,'_')}">${betsCount}</strong> apuestas
+          </span>
+          <span class="bet-odds-badge ${oddsClass}">${oddsLabel} · x${odds}</span>
+        </div>
+        <div class="bet-bar-wrap">
+          <div class="bet-bar-fill" id="bet-bar-${escHtml(c.char_name).replace(/\s/g,'_')}"
+               style="width:${barPct}%"></div>
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem">
+          Payout estimado: <strong style="color:var(--gold)">🪙 ${estPayout}</strong> por 2 monedas
+        </div>
+      </div>
+
+      ${btnHtml}
+    </div>`;
+  }).join('');
+}
+
+/* ── Abrir modal de apuesta ── */
+function openBetModal(candidate) {
+  if (!api.isLoggedIn) { openModal('login'); return; }
+  betSelectedChar  = candidate;
+  betSelectedCoins = 2;
+
+  // Rellenar resumen
+  document.getElementById('bcs-class-icon').textContent = getClassIcon(candidate.classid);
+  document.getElementById('bcs-char-name').textContent  = candidate.char_name;
+  document.getElementById('bcs-class-name').textContent = CLASS_NAMES[candidate.classid] || `Clase ${candidate.classid}`;
+  document.getElementById('bcs-stats').textContent =
+    `🏅 ${(candidate.olympiad_points||0).toLocaleString()} pts · ⚔️ ${candidate.competitions_won||0}W`;
+
+  updateBetModal();
+  // Reset selector de monedas
+  document.querySelectorAll('.bet-coin-btn').forEach(b =>
+    b.classList.toggle('active', parseInt(b.dataset.coins) === 2)
+  );
+  openModal('bet');
+}
+window.openBetModal = openBetModal;
+
+/* ── Actualizar estimaciones en el modal ── */
+function updateBetModal() {
+  if (!betSelectedChar || !betsSeasonData) return;
+  const totalBets  = parseInt(betsSeasonData.totals?.total_bets) || 0;
+  const betsOnChar = parseInt(betSelectedChar.bets_count) || 0;
+  const odds       = betsOnChar > 0 ? Math.floor(totalBets / betsOnChar) : totalBets || 1;
+  const payout     = Math.min(20, Math.max(1, odds * betSelectedCoins));
+
+  document.getElementById('bcs-odds').textContent     = `x${odds || '∞'}`;
+  document.getElementById('bpe-coins').textContent    = `${betSelectedCoins} 🪙`;
+  document.getElementById('bpe-payout').textContent   = `≈ ${payout} 🪙`;
+  document.getElementById('bpe-bets-on').textContent  = betsOnChar;
+  document.getElementById('bpe-total-bets').textContent = totalBets;
+}
+
+/* ── Selector de monedas en modal ── */
+document.querySelectorAll('.bet-coin-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.bet-coin-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    betSelectedCoins = parseInt(btn.dataset.coins);
+    updateBetModal();
+  });
+});
+
+/* ── Confirmar apuesta ── */
+async function confirmBet() {
+  if (!betSelectedChar) return;
+  const btn = document.getElementById('btn-confirm-bet');
+  btn.disabled = true;
+  btn.textContent = 'Apostando...';
+  try {
+    const res = await api.placeBet(betSelectedChar.char_name, betSelectedCoins);
+    closeAllModals();
+    showToast(res.message, 'success', '🎯');
+    loadBets();  // refrescar
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚔️ Confirmar Apuesta';
+  }
+}
+window.confirmBet = confirmBet;
+
+/* ── Mis apuestas ── */
+async function loadMyBets() {
+  const el = document.getElementById('bets-my-list');
+  if (!el || !api.isLoggedIn) {
+    if (el) el.innerHTML = '<p class="text-muted" style="padding:1rem">Iniciá sesión para ver tus apuestas.</p>';
+    return;
+  }
+  el.innerHTML = '<div class="flex-center" style="padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const bets = await api.getMyBets();
+    if (!bets.length) { el.innerHTML = '<p class="text-muted" style="padding:1rem">No tenés apuestas aún.</p>'; return; }
+    el.innerHTML = bets.map(b => {
+      const isWon    = b.won === 1;
+      const isLost   = b.won === 0;
+      const isPending= b.won === null;
+      return `
+      <div class="my-bet-item">
+        <div class="mbi-icon">${isPending ? '⏳' : isWon ? '🏆' : '💀'}</div>
+        <div class="mbi-body">
+          <div class="mbi-season">${escHtml(b.season_name)}</div>
+          <div class="mbi-char">Aposté por: <strong>${escHtml(b.char_bet)}</strong></div>
+          <div class="mbi-detail">${b.coins_bet} 🪙 apostadas · ${formatDate(b.created_at)}</div>
+          ${b.winner_char ? `<div class="mbi-detail">Héroe ganador: <strong>${escHtml(b.winner_char)}</strong></div>` : ''}
+        </div>
+        <div class="mbi-result">
+          ${isPending ? `<div class="mbi-pend">⏳ Pendiente</div>` : ''}
+          ${isWon     ? `<div class="mbi-won">+${b.payout} 🪙</div><div style="font-size:.75rem;color:var(--green)">¡Ganaste!</div>` : ''}
+          ${isLost    ? `<div class="mbi-lost">−${b.coins_bet} 🪙</div><div style="font-size:.75rem;color:var(--red)">Perdiste</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    el.innerHTML = `<p class="text-red" style="padding:1rem">Error: ${err.message}</p>`;
+  }
+}
+
+/* ── Historial de temporadas ── */
+async function loadBetsHistory() {
+  const el = document.getElementById('bets-history-list');
+  if (!el) return;
+  el.innerHTML = '<div class="flex-center" style="padding:2rem"><div class="spinner"></div></div>';
+  try {
+    const seasons = await api.getBetHistory();
+    if (!seasons.length) { el.innerHTML = '<p class="text-muted" style="padding:1rem">Sin temporadas resueltas aún.</p>'; return; }
+    el.innerHTML = seasons.map(s => `
+    <div class="bets-history-season">
+      <div>
+        <div class="bhs-name">${escHtml(s.name)}</div>
+        <div class="bhs-winner">👑 Héroe: <strong>${escHtml(s.winner_char || '—')}</strong>
+          ${s.winner_class_id ? ` · ${CLASS_NAMES[s.winner_class_id] || ''}` : ''}
+        </div>
+        <div style="font-size:.78rem;color:var(--text-muted);margin-top:.25rem">
+          Resuelta: ${formatDate(s.resolved_at)}
+        </div>
+      </div>
+      <div class="bhs-stats">
+        <div class="bhs-stat">
+          <div class="bhs-stat-v">${(s.total_bets||0).toLocaleString()}</div>
+          <div class="bhs-stat-l">Apuestas</div>
+        </div>
+        <div class="bhs-stat">
+          <div class="bhs-stat-v text-gold">${(s.total_pool||0).toLocaleString()} 🪙</div>
+          <div class="bhs-stat-l">En juego</div>
+        </div>
+      </div>
+    </div>`).join('');
+  } catch (err) {
+    el.innerHTML = `<p class="text-red" style="padding:1rem">Error: ${err.message}</p>`;
+  }
+}
+
+/* ── SSE — Tiempo real ── */
+function startBetsSSE() {
+  if (betsSSE) { betsSSE.close(); betsSSE = null; }
+
+  const token = api.token ? `?token=${api.token}` : '';
+  betsSSE = new EventSource(`/api/bets/live`);
+
+  betsSSE.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      handleBetsSSE(msg);
+    } catch {}
+  };
+
+  betsSSE.onerror = () => {
+    // Reconectar en 5s
+    setTimeout(() => {
+      if (document.getElementById('section-bets')?.classList.contains('active')) {
+        startBetsSSE();
+      }
+    }, 5000);
+  };
+}
+
+function handleBetsSSE(msg) {
+  if (msg.type === 'new_bet') {
+    // Actualizar contador del candidato en tiempo real
+    const charKey  = msg.char_bet?.replace(/\s/g, '_');
+    const countEl  = document.getElementById(`bet-count-${charKey}`);
+    if (countEl) countEl.textContent = msg.bets_count;
+
+    // Animar barra
+    const barEl = document.getElementById(`bet-bar-${charKey}`);
+    if (barEl && betsSeasonData?.candidates) {
+      const maxBets = Math.max(...betsSeasonData.candidates.map(c => parseInt(c.bets_count)||0), msg.bets_count);
+      barEl.style.width = Math.round((msg.bets_count / maxBets) * 100) + '%';
+    }
+
+    // Flash visual en la tarjeta
+    const card = document.getElementById(`bet-card-${charKey}`);
+    if (card) {
+      card.classList.add('flash');
+      setTimeout(() => card.classList.remove('flash'), 700);
+    }
+
+    // Actualizar totales
+    document.getElementById('bets-total-bets').textContent = (msg.total_bets||0).toLocaleString();
+    document.getElementById('bets-total-pool').textContent = `${(msg.total_pool||0).toLocaleString()} 🪙`;
+
+    // Actualizar betsSeasonData localmente
+    if (betsSeasonData?.candidates) {
+      const cand = betsSeasonData.candidates.find(c => c.char_name === msg.char_bet);
+      if (cand) cand.bets_count = msg.bets_count;
+      if (betsSeasonData.totals) {
+        betsSeasonData.totals.total_bets = msg.total_bets;
+        betsSeasonData.totals.total_pool = msg.total_pool;
+      }
+    }
+
+    showToast(`Nueva apuesta por ${msg.char_bet}!`, 'info', '🎯');
+
+  } else if (msg.type === 'season_resolved') {
+    showToast(`¡Temporada resuelta! 🏆 Héroe: ${msg.winner_char}`, 'success', '👑');
+    loadBets();
+
+  } else if (msg.type === 'season_closed') {
+    showToast('Las apuestas están cerradas. ¡Esperá el resultado!', 'warning', '🔒');
+    loadBets();
+
+  } else if (msg.type === 'new_season') {
+    showToast('¡Nueva temporada de apuestas abierta!', 'success', '⚔️');
+    loadBets();
+  }
+}
+
+/* ── Admin helpers ── */
+async function adminNewSeason() {
+  const name = document.getElementById('admin-season-name')?.value?.trim();
+  try {
+    const res = await api.adminNewSeason(name || undefined);
+    showToast(res.message, 'success');
+    loadBets();
+  } catch (err) { showToast(err.message, 'error'); }
+}
+async function adminCloseSeason() {
+  const seasonId = betsSeasonData?.season?.id;
+  if (!seasonId) { showToast('No hay temporada activa', 'warning'); return; }
+  if (!confirm('¿Cerrar apuestas? Ya no se aceptarán nuevas apuestas.')) return;
+  try {
+    const res = await api.adminCloseSeason(seasonId);
+    showToast(res.message, 'success');
+    loadBets();
+  } catch (err) { showToast(err.message, 'error'); }
+}
+async function adminResolve() {
+  const seasonId   = betsSeasonData?.season?.id;
+  const winnerChar = document.getElementById('admin-winner-char')?.value?.trim();
+  if (!seasonId)   { showToast('No hay temporada activa', 'warning'); return; }
+  if (!winnerChar) { showToast('Ingresá el nombre del Héroe ganador', 'warning'); return; }
+  if (!confirm(`¿Declarar a "${winnerChar}" como Héroe y pagar a los ganadores?`)) return;
+  try {
+    const res = await api.adminResolveBets(seasonId, winnerChar);
+    showToast(res.message, 'success', '👑');
+    loadBets();
+  } catch (err) { showToast(err.message, 'error'); }
+}
+window.adminNewSeason    = adminNewSeason;
+window.adminCloseSeason  = adminCloseSeason;
+window.adminResolve      = adminResolve;
+
+/* ── Helpers de clase/icono (reutiliza CLASS_NAMES de main.js) ── */
+function getClassIcon(classId) {
+  const icons = {
+    88:'⚔️',89:'🛡️',90:'🛡️',91:'🗡️',92:'🏹',93:'🗡️',
+    94:'🔥',95:'💀',96:'👁️',97:'✨',98:'☀️',
+    99:'🛡️',100:'🎵',101:'💨',102:'🏹',103:'🔮',104:'🌊',105:'🌿',
+    106:'⚡',107:'💃',108:'👻',109:'🏹',110:'🌩️',111:'👁️',112:'🌸',
+    113:'💪',114:'🥊',115:'🌀',116:'📣',117:'💰',118:'🔧'
+  };
+  return icons[classId] || '⚔️';
+}
+
+const CLASS_NAMES = {
+  0:'Human Fighter',1:'Warrior',2:'Gladiator',3:'Warlord',4:'Human Knight',
+  5:'Paladin',6:'Dark Avenger',7:'Rogue',8:'Treasure Hunter',9:'Hawkeye',
+  10:'Human Mystic',11:'Human Wizard',12:'Sorcerer',13:'Necromancer',14:'Warlock',
+  15:'Cleric',16:'Bishop',17:'Prophet',
+  18:'Elven Fighter',19:'Elven Knight',20:'Temple Knight',21:'Swordsinger',
+  22:'Elven Scout',23:'Plainswalker',24:'Silver Ranger',
+  25:'Elven Mystic',26:'Elven Wizard',27:'Spellsinger',28:'Elemental Summoner',
+  29:'Elven Oracle',30:'Elven Elder',
+  31:'Dark Fighter',32:'Palus Knight',33:'Shillien Knight',34:'Bladedancer',
+  35:'Assassin',36:'Abyss Walker',37:'Phantom Ranger',
+  38:'Dark Elven Mystic',39:'Dark Wizard',40:'Spellhowler',41:'Phantom Summoner',
+  42:'Shillien Oracle',43:'Shillien Elder',
+  44:'Orc Fighter',45:'Orc Raider',46:'Destroyer',47:'Monk',48:'Tyrant',
+  49:'Orc Mystic',50:'Orc Shaman',51:'Overlord',52:'Warcryer',
+  53:'Dwarven Fighter',54:'Scavenger',55:'Bounty Hunter',56:'Artisan',57:'Warsmith',
+  88:'Duelist',89:'Dreadnought',90:'Phoenix Knight',91:'Hell Knight',
+  92:'Sagittarius',93:'Adventurer',94:'Archmage',95:'Soultaker',
+  96:'Arcana Lord',97:'Cardinal',98:'Hierophant',
+  99:"Eva's Templar",100:'Sword Muse',101:'Wind Rider',102:'Moonlight Sentinel',
+  103:'Mystic Muse',104:'Elemental Master',105:"Eva's Saint",
+  106:'Shillien Templar',107:'Spectral Dancer',108:'Ghost Hunter',
+  109:'Ghost Sentinel',110:'Storm Screamer',111:'Spectral Master',112:'Shillien Saint',
+  113:'Titan',114:'Grand Khavatari',115:'Dominator',116:'Doomcryer',
+  117:'Fortune Seeker',118:'Maestro'
+};
 
 /* ====================================================================
    RECHARGE — Paquetes de Monedas

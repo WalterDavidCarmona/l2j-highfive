@@ -37,6 +37,7 @@
     <li><a href="#" data-nav="rankings"><span class="icon">🏆</span> Rankings</a></li>
     <li><a href="#" data-nav="news"    ><span class="icon">📰</span> Noticias</a></li>
     <li><a href="#" data-nav="shop"    ><span class="icon">🛒</span> Tienda</a></li>
+    <li><a href="#" data-nav="bets"    ><span class="icon">🏅</span> Olimpiada</a></li>
     <li><a href="#" data-nav="recharge"><span class="icon">💳</span> Recargar</a></li>
     <li><a href="#" data-nav="panel"   ><span class="icon">👤</span> Mi Panel</a></li>
   </ul>
@@ -292,6 +293,116 @@
     </div>
   </section>
 
+  <!-- ──── OLIMPIADA BETS ──── -->
+  <section id="section-bets" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🏅</span> Apuestas Olimpiada</h2>
+        <div class="bets-live-badge" id="bets-live-badge">
+          <span class="bets-live-dot"></span> EN VIVO
+        </div>
+      </div>
+
+      <!-- Banner de temporada -->
+      <div class="bets-season-banner" id="bets-season-banner">
+        <div class="bsb-left">
+          <div class="bsb-label">⚔️ TEMPORADA ACTIVA</div>
+          <div class="bsb-name" id="bets-season-name">Cargando...</div>
+          <div class="bsb-status" id="bets-season-status"></div>
+        </div>
+        <div class="bsb-stats">
+          <div class="bsb-stat">
+            <div class="bsb-stat-val" id="bets-total-bets">—</div>
+            <div class="bsb-stat-lbl">Apuestas</div>
+          </div>
+          <div class="bsb-stat">
+            <div class="bsb-stat-val text-gold" id="bets-total-pool">—</div>
+            <div class="bsb-stat-lbl">🪙 En juego</div>
+          </div>
+          <div class="bsb-stat">
+            <div class="bsb-stat-val text-cyan" id="bets-my-pick">—</div>
+            <div class="bsb-stat-lbl">Tu apuesta</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cómo funciona -->
+      <div class="bets-rules">
+        <div class="bets-rule"><span>🪙</span><span>Apostá <strong>1 a 5 monedas</strong> por el personaje que creés que será el próximo Héroe</span></div>
+        <div class="bets-rule"><span>🎯</span><span>Si acertás, ganás <strong>hasta 20 monedas</strong> según las odds — menos apostadores en tu pick = mayor recompensa</span></div>
+        <div class="bets-rule"><span>⚡</span><span>Las apuestas se actualizan <strong>en tiempo real</strong> — ves las odds cambiar mientras otros apuestan</span></div>
+      </div>
+
+      <!-- Mi apuesta (si ya apostó) -->
+      <div class="bets-my-bet-card hidden" id="bets-my-bet-card">
+        <div class="bmb-icon">🎯</div>
+        <div class="bmb-body">
+          <div class="bmb-label">TU APUESTA</div>
+          <div class="bmb-char" id="bmb-char-name">—</div>
+          <div class="bmb-detail" id="bmb-detail">—</div>
+        </div>
+        <div class="bmb-payout" id="bmb-payout-est">
+          <div class="bmb-pay-label">Payout estimado</div>
+          <div class="bmb-pay-val" id="bmb-pay-val">🪙 —</div>
+        </div>
+      </div>
+
+      <!-- Tabs: Candidatos / Mi Historial -->
+      <div class="tabs" style="margin-bottom:1.5rem">
+        <button class="tab-btn active" data-bets-tab="candidates">⚔️ Candidatos</button>
+        <button class="tab-btn"        data-bets-tab="my-bets"   >🎯 Mis Apuestas</button>
+        <button class="tab-btn"        data-bets-tab="history"   >📋 Historial</button>
+      </div>
+
+      <!-- TAB: Candidatos -->
+      <div id="bets-tab-candidates">
+        <div id="bets-candidates-grid" class="bets-grid">
+          <div class="flex-center" style="padding:3rem;grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: Mis apuestas -->
+      <div id="bets-tab-my-bets" class="hidden">
+        <div id="bets-my-list"></div>
+      </div>
+
+      <!-- TAB: Historial de temporadas -->
+      <div id="bets-tab-history" class="hidden">
+        <div id="bets-history-list"></div>
+      </div>
+
+      <!-- Panel Admin (solo visible para accessLevel>=100) -->
+      <div id="bets-admin-panel" class="hidden" style="margin-top:3rem">
+        <div class="card" style="border-color:var(--gold);border-width:1px">
+          <h3 style="color:var(--gold);margin-bottom:1.5rem">⚙️ Panel Admin — Olimpiada</h3>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <div style="flex:1;min-width:220px">
+              <label class="form-label">Nombre nueva temporada</label>
+              <input type="text" id="admin-season-name" class="form-input"
+                     placeholder="ej: Temporada 2 — Mes de Enero">
+              <button class="btn btn-primary btn-sm" style="margin-top:.5rem;width:100%"
+                      onclick="adminNewSeason()">✨ Abrir Nueva Temporada</button>
+            </div>
+            <div style="flex:1;min-width:220px">
+              <label class="form-label">Cerrar apuestas (sin resolver)</label>
+              <button class="btn btn-secondary btn-sm" style="width:100%"
+                      onclick="adminCloseSeason()">🔒 Cerrar Apuestas</button>
+            </div>
+            <div style="flex:1;min-width:220px">
+              <label class="form-label">Resolver temporada — Héroe ganador</label>
+              <input type="text" id="admin-winner-char" class="form-input"
+                     placeholder="Nombre exacto del personaje Héroe">
+              <button class="btn btn-gold btn-sm" style="margin-top:.5rem;width:100%"
+                      onclick="adminResolve()">🏆 Declarar Héroe y Pagar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <!-- ──── RECARGAR ──── -->
   <section id="section-recharge" class="section">
     <div class="container">
@@ -488,6 +599,72 @@
     </form>
     <div class="modal-divider">¿Ya tienes cuenta?</div>
     <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- ── Modal: Apostar en Olimpiada ── -->
+<div class="modal-overlay" id="modal-bet">
+  <div class="modal modal-bet">
+    <div class="modal-header">
+      <h3 class="modal-title">🏅 Realizar Apuesta</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Candidato seleccionado -->
+    <div class="bet-candidate-summary" id="bet-candidate-summary">
+      <div class="bcs-avatar" id="bcs-class-icon">⚔️</div>
+      <div class="bcs-info">
+        <div class="bcs-name"  id="bcs-char-name">—</div>
+        <div class="bcs-class" id="bcs-class-name">—</div>
+        <div class="bcs-stats" id="bcs-stats">—</div>
+      </div>
+      <div class="bcs-odds">
+        <div class="bcs-odds-label">Odds actuales</div>
+        <div class="bcs-odds-val" id="bcs-odds">—</div>
+      </div>
+    </div>
+
+    <!-- Cuántas monedas apostar -->
+    <div style="margin:1.5rem 0">
+      <label class="form-label">¿Cuántas monedas apostás? <span style="color:var(--text-muted)">(1–5)</span></label>
+      <div class="bet-coins-selector">
+        <button class="bet-coin-btn" data-coins="1">1 🪙</button>
+        <button class="bet-coin-btn active" data-coins="2">2 🪙</button>
+        <button class="bet-coin-btn" data-coins="3">3 🪙</button>
+        <button class="bet-coin-btn" data-coins="4">4 🪙</button>
+        <button class="bet-coin-btn" data-coins="5">5 🪙</button>
+      </div>
+      <div class="form-hint" style="margin-top:.75rem">
+        Más monedas apostadas = mayor payout si ganás
+      </div>
+    </div>
+
+    <!-- Estimación de payout -->
+    <div class="bet-payout-estimate" id="bet-payout-estimate">
+      <div class="bpe-row">
+        <span>Apostás</span>
+        <strong class="text-gold" id="bpe-coins">2 🪙</strong>
+      </div>
+      <div class="bpe-row">
+        <span>Payout si ganás</span>
+        <strong class="text-green" id="bpe-payout">≈ — 🪙</strong>
+      </div>
+      <div class="bpe-row">
+        <span>Apostadores en este pick</span>
+        <strong id="bpe-bets-on">—</strong>
+      </div>
+      <div class="bpe-row">
+        <span>Total en la temporada</span>
+        <strong id="bpe-total-bets">—</strong>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" id="btn-confirm-bet" onclick="confirmBet()">
+      ⚔️ Confirmar Apuesta
+    </button>
+    <p style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:.75rem">
+      Solo podés apostar una vez por temporada. Si perdés, perdés las monedas apostadas.
+    </p>
   </div>
 </div>
 

@@ -34,6 +34,7 @@ app.use('/api/news',     require('./routes/news'));
 app.use('/api/shop',     require('./routes/shop'));
 app.use('/api/server',   require('./routes/server'));
 app.use('/api/payments', require('./routes/payments'));
+app.use('/api/bets',     require('./routes/bets').router);
 
 /* ─── Health check ─────────────────────────────────────────────── */
 app.get('/api/health', (req, res) =>
