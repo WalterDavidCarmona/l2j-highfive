@@ -1543,6 +1543,7 @@ function loadAdmin() {
   document.querySelector('[data-admin-tab="users"]')?.classList.add('active');
   document.getElementById('admin-tab-users')?.classList.remove('hidden');
   document.getElementById('admin-tab-payments')?.classList.add('hidden');
+  document.getElementById('admin-tab-shop')?.classList.add('hidden');
 }
 
 /** Tabs del panel admin */
@@ -1553,9 +1554,13 @@ document.querySelectorAll('[data-admin-tab]').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('admin-tab-users')?.classList.toggle('hidden', tab !== 'users');
     document.getElementById('admin-tab-payments')?.classList.toggle('hidden', tab !== 'payments');
+    document.getElementById('admin-tab-shop')?.classList.toggle('hidden', tab !== 'shop');
     if (tab === 'payments') {
       adminCurrentPage = 0;
       loadAdminPayments(adminCurrentStatus);
+    }
+    if (tab === 'shop') {
+      loadAdminShop();
     }
   });
 });
@@ -1797,6 +1802,163 @@ document.querySelectorAll('.admin-status-btn').forEach(btn => {
     loadAdminPayments(btn.dataset.status);
   });
 });
+
+/* ====================================================================
+   ADMIN SHOP EDITOR
+   ==================================================================== */
+
+let adminShopEditingId = null;
+
+/** Carga la tabla de items de la tienda en el panel admin */
+async function loadAdminShop() {
+  const tbody = document.getElementById('admin-shop-tbody');
+  tbody.innerHTML = `<tr><td colspan="9" class="text-center"><div class="spinner" style="margin:2rem auto"></div></td></tr>`;
+  try {
+    const { items } = await api.adminGetShopItems();
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted" style="padding:2rem">No hay items en la tienda</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = items.map(item => {
+      const statusBadge = item.active
+        ? `<span class="badge-status approved">✅ Activo</span>`
+        : `<span class="badge-status cancelled">⛔ Inactivo</span>`;
+      const stockLabel = item.stock === null ? '∞' : item.stock;
+      const featuredIcon = item.featured ? '⭐ ' : '';
+      return `<tr>
+        <td style="color:var(--text-muted);font-size:.82rem">${item.id}</td>
+        <td><strong>${featuredIcon}${escHtml(item.name)}</strong></td>
+        <td style="color:var(--cyan);font-family:monospace">${item.item_id}</td>
+        <td style="text-align:center">${item.item_count}</td>
+        <td style="color:var(--gold)">🪙 ${(item.price_coins||0).toLocaleString()}</td>
+        <td style="color:var(--text-muted);font-size:.85rem">${escHtml(item.category||'general')}</td>
+        <td style="text-align:center">${stockLabel}</td>
+        <td>${statusBadge}</td>
+        <td>
+          <div style="display:flex;gap:.4rem">
+            <button class="btn btn-sm btn-secondary" onclick="openAdminShopModal(${item.id})" title="Editar">✏️</button>
+            <button class="btn btn-sm" style="background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--cyan)"
+              onclick="toggleAdminShopItem(${item.id}, ${item.active})" title="${item.active ? 'Desactivar' : 'Activar'}">${item.active ? '👁' : '👁‍🗨'}</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteAdminShopItem(${item.id}, '${escHtml(item.name)}')" title="Eliminar">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="color:var(--red)">Error: ${escHtml(err.message)}</td></tr>`;
+  }
+}
+
+/** Abre el modal para crear (id=null) o editar (id=number) un item */
+async function openAdminShopModal(id) {
+  adminShopEditingId = id;
+  const title = document.getElementById('admin-shop-modal-title');
+
+  if (id === null) {
+    // Modo creación: limpiar campos
+    title.textContent = '➕ Nuevo Item de Tienda';
+    document.getElementById('asi-editing-id').value = '';
+    document.getElementById('asi-name').value = '';
+    document.getElementById('asi-description').value = '';
+    document.getElementById('asi-item-id').value = '';
+    document.getElementById('asi-item-count').value = '1';
+    document.getElementById('asi-price-coins').value = '0';
+    document.getElementById('asi-category').value = 'general';
+    document.getElementById('asi-image-url').value = '';
+    document.getElementById('asi-stock').value = '';
+    document.getElementById('asi-featured').checked = false;
+    document.getElementById('asi-active').checked = true;
+    openModal('admin-shop-item');
+  } else {
+    // Modo edición: cargar datos
+    try {
+      const { items } = await api.adminGetShopItems();
+      const item = items.find(i => i.id === id);
+      if (!item) { showToast('Item no encontrado', 'error'); return; }
+
+      title.textContent = `✏️ Editar: ${item.name}`;
+      document.getElementById('asi-editing-id').value = id;
+      document.getElementById('asi-name').value = item.name || '';
+      document.getElementById('asi-description').value = item.description || '';
+      document.getElementById('asi-item-id').value = item.item_id || '';
+      document.getElementById('asi-item-count').value = item.item_count || 1;
+      document.getElementById('asi-price-coins').value = item.price_coins || 0;
+      document.getElementById('asi-category').value = item.category || 'general';
+      document.getElementById('asi-image-url').value = item.image_url || '';
+      document.getElementById('asi-stock').value = item.stock !== null ? item.stock : '';
+      document.getElementById('asi-featured').checked = !!item.featured;
+      document.getElementById('asi-active').checked = !!item.active;
+      openModal('admin-shop-item');
+    } catch (err) {
+      showToast('Error al cargar item: ' + err.message, 'error');
+    }
+  }
+}
+
+/** Guarda el item (crea o actualiza) */
+async function saveAdminShopItem() {
+  const editingId = document.getElementById('asi-editing-id').value;
+  const name       = document.getElementById('asi-name').value.trim();
+  const item_id    = parseInt(document.getElementById('asi-item-id').value);
+
+  if (!name)         { showToast('El nombre es requerido', 'error'); return; }
+  if (!item_id || item_id <= 0) { showToast('Item ID de L2 es requerido', 'error'); return; }
+
+  const stockVal = document.getElementById('asi-stock').value;
+  const payload = {
+    name,
+    description:  document.getElementById('asi-description').value.trim(),
+    item_id,
+    item_count:   parseInt(document.getElementById('asi-item-count').value) || 1,
+    price_coins:  parseInt(document.getElementById('asi-price-coins').value) || 0,
+    category:     document.getElementById('asi-category').value,
+    image_url:    document.getElementById('asi-image-url').value.trim(),
+    stock:        stockVal !== '' ? parseInt(stockVal) : null,
+    featured:     document.getElementById('asi-featured').checked,
+    active:       document.getElementById('asi-active').checked,
+  };
+
+  try {
+    if (editingId) {
+      await api.adminUpdateShopItem(parseInt(editingId), payload);
+      showToast(`✅ Item "${name}" actualizado`, 'success');
+    } else {
+      await api.adminCreateShopItem(payload);
+      showToast(`✅ Item "${name}" creado`, 'success');
+    }
+    closeAllModals();
+    loadAdminShop(); // Refrescar tabla
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/** Toggle rápido activo/inactivo sin abrir modal */
+async function toggleAdminShopItem(id, currentActive) {
+  try {
+    // Necesitamos todos los campos requeridos para el PUT — cargamos el item primero
+    const { items } = await api.adminGetShopItems();
+    const item = items.find(i => i.id === id);
+    if (!item) { showToast('Item no encontrado', 'error'); return; }
+    await api.adminUpdateShopItem(id, { ...item, active: currentActive ? 0 : 1 });
+    showToast(currentActive ? '⛔ Item desactivado' : '✅ Item activado', 'success');
+    loadAdminShop();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/** Elimina un item con confirmación */
+async function deleteAdminShopItem(id, name) {
+  if (!confirm(`¿Eliminar permanentemente el item "${name}"?\nEsta acción no se puede deshacer.`)) return;
+  try {
+    await api.adminDeleteShopItem(id);
+    showToast(`🗑 Item "${name}" eliminado`, 'success');
+    loadAdminShop();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
 
 /* ====================================================================
    INIT

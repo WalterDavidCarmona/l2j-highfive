@@ -277,4 +277,120 @@ router.get('/payments', auth, adminOnly, async (req, res) => {
   }
 });
 
+/* ──────────────────────────────────────────────────────────────────
+   GESTIÓN DE TIENDA WEB (web_shop_items)
+─────────────────────────────────────────────────────────────────── */
+
+/* GET /api/admin/shop-items — Lista TODOS los items (activos + inactivos) */
+router.get('/shop-items', auth, adminOnly, async (req, res) => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT id, name, description, item_id, item_count, price_coins,
+              price_adena, category, image_url, featured, stock, active
+       FROM web_shop_items
+       ORDER BY active DESC, id ASC`
+    );
+    res.json({ items: rows });
+  } catch (err) {
+    console.error('[admin/shop-items GET]', err);
+    res.status(500).json({ error: 'Error al obtener items de tienda' });
+  }
+});
+
+/* POST /api/admin/shop-items — Crear nuevo item */
+router.post('/shop-items', auth, adminOnly, async (req, res) => {
+  const { name, description, item_id, item_count, price_coins,
+          price_adena, category, image_url, featured, active, stock } = req.body;
+
+  if (!name?.trim())
+    return res.status(400).json({ error: 'El nombre es requerido' });
+  if (!item_id || parseInt(item_id) <= 0)
+    return res.status(400).json({ error: 'item_id de L2 es requerido y debe ser > 0' });
+  if (parseInt(item_count) < 1)
+    return res.status(400).json({ error: 'item_count debe ser al menos 1' });
+  if (parseInt(price_coins) < 0)
+    return res.status(400).json({ error: 'price_coins no puede ser negativo' });
+
+  try {
+    const [result] = await db.execute(
+      `INSERT INTO web_shop_items
+         (name, description, item_id, item_count, price_coins, price_adena,
+          category, image_url, featured, active, stock)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        name.trim(),
+        description?.trim() || null,
+        parseInt(item_id),
+        parseInt(item_count) || 1,
+        parseInt(price_coins) || 0,
+        parseInt(price_adena) || 0,
+        category?.trim() || 'general',
+        image_url?.trim() || null,
+        featured ? 1 : 0,
+        active !== false ? 1 : 0,
+        stock !== undefined && stock !== '' ? parseInt(stock) : null
+      ]
+    );
+    res.status(201).json({ ok: true, id: result.insertId });
+  } catch (err) {
+    console.error('[admin/shop-items POST]', err);
+    res.status(500).json({ error: 'Error al crear item' });
+  }
+});
+
+/* PUT /api/admin/shop-items/:id — Editar item existente */
+router.put('/shop-items/:id', auth, adminOnly, async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, description, item_id, item_count, price_coins,
+          price_adena, category, image_url, featured, active, stock } = req.body;
+
+  if (!name?.trim())
+    return res.status(400).json({ error: 'El nombre es requerido' });
+  if (!item_id || parseInt(item_id) <= 0)
+    return res.status(400).json({ error: 'item_id de L2 es requerido y debe ser > 0' });
+
+  try {
+    const [result] = await db.execute(
+      `UPDATE web_shop_items SET
+         name=?, description=?, item_id=?, item_count=?, price_coins=?,
+         price_adena=?, category=?, image_url=?, featured=?, active=?, stock=?
+       WHERE id=?`,
+      [
+        name.trim(),
+        description?.trim() || null,
+        parseInt(item_id),
+        parseInt(item_count) || 1,
+        parseInt(price_coins) || 0,
+        parseInt(price_adena) || 0,
+        category?.trim() || 'general',
+        image_url?.trim() || null,
+        featured ? 1 : 0,
+        active ? 1 : 0,
+        stock !== undefined && stock !== '' && stock !== null ? parseInt(stock) : null,
+        id
+      ]
+    );
+    if (!result.affectedRows)
+      return res.status(404).json({ error: 'Item no encontrado' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[admin/shop-items PUT]', err);
+    res.status(500).json({ error: 'Error al actualizar item' });
+  }
+});
+
+/* DELETE /api/admin/shop-items/:id — Eliminar item permanentemente */
+router.delete('/shop-items/:id', auth, adminOnly, async (req, res) => {
+  const id = parseInt(req.params.id);
+  try {
+    const [result] = await db.execute('DELETE FROM web_shop_items WHERE id=?', [id]);
+    if (!result.affectedRows)
+      return res.status(404).json({ error: 'Item no encontrado' });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[admin/shop-items DELETE]', err);
+    res.status(500).json({ error: 'Error al eliminar item' });
+  }
+});
+
 module.exports = router;

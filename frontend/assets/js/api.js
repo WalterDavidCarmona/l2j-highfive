@@ -99,6 +99,10 @@ class L2Api {
   adminUpdateCoins(login, action, amount)      { return this._fetch(`/admin/users/${encodeURIComponent(login)}/coins`, { method:'POST', body: JSON.stringify({ action, amount }) }); }
   adminUpdateUser(login, data)                 { return this._fetch(`/admin/users/${encodeURIComponent(login)}`, { method:'PUT', body: JSON.stringify(data) }); }
   adminGetPayments(status = 'all', limit = 50, offset = 0) { return this._fetch(`/admin/payments?status=${status}&limit=${limit}&offset=${offset}`); }
+  adminGetShopItems()              { return this._fetch('/admin/shop-items'); }
+  adminCreateShopItem(data)        { return this._fetch('/admin/shop-items',     { method:'POST',   body: JSON.stringify(data) }); }
+  adminUpdateShopItem(id, data)    { return this._fetch(`/admin/shop-items/${id}`, { method:'PUT',  body: JSON.stringify(data) }); }
+  adminDeleteShopItem(id)          { return this._fetch(`/admin/shop-items/${id}`, { method:'DELETE' }); }
 
   // ── Bets ──────────────────────────────────────────────────────────
   getBetSeason()                       { return this._fetch('/bets/season'); }

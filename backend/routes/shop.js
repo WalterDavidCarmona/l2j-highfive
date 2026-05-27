@@ -83,11 +83,11 @@ router.post('/purchase', auth, async (req, res) => {
       );
     }
 
-    // 4. Entregar ítem al personaje (tabla items de L2)
+    // 4. Entregar ítem al personaje (tabla items de L2JMobius H5)
     const objectId = await generateObjectId(conn);
     await conn.execute(
-      `INSERT INTO items (object_id, item_id, owner_id, loc, loc_data, count, enchant_level, custom_type1, custom_type2, mana_left, time, existsInDb)
-       VALUES (?, ?, ?, 'INVENTORY', 0, ?, 0, 0, 0, -1, -1, 1)`,
+      `INSERT INTO items (object_id, item_id, owner_id, loc, loc_data, count, enchant_level, custom_type1, custom_type2, mana_left, time)
+       VALUES (?, ?, ?, 'INVENTORY', 0, ?, 0, 0, 0, -1, -1)`,
       [objectId, item.item_id, char.charId, item.item_count || 1]
     );
 

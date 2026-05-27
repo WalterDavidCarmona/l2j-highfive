@@ -550,6 +550,7 @@
       <div class="tabs" style="margin-bottom:1.5rem">
         <button class="tab-btn active" data-admin-tab="users">👥 Usuarios</button>
         <button class="tab-btn"        data-admin-tab="payments">💳 Compras</button>
+        <button class="tab-btn"        data-admin-tab="shop">🛒 Tienda</button>
       </div>
 
       <!-- ── TAB: USUARIOS ── -->
@@ -628,6 +629,38 @@
           <button class="btn btn-secondary btn-sm" id="btn-admin-payments-next" onclick="adminPaymentsPage(1)">Siguiente →</button>
         </div>
       </div>
+
+      <!-- ── TAB: TIENDA ── -->
+      <div id="admin-tab-shop" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+          <span class="text-muted" style="font-size:.9rem">Items activos e inactivos de la tienda web</span>
+          <button class="btn btn-primary btn-sm" onclick="openAdminShopModal(null)">➕ Nuevo Item</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Item ID L2</th>
+                <th>Cant.</th>
+                <th>Precio 🪙</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="admin-shop-tbody">
+              <tr><td colspan="9" class="text-center">
+                <div class="spinner" style="margin:2rem auto"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -756,6 +789,83 @@
     </div>
 
     <input type="hidden" id="admin-edit-login-value">
+  </div>
+</div>
+
+<!-- ── Modal: Admin Shop Item Editor ── -->
+<div class="modal-overlay" id="modal-admin-shop-item">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <h3 class="modal-title" id="admin-shop-modal-title">🛒 Nuevo Item</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <!-- Nombre (full width) -->
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
+        <label class="form-label">Nombre del item *</label>
+        <input type="text" id="asi-name" class="form-input" placeholder="Ej: Blessed Scroll of Enchant">
+      </div>
+      <!-- Item ID L2 -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Item ID en L2 *</label>
+        <input type="number" id="asi-item-id" class="form-input" min="1" placeholder="Ej: 729">
+        <div class="form-hint">ID del ítem en el servidor de juego</div>
+      </div>
+      <!-- Cantidad -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Cantidad a entregar</label>
+        <input type="number" id="asi-item-count" class="form-input" min="1" value="1">
+      </div>
+      <!-- Precio WebCoins -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">🪙 Precio (WebCoins)</label>
+        <input type="number" id="asi-price-coins" class="form-input" min="0" value="0">
+      </div>
+      <!-- Categoría -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Categoría</label>
+        <select id="asi-category" class="form-input form-select">
+          <option value="general">General</option>
+          <option value="scrolls">Scrolls</option>
+          <option value="equipment">Equipment</option>
+          <option value="skills">Skills</option>
+          <option value="adena">Adena</option>
+          <option value="other">Otro</option>
+        </select>
+      </div>
+      <!-- Stock -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Stock (vacío = ilimitado)</label>
+        <input type="number" id="asi-stock" class="form-input" min="0" placeholder="Ilimitado">
+      </div>
+      <!-- URL Imagen (full width) -->
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
+        <label class="form-label">URL de imagen</label>
+        <input type="text" id="asi-image-url" class="form-input" placeholder="https://...">
+      </div>
+      <!-- Descripción (full width) -->
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
+        <label class="form-label">Descripción</label>
+        <textarea id="asi-description" class="form-input" rows="2" placeholder="Descripción opcional del ítem" style="resize:vertical"></textarea>
+      </div>
+      <!-- Checkboxes -->
+      <div style="display:flex;gap:1.5rem;align-items:center;grid-column:1/-1;padding:.25rem 0">
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;color:var(--text-dim)">
+          <input type="checkbox" id="asi-featured"> <span>⭐ Destacado</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;color:var(--text-dim)">
+          <input type="checkbox" id="asi-active" checked> <span>✅ Activo (visible en tienda)</span>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;margin-top:1.25rem">
+      <button class="btn btn-secondary btn-full" onclick="closeAllModals()">Cancelar</button>
+      <button class="btn btn-primary btn-full" onclick="saveAdminShopItem()">💾 Guardar</button>
+    </div>
+
+    <input type="hidden" id="asi-editing-id" value="">
   </div>
 </div>
 

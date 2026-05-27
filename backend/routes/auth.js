@@ -38,9 +38,21 @@ router.post('/register', async (req, res) => {
     if (rows.length > 0)
       return res.status(409).json({ error: 'Ese nombre de cuenta ya existe' });
 
-    const hashed   = hashPassword(password);
-    const lastIP   = req.ip || '0.0.0.0';
-    const now      = Date.now();
+    // Normalizar IP (IPv4-mapped IPv6 → IPv4)
+    const rawIp  = req.ip || req.connection?.remoteAddress || '0.0.0.0';
+    const lastIP = rawIp.replace(/^::ffff:/, '');
+
+    // Verificar límite de cuentas por IP (máximo 5)
+    const [[{ ipCount }]] = await db.execute(
+      'SELECT COUNT(*) AS ipCount FROM accounts WHERE lastIP = ?', [lastIP]
+    );
+    if (ipCount >= 5)
+      return res.status(403).json({
+        error: 'Límite de cuentas alcanzado para tu IP (máximo 5). Contacta al staff si necesitas más.'
+      });
+
+    const hashed = hashPassword(password);
+    const now    = Date.now();
 
     await db.execute(
       'INSERT INTO accounts (login, password, lastactive, accessLevel, lastIP) VALUES (?, ?, ?, 0, ?)',
