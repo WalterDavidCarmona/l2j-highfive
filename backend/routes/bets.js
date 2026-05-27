@@ -206,8 +206,8 @@ router.post('/place', auth, async (req, res) => {
     if (!charBet) return res.status(400).json({ error: 'charBet requerido' });
 
     const coins = parseInt(coinsBet);
-    if (isNaN(coins) || coins < 1 || coins > 5)
-      return res.status(400).json({ error: 'Podés apostar entre 1 y 5 monedas' });
+    if (isNaN(coins) || coins < 1 || coins > 1000)
+      return res.status(400).json({ error: 'Podés apostar entre 1 y 1000 monedas' });
 
     // Temporada abierta
     const [[season]] = await conn.execute(

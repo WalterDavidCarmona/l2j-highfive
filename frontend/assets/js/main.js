@@ -563,7 +563,7 @@ document.getElementById('form-change-pass')?.addEventListener('submit', async e 
    ==================================================================== */
 let betsSeasonData   = null;   // { season, candidates, myBet, totals }
 let betSelectedChar  = null;   // candidato elegido para apostar
-let betSelectedCoins = 2;      // monedas a apostar (default 2)
+let betSelectedCoins = 50;     // monedas a apostar (default 50)
 let betsSSE          = null;   // EventSource activo
 let currentBetsTab   = 'candidates';
 
@@ -706,7 +706,7 @@ function renderBetsCandidates(candidates, myBet, totals) {
                style="width:${barPct}%"></div>
         </div>
         <div style="font-size:.78rem;color:var(--text-muted);margin-top:.3rem">
-          Payout estimado: <strong style="color:var(--gold)">🪙 ${estPayout}</strong> por 2 monedas
+          Payout estimado: <strong style="color:var(--gold)">🪙 ${estPayout}</strong> por 50 monedas
         </div>
       </div>
 
@@ -719,7 +719,7 @@ function renderBetsCandidates(candidates, myBet, totals) {
 function openBetModal(candidate) {
   if (!api.isLoggedIn) { openModal('login'); return; }
   betSelectedChar  = candidate;
-  betSelectedCoins = 2;
+  betSelectedCoins = 50;
 
   // Rellenar resumen
   document.getElementById('bcs-class-icon').textContent = getClassIcon(candidate.classid);
@@ -730,8 +730,10 @@ function openBetModal(candidate) {
 
   updateBetModal();
   // Reset selector de monedas
+  const customInput = document.getElementById('bet-coins-custom');
+  if (customInput) customInput.value = '';
   document.querySelectorAll('.bet-coin-btn').forEach(b =>
-    b.classList.toggle('active', parseInt(b.dataset.coins) === 2)
+    b.classList.toggle('active', parseInt(b.dataset.coins) === 50)
   );
   openModal('bet');
 }
@@ -758,8 +760,19 @@ document.querySelectorAll('.bet-coin-btn').forEach(btn => {
     document.querySelectorAll('.bet-coin-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     betSelectedCoins = parseInt(btn.dataset.coins);
+    const customInput = document.getElementById('bet-coins-custom');
+    if (customInput) customInput.value = '';
     updateBetModal();
   });
+});
+
+// Input manual 1-1000
+document.getElementById('bet-coins-custom')?.addEventListener('input', function () {
+  const val = parseInt(this.value);
+  if (isNaN(val) || val < 1) return;
+  betSelectedCoins = Math.min(1000, val);
+  document.querySelectorAll('.bet-coin-btn').forEach(b => b.classList.remove('active'));
+  updateBetModal();
 });
 
 /* ── Confirmar apuesta ── */

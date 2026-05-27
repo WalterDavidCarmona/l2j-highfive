@@ -329,7 +329,7 @@
 
       <!-- Cómo funciona -->
       <div class="bets-rules">
-        <div class="bets-rule"><span>🪙</span><span>Apostá <strong>1 a 5 monedas</strong> por el personaje que creés que será el próximo Héroe</span></div>
+        <div class="bets-rule"><span>🪙</span><span>Apostá <strong>1 a 1000 monedas</strong> por el personaje que creés que será el próximo Héroe</span></div>
         <div class="bets-rule"><span>🎯</span><span>Si acertás, ganás <strong>hasta 20 monedas</strong> según las odds — menos apostadores en tu pick = mayor recompensa</span></div>
         <div class="bets-rule"><span>⚡</span><span>Las apuestas se actualizan <strong>en tiempo real</strong> — ves las odds cambiar mientras otros apuestan</span></div>
       </div>
@@ -626,15 +626,20 @@
 
     <!-- Cuántas monedas apostar -->
     <div style="margin:1.5rem 0">
-      <label class="form-label">¿Cuántas monedas apostás? <span style="color:var(--text-muted)">(1–5)</span></label>
+      <label class="form-label">¿Cuántas monedas apostás? <span style="color:var(--text-muted)">(1–1000)</span></label>
       <div class="bet-coins-selector">
-        <button class="bet-coin-btn" data-coins="1">1 🪙</button>
-        <button class="bet-coin-btn active" data-coins="2">2 🪙</button>
-        <button class="bet-coin-btn" data-coins="3">3 🪙</button>
-        <button class="bet-coin-btn" data-coins="4">4 🪙</button>
-        <button class="bet-coin-btn" data-coins="5">5 🪙</button>
+        <button class="bet-coin-btn" data-coins="10">10 🪙</button>
+        <button class="bet-coin-btn active" data-coins="50">50 🪙</button>
+        <button class="bet-coin-btn" data-coins="100">100 🪙</button>
+        <button class="bet-coin-btn" data-coins="500">500 🪙</button>
+        <button class="bet-coin-btn" data-coins="1000">1000 🪙</button>
       </div>
-      <div class="form-hint" style="margin-top:.75rem">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-top:.75rem">
+        <input type="number" id="bet-coins-custom" class="form-input"
+               min="1" max="1000" placeholder="O ingresá un monto (1-1000)"
+               style="flex:1;padding:.5rem .85rem">
+      </div>
+      <div class="form-hint" style="margin-top:.5rem">
         Más monedas apostadas = mayor payout si ganás
       </div>
     </div>
