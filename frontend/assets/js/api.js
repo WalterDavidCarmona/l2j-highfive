@@ -93,6 +93,13 @@ class L2Api {
   }
   getPaymentHistory()           { return this._fetch('/payments/history'); }
 
+  // ── Admin ─────────────────────────────────────────────────────────
+  adminSearchUsers(q)                          { return this._fetch(`/admin/users/search?q=${encodeURIComponent(q)}`); }
+  adminGetUser(login)                          { return this._fetch(`/admin/users/${encodeURIComponent(login)}`); }
+  adminUpdateCoins(login, action, amount)      { return this._fetch(`/admin/users/${encodeURIComponent(login)}/coins`, { method:'POST', body: JSON.stringify({ action, amount }) }); }
+  adminUpdateUser(login, data)                 { return this._fetch(`/admin/users/${encodeURIComponent(login)}`, { method:'PUT', body: JSON.stringify(data) }); }
+  adminGetPayments(status = 'all', limit = 50, offset = 0) { return this._fetch(`/admin/payments?status=${status}&limit=${limit}&offset=${offset}`); }
+
   // ── Bets ──────────────────────────────────────────────────────────
   getBetSeason()                       { return this._fetch('/bets/season'); }
   placeBet(charBet, coinsBet)          { return this._fetch('/bets/place', { method:'POST', body: JSON.stringify({ charBet, coinsBet }) }); }

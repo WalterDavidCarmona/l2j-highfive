@@ -40,6 +40,7 @@
     <li><a href="#" data-nav="bets"    ><span class="icon">🏅</span> Apuestas Olimpiadas</a></li>
     <li><a href="#" data-nav="recharge"><span class="icon">💳</span> Recargar</a></li>
     <li><a href="#" data-nav="panel"   ><span class="icon">👤</span> Mi Panel</a></li>
+    <li id="nav-admin-item" class="hidden"><a href="#" data-nav="admin"><span class="icon">⚙️</span> Admin</a></li>
   </ul>
 
   <div class="navbar-actions">
@@ -537,6 +538,99 @@
     </div>
   </section>
 
+  <!-- ──── ADMIN PANEL ──── -->
+  <section id="section-admin" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">⚙️</span> Panel de Administración</h2>
+        <span class="admin-badge">🔒 Solo Admins</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs" style="margin-bottom:1.5rem">
+        <button class="tab-btn active" data-admin-tab="users">👥 Usuarios</button>
+        <button class="tab-btn"        data-admin-tab="payments">💳 Compras</button>
+      </div>
+
+      <!-- ── TAB: USUARIOS ── -->
+      <div id="admin-tab-users">
+        <!-- Buscador -->
+        <div class="admin-search-bar">
+          <input type="text" id="admin-search-input" class="form-input" placeholder="Buscar por nombre de cuenta...">
+          <button class="btn btn-primary" onclick="searchAdminUsers()">🔍 Buscar</button>
+        </div>
+
+        <!-- Tabla de resultados -->
+        <div class="table-wrap" style="margin-top:1rem">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Cuenta</th>
+                <th>Email</th>
+                <th>Access Level</th>
+                <th>🪙 WebCoins</th>
+                <th>Estado</th>
+                <th>Último Login</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <tr><td colspan="7" class="text-center text-muted" style="padding:2rem">
+                Escribe un nombre de cuenta para buscar
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: COMPRAS ── -->
+      <div id="admin-tab-payments" class="hidden">
+        <!-- Filtro por estado -->
+        <div class="admin-payments-filter">
+          <label class="form-label">Filtrar por estado:</label>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn btn-sm btn-primary   admin-status-btn active" data-status="all">Todos</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="approved">✅ Aprobados</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="pending">⏳ Pendientes</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="rejected">❌ Rechazados</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="cancelled">🚫 Cancelados</button>
+          </div>
+          <span id="admin-payments-total" class="text-muted" style="margin-left:auto;font-size:.85rem"></span>
+        </div>
+
+        <!-- Tabla de compras -->
+        <div class="table-wrap" style="margin-top:1rem">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cuenta</th>
+                <th>Paquete</th>
+                <th>🪙 Coins</th>
+                <th>Monto</th>
+                <th>Proveedor</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="admin-payments-tbody">
+              <tr><td colspan="8" class="text-center">
+                <div class="spinner" style="margin:2rem auto"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem">
+          <button class="btn btn-secondary btn-sm" id="btn-admin-payments-prev" onclick="adminPaymentsPage(-1)" disabled>← Anterior</button>
+          <span id="admin-payments-page" class="text-muted" style="display:flex;align-items:center">Página 1</span>
+          <button class="btn btn-secondary btn-sm" id="btn-admin-payments-next" onclick="adminPaymentsPage(1)">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <!-- ================================================================
@@ -600,6 +694,68 @@
       <button class="btn btn-secondary btn-full" onclick="closeModal('inactivity-warning'); logout()">Salir</button>
       <button class="btn btn-primary btn-full" onclick="closeModal('inactivity-warning'); window.inactivityManager?.resetTimer()">Extender sesión</button>
     </div>
+  </div>
+</div>
+
+<!-- ── Modal: Admin Edit User ── -->
+<div class="modal-overlay" id="modal-admin-edit">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3 class="modal-title">⚙️ Editar: <span id="admin-edit-login-title">—</span></h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Info rápida -->
+    <div class="admin-user-card" id="admin-edit-info-card">
+      <div class="auc-item"><span class="auc-label">Coins actuales</span><span id="auc-coins" class="auc-value">—</span></div>
+      <div class="auc-item"><span class="auc-label">Estado ban</span><span id="auc-ban" class="auc-value">—</span></div>
+      <div class="auc-item"><span class="auc-label">Access Level</span><span id="auc-level" class="auc-value">—</span></div>
+    </div>
+
+    <!-- ── Sección: WebCoins ── -->
+    <div class="admin-modal-section">
+      <h4 class="admin-section-title">🪙 WebCoins</h4>
+      <div class="admin-coins-actions">
+        <button class="btn btn-sm coin-action-btn active" data-action="add" onclick="selectCoinAction('add', this)">+ Sumar</button>
+        <button class="btn btn-sm coin-action-btn" data-action="subtract" onclick="selectCoinAction('subtract', this)">− Restar</button>
+        <button class="btn btn-sm coin-action-btn" data-action="set" onclick="selectCoinAction('set', this)">= Establecer</button>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.75rem;align-items:center">
+        <input type="number" id="admin-coins-amount" class="form-input" min="0" max="999999" value="100" style="flex:1">
+        <button class="btn btn-primary" onclick="adminSaveCoins()">Aplicar</button>
+      </div>
+      <div id="admin-coins-result" class="form-hint" style="margin-top:.5rem"></div>
+    </div>
+
+    <!-- ── Sección: Datos de cuenta ── -->
+    <div class="admin-modal-section">
+      <h4 class="admin-section-title">📋 Datos de cuenta</h4>
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label class="form-label">Nuevo Email</label>
+        <input type="email" id="admin-edit-email" class="form-input" placeholder="correo@ejemplo.com">
+      </div>
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label class="form-label">Nueva Contraseña</label>
+        <input type="password" id="admin-edit-password" class="form-input" placeholder="Dejar vacío para no cambiar">
+      </div>
+      <button class="btn btn-secondary btn-full" onclick="adminSaveAccount()">💾 Guardar Cambios</button>
+    </div>
+
+    <!-- ── Sección: Ban ── -->
+    <div class="admin-modal-section">
+      <h4 class="admin-section-title">🔨 Gestión de Ban</h4>
+      <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+        <div class="form-group" style="flex:1;min-width:120px;margin-bottom:0">
+          <label class="form-label">Días de ban</label>
+          <input type="number" id="admin-ban-days" class="form-input" min="0" value="7" placeholder="0 = permanente">
+        </div>
+        <button class="btn btn-danger" onclick="adminBanUser()">🔨 Banear</button>
+        <button class="btn btn-secondary" onclick="adminUnbanUser()">✅ Desbanear</button>
+      </div>
+      <div class="form-hint" style="margin-top:.5rem">Días = 0 aplica ban permanente.</div>
+    </div>
+
+    <input type="hidden" id="admin-edit-login-value">
   </div>
 </div>
 

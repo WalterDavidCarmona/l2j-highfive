@@ -596,6 +596,105 @@ main { padding-top: 64px; position: relative; z-index: 1; }
 }
 
 /* ====================================================================
+   ADMIN PANEL
+   ==================================================================== */
+.admin-badge {
+  background: rgba(245,158,11,.15);
+  border: 1px solid rgba(245,158,11,.4);
+  color: var(--gold);
+  font-size: .78rem;
+  font-weight: 700;
+  padding: .25rem .65rem;
+  border-radius: 999px;
+  letter-spacing: .5px;
+}
+
+/* Search bar */
+.admin-search-bar {
+  display: flex; gap: .75rem; align-items: center;
+}
+.admin-search-bar .form-input {
+  flex: 1;
+}
+
+/* User card inside modal */
+.admin-user-card {
+  display: flex; gap: .75rem; flex-wrap: wrap;
+  background: rgba(0,212,255,.06);
+  border: 1px solid rgba(0,212,255,.2);
+  border-radius: var(--radius);
+  padding: .875rem 1rem;
+  margin-bottom: 1rem;
+}
+.auc-item   { display: flex; flex-direction: column; gap: .15rem; min-width: 110px; }
+.auc-label  { font-size: .72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
+.auc-value  { font-size: 1rem; font-weight: 700; color: var(--cyan); }
+
+/* Modal sections */
+.admin-modal-section {
+  border-top: 1px solid var(--border);
+  padding: 1rem 0;
+}
+.admin-section-title {
+  font-family: var(--font-title); font-size: .9rem;
+  color: var(--text-dim); margin-bottom: .75rem;
+  letter-spacing: .5px;
+}
+
+/* Coin action buttons */
+.admin-coins-actions { display: flex; gap: .5rem; }
+.coin-action-btn {
+  flex: 1; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  transition: all .2s;
+}
+.coin-action-btn.active,
+.coin-action-btn:hover {
+  background: rgba(0,212,255,.15);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* Payments filter */
+.admin-payments-filter {
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+  margin-bottom: .5rem;
+}
+.admin-status-btn.active {
+  background: var(--cyan-dim);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* Status badge in payments table */
+.badge-status {
+  display: inline-block; padding: .2rem .55rem;
+  border-radius: 999px; font-size: .78rem; font-weight: 700; white-space: nowrap;
+}
+.badge-status.approved  { background: rgba(34,197,94,.15);  color: var(--green); }
+.badge-status.pending   { background: rgba(245,158,11,.15); color: var(--gold);  }
+.badge-status.rejected  { background: rgba(239,68,68,.15);  color: var(--red);   }
+.badge-status.cancelled { background: rgba(100,116,139,.15);color: var(--text-muted); }
+.badge-status.refunded  { background: rgba(124,58,237,.15); color: #a78bfa;      }
+
+/* Ban button */
+.btn-danger {
+  background: rgba(239,68,68,.15);
+  border: 1px solid rgba(239,68,68,.4);
+  color: var(--red);
+  padding: .5rem 1rem; border-radius: var(--radius); cursor: pointer;
+  font-weight: 600; transition: all .2s;
+}
+.btn-danger:hover {
+  background: rgba(239,68,68,.3);
+  border-color: var(--red);
+}
+
+/* User row ban indicator */
+.ban-active { color: var(--red); font-size: .8rem; font-weight: 700; }
+.ban-none   { color: var(--green); font-size: .8rem; }
+
+/* ====================================================================
    USER PANEL (Dashboard)
    ==================================================================== */
 .panel-grid { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; }

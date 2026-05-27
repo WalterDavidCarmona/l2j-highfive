@@ -175,6 +175,7 @@ function navigate(sectionId) {
     case 'recharge':  loadRecharge();   break;
     case 'panel':     loadPanel();      break;
     case 'home':      loadHome();       break;
+    case 'admin':     loadAdmin();      break;
   }
 }
 
@@ -189,6 +190,12 @@ document.querySelectorAll('[data-nav]').forEach(el => {
       openModal('login');
       showToast('Inicia sesión para continuar', 'warning');
       return;
+    }
+    if (target === 'admin') {
+      if (!api.isLoggedIn) { openModal('login'); showToast('Inicia sesión para continuar', 'warning'); return; }
+      if (!currentUser?.account || currentUser.account.accessLevel < 100) {
+        showToast('Sin permisos de administrador', 'error'); return;
+      }
     }
     navigate(target);
     // Cerrar menú mobile
@@ -242,6 +249,12 @@ function updateAuthUI() {
   if (currentUser) {
     document.getElementById('nav-username')?.textContent &&
       (document.getElementById('nav-username').textContent = currentUser.account?.login || '');
+  }
+  // Mostrar/ocultar link de Admin según accessLevel
+  const adminNav = document.getElementById('nav-admin-item');
+  if (adminNav) {
+    const isAdmin = loggedIn && currentUser?.account?.accessLevel >= 100;
+    adminNav.classList.toggle('hidden', !isAdmin);
   }
 }
 
@@ -1507,6 +1520,283 @@ function formatDate(d) {
   return isNaN(date) ? String(d).substring(0,10) :
     date.toLocaleDateString('es-AR', { day:'2-digit', month:'short', year:'numeric' });
 }
+
+/* ====================================================================
+   ADMIN PANEL
+   ==================================================================== */
+
+// Estado del panel de admin
+let adminCurrentPage = 0;
+let adminCurrentStatus = 'all';
+let adminCurrentCoinAction = 'add';
+const ADMIN_PAGE_SIZE = 50;
+
+/** Carga inicial del panel admin */
+function loadAdmin() {
+  if (!currentUser?.account || currentUser.account.accessLevel < 100) {
+    showToast('Acceso denegado', 'error');
+    navigate('home');
+    return;
+  }
+  // Tab inicial: usuarios
+  document.querySelectorAll('[data-admin-tab]').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-admin-tab="users"]')?.classList.add('active');
+  document.getElementById('admin-tab-users')?.classList.remove('hidden');
+  document.getElementById('admin-tab-payments')?.classList.add('hidden');
+}
+
+/** Tabs del panel admin */
+document.querySelectorAll('[data-admin-tab]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.adminTab;
+    document.querySelectorAll('[data-admin-tab]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('admin-tab-users')?.classList.toggle('hidden', tab !== 'users');
+    document.getElementById('admin-tab-payments')?.classList.toggle('hidden', tab !== 'payments');
+    if (tab === 'payments') {
+      adminCurrentPage = 0;
+      loadAdminPayments(adminCurrentStatus);
+    }
+  });
+});
+
+/** Búsqueda de usuarios admin */
+async function searchAdminUsers() {
+  const q = document.getElementById('admin-search-input')?.value.trim();
+  if (!q) { showToast('Escribe un nombre para buscar', 'warning'); return; }
+
+  const tbody = document.getElementById('admin-users-tbody');
+  tbody.innerHTML = `<tr><td colspan="7" class="text-center"><div class="spinner" style="margin:1.5rem auto"></div></td></tr>`;
+
+  try {
+    const { users } = await api.adminSearchUsers(q);
+    if (!users.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:2rem">Sin resultados para "${escHtml(q)}"</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = users.map(u => {
+      const banStatus = u.ban_until
+        ? (parseInt(u.ban_until) >= 9999999990
+          ? `<span class="ban-active">🔨 Permanente</span>`
+          : `<span class="ban-active">🔨 ${new Date(parseInt(u.ban_until)*1000).toLocaleDateString('es-AR')}</span>`)
+        : `<span class="ban-none">✅ Libre</span>`;
+      const levelBadge = u.accessLevel >= 100
+        ? `<span class="badge-status approved">${u.accessLevel} Admin</span>`
+        : `<span style="color:var(--text-muted)">${u.accessLevel}</span>`;
+      return `<tr>
+        <td><strong>${escHtml(u.login)}</strong></td>
+        <td style="color:var(--text-dim)">${escHtml(u.email||'—')}</td>
+        <td>${levelBadge}</td>
+        <td><strong style="color:var(--cyan)">🪙 ${(u.web_coins||0).toLocaleString()}</strong></td>
+        <td>${banStatus}</td>
+        <td style="color:var(--text-muted);font-size:.82rem">${formatDate(u.last_login)}</td>
+        <td><button class="btn btn-sm btn-secondary" onclick="openAdminEditModal('${escHtml(u.login)}')">✏️ Editar</button></td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="color:var(--red)">Error: ${escHtml(err.message)}</td></tr>`;
+  }
+}
+
+// Enter key en el buscador
+document.getElementById('admin-search-input')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') searchAdminUsers();
+});
+
+/** Abre modal de edición con datos del usuario */
+async function openAdminEditModal(login) {
+  try {
+    const { user } = await api.adminGetUser(login);
+    document.getElementById('admin-edit-login-title').textContent = user.login;
+    document.getElementById('admin-edit-login-value').value = user.login;
+    document.getElementById('auc-coins').textContent = `🪙 ${(user.web_coins||0).toLocaleString()}`;
+    document.getElementById('auc-level').textContent = user.accessLevel;
+
+    const banEl = document.getElementById('auc-ban');
+    if (!user.ban_until) {
+      banEl.textContent = '✅ Sin ban';
+      banEl.style.color = 'var(--green)';
+    } else if (parseInt(user.ban_until) >= 9999999990) {
+      banEl.textContent = '🔨 Ban permanente';
+      banEl.style.color = 'var(--red)';
+    } else {
+      banEl.textContent = `🔨 Hasta ${new Date(parseInt(user.ban_until)*1000).toLocaleDateString('es-AR')}`;
+      banEl.style.color = 'var(--red)';
+    }
+
+    document.getElementById('admin-edit-email').value = user.email || '';
+    document.getElementById('admin-edit-password').value = '';
+    document.getElementById('admin-coins-result').textContent = '';
+
+    // Reset coin action
+    selectCoinAction('add', document.querySelector('[data-action="add"]'));
+
+    openModal('admin-edit');
+  } catch (err) {
+    showToast('Error al cargar usuario: ' + err.message, 'error');
+  }
+}
+
+/** Selecciona la acción de coins (add/subtract/set) */
+function selectCoinAction(action, btn) {
+  adminCurrentCoinAction = action;
+  document.querySelectorAll('.coin-action-btn').forEach(b => b.classList.remove('active'));
+  btn?.classList.add('active');
+}
+
+/** Guarda el ajuste de coins */
+async function adminSaveCoins() {
+  const login  = document.getElementById('admin-edit-login-value').value;
+  const amount = parseInt(document.getElementById('admin-coins-amount').value);
+  const resultEl = document.getElementById('admin-coins-result');
+
+  if (!login || isNaN(amount) || amount < 0) {
+    resultEl.textContent = '⚠️ Cantidad inválida';
+    return;
+  }
+
+  try {
+    const { web_coins } = await api.adminUpdateCoins(login, adminCurrentCoinAction, amount);
+    resultEl.textContent = `✅ Saldo actualizado: 🪙 ${web_coins.toLocaleString()} coins`;
+    document.getElementById('auc-coins').textContent = `🪙 ${web_coins.toLocaleString()}`;
+    showToast(`Coins de ${login} actualizados a ${web_coins}`, 'success');
+    // Refrescar tabla si está visible
+    const q = document.getElementById('admin-search-input')?.value.trim();
+    if (q) searchAdminUsers();
+  } catch (err) {
+    resultEl.textContent = '❌ ' + err.message;
+    showToast(err.message, 'error');
+  }
+}
+
+/** Guarda email y/o contraseña */
+async function adminSaveAccount() {
+  const login    = document.getElementById('admin-edit-login-value').value;
+  const email    = document.getElementById('admin-edit-email').value.trim();
+  const password = document.getElementById('admin-edit-password').value;
+
+  if (!email && !password) {
+    showToast('No hay cambios que guardar', 'warning');
+    return;
+  }
+
+  const payload = {};
+  if (email)    payload.email    = email;
+  if (password) payload.password = password;
+
+  try {
+    const { changes } = await api.adminUpdateUser(login, payload);
+    showToast(`✅ Actualizado: ${changes.join(', ')}`, 'success');
+    if (password) document.getElementById('admin-edit-password').value = '';
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/** Banea al usuario */
+async function adminBanUser() {
+  const login = document.getElementById('admin-edit-login-value').value;
+  const days  = parseInt(document.getElementById('admin-ban-days').value) || 0;
+  const label = days === 0 ? 'permanente' : `${days} días`;
+
+  if (!confirm(`¿Confirmas banear a "${login}" (${label})?`)) return;
+
+  try {
+    await api.adminUpdateUser(login, { ban: { days } });
+    showToast(`🔨 ${login} baneado (${label})`, 'success');
+    // Actualizar info card
+    const banEl = document.getElementById('auc-ban');
+    if (days === 0) {
+      banEl.textContent = '🔨 Ban permanente'; banEl.style.color = 'var(--red)';
+    } else {
+      const d = new Date(Date.now() + days*86400000);
+      banEl.textContent = `🔨 Hasta ${d.toLocaleDateString('es-AR')}`; banEl.style.color = 'var(--red)';
+    }
+    const q = document.getElementById('admin-search-input')?.value.trim();
+    if (q) searchAdminUsers();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/** Desbanea al usuario */
+async function adminUnbanUser() {
+  const login = document.getElementById('admin-edit-login-value').value;
+  if (!confirm(`¿Confirmas remover el ban de "${login}"?`)) return;
+
+  try {
+    await api.adminUpdateUser(login, { ban: null });
+    showToast(`✅ Ban removido de ${login}`, 'success');
+    const banEl = document.getElementById('auc-ban');
+    banEl.textContent = '✅ Sin ban'; banEl.style.color = 'var(--green)';
+    const q = document.getElementById('admin-search-input')?.value.trim();
+    if (q) searchAdminUsers();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+/** Carga la tabla de compras */
+async function loadAdminPayments(status) {
+  adminCurrentStatus = status || 'all';
+  const tbody   = document.getElementById('admin-payments-tbody');
+  const totalEl = document.getElementById('admin-payments-total');
+  const pageEl  = document.getElementById('admin-payments-page');
+
+  // Resaltar botón activo
+  document.querySelectorAll('.admin-status-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.status === adminCurrentStatus);
+  });
+
+  tbody.innerHTML = `<tr><td colspan="8" class="text-center"><div class="spinner" style="margin:2rem auto"></div></td></tr>`;
+
+  try {
+    const { payments, total } = await api.adminGetPayments(adminCurrentStatus, ADMIN_PAGE_SIZE, adminCurrentPage * ADMIN_PAGE_SIZE);
+
+    totalEl.textContent = `Total: ${total} registro${total !== 1 ? 's' : ''}`;
+    pageEl.textContent  = `Página ${adminCurrentPage + 1}`;
+
+    document.getElementById('btn-admin-payments-prev').disabled = adminCurrentPage === 0;
+    document.getElementById('btn-admin-payments-next').disabled = (adminCurrentPage + 1) * ADMIN_PAGE_SIZE >= total;
+
+    if (!payments.length) {
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted" style="padding:2rem">Sin registros</td></tr>`;
+      return;
+    }
+
+    const providerIcon = { mercadopago: '💳', paypal: '🅿️' };
+    tbody.innerHTML = payments.map(p => {
+      const statusCls = { approved:'approved', pending:'pending', rejected:'rejected', cancelled:'cancelled', refunded:'refunded' };
+      const statusLabel = { approved:'✅ Aprobado', pending:'⏳ Pendiente', rejected:'❌ Rechazado', cancelled:'🚫 Cancelado', refunded:'↩️ Reembolsado' };
+      return `<tr>
+        <td style="color:var(--text-muted);font-size:.82rem">#${p.id}</td>
+        <td><strong>${escHtml(p.account_name)}</strong></td>
+        <td style="font-size:.85rem">${escHtml(p.package_name || '—')}</td>
+        <td style="color:var(--cyan)">🪙 ${p.coins.toLocaleString()}</td>
+        <td>${p.currency === 'USD' ? '$' : 'ARS$'} ${parseFloat(p.amount).toLocaleString()}</td>
+        <td>${providerIcon[p.provider] || '?'} ${p.provider}</td>
+        <td><span class="badge-status ${statusCls[p.status]||''}">${statusLabel[p.status]||p.status}</span></td>
+        <td style="color:var(--text-muted);font-size:.8rem">${formatDate(p.created_at)}</td>
+      </tr>`;
+    }).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="color:var(--red)">Error: ${escHtml(err.message)}</td></tr>`;
+  }
+}
+
+/** Paginación de compras */
+function adminPaymentsPage(delta) {
+  adminCurrentPage = Math.max(0, adminCurrentPage + delta);
+  loadAdminPayments(adminCurrentStatus);
+}
+
+// Filtros de estado en tabla de compras
+document.querySelectorAll('.admin-status-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    adminCurrentPage = 0;
+    loadAdminPayments(btn.dataset.status);
+  });
+});
 
 /* ====================================================================
    INIT
