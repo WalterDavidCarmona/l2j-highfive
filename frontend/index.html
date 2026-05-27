@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Servidor privado de Lineage 2 H5 - Panel de cuentas, rankings, tienda y más">
+  <meta name="theme-color" content="#070710">
+  <title>L2 H5 Server — Panel Oficial</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- Particles Background -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ================================================================
+     NAVBAR
+     ================================================================ -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <span style="font-size:1.8rem">⚔️</span>
+    <div>
+      <span>L2 H5 SERVER</span>
+      <span class="sub">LINEAGE II</span>
+    </div>
+  </div>
+
+  <ul class="navbar-links">
+    <li><a href="#" data-nav="home"     class="active"><span class="icon">🏠</span> Inicio</a></li>
+    <li><a href="#" data-nav="rankings"><span class="icon">🏆</span> Rankings</a></li>
+    <li><a href="#" data-nav="news"    ><span class="icon">📰</span> Noticias</a></li>
+    <li><a href="#" data-nav="shop"    ><span class="icon">🛒</span> Tienda</a></li>
+    <li><a href="#" data-nav="panel"   ><span class="icon">👤</span> Mi Panel</a></li>
+  </ul>
+
+  <div class="navbar-actions">
+    <div class="online-badge" id="nav-online">
+      <span id="nav-online-count">...</span> online
+    </div>
+    <!-- Logged out -->
+    <div data-auth-show="guest">
+      <button class="btn btn-secondary btn-sm" onclick="openModal('login')">Iniciar Sesión</button>
+      <button class="btn btn-primary btn-sm"   onclick="openModal('register')">Registrarse</button>
+    </div>
+    <!-- Logged in -->
+    <div data-auth-show="logged" class="hidden" style="display:flex;align-items:center;gap:.5rem">
+      <span style="font-size:.85rem;color:var(--text-dim)">👤 <span id="nav-username"></span></span>
+      <button class="btn btn-secondary btn-sm" id="btn-logout">Salir</button>
+    </div>
+  </div>
+
+  <button class="hamburger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ================================================================
+     MAIN CONTENT
+     ================================================================ -->
+<main>
+
+  <!-- ──── HOME ──── -->
+  <section id="section-home" class="section active" style="padding:0">
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-content container">
+        <div class="hero-eyebrow">Servidor Privado de Lineage 2</div>
+        <h1 class="hero-title">
+          <span class="line1">LINEAGE II</span>
+          <span class="line2">CHRONICLE — HIGH FIVE</span>
+        </h1>
+        <p class="hero-subtitle">
+          El mejor servidor H5 con zonas PvP rotativas, eventos únicos y una comunidad activa.
+          Únete ahora y demuestra tu poder en las arenas de batalla.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openModal('register')">
+            ⚔️ Crear Cuenta
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="navigate('rankings')">
+            🏆 Ver Rankings
+          </button>
+        </div>
+
+        <!-- Zona PvP activa -->
+        <div class="pvpzone-widget" style="margin-top:3rem;max-width:600px;margin-left:auto;margin-right:auto">
+          <div class="pvpzone-icon">🗡️</div>
+          <div class="pvpzone-info">
+            <div class="pvpzone-label">⚡ ZONA PvP ACTIVA AHORA</div>
+            <div class="pvpzone-name" id="home-pvpzone">Cargando...</div>
+            <div class="pvpzone-players">Zona rotativa — cambia cada hora</div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="navigate('rankings');document.querySelector('[data-ranking-tab=pvpzone]').click()">
+            Ver Ranking
+          </button>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="hero-stats" style="max-width:600px;margin:0 auto">
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-online">...</div>
+            <div class="hero-stat-label">Online</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-accounts">...</div>
+            <div class="hero-stat-label">Cuentas</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-chars">...</div>
+            <div class="hero-stat-label">Personajes</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value text-gold">H5</div>
+            <div class="hero-stat-label">Chronicle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="container" style="padding:4rem 2rem">
+      <h2 class="section-title" style="text-align:center;margin-bottom:2.5rem">
+        ¿Por qué elegir nuestro servidor?
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem">
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">🗡️</div>
+          <h3 style="margin-bottom:.5rem;color:var(--cyan)">Zona PvP Rotativa</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">Dos zonas únicas que rotan cada hora. Coliseo de Giran y Catacumbas de los Sacrificados.</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">🏆</div>
+          <h3 style="margin-bottom:.5rem;color:var(--purple)">Rankings en Tiempo Real</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">Compite en PvP, PK, Olimpiadas y Zonas PvP. Tu nombre en la cima.</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">🛒</div>
+          <h3 style="margin-bottom:.5rem;color:var(--gold)">Tienda Web</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">Ítems exclusivos con monedas web. Entrega instantánea a tu personaje.</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">⚡</div>
+          <h3 style="margin-bottom:.5rem;color:var(--green)">Alta Estabilidad</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">L2JMobius optimizado con protección anti-DDoS. Uptime garantizado.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-brand">⚔️ L2 H5 SERVER</div>
+      <p>Servidor privado de Lineage 2 High Five — L2JMobius</p>
+      <div class="footer-links">
+        <a href="#" onclick="navigate('news')">Noticias</a>
+        <a href="#" onclick="navigate('rankings')">Rankings</a>
+        <a href="#" onclick="navigate('shop')">Tienda</a>
+        <a href="#" onclick="openModal('register')">Registrarse</a>
+      </div>
+      <p style="margin-top:1rem;font-size:.72rem">© 2026 L2H5 Server. Fansite no oficial de Lineage 2.</p>
+    </footer>
+  </section>
+
+  <!-- ──── RANKINGS ──── -->
+  <section id="section-rankings" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🏆</span> Rankings</h2>
+        <div class="online-badge">
+          <span id="online-players-count">...</span> jugadores online
+        </div>
+      </div>
+
+      <!-- PvP Zone Widget -->
+      <div class="pvpzone-widget">
+        <div class="pvpzone-icon">🗡️</div>
+        <div class="pvpzone-info">
+          <div class="pvpzone-label">⚡ ZONA PvP ACTIVA</div>
+          <div class="pvpzone-name" id="ranking-pvpzone">Cargando...</div>
+          <div class="pvpzone-players" id="ranking-pvpzone-players">...</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <div class="tabs">
+          <button class="tab-btn active" data-ranking-tab="pvp">⚔️ Top PvP</button>
+          <button class="tab-btn"        data-ranking-tab="pk">💀 Top PK</button>
+          <button class="tab-btn"        data-ranking-tab="pvpzone">🏆 Zona PvP</button>
+          <button class="tab-btn"        data-ranking-tab="clans">🛡️ Clanes</button>
+          <button class="tab-btn"        data-ranking-tab="olympiad">🏅 Olimpiada</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Personaje / Clan</th>
+              <th>Nivel</th>
+              <th>Clase</th>
+              <th>Kills</th>
+              <th>PK / Extra</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-tbody">
+            <tr><td colspan="7" class="text-center text-muted" style="padding:3rem">Selecciona una categoría</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── NEWS ──── -->
+  <section id="section-news" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">📰</span> Noticias & Eventos</h2>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="newsFilter('')">Todos</button>
+          <button class="tab-btn" onclick="newsFilter('news')">Noticias</button>
+          <button class="tab-btn" onclick="newsFilter('event')">Eventos</button>
+          <button class="tab-btn" onclick="newsFilter('update')">Updates</button>
+        </div>
+      </div>
+
+      <div class="news-grid">
+        <div>
+          <div id="news-main" style="display:flex;flex-direction:column;gap:1.25rem"></div>
+          <div style="text-align:center;margin-top:1.5rem">
+            <button class="btn btn-secondary" id="news-load-more">Cargar más</button>
+          </div>
+        </div>
+        <div class="news-side">
+          <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">
+            Recientes
+          </h3>
+          <div id="news-sidebar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── SHOP ──── -->
+  <section id="section-shop" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🛒</span> Tienda Web</h2>
+        <div class="flex gap-2" style="align-items:center">
+          <div class="coins-display">
+            🪙 <span id="shop-coins">0</span> Monedas
+          </div>
+        </div>
+      </div>
+
+      <!-- Char select + Categorías -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <div class="tabs">
+          <button class="tab-btn active" data-shop-cat="all">Todo</button>
+          <button class="tab-btn" data-shop-cat="scrolls">📜 Scrolls</button>
+          <button class="tab-btn" data-shop-cat="skills">✨ Skills</button>
+          <button class="tab-btn" data-shop-cat="adena">💰 Adena</button>
+          <button class="tab-btn" data-shop-cat="premium">⭐ Premium</button>
+          <button class="tab-btn" data-shop-cat="boxes">📦 Boxes</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <label class="form-label" style="margin:0;white-space:nowrap">Personaje:</label>
+          <select class="form-select" id="shop-char-select" style="width:auto">
+            <option>Inicia sesión</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="shop-grid" class="shop-grid"></div>
+
+      <!-- Historial -->
+      <div style="margin-top:3rem">
+        <h3 style="margin-bottom:1rem;color:var(--text-dim)">📋 Historial de compras</h3>
+        <button class="btn btn-secondary btn-sm" onclick="loadShopHistory()">Ver historial</button>
+        <div id="shop-history"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── PANEL ──── -->
+  <section id="section-panel" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">👤</span> Mi Panel</h2>
+      </div>
+
+      <div class="panel-grid">
+        <!-- Sidebar -->
+        <div class="panel-sidebar">
+          <div class="account-card">
+            <div class="account-avatar">👤</div>
+            <div class="account-login" id="panel-login">—</div>
+            <div class="account-level">⚔️ Jugador</div>
+            <div class="coins-display mt-1">🪙 <span id="panel-coins">0</span> monedas</div>
+          </div>
+
+          <div class="card" style="margin-top:0">
+            <ul class="sidebar-nav">
+              <li><a href="#" onclick="showPanelTab('chars')" class="active">⚔️ Mis Personajes</a></li>
+              <li><a href="#" onclick="showPanelTab('account')">🔒 Cuenta</a></li>
+              <li><a href="#" onclick="showPanelTab('history')">📋 Historial</a></li>
+              <li><a href="#" onclick="navigate('shop')">🛒 Ir a Tienda</a></li>
+            </ul>
+          </div>
+
+          <div class="card" style="margin-top:1rem;font-size:.82rem;color:var(--text-muted)">
+            <div class="mb-1">🌐 Última IP:<br><strong id="panel-lastip">—</strong></div>
+            <div>📅 Último acceso:<br><strong id="panel-lastactive">—</strong></div>
+          </div>
+        </div>
+
+        <!-- Main -->
+        <div class="panel-main">
+
+          <!-- Personajes -->
+          <div id="panel-tab-chars">
+            <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Mis Personajes</h3>
+            <div id="panel-chars" class="char-grid"></div>
+          </div>
+
+          <!-- Cuenta -->
+          <div id="panel-tab-account" class="hidden">
+            <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Seguridad de la Cuenta</h3>
+            <div class="card" style="max-width:480px">
+              <h4 style="margin-bottom:1.25rem">Cambiar Contraseña</h4>
+              <form id="form-change-pass">
+                <div class="form-group">
+                  <label class="form-label">Contraseña actual</label>
+                  <input type="password" id="cp-current" class="form-input" required placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nueva contraseña</label>
+                  <input type="password" id="cp-new" class="form-input" required placeholder="Mínimo 6 caracteres">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Confirmar nueva contraseña</label>
+                  <input type="password" id="cp-confirm" class="form-input" required placeholder="Repite la nueva contraseña">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Cambiar Contraseña</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Historial -->
+          <div id="panel-tab-history" class="hidden">
+            <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Historial de Compras</h3>
+            <button class="btn btn-secondary btn-sm mb-2" onclick="loadPanelHistory()">Cargar historial</button>
+            <div id="panel-history"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================================================================
+     MODALS
+     ================================================================ -->
+
+<!-- Login -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">🗡️ Iniciar Sesión</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <form id="form-login">
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <input type="text" id="login-user" class="form-input" required
+               placeholder="Tu nombre de cuenta" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" id="login-pass" class="form-input" required
+               placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg">INICIAR SESIÓN</button>
+    </form>
+    <div class="modal-divider">¿No tienes cuenta?</div>
+    <button class="btn btn-secondary btn-full" onclick="openModal('register')">Crear cuenta gratis</button>
+  </div>
+</div>
+
+<!-- Register -->
+<div class="modal-overlay" id="modal-register">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">⚔️ Crear Cuenta</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <form id="form-register">
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <input type="text" id="reg-login" class="form-input" required
+               placeholder="4-14 caracteres (a-z, 0-9, _)" autocomplete="username">
+        <div class="form-hint">Solo letras minúsculas, números y guión bajo</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" id="reg-password" class="form-input" required
+               placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <input type="password" id="reg-confirm" class="form-input" required
+               placeholder="Repite la contraseña" autocomplete="new-password">
+      </div>
+      <div class="form-hint" style="margin-bottom:1rem">
+        ⚠️ Esta cuenta se usará para conectarte al servidor de juego.
+      </div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg">CREAR CUENTA</button>
+    </form>
+    <div class="modal-divider">¿Ya tienes cuenta?</div>
+    <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ================================================================
+     SCRIPTS
+     ================================================================ -->
+<script src="assets/js/api.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+/* Extra funciones llamadas desde HTML inline */
+
+function newsFilter(type) {
+  // Marcar tab activo
+  document.querySelectorAll('#section-news .tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['', 'news', 'event', 'update'][i] === type);
+  });
+  // Reset y recargar
+  document.getElementById('news-sidebar').innerHTML = '';
+  api._newsType = type;
+  // Override temporal
+  const origGetNews = api.getNews.bind(api);
+  loadNews = async function(reset = true) {
+    if (reset) newsOffset = 0;
+    const mainGrid = document.getElementById('news-main');
+    const sideList = document.getElementById('news-sidebar');
+    if (reset && mainGrid) mainGrid.innerHTML = '<div class="flex-center" style="padding:3rem"><div class="spinner"></div></div>';
+    try {
+      const res = await api.getNews(NEWS_LIMIT, newsOffset, type);
+      const items = res.items || [];
+      if (reset) mainGrid.innerHTML = '';
+      items.forEach((item, i) => {
+        const el = document.createElement('div');
+        el.className = `news-card ${item.pinned ? 'pinned' : ''}`;
+        const typeIcons = { news:'📰', event:'⚔️', update:'🔧', maintenance:'🛠️' };
+        el.innerHTML = `<div class="news-img">${typeIcons[item.type]||'📰'}<span class="news-type-badge ${item.type}">${item.type}</span></div><div class="news-body"><div class="news-title">${item.pinned?'📌 ':''}${escHtml(item.title)}</div><div class="news-excerpt">${escHtml((item.content||'').substring(0,140))}${item.content?.length>140?'...':''}</div><div class="news-meta"><span>👤 ${escHtml(item.author||'Admin')}</span><span>📅 ${formatDate(item.created_at)}</span></div></div>`;
+        mainGrid.appendChild(el);
+      });
+      newsOffset += items.length;
+      const btn = document.getElementById('news-load-more');
+      if (btn) btn.classList.toggle('hidden', newsOffset >= res.total);
+    } catch(err) {
+      if (mainGrid) mainGrid.innerHTML = `<div class="text-red" style="padding:2rem">Error: ${err.message}</div>`;
+    }
+  };
+  loadNews(true);
+}
+
+function showPanelTab(tab) {
+  ['chars','account','history'].forEach(t => {
+    document.getElementById(`panel-tab-${t}`)?.classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('.sidebar-nav a').forEach((a, i) => {
+    a.classList.toggle('active', ['chars','account','history'][i] === tab);
+  });
+}
+
+async function loadShopHistory() {
+  const el = document.getElementById('shop-history');
+  if (!el) return;
+  el.innerHTML = '<div class="flex-center" style="padding:1rem"><div class="spinner"></div></div>';
+  try {
+    const rows = await api.getShopHistory();
+    if (!rows.length) { el.innerHTML = '<p class="text-muted">Sin compras aún.</p>'; return; }
+    el.innerHTML = `<div class="table-wrap" style="margin-top:1rem">
+      <table class="ranking-table"><thead><tr>
+        <th>Ítem</th><th>Personaje</th><th>Precio</th><th>Cantidad</th><th>Fecha</th>
+      </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td>${escHtml(r.item_name)}</td>
+        <td>${escHtml(r.char_name)}</td>
+        <td class="text-gold">🪙 ${r.price_coins}</td>
+        <td>x${r.item_count}</td>
+        <td class="text-muted">${formatDate(r.created_at)}</td>
+      </tr>`).join('')}
+      </tbody></table></div>`;
+  } catch(err) { el.innerHTML = `<p class="text-red">Error: ${err.message}</p>`; }
+}
+
+async function loadPanelHistory() {
+  const el = document.getElementById('panel-history');
+  if (!el) return;
+  el.innerHTML = '<div class="flex-center" style="padding:1rem"><div class="spinner"></div></div>';
+  try {
+    const rows = await api.getShopHistory();
+    if (!rows.length) { el.innerHTML = '<p class="text-muted">Sin compras aún.</p>'; return; }
+    el.innerHTML = `<div class="table-wrap"><table class="ranking-table"><thead><tr>
+      <th>Ítem</th><th>Personaje</th><th>Costo</th><th>Fecha</th>
+    </tr></thead><tbody>
+    ${rows.map(r=>`<tr>
+      <td>${escHtml(r.item_name)}</td><td>${escHtml(r.char_name)}</td>
+      <td class="text-gold">🪙 ${r.price_coins}</td>
+      <td class="text-muted">${formatDate(r.created_at)}</td>
+    </tr>`).join('')}
+    </tbody></table></div>`;
+  } catch(err) { el.innerHTML = `<p class="text-red">${err.message}</p>`; }
+}
+
+// Actualizar online count
+async function refreshOnlineCount() {
+  try {
+    const res = await api.getServerStatus();
+    const count = res.online || 0;
+    document.getElementById('nav-online-count').textContent = count;
+    document.getElementById('online-players-count').textContent = count;
+    document.getElementById('home-pvpzone').textContent = res.pvpZone?.name || '—';
+    document.getElementById('ranking-pvpzone').textContent = res.pvpZone?.name || '—';
+  } catch {}
+}
+refreshOnlineCount();
+setInterval(refreshOnlineCount, 30000);
+</script>
+
+</body>
+</html>

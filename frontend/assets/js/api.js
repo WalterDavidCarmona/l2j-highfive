@@ -1,0 +1,87 @@
+/**
+ * L2H5 API Client
+ * Centraliza todas las llamadas al backend Node.js
+ */
+const API_BASE = '/api';
+
+class L2Api {
+  constructor() {
+    this._token = localStorage.getItem('l2_token');
+  }
+
+  get token()      { return this._token; }
+  get isLoggedIn() { return !!this._token; }
+
+  setToken(t) {
+    this._token = t;
+    if (t) localStorage.setItem('l2_token', t);
+    else   localStorage.removeItem('l2_token');
+  }
+
+  async _fetch(path, options = {}) {
+    const headers = { 'Content-Type': 'application/json', ...options.headers };
+    if (this._token) headers['Authorization'] = `Bearer ${this._token}`;
+
+    const res = await fetch(API_BASE + path, { ...options, headers });
+    const data = await res.json().catch(() => ({ error: 'Respuesta inválida del servidor' }));
+
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  // ── Auth ──────────────────────────────────────────────────────────
+  register(login, password, email)  {
+    return this._fetch('/auth/register', {
+      method: 'POST', body: JSON.stringify({ login, password, email })
+    });
+  }
+  login(login, password) {
+    return this._fetch('/auth/login', {
+      method: 'POST', body: JSON.stringify({ login, password })
+    });
+  }
+  getMe()          { return this._fetch('/auth/me'); }
+  changePassword(currentPassword, newPassword) {
+    return this._fetch('/auth/change-password', {
+      method: 'POST', body: JSON.stringify({ currentPassword, newPassword })
+    });
+  }
+  logout() { this.setToken(null); }
+
+  // ── Server ────────────────────────────────────────────────────────
+  getServerStatus() { return this._fetch('/server/status'); }
+  getPvpZoneInfo()  { return this._fetch('/server/pvpzone'); }
+
+  // ── Rankings ──────────────────────────────────────────────────────
+  getRankingPvp(limit = 50)     { return this._fetch(`/rankings/pvp?limit=${limit}`); }
+  getRankingPk(limit = 50)      { return this._fetch(`/rankings/pk?limit=${limit}`); }
+  getRankingPvpZone(limit = 25) { return this._fetch(`/rankings/pvpzone?limit=${limit}`); }
+  getRankingClans(limit = 25)   { return this._fetch(`/rankings/clans?limit=${limit}`); }
+  getRankingOlympiad(limit = 25){ return this._fetch(`/rankings/olympiad?limit=${limit}`); }
+  getOnlinePlayers()            { return this._fetch('/rankings/online'); }
+
+  // ── News ──────────────────────────────────────────────────────────
+  getNews(limit = 10, offset = 0, type = '') {
+    let q = `/news?limit=${limit}&offset=${offset}`;
+    if (type) q += `&type=${type}`;
+    return this._fetch(q);
+  }
+  getNewsItem(id) { return this._fetch(`/news/${id}`); }
+  createNews(data) {
+    return this._fetch('/news', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  // ── Shop ──────────────────────────────────────────────────────────
+  getShopItems(category = '') {
+    return this._fetch(`/shop/items${category ? '?category=' + category : ''}`);
+  }
+  getShopBalance() { return this._fetch('/shop/balance'); }
+  purchase(itemShopId, charName) {
+    return this._fetch('/shop/purchase', {
+      method: 'POST', body: JSON.stringify({ itemShopId, charName })
+    });
+  }
+  getShopHistory() { return this._fetch('/shop/history'); }
+}
+
+window.api = new L2Api();

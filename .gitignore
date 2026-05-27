@@ -1,0 +1,25 @@
+# ── Entorno / secretos ──────────────────────────────────────────────
+backend/.env
+*.env
+
+# ── Node ────────────────────────────────────────────────────────────
+node_modules/
+backend/node_modules/
+npm-debug.log*
+yarn-error.log
+
+# ── Logs ────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── OS / editores ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ── Build / temporales ──────────────────────────────────────────────
+dist/
+build/
+.tmp/

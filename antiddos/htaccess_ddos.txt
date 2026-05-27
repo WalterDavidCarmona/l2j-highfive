@@ -1,0 +1,92 @@
+# ============================================================
+#  L2H5 Apache .htaccess — Anti-DDoS Rules
+#  Renombrar a .htaccess y colocar en la raíz del sitio web
+#  (si usas Apache en lugar de Nginx)
+# ============================================================
+
+Options -Indexes -ExecCGI
+ServerSignature Off
+
+# ── mod_rewrite ──────────────────────────────────────────────
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Bloquear User-Agents vacíos
+    RewriteCond %{HTTP_USER_AGENT} ^-?$
+    RewriteRule ^ - [R=403,L]
+
+    # Bloquear bots/scanners conocidos
+    RewriteCond %{HTTP_USER_AGENT} (curl|python-requests|masscan|nikto|nmap|sqlmap|zgrab|scrapy|libwww|havij|acunetix) [NC]
+    RewriteRule ^ - [R=403,L]
+
+    # Bloquear métodos HTTP peligrosos
+    RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|DELETE|PUT|PATCH) [NC]
+    RewriteRule ^ - [R=405,L]
+
+    # Proxy SPA → Node.js (si Apache actúa como proxy)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# ── mod_evasive (Anti-DDoS Apache) ──────────────────────────
+# Instalar: sudo apt install libapache2-mod-evasive
+<IfModule mod_evasive24.c>
+    DOSHashTableSize    3097
+    DOSPageCount        10
+    DOSSiteCount        50
+    DOSPageInterval     2
+    DOSSiteInterval     1
+    DOSBlockingPeriod   600
+    DOSLogDir           /var/log/mod_evasive
+    DOSEmailNotify      admin@tu-dominio.com
+</IfModule>
+
+# ── mod_security (WAF) ───────────────────────────────────────
+# Instalar: sudo apt install libapache2-mod-security2
+<IfModule security2_module>
+    SecRuleEngine On
+    SecRequestBodyAccess On
+    SecResponseBodyAccess Off
+    SecRequestBodyLimit 524288
+    # Regla básica: bloquear intentos de SQL injection
+    SecRule ARGS "@rx (union|select|insert|update|delete|drop|create|alter)\s" \
+        "id:1001,phase:2,deny,status:403,msg:'SQL Injection Detected'"
+</IfModule>
+
+# ── Headers de seguridad ─────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+    # Ocultar versión de Apache
+    Header unset Server
+    Header always set Server "L2H5-Server"
+</IfModule>
+
+# ── Proteger archivos sensibles ──────────────────────────────
+<FilesMatch "\.(env|log|sql|json|htaccess|config)$">
+    Require all denied
+</FilesMatch>
+
+# ── Rate limiting básico con mod_ratelimit ───────────────────
+<IfModule mod_ratelimit.c>
+    <Location /api/auth>
+        SetOutputFilter RATE_LIMIT
+        SetEnv rate-limit 400
+    </Location>
+</IfModule>
+
+# ── Caché de estáticos ───────────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css            "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/png           "access plus 30 days"
+    ExpiresByType image/jpeg          "access plus 30 days"
+</IfModule>
