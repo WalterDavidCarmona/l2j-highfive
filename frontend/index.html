@@ -1332,8 +1332,60 @@
 <!-- ================================================================
      SCRIPTS
      ================================================================ -->
-<script src="assets/js/api.js"></script>
-<script src="assets/js/main.js"></script>
+<!-- DevTools protection — must load before app scripts -->
+<script>
+(function(){
+  // 1. Deshabilitar click derecho
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+  // 2. Bloquear atajos de teclado de DevTools
+  document.addEventListener('keydown', function(e){
+    // F12
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+    // Ctrl+Shift+I / Cmd+Option+I
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) { e.preventDefault(); return false; }
+    // Ctrl+Shift+J / Cmd+Option+J
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) { e.preventDefault(); return false; }
+    // Ctrl+Shift+C / Cmd+Option+C
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'C' || e.key === 'c')) { e.preventDefault(); return false; }
+    // Ctrl+U (ver fuente)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) { e.preventDefault(); return false; }
+    // Ctrl+S (guardar página)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
+  });
+
+  // 3. Silenciar consola — sobreescribir métodos nativos
+  var noop = function(){};
+  var methods = ['log','warn','error','info','debug','table','trace','dir','dirxml','group','groupEnd','time','timeEnd','assert','profile','profileEnd'];
+  if (window.console) {
+    methods.forEach(function(m){ try{ console[m] = noop; }catch(e){} });
+  }
+
+  // 4. Detección de DevTools abierto por diferencia de tamaño de ventana
+  var threshold = 160;
+  function detectDevTools() {
+    var widthDiff  = window.outerWidth  - window.innerWidth;
+    var heightDiff = window.outerHeight - window.innerHeight;
+    if (widthDiff > threshold || heightDiff > threshold) {
+      // DevTools probablemente abierto — redirigir a home y limpiar
+      document.body.innerHTML = '';
+      window.location.href = window.location.href;
+    }
+  }
+  setInterval(detectDevTools, 1000);
+
+  // 5. Trampa debugger — se activa si se intenta pausar la ejecución
+  (function antiDebug(){
+    (function loop(){
+      (function(){}['constructor']('debugger')());
+      requestAnimationFrame(loop);
+    })();
+  })();
+})();
+</script>
+
+<script src="assets/js/dist/api.min.js"></script>
+<script src="assets/js/dist/main.min.js"></script>
 <script>
 /* Extra funciones llamadas desde HTML inline */
 

@@ -23,3 +23,11 @@ Thumbs.db
 dist/
 build/
 .tmp/
+
+# ── Excepciones: archivos ofuscados que deben servirse ──────────────
+!frontend/assets/js/dist/
+!frontend/assets/js/dist/*.min.js
+
+# ── Frontend npm (solo herramientas de build, no van en producción) ──
+frontend/node_modules/
+frontend/package-lock.json
