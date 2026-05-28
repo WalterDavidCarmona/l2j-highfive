@@ -56,6 +56,7 @@ import org.l2jmobius.gameserver.network.NpcStringId;
 import org.l2jmobius.gameserver.network.serverpackets.ExSendUIEvent;
 import org.l2jmobius.gameserver.network.serverpackets.ExShowScreenMessage;
 import org.l2jmobius.gameserver.network.serverpackets.ExPVPMatchCCRecord;
+import org.l2jmobius.gameserver.network.serverpackets.ExPVPMatchCCRetire;
 import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 import org.l2jmobius.gameserver.util.Broadcast;
 
@@ -720,6 +721,8 @@ public class PvpZone extends Script
 		// Close scoreboard for this player and remove from tracking
 		SCOREBOARD.remove(player);
 		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.FINISH, buildRealNameScoreboard(), true));
+		// Dismiss the ExPVPMatchCCRecord window on the client side
+		player.sendPacket(ExPVPMatchCCRetire.STATIC);
 
 		// Clear timer UI
 		player.sendPacket(new ExSendUIEvent(player, true, true, 0, 0, ""));
