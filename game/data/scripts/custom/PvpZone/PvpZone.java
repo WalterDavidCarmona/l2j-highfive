@@ -809,6 +809,10 @@ public class PvpZone extends Script
 				{
 					ZONE_KILL_CLASSES.put(killer.getObjectId(), ClassListData.getInstance().getClass(killer.getActiveClass()).getClassName());
 				}
+				// Persist kill to DB for web panel ranking
+				final String realName = killerRealName != null ? killerRealName : killer.getName();
+				final String currentZoneName = ZONES.get(_currentZoneIndex).name;
+				persistZoneKill(realName, currentZoneName, totalKills);
 
 				int rewardCount = REWARD_BASE_COUNT;
 				for (int[] streakData : STREAKS)
@@ -965,6 +969,9 @@ public class PvpZone extends Script
 		ZONE_KILL_NAMES.clear();
 		ZONE_KILL_CLASSES.clear();
 		SCOREBOARD.clear();
+		// Clear DB kill records for the upcoming zone so it starts fresh
+		final String upcomingZoneName = ZONES.get((_currentZoneIndex) % ZONES.size()).name;
+		resetZoneKillsInDb(upcomingZoneName);
 
 		final PvpZoneData newZone = ZONES.get(_currentZoneIndex);
 
@@ -1302,6 +1309,48 @@ public class PvpZone extends Script
 		final NpcHtmlMessage html = new NpcHtmlMessage();
 		html.setHtml(sb.toString());
 		player.sendPacket(html);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Persist zone kill count to pvp_zone_kills for the web panel ranking.
+	// Uses UPSERT: inserts on first kill, updates count on subsequent kills.
+	// ---------------------------------------------------------------------------
+	private void persistZoneKill(String charName, String zoneName, int totalKills)
+	{
+		final String UPSERT_SQL = "INSERT INTO pvp_zone_kills (char_name, zone_name, kills, last_kill) "
+			+ "VALUES (?, ?, ?, NOW()) "
+			+ "ON DUPLICATE KEY UPDATE kills = ?, last_kill = NOW()";
+		try (Connection con = DatabaseFactory.getConnection();
+			PreparedStatement ps = con.prepareStatement(UPSERT_SQL))
+		{
+			ps.setString(1, charName);
+			ps.setString(2, zoneName);
+			ps.setInt(3, totalKills);
+			ps.setInt(4, totalKills);
+			ps.executeUpdate();
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("PvpZone: Could not persist zone kill for " + charName + ": " + e.getMessage());
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Reset pvp_zone_kills at zone rotation so each zone starts fresh.
+	// ---------------------------------------------------------------------------
+	private void resetZoneKillsInDb(String zoneName)
+	{
+		final String DELETE_SQL = "DELETE FROM pvp_zone_kills WHERE zone_name = ?";
+		try (Connection con = DatabaseFactory.getConnection();
+			PreparedStatement ps = con.prepareStatement(DELETE_SQL))
+		{
+			ps.setString(1, zoneName);
+			ps.executeUpdate();
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("PvpZone: Could not reset zone kills in DB for zone " + zoneName + ": " + e.getMessage());
+		}
 	}
 
 	// ---------------------------------------------------------------------------
