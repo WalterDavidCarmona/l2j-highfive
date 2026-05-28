@@ -1934,6 +1934,57 @@ main { padding-top: 64px; position: relative; z-index: 1; }
 }
 
 /* ====================================================================
+   DISCORD HERO BUTTON
+   ==================================================================== */
+.btn-discord {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  background: #5865F2;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(88,101,242,.4),
+    0 6px 20px rgba(88,101,242,.45);
+  transition: background .2s, transform .15s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+}
+/* inner highlight */
+.btn-discord::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 46%;
+  background: linear-gradient(180deg, rgba(255,255,255,.16) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.btn-discord:hover {
+  background: #4752c4;
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(88,101,242,.6),
+    0 10px 28px rgba(88,101,242,.6);
+  color: #fff;
+  text-decoration: none;
+}
+.btn-discord:active { transform: translateY(0); }
+
+.btn-discord .discord-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+/* Asegurar que el texto también quede sobre el ::before */
+.btn-discord > :not(svg) { position: relative; z-index: 1; }
+
+/* ====================================================================
    DISCORD POPUP  —  Arcane Threshold aesthetic
    Stone materiality · ornamental gold · electric glow
    ==================================================================== */
