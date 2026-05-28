@@ -308,5 +308,7 @@
 		<npc id="35405" x="18634" y="143342" z="-3010" heading="64500" respawnDelay="60" /> <!-- Flynn -->
 		<npc id="35406" x="20237" y="145941" z="-3124" heading="49152" respawnDelay="60" /> <!-- Jabilo -->
 		<npc id="35407" x="19996" y="146216" z="-3111" heading="57344" respawnDelay="60" /> <!-- Seth -->
+		<npc id="20432" x="18803" y="145014" z="-3120" heading="5055" respawnDelay="60" /> <!-- Elpy -->
+		<npc id="20432" x="18723" y="144964" z="-3112" heading="46129" respawnDelay="60" /> <!-- Elpy -->
 	</spawn>
 </list>

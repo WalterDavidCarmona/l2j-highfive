@@ -7,6 +7,5 @@
 	-->
 	<spawn name="PvpZoneNpc">
 		<!-- Giran Town -->
-		<npc id="30999" x="83295" y="147901" z="-3400" heading="28000" respawnDelay="60" />
 	</spawn>
 </list>

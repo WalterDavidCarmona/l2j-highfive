@@ -7,6 +7,5 @@
 	-->
 	<spawn name="AugmentMaster">
 		<!-- Giran Town -->
-		<npc id="1004000" x="83527" y="148170" z="-3400" heading="32768" respawnDelay="60" />
 	</spawn>
 </list>
