@@ -158,29 +158,38 @@ router.get('/me', auth, async (req, res) => {
   try {
     const { login } = req.user;
 
-    const [accRows] = await db.execute(
-      'SELECT login, accessLevel, lastactive, lastIP, email, birthday, web_coins FROM accounts WHERE login = ?',
-      [login]
-    );
+    // Consultar cuenta y monedas en paralelo
+    const [[accRows], [coinRows], [chars]] = await Promise.all([
+      db.execute(
+        'SELECT login, accessLevel, lastactive, lastIP, email, birthday FROM accounts WHERE login = ?',
+        [login]
+      ),
+      db.execute(
+        "SELECT CAST(COALESCE(value,'0') AS UNSIGNED) AS web_coins FROM account_data WHERE account_name = ? AND var = 'web_coins'",
+        [login]
+      ),
+      db.execute(
+        `SELECT charId, char_name, level, race, classid, online,
+                pvpkills, pkkills, title, title_color, createDate
+         FROM characters
+         WHERE account_name = ? AND deletetime = 0
+         ORDER BY createDate ASC
+         LIMIT ${MAX_CHARS}`,
+        [login]
+      ),
+    ]);
+
     if (accRows.length === 0)
       return res.status(404).json({ error: 'Cuenta no encontrada' });
 
     const account = accRows[0];
+    account.web_coins = coinRows.length ? (coinRows[0].web_coins || 0) : 0;
+
     // Ocultar parte del email para el frontend (privacidad)
     if (account.email) {
       const [user, domain] = account.email.split('@');
       account.emailMasked = user.slice(0, 2) + '***@' + domain;
     }
-
-    const [chars] = await db.execute(
-      `SELECT charId, char_name, level, race, classid, online,
-              pvpkills, pkkills, title, title_color, createDate
-       FROM characters
-       WHERE account_name = ? AND deletetime = 0
-       ORDER BY createDate ASC
-       LIMIT ${MAX_CHARS}`,
-      [login]
-    );
 
     res.json({ account, characters: chars });
   } catch (err) {
