@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import custom.VoteSystem.VoteSystem;
 import org.l2jmobius.commons.database.DatabaseFactory;
 import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.gameserver.cache.HtmCache;
@@ -71,6 +72,7 @@ public class HomeBoard implements IParseBoardHandler
 	{
 		"_bbshome",
 		"_bbstop",
+		"_bbsvote",
 	};
 	
 	private static final String[] CUSTOM_COMMANDS =
@@ -152,6 +154,21 @@ public class HomeBoard implements IParseBoardHandler
 				returnHtml = returnHtml.replace("%region_count%", Integer.toString(getRegionCount(player)));
 				returnHtml = returnHtml.replace("%clan_count%", Integer.toString(ClanTable.getInstance().getClanCount()));
 			}
+		}
+		else if (command.equals("_bbsvote"))
+		{
+			if (VoteSystem.getInstance() != null)
+			{
+				VoteSystem.claimReward(player);
+			}
+			else
+			{
+				player.sendMessage("[Votos] El sistema de votos no esta disponible.");
+			}
+			// Reload home page after claim attempt
+			final String customPath = CommunityBoardConfig.CUSTOM_CB_ENABLED ? "Custom/" : "";
+			CommunityBoardHandler.getInstance().addBypass(player, "Home", "_bbshome");
+			returnHtml = HtmCache.getInstance().getHtm(player, "data/html/CommunityBoard/" + customPath + "home.html");
 		}
 		else if (command.startsWith("_bbstop;"))
 		{
