@@ -1,6 +1,9 @@
 # Claude Code internal files
 .claude/
 
+# Discord bot secrets
+discord_bot/.env
+
 # Large binary geodata files
 game/data/geodata/
 

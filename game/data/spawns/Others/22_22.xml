@@ -110,12 +110,13 @@
 		<npc id="35459" x="81920" y="151968" z="-3520" heading="0" respawnDelay="60" /> <!-- Regina -->
 		<npc id="35460" x="81808" y="151776" z="-3536" heading="32000" respawnDelay="60" /> <!-- Trey -->
 		<npc id="30999" x="83064" y="148840" z="-3464" heading="34490" respawnDelay="60" /> <!-- Guardian PvP - Zona PvP -->
-		<npc id="30999" x="83073" y="148405" z="-3464" heading="21535" respawnDelay="60" /> <!-- Guardian PvP - Zona PvP -->
 		<npc id="50008" x="82259" y="148620" z="-3464" heading="62728" respawnDelay="60" /> <!-- Thiago - Scheme Buffer -->
 		<npc id="30120" x="83067" y="149326" z="-3464" heading="30212" respawnDelay="60" /> <!-- Maximilian - High Priest -->
 		<npc id="32323" x="82885" y="149378" z="-3464" heading="50786" respawnDelay="60" /> <!-- Avant-Garde - Transformation Wizard -->
 		<npc id="1004000" x="83686" y="147993" z="-3400" heading="27657" respawnDelay="60" /> <!-- Viserion - Augment Master -->
 		<npc id="30085" x="81936" y="148305" z="-3464" heading="46596" respawnDelay="60" /> <!-- Stanford - Wizard-use Weapon Merchant -->
 		<npc id="30471" x="81914" y="148923" z="-3464" heading="13962" respawnDelay="60" /> <!-- Rupio - Blacksmith -->
+		<npc id="50009" x="83464" y="147918" z="-3400" heading="16797" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
+		<npc id="31049" x="83074" y="148395" z="-3464" heading="34685" respawnDelay="60" /> <!-- Pepper - Symbol Maker -->
 	</spawn>
 </list>

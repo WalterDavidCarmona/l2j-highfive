@@ -20,7 +20,9 @@
  */
 package handlers.skill.effects;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.gameserver.config.custom.CancelReturnConfig;
@@ -96,43 +98,54 @@ public class DispelByCategory extends AbstractEffect
 		{
 			return;
 		}
-		
+
+		// Capturar el tiempo restante ANTES de detener los efectos.
+		// stopSkillEffects puede resetear el campo time del BuffInfo a 0,
+		// lo que haría que timeLeft <= 0 y el buff nunca se restauraría.
+		final Map<Skill, Integer> timeSnapshot = new LinkedHashMap<>();
+		for (BuffInfo info : canceled)
+		{
+			timeSnapshot.put(info.getSkill(), info.getTime());
+		}
+
 		for (BuffInfo info : canceled)
 		{
 			effected.getEffectList().stopSkillEffects(SkillFinishType.REMOVED, info.getSkill());
 		}
-		
+
 		ThreadPool.schedule(() ->
 		{
-			if (effected.isMonster() || effected.isDead() || !effected.asPlayer().isOnline())
+			// Corregido: usar !isPlayer() en lugar de isMonster() para cubrir
+			// correctamente el caso de jugadores sin lanzar NPE en asPlayer().
+			if (!effected.isPlayer() || effected.isDead() || !effected.asPlayer().isOnline())
 			{
 				return;
 			}
-			
-			for (BuffInfo info : canceled)
+
+			for (Map.Entry<Skill, Integer> entry : timeSnapshot.entrySet())
 			{
-				final Skill sk = info.getSkill();
-				final int timeLeft = info.getTime();
-				
+				final Skill sk = entry.getKey();
+				final int timeLeft = entry.getValue();
+
 				if ((sk == null) || (timeLeft <= 0))
 				{
 					continue;
 				}
-				
+
 				if (effected.getEffectList().getBuffInfoBySkillId(sk.getId()) != null)
 				{
 					continue;
 				}
-				
+
 				sk.applyEffects(effected, effected);
-				
+
 				final BuffInfo newInfo = effected.getEffectList().getBuffInfoBySkillId(sk.getId());
 				if (newInfo != null)
 				{
 					newInfo.setAbnormalTime(timeLeft);
 				}
 			}
-			
+
 		}, CancelReturnConfig.TIME_TO_RETURN);
 	}
 	

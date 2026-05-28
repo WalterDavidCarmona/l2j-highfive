@@ -73,5 +73,7 @@
 		<npc id="32878" x="107832" y="218971" z="-3656" heading="48457" respawnDelay="60" /> <!-- Sparky -->
 		<npc id="35319" x="107372" y="217848" z="-3675" heading="13120" respawnDelay="60" /> <!-- Manor Manager -->
 		<npc id="35319" x="115527" y="218850" z="-3664" heading="16256" respawnDelay="60" /> <!-- Manor Manager -->
+		<npc id="50009" x="110817" y="219852" z="-3664" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
+		<npc id="50009" x="111319" y="219411" z="-3544" heading="51134" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
 	</spawn>
 </list>

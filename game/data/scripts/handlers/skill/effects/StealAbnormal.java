@@ -16,8 +16,12 @@
  */
 package handlers.skill.effects;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.l2jmobius.commons.threads.ThreadPool;
+import org.l2jmobius.gameserver.config.custom.CancelReturnConfig;
 import org.l2jmobius.gameserver.model.StatSet;
 import org.l2jmobius.gameserver.model.actor.Creature;
 import org.l2jmobius.gameserver.model.conditions.Condition;
@@ -63,25 +67,83 @@ public class StealAbnormal extends AbstractEffect
 	@Override
 	public void onStart(Creature effector, Creature effected, Skill skill)
 	{
-		if ((effected != null) && effected.isPlayer() && (effector != effected))
+		if ((effected == null) || !effected.isPlayer() || (effector == effected))
 		{
-			final List<BuffInfo> toSteal = Formulas.calcCancelStealEffects(effector, effected, skill, _slot, _rate, _max);
-			if (toSteal.isEmpty())
+			return;
+		}
+
+		final List<BuffInfo> toSteal = Formulas.calcCancelStealEffects(effector, effected, skill, _slot, _rate, _max);
+		if (toSteal.isEmpty())
+		{
+			return;
+		}
+
+		// Verificar si CancelReturn esta activo y aplica a este escenario.
+		final boolean shouldReturn = CancelReturnConfig.CANCEL_RETURN_ON
+			&& !(effector.isPlayer() && !CancelReturnConfig.CANCEL_RETURN_PLAYER)
+			&& !((effector.isMonster() || effector.isRaid()) && !CancelReturnConfig.CANCEL_RETURN_MOB)
+			&& (CancelReturnConfig.CANCEL_RETURN_PLAYER_OLYS || !effected.asPlayer().isInOlympiadMode());
+
+		// Capturar el tiempo restante de cada buff ANTES del robo.
+		// remove() puede resetear el campo time del BuffInfo a 0.
+		final Map<Skill, Integer> timeSnapshot = shouldReturn ? new LinkedHashMap<>() : null;
+		if (shouldReturn)
+		{
+			for (BuffInfo info : toSteal)
 			{
-				return;
+				timeSnapshot.put(info.getSkill(), info.getTime());
 			}
-			
-			for (BuffInfo infoToSteal : toSteal)
+		}
+
+		// Realizar el robo: transferir cada buff de la victima al ladron.
+		for (BuffInfo infoToSteal : toSteal)
+		{
+			// Invertir effected y effector para que el buff quede en el ladron.
+			final BuffInfo stolen = new BuffInfo(effected, effector, infoToSteal.getSkill());
+			stolen.setAbnormalTime(infoToSteal.getTime()); // Copiar el tiempo restante.
+
+			// Aplicar los efectos mediante el template para incluir todos los scopes.
+			infoToSteal.getSkill().applyEffectScope(EffectScope.GENERAL, stolen, true, true);
+			effected.getEffectList().remove(SkillFinishType.REMOVED, infoToSteal);
+			effector.getEffectList().add(stolen);
+		}
+
+		// Si CancelReturn esta activo, programar la devolucion de los buffs robados.
+		if (shouldReturn)
+		{
+			ThreadPool.schedule(() ->
 			{
-				// Invert effected and effector.
-				final BuffInfo stolen = new BuffInfo(effected, effector, infoToSteal.getSkill());
-				stolen.setAbnormalTime(infoToSteal.getTime()); // Copy the remaining time.
-				
-				// To include all the effects, it's required to go through the template rather the buff info.
-				infoToSteal.getSkill().applyEffectScope(EffectScope.GENERAL, stolen, true, true);
-				effected.getEffectList().remove(SkillFinishType.REMOVED, infoToSteal);
-				effector.getEffectList().add(stolen);
-			}
+				if (!effected.isPlayer() || effected.isDead() || !effected.asPlayer().isOnline())
+				{
+					return;
+				}
+
+				for (Map.Entry<Skill, Integer> entry : timeSnapshot.entrySet())
+				{
+					final Skill sk = entry.getKey();
+					final int timeLeft = entry.getValue();
+
+					if ((sk == null) || (timeLeft <= 0))
+					{
+						continue;
+					}
+
+					// No restaurar si el personaje ya tiene el buff activo (p.ej. fue rebuffeado).
+					if (effected.getEffectList().getBuffInfoBySkillId(sk.getId()) != null)
+					{
+						continue;
+					}
+
+					sk.applyEffects(effected, effected);
+
+					final BuffInfo newInfo = effected.getEffectList().getBuffInfoBySkillId(sk.getId());
+					if (newInfo != null)
+					{
+						newInfo.setAbnormalTime(timeLeft);
+					}
+				}
+
+			}, CancelReturnConfig.TIME_TO_RETURN);
 		}
 	}
 }

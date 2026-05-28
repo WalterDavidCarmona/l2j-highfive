@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list enabled="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/spawns.xsd">
-	<!--
-		Augment Master NPC Spawn
-		NPC ID: 1004000 (configured in AugmentMaster.ini)
-		Use //loc in-game to get coordinates of your desired position.
-	-->
+	<!-- Augment Master NPC — NPC ID: 1004000 (configurado en AugmentMaster.ini) -->
+	<!-- Usa //loc en el juego para obtener las coordenadas exactas y actualizar este archivo. -->
 	<spawn name="AugmentMaster">
-		<!-- Giran Town -->
+		<npc id="1004000" x="82586" y="147862" z="-3463" heading="0" respawnDelay="60" />
 	</spawn>
 </list>

@@ -3014,7 +3014,7 @@
 		<magicLevel>#magicLevel</magicLevel>
 		<mpConsume>#mpConsume</mpConsume>
 		<mpInitialConsume>#mpInitialConsume</mpInitialConsume>
-		<reuseDelay>30000</reuseDelay>
+		<reuseDelay>60000</reuseDelay>
 		<effects>
 			<effect name="DispelByCategory">
 				<slot>buff</slot>

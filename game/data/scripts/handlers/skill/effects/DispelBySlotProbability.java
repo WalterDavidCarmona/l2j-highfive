@@ -22,6 +22,7 @@ package handlers.skill.effects;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -113,7 +114,9 @@ public class DispelBySlotProbability extends AbstractEffect
 		}
 		
 		final EffectList effectList = effected.getEffectList();
-		final List<BuffInfo> canceled = new LinkedList<>();
+		// Usar Map<Skill, Integer> para guardar el tiempo restante de cada buff
+		// ANTES de llamar a stopSkillEffects, que puede resetear el campo time a 0.
+		final Map<Skill, Integer> canceledWithTime = new LinkedHashMap<>();
 		for (Entry<AbnormalType, Short> entry : _dispelAbnormals.entrySet())
 		{
 			if (Rnd.get(100) < _rate)
@@ -123,51 +126,53 @@ public class DispelBySlotProbability extends AbstractEffect
 				{
 					effected.stopTransformation(true);
 				}
-				
+
 				final BuffInfo toDispel = effectList.getBuffInfoByAbnormalType(entry.getKey());
 				if ((toDispel != null) && ((entry.getValue() < 0) || (entry.getValue() >= toDispel.getSkill().getAbnormalLevel())))
 				{
-					canceled.add(toDispel);
+					// Guardar tiempo ANTES de detener el efecto.
+					canceledWithTime.put(toDispel.getSkill(), toDispel.getTime());
 					effectList.stopSkillEffects(SkillFinishType.REMOVED, entry.getKey());
 				}
 			}
 		}
-		
-		if (canceled.isEmpty())
+
+		if (canceledWithTime.isEmpty())
 		{
 			return;
 		}
-		
+
 		ThreadPool.schedule(() ->
 		{
 			if (!effected.isPlayer() || effected.isDead() || !effected.asPlayer().isOnline())
 			{
 				return;
 			}
-			
-			for (BuffInfo oldInfo : canceled)
+
+			for (Entry<Skill, Integer> entry : canceledWithTime.entrySet())
 			{
-				final Skill sk = oldInfo.getSkill();
-				final int timeLeft = oldInfo.getTime();
+				final Skill sk = entry.getKey();
+				final int timeLeft = entry.getValue();
+
 				if ((sk == null) || (timeLeft <= 0))
 				{
 					continue;
 				}
-				
+
 				if (effected.getEffectList().getBuffInfoBySkillId(sk.getId()) != null)
 				{
 					continue;
 				}
-				
+
 				sk.applyEffects(effected, effected);
-				
+
 				final BuffInfo newInfo = effected.getEffectList().getBuffInfoBySkillId(sk.getId());
 				if (newInfo != null)
 				{
 					newInfo.setAbnormalTime(timeLeft);
 				}
 			}
-			
+
 		}, CancelReturnConfig.TIME_TO_RETURN);
 	}
 	

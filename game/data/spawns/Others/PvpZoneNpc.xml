@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list enabled="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/spawns.xsd">
-	<!--
-		Spawn del NPC Guardian de Zona PvP
-		NPC ID: 30999
-		Location: Giran Town
-	-->
+	<!-- Guardián de Zona PvP — NPC ID: 30999 -->
+	<!-- Usa //loc en el juego para obtener las coordenadas exactas y actualizar este archivo. -->
 	<spawn name="PvpZoneNpc">
-		<!-- Giran Town -->
+		<npc id="30999" x="83400" y="147900" z="-3463" heading="0" respawnDelay="60" />
 	</spawn>
 </list>

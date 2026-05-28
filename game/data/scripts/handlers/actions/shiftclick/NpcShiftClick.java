@@ -35,6 +35,7 @@ import org.l2jmobius.gameserver.model.actor.enums.creature.InstanceType;
 import org.l2jmobius.gameserver.model.item.holders.Elementals;
 import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 
+import custom.ShowDrop.ShowDrop;
 import handlers.bypass.npc.NpcViewMod;
 
 public class NpcShiftClick implements IActionShiftHandler
@@ -187,15 +188,36 @@ public class NpcShiftClick implements IActionShiftHandler
 			
 			player.sendPacket(html);
 		}
+		else if (ShowDrop.ENABLED)
+		{
+			// Show Drop personalizado: solo muestra drops en monstruos atacables.
+			if (!target.isNpc() || target.isFakePlayer())
+			{
+				return false;
+			}
+
+			player.setTarget(target);
+
+			final Npc npc = target.asNpc();
+			if ((npc != null) && !npc.isDead() && npc.isAttackable())
+			{
+				final boolean hasDrop = (npc.getTemplate().getDropList() != null) || (npc.getTemplate().getDropGroups() != null);
+				final boolean hasSpoil = (npc.getTemplate().getSpoilList() != null);
+				if (hasDrop || hasSpoil)
+				{
+					ShowDrop.sendDropView(player, npc);
+				}
+			}
+		}
 		else if (NpcConfig.ALT_GAME_VIEWNPC)
 		{
 			if (!target.isNpc() || target.isFakePlayer())
 			{
 				return false;
 			}
-			
+
 			player.setTarget(target);
-			
+
 			// Only show view if NPC is alive.
 			final Npc npc = target.asNpc();
 			if ((npc != null) && !npc.isDead())

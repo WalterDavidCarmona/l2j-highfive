@@ -2502,7 +2502,7 @@
 		<!-- Level 5: Steals up to 7 of the enemy's abnormal statuses. -->
 		<table name="#effectPoints">-541 -566 -597 -624 -646</table>
 		<table name="#magicLevel">55 60 64 68 72</table>
-		<table name="#maxNegated">3 4 5 6 7</table>
+		<table name="#maxNegated">3 4 4 4 4</table>
 		<table name="#mpConsume">40 44 48 51 53</table>
 		<table name="#mpInitialConsume">10 11 12 13 14</table>
 		<icon>icon.skill1440</icon>
@@ -2518,7 +2518,7 @@
 		<mpConsume>#mpConsume</mpConsume>
 		<mpInitialConsume>#mpInitialConsume</mpInitialConsume>
 		<nextActionAttack>true</nextActionAttack>
-		<reuseDelay>15000</reuseDelay>
+		<reuseDelay>60000</reuseDelay>
 		<effects>
 			<effect name="StealAbnormal">
 				<slot>buff</slot>
@@ -2891,7 +2891,7 @@
 		<table name="#enchMagicLvl">76 76 76 77 77 77 78 78 78 79 79 79 80 80 80 81 81 81 82 82 82 83 83 83 84 84 84 85 85 85</table>
 		<icon>icon.skill1444</icon>
 		<operateType>A2</operateType>
-		<targetType>PARTY_MEMBER</targetType>
+		<targetType>SELF</targetType>
 		<abnormalLevel>1</abnormalLevel>
 		<abnormalTime>180</abnormalTime>
 		<abnormalType>KAMAEL_SPECIAL</abnormalType>
