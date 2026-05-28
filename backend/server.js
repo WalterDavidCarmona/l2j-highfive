@@ -52,6 +52,13 @@ app.listen(PORT, () => {
   console.log(`\n🗡️  L2H5 Web Server corriendo en http://localhost:${PORT}`);
   console.log(`📡  API disponible en http://localhost:${PORT}/api`);
   console.log(`⚙️  Entorno: ${process.env.NODE_ENV || 'development'}\n`);
+
+  // Iniciar worker de recompensas PvP Zona
+  try {
+    require('./workers/pvpRewardWorker').start();
+  } catch (err) {
+    console.error('[PvpReward] No se pudo iniciar el worker:', err.message);
+  }
 });
 
 module.exports = app;

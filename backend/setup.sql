@@ -83,6 +83,31 @@ INSERT IGNORE INTO `web_news` (`id`,`title`,`content`,`type`,`pinned`) VALUES
  'Hemos implementado el sistema de Zona PvP Rotativa. Cada hora la zona cambia entre el Coliseo de Giran y las Catacumbas de los Sacrificados. ¡Los top killers recibirán recompensas especiales!',
  'update', 0);
 
+-- Recompensas PvP Zona — registro de kills ya premiados por personaje
+CREATE TABLE IF NOT EXISTS `pvp_zone_reward_log` (
+  `char_name`       VARCHAR(35)  NOT NULL,
+  `kills_rewarded`  INT UNSIGNED DEFAULT 0  COMMENT 'kills acumulados ya premiados',
+  `coins_total`     INT UNSIGNED DEFAULT 0  COMMENT 'total de coins entregados',
+  `last_reward_at`  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`char_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Historial de eventos de recompensa (log de auditoría)
+CREATE TABLE IF NOT EXISTS `pvp_zone_reward_history` (
+  `id`            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `char_name`     VARCHAR(35)  NOT NULL,
+  `account_name`  VARCHAR(45)  NOT NULL,
+  `kills_new`     INT UNSIGNED DEFAULT 0,
+  `coins_awarded` INT UNSIGNED DEFAULT 0,
+  `rewarded_at`   DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  INDEX(`char_name`), INDEX(`rewarded_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Config PvP Reward (insertar valores por defecto)
+INSERT IGNORE INTO `web_config` (`key`, `value`) VALUES
+  ('pvpzone_reward_enabled', '0'),
+  ('pvpzone_reward_coins',   '5');
+
 -- Ítems de ejemplo en la tienda
 INSERT IGNORE INTO `web_shop_items` (`id`,`name`,`description`,`item_id`,`item_count`,`price_coins`,`category`,`featured`) VALUES
 (1, 'Blessed Scroll: Enchant Weapon (S)', 'Encanta un arma de grado S de forma segura. No destruye el ítem.', 959, 1, 50, 'scrolls', 1),

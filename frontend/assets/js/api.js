@@ -118,6 +118,13 @@ class L2Api {
   adminUpdateShopItem(id, data)    { return this._fetch(`/admin/shop-items/${id}`, { method:'PUT',  body: JSON.stringify(data) }); }
   adminDeleteShopItem(id)          { return this._fetch(`/admin/shop-items/${id}`, { method:'DELETE' }); }
 
+  // ── Admin PvP Reward ──────────────────────────────────────────────
+  adminGetPvpReward()              { return this._fetch('/admin/pvpzone-reward'); }
+  adminSetPvpReward(enabled, coins_per_kill) {
+    return this._fetch('/admin/pvpzone-reward', { method:'PUT', body: JSON.stringify({ enabled, coins_per_kill }) });
+  }
+  adminResetPvpRewardLog()         { return this._fetch('/admin/pvpzone-reward/log', { method:'DELETE' }); }
+
   // ── Bets ──────────────────────────────────────────────────────────
   getBetSeason()                       { return this._fetch('/bets/season'); }
   placeBet(charBet, coinsBet)          { return this._fetch('/bets/place', { method:'POST', body: JSON.stringify({ charBet, coinsBet }) }); }

@@ -674,6 +674,7 @@
         <button class="tab-btn active" data-admin-tab="users">👥 Usuarios</button>
         <button class="tab-btn"        data-admin-tab="payments">💳 Compras</button>
         <button class="tab-btn"        data-admin-tab="shop">🛒 Tienda</button>
+        <button class="tab-btn"        data-admin-tab="pvpreward">⚔️ Recompensa PvP</button>
       </div>
 
       <!-- ── TAB: USUARIOS ── -->
@@ -779,6 +780,89 @@
               <tr><td colspan="9" class="text-center">
                 <div class="spinner" style="margin:2rem auto"></div>
               </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: RECOMPENSA PVP ZONA ── -->
+      <div id="admin-tab-pvpreward" class="hidden">
+
+        <!-- Config card -->
+        <div class="pvpr-config-card">
+          <h3 class="pvpr-config-title">⚔️ Configuración de Recompensa</h3>
+          <p class="text-muted" style="font-size:.85rem;margin-bottom:1.2rem">
+            Cada vez que un jugador consigue un kill en la <strong>Zona PvP</strong>, se le acreditan
+            automáticamente WebCoins a su cuenta web. El worker revisa la BD cada 15 segundos.
+          </p>
+
+          <div class="pvpr-config-row">
+            <!-- Toggle activar/desactivar -->
+            <div class="pvpr-toggle-wrap">
+              <label class="pvpr-toggle-label">Estado:</label>
+              <label class="toggle-switch" title="Activar/desactivar recompensas">
+                <input type="checkbox" id="pvpr-enabled-toggle">
+                <span class="toggle-slider"></span>
+              </label>
+              <span id="pvpr-status-text" class="pvpr-status-badge pvpr-status-off">DESACTIVADO</span>
+            </div>
+
+            <!-- Coins por kill -->
+            <div class="pvpr-coins-wrap">
+              <label class="pvpr-toggle-label" for="pvpr-coins-input">🪙 WebCoins por kill:</label>
+              <input type="number" id="pvpr-coins-input" class="form-input"
+                     min="0" max="10000" step="1" value="5"
+                     style="width:100px;text-align:center">
+            </div>
+
+            <button class="btn btn-primary btn-sm" id="pvpr-save-btn" onclick="savePvpRewardConfig()">
+              💾 Guardar
+            </button>
+          </div>
+          <div id="pvpr-save-msg" class="form-success hidden" style="margin-top:.6rem"></div>
+        </div>
+
+        <!-- Estadísticas top jugadores -->
+        <div style="margin:1.5rem 0 .75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+          <h4 style="margin:0;font-size:1rem">🏆 Top jugadores premiados</h4>
+          <button class="btn btn-danger btn-sm" onclick="confirmResetPvpLog()" title="Reiniciar contadores">
+            🗑 Reiniciar historial
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Personaje</th>
+                <th>Kills premiados</th>
+                <th>🪙 Coins entregados</th>
+                <th>Último premio</th>
+              </tr>
+            </thead>
+            <tbody id="pvpr-totals-tbody">
+              <tr><td colspan="5" class="text-center">
+                <div class="spinner" style="margin:2rem auto"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Últimas recompensas (historial de eventos) -->
+        <h4 style="margin:1.5rem 0 .75rem;font-size:1rem">📋 Historial de recompensas recientes</h4>
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Personaje</th>
+                <th>Cuenta</th>
+                <th>Kills</th>
+                <th>🪙 Coins</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="pvpr-history-tbody">
+              <tr><td colspan="5" class="text-center text-muted">—</td></tr>
             </tbody>
           </table>
         </div>

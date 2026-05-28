@@ -393,4 +393,96 @@ router.delete('/shop-items/:id', auth, adminOnly, async (req, res) => {
   }
 });
 
+/* ──────────────────────────────────────────────────────────────────
+   RECOMPENSAS PvP ZONA
+─────────────────────────────────────────────────────────────────── */
+
+/* GET /api/admin/pvpzone-reward — Obtiene configuración + historial */
+router.get('/pvpzone-reward', auth, adminOnly, async (req, res) => {
+  try {
+    // Config
+    const [cfgRows] = await db.execute(
+      `SELECT \`key\`, \`value\` FROM web_config
+       WHERE \`key\` IN ('pvpzone_reward_enabled','pvpzone_reward_coins')`
+    );
+    const cfg = {};
+    cfgRows.forEach(r => { cfg[r.key] = r.value; });
+
+    // Últimas 50 recompensas entregadas
+    let history = [];
+    try {
+      [history] = await db.execute(
+        `SELECT char_name, account_name, kills_new, coins_awarded, rewarded_at
+         FROM pvp_zone_reward_history
+         ORDER BY rewarded_at DESC
+         LIMIT 50`
+      );
+    } catch { /* tabla puede no existir aún */ }
+
+    // Totales por personaje (top 20)
+    let totals = [];
+    try {
+      [totals] = await db.execute(
+        `SELECT char_name, kills_rewarded, coins_total, last_reward_at
+         FROM pvp_zone_reward_log
+         ORDER BY coins_total DESC
+         LIMIT 20`
+      );
+    } catch { /* tabla puede no existir aún */ }
+
+    res.json({
+      enabled:      cfg['pvpzone_reward_enabled'] === '1',
+      coins_per_kill: parseInt(cfg['pvpzone_reward_coins'] || '5', 10),
+      history,
+      totals
+    });
+  } catch (err) {
+    console.error('[admin/pvpzone-reward GET]', err);
+    res.status(500).json({ error: 'Error al obtener configuración' });
+  }
+});
+
+/* PUT /api/admin/pvpzone-reward — Actualiza configuración */
+router.put('/pvpzone-reward', auth, adminOnly, async (req, res) => {
+  const { enabled, coins_per_kill } = req.body;
+
+  if (typeof enabled !== 'boolean')
+    return res.status(400).json({ error: '"enabled" debe ser true o false' });
+
+  const coins = parseInt(coins_per_kill);
+  if (isNaN(coins) || coins < 0)
+    return res.status(400).json({ error: '"coins_per_kill" debe ser un número >= 0' });
+  if (coins > 10000)
+    return res.status(400).json({ error: '"coins_per_kill" no puede superar 10.000' });
+
+  try {
+    await db.execute(
+      `INSERT INTO web_config (\`key\`, value) VALUES ('pvpzone_reward_enabled', ?)
+       ON DUPLICATE KEY UPDATE value = ?`,
+      [enabled ? '1' : '0', enabled ? '1' : '0']
+    );
+    await db.execute(
+      `INSERT INTO web_config (\`key\`, value) VALUES ('pvpzone_reward_coins', ?)
+       ON DUPLICATE KEY UPDATE value = ?`,
+      [String(coins), String(coins)]
+    );
+    res.json({ ok: true, enabled, coins_per_kill: coins });
+  } catch (err) {
+    console.error('[admin/pvpzone-reward PUT]', err);
+    res.status(500).json({ error: 'Error al guardar configuración' });
+  }
+});
+
+/* DELETE /api/admin/pvpzone-reward/log — Reinicia el historial (no borra web_config) */
+router.delete('/pvpzone-reward/log', auth, adminOnly, async (req, res) => {
+  try {
+    await db.execute('TRUNCATE TABLE pvp_zone_reward_log').catch(() => {});
+    await db.execute('TRUNCATE TABLE pvp_zone_reward_history').catch(() => {});
+    res.json({ ok: true, message: 'Historial de recompensas reiniciado' });
+  } catch (err) {
+    console.error('[admin/pvpzone-reward DELETE]', err);
+    res.status(500).json({ error: 'Error al reiniciar historial' });
+  }
+});
+
 module.exports = router;

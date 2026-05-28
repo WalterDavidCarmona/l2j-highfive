@@ -2269,6 +2269,7 @@ function loadAdmin() {
   document.getElementById('admin-tab-users')?.classList.remove('hidden');
   document.getElementById('admin-tab-payments')?.classList.add('hidden');
   document.getElementById('admin-tab-shop')?.classList.add('hidden');
+  document.getElementById('admin-tab-pvpreward')?.classList.add('hidden');
 }
 
 /** Tabs del panel admin */
@@ -2280,12 +2281,16 @@ document.querySelectorAll('[data-admin-tab]').forEach(btn => {
     document.getElementById('admin-tab-users')?.classList.toggle('hidden', tab !== 'users');
     document.getElementById('admin-tab-payments')?.classList.toggle('hidden', tab !== 'payments');
     document.getElementById('admin-tab-shop')?.classList.toggle('hidden', tab !== 'shop');
+    document.getElementById('admin-tab-pvpreward')?.classList.toggle('hidden', tab !== 'pvpreward');
     if (tab === 'payments') {
       adminCurrentPage = 0;
       loadAdminPayments(adminCurrentStatus);
     }
     if (tab === 'shop') {
       loadAdminShop();
+    }
+    if (tab === 'pvpreward') {
+      loadAdminPvpReward();
     }
   });
 });
@@ -2699,6 +2704,116 @@ async function deleteAdminShopItem(id, name) {
     showToast(err.message, 'error');
   }
 }
+
+/* ====================================================================
+   ADMIN — PvP ZONE REWARD
+   ==================================================================== */
+
+/** Carga la configuración y el historial de recompensas PvP */
+async function loadAdminPvpReward() {
+  try {
+    const data = await api.adminGetPvpReward();
+
+    // Actualizar toggle
+    const toggle = document.getElementById('pvpr-enabled-toggle');
+    const statusBadge = document.getElementById('pvpr-status-text');
+    const coinsInput  = document.getElementById('pvpr-coins-input');
+
+    if (toggle) {
+      toggle.checked = data.enabled;
+      _updatePvpRewardStatusBadge(data.enabled);
+      toggle.onchange = () => _updatePvpRewardStatusBadge(toggle.checked);
+    }
+    if (coinsInput) coinsInput.value = data.coins_per_kill ?? 5;
+
+    // Tabla de totales por personaje
+    const tbody = document.getElementById('pvpr-totals-tbody');
+    if (tbody) {
+      if (!data.totals || !data.totals.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:1.5rem">Sin recompensas entregadas aún</td></tr>`;
+      } else {
+        tbody.innerHTML = data.totals.map((r, i) => `
+          <tr>
+            <td><span class="rank-badge">${i + 1}</span></td>
+            <td><strong>${escHtml(r.char_name)}</strong></td>
+            <td>${r.kills_rewarded.toLocaleString()}</td>
+            <td><span class="coins-badge">🪙 ${r.coins_total.toLocaleString()}</span></td>
+            <td class="text-muted" style="font-size:.82rem">${r.last_reward_at ? new Date(r.last_reward_at).toLocaleString() : '—'}</td>
+          </tr>`).join('');
+      }
+    }
+
+    // Tabla de historial de eventos
+    const hbody = document.getElementById('pvpr-history-tbody');
+    if (hbody) {
+      if (!data.history || !data.history.length) {
+        hbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:1rem">Sin eventos registrados</td></tr>`;
+      } else {
+        hbody.innerHTML = data.history.map(r => `
+          <tr>
+            <td><strong>${escHtml(r.char_name)}</strong></td>
+            <td class="text-muted" style="font-size:.82rem">${escHtml(r.account_name)}</td>
+            <td>+${r.kills_new}</td>
+            <td><span class="coins-badge">🪙 +${r.coins_awarded}</span></td>
+            <td class="text-muted" style="font-size:.82rem">${new Date(r.rewarded_at).toLocaleString()}</td>
+          </tr>`).join('');
+      }
+    }
+  } catch (err) {
+    showToast('Error cargando configuración: ' + err.message, 'error');
+  }
+}
+
+function _updatePvpRewardStatusBadge(enabled) {
+  const badge = document.getElementById('pvpr-status-text');
+  if (!badge) return;
+  badge.textContent = enabled ? 'ACTIVADO' : 'DESACTIVADO';
+  badge.className = 'pvpr-status-badge ' + (enabled ? 'pvpr-status-on' : 'pvpr-status-off');
+}
+
+/** Guarda la configuración de recompensa PvP */
+async function savePvpRewardConfig() {
+  const enabled = document.getElementById('pvpr-enabled-toggle')?.checked ?? false;
+  const coinsRaw = parseInt(document.getElementById('pvpr-coins-input')?.value || '0');
+
+  if (isNaN(coinsRaw) || coinsRaw < 0) {
+    showToast('El valor de coins debe ser >= 0', 'error'); return;
+  }
+
+  const btn = document.getElementById('pvpr-save-btn');
+  const msg = document.getElementById('pvpr-save-msg');
+  if (btn) btn.disabled = true;
+
+  try {
+    await api.adminSetPvpReward(enabled, coinsRaw);
+    showToast(`✅ Configuración guardada — ${enabled ? coinsRaw + ' 🪙 por kill (ACTIVO)' : 'DESACTIVADO'}`, 'success');
+    if (msg) {
+      msg.textContent = `Guardado: ${enabled ? coinsRaw + ' WebCoins por kill — ACTIVO' : 'Recompensas desactivadas'}`;
+      msg.classList.remove('hidden');
+      setTimeout(() => msg.classList.add('hidden'), 4000);
+    }
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+/** Reinicia el historial de recompensas con confirmación */
+async function confirmResetPvpLog() {
+  if (!confirm('¿Reiniciar TODO el historial de recompensas PvP?\n\nEsto borra los contadores de kills premiados y el historial de eventos.\nLos kills existentes volverán a ser premiados en el próximo ciclo.\n\nEsta acción no se puede deshacer.')) return;
+  try {
+    const r = await api.adminResetPvpRewardLog();
+    showToast('🗑 ' + r.message, 'success');
+    loadAdminPvpReward();
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  }
+}
+
+window.savePvpRewardConfig  = savePvpRewardConfig;
+window.confirmResetPvpLog   = confirmResetPvpLog;
+window.loadAdminPvpReward   = loadAdminPvpReward;
 
 /* ====================================================================
    INIT
