@@ -57,6 +57,11 @@ class L2Api {
   }
   logout() { this.setToken(null); }
 
+  /** Marca como leída la notificación PvP de un personaje */
+  dismissPvpNotif(charName) {
+    return this._fetch(`/auth/dismiss-pvp-notif/${encodeURIComponent(charName)}`, { method: 'POST' });
+  }
+
   // ── Server ────────────────────────────────────────────────────────
   getServerStatus() { return this._fetch('/server/status'); }
   getPvpZoneInfo()  { return this._fetch('/server/pvpzone'); }

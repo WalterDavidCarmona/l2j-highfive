@@ -158,8 +158,8 @@ router.get('/me', auth, async (req, res) => {
   try {
     const { login } = req.user;
 
-    // Consultar cuenta y monedas en paralelo
-    const [[accRows], [coinRows], [chars]] = await Promise.all([
+    // Consultar cuenta, monedas, personajes y notificaciones en paralelo
+    const [[accRows], [coinRows], [chars], [notifs]] = await Promise.all([
       db.execute(
         'SELECT login, accessLevel, lastactive, lastIP, email, birthday FROM accounts WHERE login = ?',
         [login]
@@ -177,6 +177,12 @@ router.get('/me', auth, async (req, res) => {
          LIMIT ${MAX_CHARS}`,
         [login]
       ),
+      db.execute(
+        `SELECT char_name, coins_awarded, zone_name, kills_new, expires_at
+         FROM pvp_zone_notifications
+         WHERE account_name = ? AND expires_at > NOW() AND dismissed = 0`,
+        [login]
+      ).catch(() => [[]]), // tabla puede no existir aún
     ]);
 
     if (accRows.length === 0)
@@ -191,7 +197,10 @@ router.get('/me', auth, async (req, res) => {
       account.emailMasked = user.slice(0, 2) + '***@' + domain;
     }
 
-    res.json({ account, characters: chars });
+    // Limpiar notificaciones expiradas en segundo plano
+    db.execute('DELETE FROM pvp_zone_notifications WHERE expires_at <= NOW()').catch(() => {});
+
+    res.json({ account, characters: chars, pvp_notifications: notifs });
   } catch (err) {
     console.error('[Me]', err.message);
     res.status(500).json({ error: 'Error interno' });
@@ -294,6 +303,26 @@ router.post('/change-password', auth, async (req, res) => {
     res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (err) {
     console.error('[ChangePass]', err.message);
+    res.status(500).json({ error: 'Error interno' });
+  }
+});
+
+/* ─── POST /api/auth/dismiss-pvp-notif/:charName ─────────────────── */
+router.post('/dismiss-pvp-notif/:charName', auth, async (req, res) => {
+  try {
+    const { login } = req.user;
+    const charName  = req.params.charName;
+
+    await db.execute(
+      `UPDATE pvp_zone_notifications
+       SET dismissed = 1
+       WHERE account_name = ? AND char_name = ?`,
+      [login, charName]
+    ).catch(() => {}); // ignorar si la tabla no existe
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[dismiss-pvp-notif]', err.message);
     res.status(500).json({ error: 'Error interno' });
   }
 });

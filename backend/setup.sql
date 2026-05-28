@@ -83,6 +83,22 @@ INSERT IGNORE INTO `web_news` (`id`,`title`,`content`,`type`,`pinned`) VALUES
  'Hemos implementado el sistema de Zona PvP Rotativa. Cada hora la zona cambia entre el Coliseo de Giran y las Catacumbas de los Sacrificados. ¡Los top killers recibirán recompensas especiales!',
  'update', 0);
 
+-- Notificaciones de recompensa PvP Zona (1 por personaje, expira en 1 día)
+CREATE TABLE IF NOT EXISTS `pvp_zone_notifications` (
+  `id`            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `account_name`  VARCHAR(45)  NOT NULL,
+  `char_name`     VARCHAR(35)  NOT NULL,
+  `coins_awarded` INT UNSIGNED DEFAULT 0  COMMENT 'acumulado desde que se creó la notif',
+  `zone_name`     VARCHAR(100) DEFAULT 'Zona PvP',
+  `kills_new`     INT UNSIGNED DEFAULT 0,
+  `dismissed`     TINYINT(1)   DEFAULT 0,
+  `created_at`    DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  `expires_at`    DATETIME     NOT NULL,
+  UNIQUE KEY `uq_char_name` (`char_name`),
+  INDEX(`account_name`),
+  INDEX(`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Recompensas PvP Zona — registro de kills ya premiados por personaje
 CREATE TABLE IF NOT EXISTS `pvp_zone_reward_log` (
   `char_name`       VARCHAR(35)  NOT NULL,

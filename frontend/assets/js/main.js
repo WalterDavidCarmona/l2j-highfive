@@ -1405,8 +1405,31 @@ function renderPanelChars() {
     return;
   }
 
+  // Mapa de notificaciones pvp activas por char_name
+  const pvpNotifs = {};
+  (currentUser?.pvp_notifications || []).forEach(n => {
+    pvpNotifs[n.char_name] = n;
+  });
+
   const raceEmojis = { 0:'🧑', 1:'🧝', 2:'🧙', 3:'👹', 4:'⚒️', 5:'👁️' };
-  grid.innerHTML = chars.map(c => `
+  grid.innerHTML = chars.map(c => {
+    const notif = pvpNotifs[c.char_name];
+    const notifHtml = notif ? `
+      <div class="pvp-reward-notif" id="pvp-notif-${escHtml(c.char_name).replace(/\s/g,'_')}">
+        <div class="pvp-reward-notif__inner">
+          <div class="pvp-reward-notif__icon">🏆</div>
+          <div class="pvp-reward-notif__text">
+            <span class="pvp-reward-notif__title">¡Felicitaciones, <strong>${escHtml(c.char_name)}</strong>!</span>
+            <span class="pvp-reward-notif__detail">
+              Ganaste <strong class="pvp-reward-notif__coins">🪙 ${Number(notif.coins_awarded).toLocaleString()} WebCoins</strong>
+              por ser Top en <em>${escHtml(notif.zone_name)}</em>
+            </span>
+          </div>
+          <button class="pvp-reward-notif__close" onclick="dismissPvpNotif('${escHtml(c.char_name)}')" title="Cerrar">✕</button>
+        </div>
+      </div>` : '';
+
+    return `
     <div class="char-card ${c.online ? 'online-char' : ''}">
       <div class="char-header">
         <div class="char-avatar">${raceEmojis[c.race] || '⚔️'}</div>
@@ -1421,9 +1444,36 @@ function renderPanelChars() {
         <span class="char-stat pvp">⚔ ${(c.pvpkills||0).toLocaleString()} PvP</span>
         <span class="char-stat pk">💀 ${(c.pkkills||0).toLocaleString()} PK</span>
       </div>
-    </div>
-  `).join('');
+      ${notifHtml}
+    </div>`;
+  }).join('');
 }
+
+/** Cierra/descarta la notificación PvP de un personaje */
+async function dismissPvpNotif(charName) {
+  // Ocultar visualmente de inmediato
+  const safeId = charName.replace(/\s/g,'_');
+  const el = document.getElementById(`pvp-notif-${safeId}`);
+  if (el) {
+    el.style.transition = 'opacity .3s, max-height .4s';
+    el.style.opacity    = '0';
+    el.style.maxHeight  = '0';
+    el.style.overflow   = 'hidden';
+    setTimeout(() => el.remove(), 400);
+  }
+
+  // Marcar como leída en el servidor
+  try {
+    await api.dismissPvpNotif(charName);
+    // Actualizar estado local
+    if (currentUser?.pvp_notifications) {
+      currentUser.pvp_notifications = currentUser.pvp_notifications.filter(
+        n => n.char_name !== charName
+      );
+    }
+  } catch { /* silencioso */ }
+}
+window.dismissPvpNotif = dismissPvpNotif;
 
 /* ────────── Change password form (Panel) ────────── */
 document.getElementById('form-change-pass')?.addEventListener('submit', async e => {

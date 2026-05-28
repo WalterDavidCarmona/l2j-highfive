@@ -72,16 +72,19 @@ async function runCycle() {
   let killRows;
   try {
     [killRows] = await db.execute(
-      `SELECT char_name, kills FROM pvp_zone_kills WHERE kills > 0`
+      `SELECT char_name, kills, zone_name FROM pvp_zone_kills WHERE kills > 0`
     );
   } catch {
     return; // tabla no existe aún
   }
 
+  // Limpiar notificaciones expiradas
+  db.execute('DELETE FROM pvp_zone_notifications WHERE expires_at <= NOW()').catch(() => {});
+
   if (!killRows.length) return;
 
   for (const row of killRows) {
-    const { char_name, kills } = row;
+    const { char_name, kills, zone_name } = row;
 
     // ¿Cuántos kills ya premiamos?
     const [[logRow]] = await db.execute(
@@ -134,6 +137,24 @@ async function runCycle() {
         [char_name, accountName, newKills, coinsToAward]
       );
 
+      // Crear / actualizar notificación en el panel del jugador (expira en 1 día).
+      // Si ya existe una notificación activa para este personaje, acumular coins y kills
+      // y renovar el tiempo de expiración desde ahora.
+      const zoneName = zone_name || 'Zona PvP';
+      await conn.execute(
+        `INSERT INTO pvp_zone_notifications
+           (account_name, char_name, coins_awarded, zone_name, kills_new, dismissed, expires_at)
+         VALUES (?, ?, ?, ?, ?, 0, DATE_ADD(NOW(), INTERVAL 1 DAY))
+         ON DUPLICATE KEY UPDATE
+           account_name  = VALUES(account_name),
+           coins_awarded = coins_awarded + VALUES(coins_awarded),
+           zone_name     = VALUES(zone_name),
+           kills_new     = kills_new + VALUES(kills_new),
+           dismissed     = 0,
+           expires_at    = DATE_ADD(NOW(), INTERVAL 1 DAY)`,
+        [accountName, char_name, coinsToAward, zoneName, newKills]
+      ).catch(err => console.warn('[PvpReward] Notif insert warn:', err.message));
+
       await conn.commit();
       console.log(`[PvpReward] ✅ ${char_name} (${accountName}) +${coinsToAward} coins (${newKills} kills × ${coinsPerKill})`);
     } catch (err) {
@@ -178,6 +199,23 @@ function start() {
       ('pvpzone_reward_enabled', '0'),
       ('pvpzone_reward_coins',   '5')
   `).catch(() => {});
+
+  db.execute(`
+    CREATE TABLE IF NOT EXISTS pvp_zone_notifications (
+      id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+      account_name  VARCHAR(45)  NOT NULL,
+      char_name     VARCHAR(35)  NOT NULL,
+      coins_awarded INT UNSIGNED DEFAULT 0,
+      zone_name     VARCHAR(100) DEFAULT 'Zona PvP',
+      kills_new     INT UNSIGNED DEFAULT 0,
+      dismissed     TINYINT(1)   DEFAULT 0,
+      created_at    DATETIME     DEFAULT CURRENT_TIMESTAMP,
+      expires_at    DATETIME     NOT NULL,
+      UNIQUE KEY uq_char_name (char_name),
+      INDEX(account_name),
+      INDEX(expires_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  `).catch(err => console.warn('[PvpReward] Tabla notifications:', err.message));
 
   // Ejecutar ciclo periódico
   setInterval(() => {

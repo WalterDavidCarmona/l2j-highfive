@@ -2422,3 +2422,104 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   color: #64748b;
   border: 1px solid rgba(100,116,139,.25);
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   PvP Reward Notification Banner (debajo del char-card)
+   ════════════════════════════════════════════════════════════════════ */
+
+.pvp-reward-notif {
+  margin-top: .55rem;
+  border-radius: 10px;
+  overflow: hidden;
+  /* animación de entrada */
+  animation: pvpNotifIn .45s ease both;
+}
+
+@keyframes pvpNotifIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pvp-reward-notif__inner {
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  padding: .65rem .85rem;
+  background:
+    linear-gradient(135deg,
+      rgba(245,158,11,.13) 0%,
+      rgba(0,212,255,.08)  60%,
+      rgba(124,58,237,.1)  100%);
+  border: 1px solid rgba(245,158,11,.38);
+  border-radius: 10px;
+  position: relative;
+  /* borde luminoso izquierdo */
+  box-shadow:
+    inset 3px 0 0 rgba(245,158,11,.6),
+    0 2px 16px rgba(245,158,11,.1);
+}
+
+/* Shimmer sutil sobre el fondo */
+.pvp-reward-notif__inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255,255,255,.03) 45%,
+    transparent 55%
+  );
+  pointer-events: none;
+}
+
+/* Icono trofeo */
+.pvp-reward-notif__icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(245,158,11,.7));
+}
+
+/* Textos */
+.pvp-reward-notif__text {
+  display: flex;
+  flex-direction: column;
+  gap: .18rem;
+  flex: 1;
+  min-width: 0;
+}
+.pvp-reward-notif__title {
+  font-size: .82rem;
+  color: #fbbf24;
+  line-height: 1.3;
+}
+.pvp-reward-notif__detail {
+  font-size: .78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.pvp-reward-notif__coins {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* Botón cerrar */
+.pvp-reward-notif__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(245,158,11,.4);
+  font-size: .75rem;
+  padding: .1rem .25rem;
+  border-radius: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color .2s, background .2s;
+  margin-top: .1rem;
+}
+.pvp-reward-notif__close:hover {
+  color: #fbbf24;
+  background: rgba(245,158,11,.1);
+}
