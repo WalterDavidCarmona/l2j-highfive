@@ -412,7 +412,7 @@ router.get('/pvpzone-reward', auth, adminOnly, async (req, res) => {
     let history = [];
     try {
       [history] = await db.execute(
-        `SELECT char_name, account_name, kills_new, coins_awarded, rewarded_at
+        `SELECT char_name, account_name, zone_name, kills_new, coins_awarded, rewarded_at
          FROM pvp_zone_reward_history
          ORDER BY rewarded_at DESC
          LIMIT 50`

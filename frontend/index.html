@@ -792,8 +792,9 @@
         <div class="pvpr-config-card">
           <h3 class="pvpr-config-title">⚔️ Configuración de Recompensa</h3>
           <p class="text-muted" style="font-size:.85rem;margin-bottom:1.2rem">
-            Cada vez que un jugador consigue un kill en la <strong>Zona PvP</strong>, se le acreditan
-            automáticamente WebCoins a su cuenta web. El worker revisa la BD cada 15 segundos.
+            Al finalizar cada sesión de <strong>Zona PvP</strong> (rotación de zona), el jugador con
+            más kills durante esa sesión recibe automáticamente WebCoins en su cuenta web.
+            El worker detecta la rotación cada 15 segundos.
           </p>
 
           <div class="pvpr-config-row">
@@ -807,11 +808,11 @@
               <span id="pvpr-status-text" class="pvpr-status-badge pvpr-status-off">DESACTIVADO</span>
             </div>
 
-            <!-- Coins por kill -->
+            <!-- Coins top killer -->
             <div class="pvpr-coins-wrap">
-              <label class="pvpr-toggle-label" for="pvpr-coins-input">🪙 WebCoins por kill:</label>
+              <label class="pvpr-toggle-label" for="pvpr-coins-input">🪙 WebCoins top killer:</label>
               <input type="number" id="pvpr-coins-input" class="form-input"
-                     min="0" max="10000" step="1" value="5"
+                     min="0" max="10000" step="1" value="50"
                      style="width:100px;text-align:center">
             </div>
 
@@ -835,7 +836,7 @@
               <tr>
                 <th>#</th>
                 <th>Personaje</th>
-                <th>Kills premiados</th>
+                <th>Kills (sesión)</th>
                 <th>🪙 Coins entregados</th>
                 <th>Último premio</th>
               </tr>
@@ -854,11 +855,11 @@
           <table class="ranking-table">
             <thead>
               <tr>
-                <th>Personaje</th>
+                <th>Top Killer</th>
                 <th>Cuenta</th>
-                <th>Kills</th>
+                <th>Kills sesión</th>
                 <th>🪙 Coins</th>
-                <th>Fecha</th>
+                <th>Zona / Fecha</th>
               </tr>
             </thead>
             <tbody id="pvpr-history-tbody">

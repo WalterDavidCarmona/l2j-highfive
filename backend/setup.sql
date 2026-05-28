@@ -99,6 +99,20 @@ CREATE TABLE IF NOT EXISTS `pvp_zone_notifications` (
   INDEX(`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Snapshot de kills al inicio de cada sesión de zona (para aislar kills por sesión)
+CREATE TABLE IF NOT EXISTS `pvp_zone_session_snapshot` (
+  `zone_name`      VARCHAR(100) NOT NULL,
+  `char_name`      VARCHAR(35)  NOT NULL,
+  `kills_at_start` INT UNSIGNED DEFAULT 0,
+  `snapshot_at`    DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`zone_name`, `char_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Config de rotación de zona activa (gestionado por el worker)
+INSERT IGNORE INTO `web_config` (`key`, `value`) VALUES
+  ('pvpzone_current_index', NULL),
+  ('pvpzone_current_name',  NULL);
+
 -- Recompensas PvP Zona — registro de kills ya premiados por personaje
 CREATE TABLE IF NOT EXISTS `pvp_zone_reward_log` (
   `char_name`       VARCHAR(35)  NOT NULL,
@@ -113,6 +127,7 @@ CREATE TABLE IF NOT EXISTS `pvp_zone_reward_history` (
   `id`            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `char_name`     VARCHAR(35)  NOT NULL,
   `account_name`  VARCHAR(45)  NOT NULL,
+  `zone_name`     VARCHAR(100) DEFAULT 'Zona PvP',
   `kills_new`     INT UNSIGNED DEFAULT 0,
   `coins_awarded` INT UNSIGNED DEFAULT 0,
   `rewarded_at`   DATETIME     DEFAULT CURRENT_TIMESTAMP,

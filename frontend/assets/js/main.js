@@ -2774,7 +2774,7 @@ async function loadAdminPvpReward() {
       _updatePvpRewardStatusBadge(data.enabled);
       toggle.onchange = () => _updatePvpRewardStatusBadge(toggle.checked);
     }
-    if (coinsInput) coinsInput.value = data.coins_per_kill ?? 5;
+    if (coinsInput) coinsInput.value = data.coins_per_kill ?? 50;
 
     // Tabla de totales por personaje
     const tbody = document.getElementById('pvpr-totals-tbody');
@@ -2801,11 +2801,14 @@ async function loadAdminPvpReward() {
       } else {
         hbody.innerHTML = data.history.map(r => `
           <tr>
-            <td><strong>${escHtml(r.char_name)}</strong></td>
+            <td><strong>🏆 ${escHtml(r.char_name)}</strong></td>
             <td class="text-muted" style="font-size:.82rem">${escHtml(r.account_name)}</td>
-            <td>+${r.kills_new}</td>
-            <td><span class="coins-badge">🪙 +${r.coins_awarded}</span></td>
-            <td class="text-muted" style="font-size:.82rem">${new Date(r.rewarded_at).toLocaleString()}</td>
+            <td>${r.kills_new}</td>
+            <td><span class="coins-badge">🪙 ${r.coins_awarded}</span></td>
+            <td class="text-muted" style="font-size:.78rem">
+              ${r.zone_name ? `<div>${escHtml(r.zone_name)}</div>` : ''}
+              <div>${new Date(r.rewarded_at).toLocaleString()}</div>
+            </td>
           </tr>`).join('');
       }
     }
@@ -2836,9 +2839,9 @@ async function savePvpRewardConfig() {
 
   try {
     await api.adminSetPvpReward(enabled, coinsRaw);
-    showToast(`✅ Configuración guardada — ${enabled ? coinsRaw + ' 🪙 por kill (ACTIVO)' : 'DESACTIVADO'}`, 'success');
+    showToast(`✅ Configuración guardada — ${enabled ? coinsRaw + ' 🪙 al top killer (ACTIVO)' : 'DESACTIVADO'}`, 'success');
     if (msg) {
-      msg.textContent = `Guardado: ${enabled ? coinsRaw + ' WebCoins por kill — ACTIVO' : 'Recompensas desactivadas'}`;
+      msg.textContent = `Guardado: ${enabled ? coinsRaw + ' WebCoins al top killer — ACTIVO' : 'Recompensas desactivadas'}`;
       msg.classList.remove('hidden');
       setTimeout(() => msg.classList.add('hidden'), 4000);
     }
