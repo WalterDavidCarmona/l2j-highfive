@@ -397,6 +397,11 @@ function updateAuthUI() {
     document.getElementById('nav-username')?.textContent &&
       (document.getElementById('nav-username').textContent = currentUser.account?.login || '');
   }
+  // Mostrar/ocultar links que requieren sesión iniciada
+  ['nav-bets-item', 'nav-recharge-item'].forEach(id => {
+    document.getElementById(id)?.classList.toggle('hidden', !loggedIn);
+  });
+
   // Mostrar/ocultar link de Admin según accessLevel
   const adminNav = document.getElementById('nav-admin-item');
   if (adminNav) {
