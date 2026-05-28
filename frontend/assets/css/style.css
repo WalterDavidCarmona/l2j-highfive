@@ -243,6 +243,16 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   box-shadow: 0 8px 25px rgba(0,212,255,.4);
 }
 
+.btn-primary-reverse {
+  background: linear-gradient(315deg, var(--cyan), var(--purple));
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(124,58,237,.25);
+}
+.btn-primary-reverse:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(124,58,237,.4);
+}
+
 .btn-secondary {
   background: var(--bg-glass);
   border: 1px solid var(--border);
