@@ -99,31 +99,36 @@ async function addCoins(conn, accountName, amount) {
 /* ─── Snapshot de kills ───────────────────────────────────────────── */
 
 /**
- * Guarda los kills actuales de cada personaje en la zona como punto de partida.
- * Se llama al inicio de cada sesión de zona para aislar los kills de esta sesión.
+ * Snapshot de kills al inicio de una sesión de zona.
+ *
+ * IMPORTANTE: No filtramos por zone_name porque el servidor Java puede
+ * escribir en pvp_zone_kills un nombre de zona distinto al que aparece
+ * en PvpZone.ini. Sumamos los kills totales de TODOS los zone_name por
+ * personaje y los guardamos bajo el marcador especial '__session__'.
+ * Así el cálculo del delta es completamente agnóstico al nombre de zona.
  */
-async function snapshotKillsForZone(zoneName) {
+async function snapshotCurrentKills() {
   try {
-    const [kills] = await db.execute(
-      `SELECT char_name, kills FROM pvp_zone_kills WHERE zone_name = ?`,
-      [zoneName]
+    // Total de kills por personaje (sumando todas las zonas)
+    const [totals] = await db.execute(
+      `SELECT char_name, SUM(kills) AS total_kills
+       FROM pvp_zone_kills
+       GROUP BY char_name`
     );
 
-    // Borrar snapshot anterior para esta zona
+    // Reemplazar snapshot anterior de la sesión activa
     await db.execute(
-      `DELETE FROM pvp_zone_session_snapshot WHERE zone_name = ?`,
-      [zoneName]
+      `DELETE FROM pvp_zone_session_snapshot WHERE zone_name = '__session__'`
     );
 
-    // Insertar snapshot actual (puede ser vacío si la zona recién empieza)
-    for (const row of kills) {
+    for (const row of totals) {
       await db.execute(
         `INSERT IGNORE INTO pvp_zone_session_snapshot (zone_name, char_name, kills_at_start)
-         VALUES (?, ?, ?)`,
-        [zoneName, row.char_name, row.kills]
+         VALUES ('__session__', ?, ?)`,
+        [row.char_name, row.total_kills]
       );
     }
-    console.log(`[PvpReward] 📸 Snapshot zona "${zoneName}" — ${kills.length} personajes`);
+    console.log(`[PvpReward] 📸 Snapshot sesión — ${totals.length} personajes registrados`);
   } catch (err) {
     console.warn('[PvpReward] Error snapshot:', err.message);
   }
@@ -132,34 +137,39 @@ async function snapshotKillsForZone(zoneName) {
 /* ─── Top killer ──────────────────────────────────────────────────── */
 
 /**
- * Busca al jugador con más kills durante ESTA sesión de la zona.
- * Kills de sesión = kills_actuales − kills_al_inicio_de_sesión
+ * Busca al jugador con más kills durante ESTA sesión de zona.
+ * Kills de sesión = total_kills_actual − total_kills_al_inicio_de_sesión
+ *
+ * No depende de zone_name: suma todos los kills del personaje en cualquier
+ * fila de pvp_zone_kills y resta lo que tenía al inicio de la sesión.
+ * Esto es robusto aunque Java use un nombre de zona diferente al del INI.
  */
-async function findTopKiller(zoneName) {
+async function findTopKiller() {
   const [rows] = await db.execute(
     `SELECT z.char_name,
-            (z.kills - COALESCE(s.kills_at_start, 0)) AS session_kills
+            (SUM(z.kills) - COALESCE(s.kills_at_start, 0)) AS session_kills
      FROM pvp_zone_kills z
      LEFT JOIN pvp_zone_session_snapshot s
-       ON s.zone_name = z.zone_name AND s.char_name = z.char_name
-     WHERE z.zone_name = ?
-       AND (z.kills - COALESCE(s.kills_at_start, 0)) > 0
+       ON s.char_name = z.char_name AND s.zone_name = '__session__'
+     GROUP BY z.char_name, s.kills_at_start
+     HAVING session_kills > 0
      ORDER BY session_kills DESC
-     LIMIT 1`,
-    [zoneName]
+     LIMIT 1`
   ).catch(() => [[]]);
 
   return rows.length ? rows[0] : null;
 }
 
 /**
- * Premia al top killer de la zona que acaba de terminar.
+ * Premia al top killer de la sesión que acaba de terminar.
+ * @param {string} zoneName  Nombre de la zona según PvpZone.ini (solo para display)
+ * @param {number} coinsToAward
  */
 async function awardTopKiller(zoneName, coinsToAward) {
-  const top = await findTopKiller(zoneName);
+  const top = await findTopKiller();
 
   if (!top) {
-    console.log(`[PvpReward] ℹ️  Zona "${zoneName}" sin kills registrados — sin premio`);
+    console.log(`[PvpReward] ℹ️  Zona "${zoneName}" — sin kills en esta sesión, sin premio`);
     return;
   }
 
@@ -236,27 +246,30 @@ async function runCycle() {
   const activeZone = getActivePvpZone();
   if (!activeZone.enabled || !activeZone.name || activeZone.name === 'Sin zona') return;
 
-  // ── Primera ejecución: sólo registrar zona actual y snapshottear ──
+  // ── Primera ejecución: registrar zona actual y tomar snapshot inicial ──
   if (storedIndex === null) {
-    console.log(`[PvpReward] 🚀 Primera ejecución — zona actual: "${activeZone.name}" (idx ${activeZone.index})`);
+    console.log(`[PvpReward] 🚀 Primera ejecución — zona activa según INI: "${activeZone.name}" (idx ${activeZone.index})`);
     await saveCurrentZone(activeZone.index, activeZone.name);
-    await snapshotKillsForZone(activeZone.name);
+    await snapshotCurrentKills();
     return;
   }
 
   // ── Zona sin cambios ───────────────────────────────────────────────
   if (storedIndex === activeZone.index) return;
 
-  // ── Zona cambió → premiar top killer de la zona que terminó ───────
+  // ── Zona cambió → premiar top killer de la sesión que terminó ─────
+  // storedName es el nombre legible del INI (solo para mostrar en notif/logs).
+  // El cálculo de kills NO depende de ese nombre: usa el snapshot __session__.
   console.log(`[PvpReward] 🔄 Rotación detectada: "${storedName}" → "${activeZone.name}"`);
 
   if (storedName) {
     await awardTopKiller(storedName, coinsTopKiller);
   }
 
-  // Actualizar zona activa y snapshottear punto de partida de la nueva zona
+  // Guardar nueva zona activa y tomar snapshot de kills actuales
+  // como punto de partida de la nueva sesión
   await saveCurrentZone(activeZone.index, activeZone.name);
-  await snapshotKillsForZone(activeZone.name);
+  await snapshotCurrentKills();
 }
 
 /* ─── Arranque ────────────────────────────────────────────────────── */
