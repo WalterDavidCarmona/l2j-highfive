@@ -38,81 +38,80 @@ router.get('/balance', auth, async (req, res) => {
   }
 });
 
-/* ─── POST /api/shop/purchase ──────────────────────────────────── */
+/* ─── POST /api/shop/purchase  (ítem individual — legado) ──────── */
 router.post('/purchase', auth, async (req, res) => {
+  const { itemShopId, charName, qty = 1 } = req.body;
+  if (!itemShopId || !charName)
+    return res.status(400).json({ error: 'itemShopId y charName requeridos' });
+
+  const quantity = Math.max(1, parseInt(qty) || 1);
+
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
+    await processPurchase(conn, req.user.login, charName, [{ id: itemShopId, qty: quantity }]);
+    await conn.commit();
 
-    const { itemShopId, charName } = req.body;
-    if (!itemShopId || !charName)
-      return res.status(400).json({ error: 'itemShopId y charName requeridos' });
-
-    // 1. Obtener ítem de la tienda
-    const [[item]] = await conn.execute(
-      'SELECT * FROM web_shop_items WHERE id=? AND active=1',
-      [itemShopId]
-    );
-    if (!item) return res.status(404).json({ error: 'Ítem no disponible' });
-    if (item.stock !== null && item.stock <= 0)
-      return res.status(400).json({ error: 'Sin stock disponible' });
-
-    // 2. Verificar que el personaje pertenezca a la cuenta
-    const [[char]] = await conn.execute(
-      'SELECT charId FROM characters WHERE char_name=? AND account_name=? AND deletetime=0',
-      [charName, req.user.login]
-    );
-    if (!char) return res.status(403).json({ error: 'Personaje no pertenece a tu cuenta' });
-
-    // 3. Verificar y descontar coins
     const [[balRow]] = await conn.execute(
-      "SELECT value FROM account_data WHERE account_name=? AND var='web_coins' FOR UPDATE",
+      "SELECT CAST(COALESCE(value,'0') AS UNSIGNED) AS coins FROM account_data WHERE account_name=? AND var='web_coins'",
       [req.user.login]
     );
-    const currentCoins = balRow ? parseInt(balRow.value) || 0 : 0;
-
-    if (item.price_coins > 0 && currentCoins < item.price_coins)
-      return res.status(400).json({ error: `Coins insuficientes (necesitas ${item.price_coins}, tienes ${currentCoins})` });
-
-    if (item.price_coins > 0) {
-      const newBal = currentCoins - item.price_coins;
-      await conn.execute(
-        `INSERT INTO account_data (account_name, var, value) VALUES (?, 'web_coins', ?)
-         ON DUPLICATE KEY UPDATE value = ?`,
-        [req.user.login, newBal, newBal]
-      );
-    }
-
-    // 4. Entregar ítem al personaje (tabla items de L2JMobius H5)
-    const objectId = await generateObjectId(conn);
-    await conn.execute(
-      `INSERT INTO items (object_id, item_id, owner_id, loc, loc_data, count, enchant_level, custom_type1, custom_type2, mana_left, time)
-       VALUES (?, ?, ?, 'INVENTORY', 0, ?, 0, 0, 0, -1, -1)`,
-      [objectId, item.item_id, char.charId, item.item_count || 1]
-    );
-
-    // 5. Registrar en historial
-    await conn.execute(
-      `INSERT INTO web_shop_history (account_name, char_name, item_shop_id, item_name, price_coins, item_count)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [req.user.login, charName, itemShopId, item.name, item.price_coins, item.item_count]
-    );
-
-    // 6. Reducir stock si aplica
-    if (item.stock !== null) {
-      await conn.execute('UPDATE web_shop_items SET stock=stock-1 WHERE id=?', [itemShopId]);
-    }
-
-    await conn.commit();
     res.json({
-      message: `¡${item.name} x${item.item_count} entregado a ${charName}!`,
-      remainingCoins: currentCoins - (item.price_coins || 0)
+      message: `¡Compra procesada! Revisa tu inventario en el juego en unos segundos.`,
+      remainingCoins: balRow ? balRow.coins : 0
     });
-
   } catch (err) {
     await conn.rollback();
     console.error('[Shop/purchase]', err.message);
-    res.status(500).json({ error: 'Error procesando compra: ' + err.message });
+    res.status(err.status || 500).json({ error: err.message || 'Error procesando compra' });
+  } finally {
+    conn.release();
+  }
+});
+
+/* ─── POST /api/shop/cart-checkout ─────────────────────────────── */
+/*  body: {
+      charName: "NombrePersonaje",
+      items: [ { id: shopItemId, qty: 2 }, { id: shopItemId2, qty: 1 }, ... ]
+    }
+*/
+router.post('/cart-checkout', auth, async (req, res) => {
+  const { charName, items } = req.body;
+
+  if (!charName || !Array.isArray(items) || !items.length)
+    return res.status(400).json({ error: 'charName e items[] requeridos' });
+
+  if (items.length > 20)
+    return res.status(400).json({ error: 'Máximo 20 ítems distintos por compra' });
+
+  // Validar que cada qty sea positivo
+  for (const it of items) {
+    const q = parseInt(it.qty);
+    if (!it.id || isNaN(q) || q < 1 || q > 999)
+      return res.status(400).json({ error: `Cantidad inválida para ítem ${it.id}` });
+  }
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+    const { totalCoins, summary } = await processPurchase(conn, req.user.login, charName, items);
+    await conn.commit();
+
+    const [[balRow]] = await conn.execute(
+      "SELECT CAST(COALESCE(value,'0') AS UNSIGNED) AS coins FROM account_data WHERE account_name=? AND var='web_coins'",
+      [req.user.login]
+    );
+
+    res.json({
+      ok: true,
+      message: `¡Compra exitosa! ${summary}. Recibirás los ítems en tu inventario en unos segundos.`,
+      spent: totalCoins,
+      remainingCoins: balRow ? balRow.coins : 0
+    });
+  } catch (err) {
+    await conn.rollback();
+    console.error('[Shop/cart-checkout]', err.message);
+    res.status(err.status || 500).json({ error: err.message || 'Error procesando carrito' });
   } finally {
     conn.release();
   }
@@ -136,10 +135,101 @@ router.get('/history', auth, async (req, res) => {
   }
 });
 
-/* Helper: generar object_id único */
-async function generateObjectId(conn) {
-  const [[row]] = await conn.execute('SELECT MAX(object_id) AS maxId FROM items');
-  return (row.maxId || 268500000) + 1;
+/* ══════════════════════════════════════════════════════════════════
+   HELPER: processPurchase
+   Ejecuta toda la lógica de compra dentro de una transacción existente.
+   items = [ { id: shopItemId, qty: número } ]
+   Lanza errores con .status para que el caller devuelva el código HTTP correcto.
+══════════════════════════════════════════════════════════════════ */
+async function processPurchase(conn, accountName, charName, items) {
+  // 1. Verificar personaje
+  const [[char]] = await conn.execute(
+    'SELECT charId FROM characters WHERE char_name=? AND account_name=? AND deletetime=0',
+    [charName, accountName]
+  );
+  if (!char) { const e = new Error('Personaje no pertenece a tu cuenta'); e.status = 403; throw e; }
+
+  // 2. Obtener todos los shop items pedidos
+  const ids = [...new Set(items.map(i => parseInt(i.id)))];
+  const [shopItems] = await conn.execute(
+    `SELECT * FROM web_shop_items WHERE id IN (${ids.map(() => '?').join(',')}) AND active=1`,
+    ids
+  );
+  const shopMap = Object.fromEntries(shopItems.map(s => [s.id, s]));
+
+  // 3. Calcular costo total y validar stock
+  let totalCost = 0;
+  const lines = []; // para el resumen del mail
+
+  for (const { id, qty } of items) {
+    const shopId = parseInt(id);
+    const q      = parseInt(qty);
+    const s      = shopMap[shopId];
+    if (!s) { const e = new Error(`Ítem #${shopId} no disponible`); e.status = 404; throw e; }
+    if (s.stock !== null && s.stock < q) {
+      const e = new Error(`Stock insuficiente para "${s.name}" (disponible: ${s.stock})`);
+      e.status = 400; throw e;
+    }
+    totalCost += (s.price_coins || 0) * q;
+    lines.push({ shopItem: s, qty: q });
+  }
+
+  // 4. Verificar balance
+  const [[balRow]] = await conn.execute(
+    "SELECT value FROM account_data WHERE account_name=? AND var='web_coins' FOR UPDATE",
+    [accountName]
+  );
+  const currentCoins = balRow ? parseInt(balRow.value) || 0 : 0;
+
+  if (totalCost > 0 && currentCoins < totalCost) {
+    const e = new Error(`Coins insuficientes (necesitas ${totalCost.toLocaleString()}, tienes ${currentCoins.toLocaleString()})`);
+    e.status = 400; throw e;
+  }
+
+  // 5. Descontar coins
+  if (totalCost > 0) {
+    const newBal = currentCoins - totalCost;
+    await conn.execute(
+      `INSERT INTO account_data (account_name, var, value) VALUES (?, 'web_coins', ?)
+       ON DUPLICATE KEY UPDATE value = ?`,
+      [accountName, newBal, newBal]
+    );
+  }
+
+  // 6. Entregar ítems via custom_mail (un correo por compra con todos los ítems)
+  //    Formato: "itemId totalCantidad;itemId2 totalCantidad2"
+  const mailItemsStr = lines
+    .map(({ shopItem, qty }) => `${shopItem.item_id} ${(shopItem.item_count || 1) * qty}`)
+    .join(';');
+
+  const summaryText = lines
+    .map(({ shopItem, qty }) => `${shopItem.name} x${(shopItem.item_count || 1) * qty}`)
+    .join(', ');
+
+  await conn.execute(
+    `INSERT INTO custom_mail (receiver, subject, message, items) VALUES (?, ?, ?, ?)`,
+    [
+      char.charId,
+      'Tienda Web — Tu pedido',
+      `Muchas gracias por tu compra. Tu pedido incluye: ${summaryText}`,
+      mailItemsStr
+    ]
+  );
+
+  // 7. Historial + stock por cada línea
+  for (const { shopItem, qty } of lines) {
+    await conn.execute(
+      `INSERT INTO web_shop_history (account_name, char_name, item_shop_id, item_name, price_coins, item_count)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [accountName, charName, shopItem.id, shopItem.name,
+       (shopItem.price_coins || 0) * qty, (shopItem.item_count || 1) * qty]
+    );
+    if (shopItem.stock !== null) {
+      await conn.execute('UPDATE web_shop_items SET stock=stock-? WHERE id=?', [qty, shopItem.id]);
+    }
+  }
+
+  return { totalCoins: totalCost, summary: summaryText };
 }
 
 module.exports = router;

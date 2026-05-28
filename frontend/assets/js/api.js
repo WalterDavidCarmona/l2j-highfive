@@ -30,9 +30,9 @@ class L2Api {
   }
 
   // ── Auth ──────────────────────────────────────────────────────────
-  register(login, password, email)  {
+  register(login, password, email, birthday)  {
     return this._fetch('/auth/register', {
-      method: 'POST', body: JSON.stringify({ login, password, email })
+      method: 'POST', body: JSON.stringify({ login, password, email, birthday })
     });
   }
   login(login, password) {
@@ -40,10 +40,19 @@ class L2Api {
       method: 'POST', body: JSON.stringify({ login, password })
     });
   }
-  getMe()          { return this._fetch('/auth/me'); }
-  changePassword(currentPassword, newPassword) {
+  getMe() { return this._fetch('/auth/me'); }
+
+  /** Recuperación sin login: verifica email + birthday, actualiza contraseña */
+  recoverPassword(email, birthday, newPassword) {
+    return this._fetch('/auth/recover-password', {
+      method: 'POST', body: JSON.stringify({ email, birthday, newPassword })
+    });
+  }
+
+  /** Cambio de contraseña autenticado: verifica contraseña actual + email + birthday */
+  changePassword(currentPassword, email, birthday, newPassword) {
     return this._fetch('/auth/change-password', {
-      method: 'POST', body: JSON.stringify({ currentPassword, newPassword })
+      method: 'POST', body: JSON.stringify({ currentPassword, email, birthday, newPassword })
     });
   }
   logout() { this.setToken(null); }
@@ -76,9 +85,14 @@ class L2Api {
     return this._fetch(`/shop/items${category ? '?category=' + category : ''}`);
   }
   getShopBalance() { return this._fetch('/shop/balance'); }
-  purchase(itemShopId, charName) {
+  purchase(itemShopId, charName, qty = 1) {
     return this._fetch('/shop/purchase', {
-      method: 'POST', body: JSON.stringify({ itemShopId, charName })
+      method: 'POST', body: JSON.stringify({ itemShopId, charName, qty })
+    });
+  }
+  cartCheckout(charName, items) {
+    return this._fetch('/shop/cart-checkout', {
+      method: 'POST', body: JSON.stringify({ charName, items })
     });
   }
   getShopHistory() { return this._fetch('/shop/history'); }

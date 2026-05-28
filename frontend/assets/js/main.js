@@ -16,7 +16,7 @@ function showToast(message, type = 'info', icon = null) {
 }
 
 /* ====================================================================
-   CAPTCHA MATEMÁTICO
+   CAPTCHA MATEMÁTICO (Login)
    ==================================================================== */
 let currentCaptchaAnswer = 0;
 
@@ -44,11 +44,152 @@ function validateCaptcha() {
   if (userAnswer !== currentCaptchaAnswer) {
     errorEl.textContent = 'Respuesta incorrecta, intenta de nuevo';
     errorEl.classList.remove('hidden');
-    generateCaptcha(); // Generar nueva pregunta
+    generateCaptcha();
     return false;
   }
 
   return true;
+}
+
+/* ====================================================================
+   CAPTCHA MATEMÁTICO (Registro)
+   ==================================================================== */
+let currentRegCaptchaAnswer = 0;
+
+function generateRegCaptcha() {
+  const ops = [
+    () => { const a = Math.floor(Math.random()*15)+2, b = Math.floor(Math.random()*15)+2; return { q:`¿Cuánto es ${a} + ${b}?`, ans: a+b }; },
+    () => { const a = Math.floor(Math.random()*10)+5, b = Math.floor(Math.random()*5)+1;  return { q:`¿Cuánto es ${a} - ${b}?`, ans: a-b }; },
+    () => { const a = Math.floor(Math.random()*9)+2,  b = Math.floor(Math.random()*5)+2;  return { q:`¿Cuánto es ${a} × ${b}?`, ans: a*b }; },
+  ];
+  const { q, ans } = ops[Math.floor(Math.random() * ops.length)]();
+  currentRegCaptchaAnswer = ans;
+  document.getElementById('reg-captcha-question').textContent = q;
+  document.getElementById('reg-captcha').value = '';
+  const errEl = document.getElementById('reg-captcha-error');
+  errEl.textContent = ''; errEl.classList.add('hidden');
+}
+
+function validateRegCaptcha() {
+  const userAnswer = parseInt(document.getElementById('reg-captcha').value.trim());
+  const errorEl = document.getElementById('reg-captcha-error');
+  if (isNaN(userAnswer)) {
+    errorEl.textContent = 'Por favor, ingresa un número';
+    errorEl.classList.remove('hidden');
+    return false;
+  }
+  if (userAnswer !== currentRegCaptchaAnswer) {
+    errorEl.textContent = 'Respuesta incorrecta, intenta de nuevo';
+    errorEl.classList.remove('hidden');
+    generateRegCaptcha();
+    return false;
+  }
+  return true;
+}
+
+/* ====================================================================
+   REGISTRO — validación en tiempo real de nombre de usuario
+   ==================================================================== */
+function sanitizeLoginPreview(raw) {
+  return raw.trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const regLoginEl = document.getElementById('reg-login');
+  if (!regLoginEl) return;
+
+  regLoginEl.addEventListener('input', () => {
+    const raw      = regLoginEl.value;
+    const clean    = sanitizeLoginPreview(raw);
+    const preview  = document.getElementById('reg-login-preview');
+    const errorEl  = document.getElementById('reg-login-error');
+
+    // Mostrar caracteres inválidos detectados
+    const hasInvalid = raw !== raw.toLowerCase() || /[^a-z0-9_]/.test(raw.toLowerCase());
+    if (hasInvalid && raw.length > 0) {
+      preview.textContent = `Se usará: "${clean}" (los caracteres no válidos se omiten)`;
+      preview.classList.remove('hidden');
+    } else {
+      preview.classList.add('hidden');
+    }
+
+    // Validar longitud
+    if (clean.length > 0 && clean.length < 4) {
+      errorEl.textContent = `Mínimo 4 caracteres (tienes ${clean.length})`;
+      errorEl.classList.remove('hidden');
+    } else if (clean.length > 14) {
+      errorEl.textContent = 'Máximo 14 caracteres';
+      errorEl.classList.remove('hidden');
+    } else {
+      errorEl.classList.add('hidden');
+    }
+  });
+});
+
+/* ====================================================================
+   DESCARGA BLOC DE NOTAS — datos de cuenta
+   isRecovery=true  → recuperación de contraseña
+   isChange=true    → cambio de contraseña desde el panel
+   ==================================================================== */
+function downloadAccountCard(login, password, email = '', birthday = '', isRecovery = false, isChange = false) {
+  const now        = new Date();
+  const dateStr    = now.toLocaleDateString('es-ES', { year:'numeric', month:'2-digit', day:'2-digit' });
+  const timeStr    = now.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+  const serverName = document.title || 'L2H5 Server';
+
+  // Formatear fecha de nacimiento legible
+  let birthdayStr = '';
+  if (birthday) {
+    const [y, m, d] = birthday.split('-');
+    birthdayStr = d ? `${d}/${m}/${y}` : birthday;
+  }
+
+  const action = isChange   ? 'ACTUALIZACIÓN DE CONTRASEÑA'
+               : isRecovery ? 'RECUPERACIÓN DE CONTRASEÑA'
+               :              'DATOS DE REGISTRO';
+
+  const lines = [
+    '╔══════════════════════════════════════════════╗',
+    `║  ${action.padEnd(44)}║`,
+    `║  ${serverName.padEnd(44)}║`,
+    '╚══════════════════════════════════════════════╝',
+    '',
+    `  Fecha : ${dateStr} a las ${timeStr}`,
+    '',
+    '  ┌─ CREDENCIALES DE ACCESO ──────────────────┐',
+    `  │  Usuario      : ${login}`,
+    `  │  Contraseña   : ${password}`,
+    '  └───────────────────────────────────────────┘',
+    '',
+    '  ┌─ DATOS DE IDENTIDAD ───────────────────────┐',
+    `  │  Correo       : ${email || '(no registrado)'}`,
+    `  │  Nacimiento   : ${birthdayStr || '(no registrado)'}`,
+    '  └───────────────────────────────────────────┘',
+    '',
+    '  INSTRUCCIONES:',
+    '  1. Abre el launcher de Lineage 2.',
+    '  2. Ingresa el Usuario y Contraseña exactamente',
+    '     como aparecen arriba.',
+    '  3. El Correo y la Fecha de Nacimiento son',
+    '     necesarios para recuperar la cuenta.',
+    '  4. Guarda este archivo en un lugar seguro.',
+    '',
+    '═══════════════════════════════════════════════',
+    '  ⚠  NO compartas esta información con nadie.',
+    '     El staff JAMÁS pedirá tu contraseña.',
+    '═══════════════════════════════════════════════',
+  ].join('\r\n');
+
+  const suffix   = isChange ? '_nueva_pass' : isRecovery ? '_recuperacion' : '_registro';
+  const blob     = new Blob(['﻿' + lines], { type: 'text/plain;charset=utf-8' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href         = url;
+  a.download     = `cuenta_${login}${suffix}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 /* ====================================================================
@@ -215,10 +356,16 @@ function openModal(type) {
   closeAllModals();
   document.getElementById(`modal-${type}`)?.classList.add('open');
 
-  // Generar CAPTCHA cuando se abre el modal de login
-  if (type === 'login') {
-    generateCaptcha();
+  // Generar CAPTCHA según el modal abierto
+  if (type === 'login')    { generateCaptcha(); }
+  if (type === 'register') {
+    generateRegCaptcha();
+    document.getElementById('form-register')?.reset();
+    ['reg-login-preview','reg-login-error','reg-pass-error','reg-confirm-error',
+     'reg-email-error','reg-email-confirm-error','reg-birthday-error','reg-captcha-error']
+      .forEach(id => { const el = document.getElementById(id); if (el) { el.textContent=''; el.classList.add('hidden'); } });
   }
+  if (type === 'recover') { resetRecoverModal(); }
 }
 function closeAllModals() {
   document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
@@ -282,29 +429,184 @@ async function fetchCurrentUser() {
   }
 }
 
+/* ────────── Helper inline de errores de campo ────────── */
+function fieldErr(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg; el.classList.remove('hidden');
+}
+function clearFieldErr(id) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = ''; el.classList.add('hidden'); }
+}
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function isValidBirthdayClient(str) {
+  if (!str) return false;
+  const d = new Date(str + 'T00:00:00');
+  return !isNaN(d.getTime()) && d < new Date();
+}
+
 /* ────────── REGISTER ────────── */
 document.getElementById('form-register')?.addEventListener('submit', async e => {
   e.preventDefault();
-  const btn = e.target.querySelector('button[type=submit]');
-  const login    = document.getElementById('reg-login').value.trim();
+  const btn      = e.target.querySelector('button[type=submit]');
+  const rawLogin = document.getElementById('reg-login').value.trim();
+  const login    = sanitizeLoginPreview(rawLogin);
   const pass     = document.getElementById('reg-password').value;
   const confirm  = document.getElementById('reg-confirm').value;
+  const email    = document.getElementById('reg-email').value.trim().toLowerCase();
+  const emailCf  = document.getElementById('reg-email-confirm').value.trim().toLowerCase();
+  const birthday = document.getElementById('reg-birthday').value;
 
-  if (pass !== confirm) { showToast('Las contraseñas no coinciden', 'error'); return; }
+  // ── Limpiar errores previos ───────────────────────────────────
+  ['reg-login-error','reg-pass-error','reg-confirm-error',
+   'reg-email-error','reg-email-confirm-error','reg-birthday-error'].forEach(clearFieldErr);
+
+  let valid = true;
+  const fail = (id, msg) => { fieldErr(id, msg); valid = false; };
+
+  if (login.length < 4)  fail('reg-login-error', `Mínimo 4 caracteres (tienes ${login.length})`);
+  if (login.length > 14) fail('reg-login-error', 'Máximo 14 caracteres');
+  if (pass.length < 6)   fail('reg-pass-error',  'La contraseña debe tener al menos 6 caracteres');
+  if (pass !== confirm)  fail('reg-confirm-error','Las contraseñas no coinciden');
+
+  if (!isValidEmail(email))       fail('reg-email-error',         'Correo electrónico no válido');
+  if (email !== emailCf)          fail('reg-email-confirm-error', 'Los correos no coinciden');
+  if (!isValidBirthdayClient(birthday)) fail('reg-birthday-error', 'Ingresa una fecha de nacimiento válida');
+
+  if (!validateRegCaptcha()) valid = false;
+  if (!valid) return;
 
   btn.disabled = true; btn.textContent = 'Creando cuenta...';
   try {
-    const res = await api.register(login, pass);
+    const res = await api.register(login, pass, email, birthday);
     api.setToken(res.token);
     await fetchCurrentUser();
     closeAllModals();
-    showToast('¡Cuenta creada exitosamente! Bienvenido/a ⚔️', 'success');
+    showToast(`¡Cuenta "${login}" creada! Descargando tus datos... ⚔️`, 'success');
     navigate('panel');
+    downloadAccountCard(login, pass, email, birthday);
   } catch (err) {
     showToast(err.message, 'error');
+    generateRegCaptcha();
   } finally {
     btn.disabled = false; btn.textContent = 'CREAR CUENTA';
   }
+});
+
+/* ────────── CAPTCHA REFRESH (Registro) ────────── */
+document.getElementById('btn-reg-captcha-refresh')?.addEventListener('click', e => {
+  e.preventDefault();
+  generateRegCaptcha();
+  showToast('Nueva pregunta generada', 'info');
+});
+
+/* ====================================================================
+   CAPTCHA MATEMÁTICO (Recuperación de contraseña)
+   ==================================================================== */
+let currentRecCaptchaAnswer = 0;
+
+function generateRecCaptcha() {
+  const ops = [
+    () => { const a = Math.floor(Math.random()*15)+2, b = Math.floor(Math.random()*15)+2; return { q:`¿Cuánto es ${a} + ${b}?`, ans: a+b }; },
+    () => { const a = Math.floor(Math.random()*10)+5, b = Math.floor(Math.random()*5)+1;  return { q:`¿Cuánto es ${a} - ${b}?`, ans: a-b }; },
+    () => { const a = Math.floor(Math.random()*9)+2,  b = Math.floor(Math.random()*5)+2;  return { q:`¿Cuánto es ${a} × ${b}?`, ans: a*b }; },
+  ];
+  const { q, ans } = ops[Math.floor(Math.random() * ops.length)]();
+  currentRecCaptchaAnswer = ans;
+  document.getElementById('rec-captcha-question').textContent = q;
+  document.getElementById('rec-captcha').value = '';
+  clearFieldErr('rec-captcha-error');
+}
+
+function validateRecCaptcha() {
+  const val = parseInt(document.getElementById('rec-captcha').value.trim());
+  if (isNaN(val)) { fieldErr('rec-captcha-error', 'Por favor ingresa un número'); return false; }
+  if (val !== currentRecCaptchaAnswer) {
+    fieldErr('rec-captcha-error', 'Respuesta incorrecta, intenta de nuevo');
+    generateRecCaptcha(); return false;
+  }
+  return true;
+}
+
+/* ────────── RECOVER MODAL: lógica de dos pasos ────────── */
+// Almacena los datos verificados para pasarlos al paso 2
+let _recoverVerified = { email: '', birthday: '' };
+
+function resetRecoverModal() {
+  _recoverVerified = { email: '', birthday: '' };
+  document.getElementById('recover-step1').classList.remove('hidden');
+  document.getElementById('recover-step2').classList.add('hidden');
+  document.getElementById('form-recover-step1')?.reset();
+  document.getElementById('form-recover-step2')?.reset();
+  ['rec-email-error','rec-birthday-error','rec-newpass-error',
+   'rec-confirm-error','rec-captcha-error'].forEach(clearFieldErr);
+}
+
+/* Paso 1 — verificar que email + birthday existen en BD */
+document.getElementById('form-recover-step1')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn      = e.target.querySelector('button[type=submit]');
+  const email    = document.getElementById('rec-email').value.trim().toLowerCase();
+  const birthday = document.getElementById('rec-birthday').value;
+
+  ['rec-email-error','rec-birthday-error'].forEach(clearFieldErr);
+  let valid = true;
+  if (!isValidEmail(email))             { fieldErr('rec-email-error',    'Correo no válido'); valid = false; }
+  if (!isValidBirthdayClient(birthday)) { fieldErr('rec-birthday-error', 'Fecha no válida');  valid = false; }
+  if (!valid) return;
+
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  try {
+    // Usamos recover-password con una contraseña placeholder para verificar — NO.
+    // En realidad hacemos la petición completa en el paso 2. Aquí solo validamos en cliente
+    // y guardamos los datos. La verificación real ocurre en el submit del paso 2.
+    // Si el servidor devuelve error en paso 2, se mostrará ahí.
+    _recoverVerified = { email, birthday };
+    document.getElementById('recover-step1').classList.add('hidden');
+    document.getElementById('recover-step2').classList.remove('hidden');
+    generateRecCaptcha();
+  } finally {
+    btn.disabled = false; btn.textContent = 'Verificar identidad';
+  }
+});
+
+/* Paso 2 — establecer nueva contraseña */
+document.getElementById('form-recover-step2')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn     = e.target.querySelector('button[type=submit]');
+  const newPass = document.getElementById('rec-newpass').value;
+  const confirm = document.getElementById('rec-confirm').value;
+
+  ['rec-newpass-error','rec-confirm-error'].forEach(clearFieldErr);
+  let valid = true;
+  if (newPass.length < 6)   { fieldErr('rec-newpass-error', 'Mínimo 6 caracteres'); valid = false; }
+  if (newPass !== confirm)  { fieldErr('rec-confirm-error', 'Las contraseñas no coinciden'); valid = false; }
+  if (!validateRecCaptcha()) valid = false;
+  if (!valid) return;
+
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  try {
+    const res = await api.recoverPassword(_recoverVerified.email, _recoverVerified.birthday, newPass);
+    closeAllModals();
+    showToast(`Contraseña de "${res.login}" actualizada. Se descargará tu ficha. ✅`, 'success');
+    downloadAccountCard(res.login, newPass, _recoverVerified.email, _recoverVerified.birthday, true);
+    resetRecoverModal();
+  } catch (err) {
+    // Si el servidor dice que no coinciden los datos, volver al paso 1
+    showToast(err.message, 'error');
+    if (err.message.includes('no coinciden') || err.message.includes('ninguna cuenta')) {
+      resetRecoverModal();
+    } else {
+      generateRecCaptcha();
+    }
+  } finally {
+    btn.disabled = false; btn.textContent = 'Guardar nueva contraseña';
+  }
+});
+
+document.getElementById('btn-rec-captcha-refresh')?.addEventListener('click', e => {
+  e.preventDefault(); generateRecCaptcha();
 });
 
 /* ────────── LOGIN ────────── */
@@ -358,19 +660,87 @@ document.getElementById('btn-logout')?.addEventListener('click', () => {
 /* ====================================================================
    HOME — Server Status
    ==================================================================== */
+
+// Countdown sincronizado para zona PvP
+let _pvpCountdownInterval = null;
+
+function startPvpZoneCountdown(el, secondsRemaining) {
+  if (_pvpCountdownInterval) clearInterval(_pvpCountdownInterval);
+
+  let secs = secondsRemaining;
+
+  const update = () => {
+    if (secs <= 0) {
+      clearInterval(_pvpCountdownInterval);
+      el.textContent = '00:00';
+      el.classList.add('urgent');
+      // Recargar status después de 3s para obtener la nueva zona
+      setTimeout(() => loadHome(), 3000);
+      return;
+    }
+    const mm = String(Math.floor(secs / 60)).padStart(2, '0');
+    const ss = String(secs % 60).padStart(2, '0');
+    el.textContent = `${mm}:${ss}`;
+    // Último minuto → clase urgente (dorado parpadeante)
+    el.classList.toggle('urgent', secs <= 60);
+    secs--;
+  };
+
+  update();
+  _pvpCountdownInterval = setInterval(update, 1000);
+}
+
 async function loadHome() {
   try {
     const status = await api.getServerStatus();
-    document.getElementById('stat-online').textContent  = status.online?.toLocaleString() || '0';
-    document.getElementById('stat-accounts').textContent = status.accounts?.toLocaleString() || '0';
-    document.getElementById('stat-chars').textContent   = status.characters?.toLocaleString() || '0';
+    const isOnline = status.gameOnline === true || status.status === 'online';
 
-    const pvpZoneEl = document.getElementById('home-pvpzone');
+    document.getElementById('stat-online').textContent   = status.online?.toLocaleString() || '0';
+    document.getElementById('stat-accounts').textContent = status.accounts?.toLocaleString() || '0';
+    document.getElementById('stat-chars').textContent    = status.characters?.toLocaleString() || '0';
+
+    // Badge del navbar (color + texto)
+    const navBadge = document.getElementById('nav-online');
+    const navDot   = document.getElementById('nav-status-dot');
+    const navLabel = document.getElementById('nav-status-label');
+    if (navDot && navLabel) {
+      navDot.className   = 'server-status-dot ' + (isOnline ? 'dot-online' : 'dot-offline');
+      navLabel.textContent = isOnline
+        ? (status.online?.toLocaleString() || '0') + ' online'
+        : 'Offline';
+    }
+    if (navBadge) {
+      navBadge.classList.toggle('badge-offline', !isOnline);
+    }
+
+    // Indicador en hero stats
+    const heroDot   = document.getElementById('hero-status-dot');
+    const heroLabel = document.getElementById('hero-status-label');
+    if (heroDot && heroLabel) {
+      heroDot.className    = 'server-status-dot ' + (isOnline ? 'dot-online' : 'dot-offline');
+      heroLabel.textContent = isOnline ? 'Online' : 'Offline';
+    }
+
+    // Zona PvP activa con countdown sincronizado al servidor
+    const pvpZoneEl  = document.getElementById('home-pvpzone');
+    const pvpTimerEl = document.getElementById('home-pvpzone-timer');
     if (pvpZoneEl && status.pvpZone) {
-      pvpZoneEl.textContent = status.pvpZone.name;
+      pvpZoneEl.textContent = status.pvpZone.name || '—';
+    }
+    if (pvpTimerEl && status.pvpZone?.nextRotationIn > 0) {
+      startPvpZoneCountdown(pvpTimerEl, status.pvpZone.nextRotationIn);
     }
   } catch (err) {
     console.warn('Server status:', err.message);
+    // Error de red → mostrar offline
+    ['nav-status-dot','hero-status-dot'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.className = 'server-status-dot dot-offline';
+    });
+    const navLbl = document.getElementById('nav-status-label');
+    const heroLbl = document.getElementById('hero-status-label');
+    if (navLbl)  navLbl.textContent  = 'Offline';
+    if (heroLbl) heroLbl.textContent = 'Offline';
   }
 }
 
@@ -399,6 +769,10 @@ async function renderRanking(type) {
   tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:2rem">
     <div class="spinner" style="margin:0 auto"></div></td></tr>`;
 
+  // Limpiar panel en-zona si cambiamos de tab
+  const inZonePanel = document.getElementById('pvpzone-in-zone-panel');
+  if (inZonePanel) inZonePanel.style.display = (type === 'pvpzone') ? '' : 'none';
+
   try {
     let data;
     switch (type) {
@@ -410,15 +784,60 @@ async function renderRanking(type) {
       default:         data = await api.getRankingPvp(50);
     }
 
-    if (!data.length) {
-      tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding:2rem">Sin datos disponibles</td></tr>';
-      return;
+    if (type === 'pvpzone') {
+      // Nueva respuesta: { zoneName, nextRotationIn, playersInZone, ranking }
+      renderPvpZoneTab(data);
+    } else {
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding:2rem">Sin datos disponibles</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(row => renderRankingRow(type, row)).join('');
     }
-
-    tbody.innerHTML = data.map(row => renderRankingRow(type, row)).join('');
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="7" class="text-center text-red" style="padding:2rem">Error: ${err.message}</td></tr>`;
   }
+}
+
+function renderPvpZoneTab(data) {
+  // Actualizar widget nombre zona + countdown
+  const nameEl = document.getElementById('ranking-pvpzone');
+  const timerEl = document.getElementById('ranking-pvpzone-players');
+  if (nameEl) nameEl.textContent = data.zoneName || '—';
+  if (timerEl && data.nextRotationIn > 0) startPvpZoneCountdown(timerEl, data.nextRotationIn);
+
+  // Panel de jugadores actualmente en zona
+  const inZonePanel = document.getElementById('pvpzone-in-zone-panel');
+  if (inZonePanel) {
+    inZonePanel.style.display = '';
+    const countEl = document.getElementById('pvpzone-in-zone-count');
+    const listEl  = document.getElementById('pvpzone-in-zone-list');
+    if (countEl) countEl.textContent = data.playersInZoneCount || 0;
+
+    if (listEl) {
+      if (!data.playersInZone || data.playersInZone.length === 0) {
+        listEl.innerHTML = `<div class="in-zone-empty">Sin jugadores en la zona ahora mismo</div>`;
+      } else {
+        listEl.innerHTML = data.playersInZone.map(p => `
+          <div class="in-zone-player">
+            <span class="online-dot online" style="margin-right:.4rem"></span>
+            <span class="in-zone-name">${p.char_name}</span>
+            <span class="in-zone-class">${p.className}</span>
+            <span class="in-zone-lvl">Nv.${p.level}</span>
+            ${p.clan_name ? `<span class="in-zone-clan">[${p.clan_name}]</span>` : ''}
+          </div>`).join('');
+      }
+    }
+  }
+
+  // Tabla de ranking de kills
+  const tbody = document.getElementById('ranking-tbody');
+  const ranking = data.ranking || [];
+  if (!ranking.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding:2rem">Aún no hay kills registradas en esta zona</td></tr>';
+    return;
+  }
+  tbody.innerHTML = ranking.map(row => renderRankingRow('pvpzone', row)).join('');
 }
 
 function getRankBadge(rank) {
@@ -500,6 +919,279 @@ document.querySelectorAll('[data-shop-cat]').forEach(btn => {
   });
 });
 
+/* ── Cart state ─────────────────────────────────────────────────── */
+// cart = Map<shopItemId, { item: shopItemObj, qty: number }>
+const cart = new Map();
+
+function cartCount() {
+  let n = 0;
+  cart.forEach(v => n += v.qty);
+  return n;
+}
+function cartTotal() {
+  let t = 0;
+  cart.forEach(v => t += (v.item.price_coins || 0) * v.qty);
+  return t;
+}
+function updateCartBadge() {
+  const n = cartCount();
+  const badge = document.getElementById('cart-badge');
+  if (badge) { badge.textContent = n; badge.style.display = n ? 'inline-flex' : 'none'; }
+}
+
+async function addToCart(item) {
+  if (!api.isLoggedIn) { showToast('Inicia sesión para comprar', 'warning'); return; }
+
+  const maxQty   = item.stock !== null ? item.stock : 999;
+  const current  = cart.get(item.id)?.qty || 0;
+  const available = maxQty - current;
+
+  if (available <= 0) { showToast(`Stock máximo alcanzado (${maxQty})`, 'warning'); return; }
+
+  // ── Pedir cantidad ───────────────────────────────────────────────
+  const qty = await showQtyModal(item, available);
+  if (!qty) return; // canceló
+  // ────────────────────────────────────────────────────────────────
+
+  const entry = cart.get(item.id);
+  if (entry) {
+    entry.qty = Math.min(entry.qty + qty, maxQty);
+  } else {
+    cart.set(item.id, { item, qty });
+  }
+  updateCartBadge();
+  showToast(`${item.name} x${qty} agregado al carrito`, 'success', '🛒');
+  renderCart();
+}
+window.addToCart = addToCart;
+
+/* ── Modal: pedir cantidad antes de agregar al carrito ───────────
+   Devuelve Promise<number|null> (null = canceló)
+───────────────────────────────────────────────────────────────── */
+function showQtyModal(item, maxAvailable) {
+  return new Promise(resolve => {
+    const existing = document.getElementById('modal-qty-dynamic');
+    if (existing) existing.remove();
+
+    const price = item.price_coins || 0;
+    const modal = document.createElement('div');
+    modal.id = 'modal-qty-dynamic';
+    modal.className = 'modal-overlay open';
+    modal.innerHTML = `
+      <div class="modal-box" style="max-width:360px">
+        <h3 style="margin-bottom:.25rem;font-size:1.05rem">🛒 Agregar al Carrito</h3>
+        <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.2rem">${item.name}</p>
+        <div style="display:flex;align-items:center;gap:.5rem;justify-content:center;margin-bottom:1rem">
+          <button class="cart-qty-btn" id="qm-minus">−</button>
+          <input id="qm-input" type="number" min="1" max="${maxAvailable}" value="1"
+            class="cart-qty-input" style="width:64px;text-align:center;font-size:1.1rem">
+          <button class="cart-qty-btn" id="qm-plus">+</button>
+        </div>
+        <div id="qm-subtotal" style="text-align:center;font-size:.95rem;color:var(--gold);margin-bottom:1.4rem">
+          🪙 ${price.toLocaleString()} WebCoins
+        </div>
+        <div class="modal-actions" style="display:flex;gap:.75rem;justify-content:flex-end">
+          <button class="btn btn-secondary" id="qm-cancel">Cancelar</button>
+          <button class="btn btn-gold" id="qm-ok">✅ Agregar</button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(modal);
+
+    const input    = modal.querySelector('#qm-input');
+    const subtotal = modal.querySelector('#qm-subtotal');
+
+    const updateSubtotal = () => {
+      const q = Math.max(1, Math.min(parseInt(input.value)||1, maxAvailable));
+      input.value = q;
+      subtotal.textContent = `🪙 ${(price * q).toLocaleString()} WebCoins`;
+    };
+
+    modal.querySelector('#qm-minus').addEventListener('click', () => { input.value = Math.max(1, (parseInt(input.value)||1) - 1); updateSubtotal(); });
+    modal.querySelector('#qm-plus').addEventListener('click',  () => { input.value = Math.min(maxAvailable, (parseInt(input.value)||1) + 1); updateSubtotal(); });
+    input.addEventListener('input', updateSubtotal);
+
+    // Enter confirma
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') modal.querySelector('#qm-ok').click(); });
+
+    const cleanup = (result) => { modal.remove(); resolve(result); };
+    modal.querySelector('#qm-ok').addEventListener('click', () => {
+      const q = Math.max(1, Math.min(parseInt(input.value)||1, maxAvailable));
+      cleanup(q);
+    });
+    modal.querySelector('#qm-cancel').addEventListener('click', () => cleanup(null));
+    modal.addEventListener('click', e => { if (e.target === modal) cleanup(null); });
+
+    // Foco automático
+    setTimeout(() => input.focus(), 50);
+  });
+}
+
+function removeFromCart(itemId) {
+  cart.delete(itemId);
+  updateCartBadge();
+  renderCart();
+}
+window.removeFromCart = removeFromCart;
+
+function setCartQty(itemId, qty) {
+  const entry = cart.get(itemId);
+  if (!entry) return;
+  const q = Math.max(1, Math.min(999, parseInt(qty) || 1));
+  const maxQty = entry.item.stock !== null ? entry.item.stock : 999;
+  entry.qty = Math.min(q, maxQty);
+  updateCartBadge();
+  renderCart();
+}
+window.setCartQty = setCartQty;
+
+function clearCart() {
+  cart.clear();
+  updateCartBadge();
+  renderCart();
+}
+window.clearCart = clearCart;
+
+function openCart() {
+  renderCart();
+  document.getElementById('cart-overlay').classList.add('open');
+  document.getElementById('cart-drawer').classList.add('open');
+}
+window.openCart = openCart;
+
+function closeCart() {
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-drawer').classList.remove('open');
+}
+window.closeCart = closeCart;
+
+function renderCart() {
+  const body   = document.getElementById('cart-body');
+  const total  = document.getElementById('cart-total');
+  const balEl  = document.getElementById('cart-balance');
+  const btn    = document.getElementById('btn-checkout');
+  if (!body) return;
+
+  // Balance actualizado
+  const balance = parseInt(document.getElementById('shop-coins')?.textContent?.replace(/\D/g,'')) || 0;
+  if (balEl) balEl.textContent = balance.toLocaleString();
+
+  if (!cart.size) {
+    body.innerHTML = '<div class="cart-empty">Tu carrito está vacío.<br>Agrega ítems desde la tienda.</div>';
+    if (total) total.textContent = '0';
+    if (btn)   btn.disabled = true;
+    return;
+  }
+
+  let html = '';
+  cart.forEach(({ item, qty }) => {
+    const subtotal = (item.price_coins || 0) * qty;
+    const maxQty   = item.stock !== null ? item.stock : 999;
+    html += `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${escHtml(item.name)}</div>
+          <div class="cart-item-price">🪙 ${(item.price_coins||0).toLocaleString()} c/u · Sub: ${subtotal.toLocaleString()}</div>
+        </div>
+        <div class="cart-item-controls">
+          <button class="cart-qty-btn" onclick="setCartQty(${item.id}, ${qty-1})" ${qty<=1?'disabled':''}>−</button>
+          <input class="cart-qty-input" type="number" min="1" max="${maxQty}" value="${qty}"
+            onchange="setCartQty(${item.id}, this.value)"
+            oninput="setCartQty(${item.id}, this.value)">
+          <button class="cart-qty-btn" onclick="setCartQty(${item.id}, ${qty+1})" ${qty>=maxQty?'disabled':''}>+</button>
+          <button class="cart-remove-btn" onclick="removeFromCart(${item.id})" title="Eliminar">🗑</button>
+        </div>
+      </div>`;
+  });
+  body.innerHTML = html;
+
+  const t = cartTotal();
+  if (total) total.textContent = t.toLocaleString();
+  if (btn)   btn.disabled = (t > balance);
+  if (btn)   btn.title = t > balance ? 'Saldo insuficiente' : '';
+}
+
+async function cartCheckout() {
+  if (!cart.size) { showToast('El carrito está vacío', 'warning'); return; }
+
+  selectedCharacter = document.getElementById('shop-char-select')?.value || selectedCharacter;
+  if (!selectedCharacter) { showToast('Selecciona un personaje primero', 'warning'); return; }
+
+  const total = cartTotal();
+  const balance = parseInt(document.getElementById('shop-coins')?.textContent?.replace(/\D/g,'')) || 0;
+  if (total > balance) { showToast('Saldo insuficiente', 'error'); return; }
+
+  // ── Confirmación previa ──────────────────────────────────────────
+  const lines = [];
+  cart.forEach(({ item, qty }) => lines.push(`• ${item.name} x${qty} — 🪙 ${((item.price_coins||0)*qty).toLocaleString()}`));
+  const confirmHtml = `
+    <div style="margin-bottom:1rem;font-size:.95rem;color:var(--text-muted)">
+      Personaje: <strong>${selectedCharacter}</strong>
+    </div>
+    <div style="max-height:180px;overflow-y:auto;margin-bottom:1rem;font-size:.9rem;line-height:1.8">
+      ${lines.join('<br>')}
+    </div>
+    <div style="font-size:1.05rem;font-weight:700;color:var(--gold)">
+      Total: 🪙 ${total.toLocaleString()} WebCoins
+    </div>`;
+
+  const confirmed = await showConfirmModal('¿Confirmar compra?', confirmHtml, '✅ Comprar', '❌ Cancelar');
+  if (!confirmed) return;
+  // ────────────────────────────────────────────────────────────────
+
+  const items = [];
+  cart.forEach(({ qty }, id) => items.push({ id, qty }));
+
+  const btn = document.getElementById('btn-checkout');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Procesando...'; }
+
+  try {
+    const res = await api.cartCheckout(selectedCharacter, items);
+    showToast(res.message, 'success', '🎁');
+    clearCart();
+    closeCart();
+    loadShop(); // refrescar balance
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar compra'; }
+  }
+}
+window.cartCheckout = cartCheckout;
+
+/* ── Helper: modal de confirmación genérico ──────────────────────
+   Devuelve una Promise<boolean>. Reutiliza el modal #modal-confirm
+   si existe, o crea uno temporal.
+───────────────────────────────────────────────────────────────── */
+function showConfirmModal(title, bodyHtml, okLabel = 'Confirmar', cancelLabel = 'Cancelar') {
+  return new Promise(resolve => {
+    // Crear modal dinámico
+    const existing = document.getElementById('modal-confirm-dynamic');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'modal-confirm-dynamic';
+    modal.className = 'modal-overlay open';
+    modal.innerHTML = `
+      <div class="modal-box" style="max-width:420px">
+        <h3 style="margin-bottom:1.2rem;font-size:1.15rem">${title}</h3>
+        <div>${bodyHtml}</div>
+        <div class="modal-actions" style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:flex-end">
+          <button class="btn btn-secondary" id="modal-confirm-cancel">${cancelLabel}</button>
+          <button class="btn btn-gold" id="modal-confirm-ok">${okLabel}</button>
+        </div>
+      </div>`;
+
+    document.body.appendChild(modal);
+
+    const cleanup = (result) => { modal.remove(); resolve(result); };
+    modal.querySelector('#modal-confirm-ok').addEventListener('click', () => cleanup(true));
+    modal.querySelector('#modal-confirm-cancel').addEventListener('click', () => cleanup(false));
+    modal.addEventListener('click', e => { if (e.target === modal) cleanup(false); });
+  });
+}
+
+/* ── Shop loader ─────────────────────────────────────────────────── */
 async function loadShop() {
   if (!api.isLoggedIn) {
     document.getElementById('shop-grid').innerHTML =
@@ -516,11 +1208,12 @@ async function loadShop() {
       api.getShopBalance()
     ]);
 
-    // Actualizar balance
+    // Balance
     const balEl = document.getElementById('shop-coins');
     if (balEl) balEl.textContent = (balance.coins || 0).toLocaleString();
+    updateCartBadge();
 
-    // Selector de personaje
+    // Selector personaje
     if (currentUser?.characters?.length) {
       const sel = document.getElementById('shop-char-select');
       if (sel) {
@@ -538,10 +1231,14 @@ async function loadShop() {
     }
 
     const EMOJIS = { scrolls:'📜', skills:'✨', adena:'💰', premium:'⭐', boxes:'📦', general:'⚔️' };
-    grid.innerHTML = items.map(item => `
+    grid.innerHTML = items.map(item => {
+      const inCart = cart.get(item.id);
+      return `
       <div class="shop-item ${item.featured ? 'featured' : ''}">
         <div class="shop-item-img">
-          ${EMOJIS[item.category] || '⚔️'}
+          ${item.image_url
+            ? `<img src="${escHtml(item.image_url)}" alt="${escHtml(item.name)}" style="max-height:100%;max-width:100%;object-fit:contain">`
+            : (EMOJIS[item.category] || '⚔️')}
           ${item.featured ? '<span class="shop-featured-badge">DESTACADO</span>' : ''}
         </div>
         <div class="shop-item-body">
@@ -549,38 +1246,23 @@ async function loadShop() {
           <div class="shop-item-desc">${escHtml(item.description || '')}</div>
           <div class="shop-item-footer">
             <div class="shop-price"><span class="coin-icon">🪙</span> ${(item.price_coins||0).toLocaleString()}</div>
-            <button class="btn btn-gold btn-sm" onclick="buyItem(${item.id}, '${escHtml(item.name).replace(/'/g,"\\'")}', ${item.price_coins})">
-              Comprar
+            ${item.stock !== null ? `<span class="shop-item-stock">📦 ${item.stock} disp.</span>` : ''}
+            <button class="btn btn-gold btn-sm shop-add-btn" onclick='addToCart(${JSON.stringify(item)})'>
+              ${inCart ? `🛒 En carrito (${inCart.qty})` : '🛒 Agregar al Carrito'}
             </button>
           </div>
-          ${item.stock !== null ? `<div class="form-hint" style="margin-top:.5rem">Stock: ${item.stock}</div>` : ''}
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   } catch (err) {
     grid.innerHTML = `<div class="text-center text-red" style="padding:3rem">Error: ${err.message}</div>`;
   }
 }
 
+// Mantener buyItem como alias para compatibilidad
 async function buyItem(itemId, itemName, price) {
-  if (!selectedCharacter && currentUser?.characters?.length) {
-    selectedCharacter = document.getElementById('shop-char-select')?.value;
-  }
-  if (!selectedCharacter) {
-    showToast('Selecciona un personaje primero', 'warning');
-    return;
-  }
-  if (!confirm(`¿Comprar "${itemName}" por ${price.toLocaleString()} 🪙 para ${selectedCharacter}?`)) return;
-
-  try {
-    const res = await api.purchase(itemId, selectedCharacter);
-    showToast(res.message, 'success', '🎁');
-    loadShop(); // refrescar balance
-  } catch (err) {
-    showToast(err.message, 'error');
-  }
+  showToast('Usa el carrito para comprar', 'info', '🛒');
 }
-
 window.buyItem = buyItem;
 
 /* ====================================================================
@@ -716,21 +1398,37 @@ function renderPanelChars() {
   `).join('');
 }
 
-/* ────────── Change password form ────────── */
+/* ────────── Change password form (Panel) ────────── */
 document.getElementById('form-change-pass')?.addEventListener('submit', async e => {
   e.preventDefault();
-  const btn = e.target.querySelector('button[type=submit]');
-  const cur = document.getElementById('cp-current').value;
-  const nw  = document.getElementById('cp-new').value;
-  const cf  = document.getElementById('cp-confirm').value;
+  const btn      = e.target.querySelector('button[type=submit]');
+  const email    = document.getElementById('cp-email').value.trim().toLowerCase();
+  const birthday = document.getElementById('cp-birthday').value;
+  const cur      = document.getElementById('cp-current').value;
+  const nw       = document.getElementById('cp-new').value;
+  const cf       = document.getElementById('cp-confirm').value;
 
-  if (nw !== cf) { showToast('Las contraseñas nuevas no coinciden', 'error'); return; }
+  // Limpiar errores
+  ['cp-email-error','cp-birthday-error','cp-current-error','cp-new-error','cp-confirm-error'].forEach(clearFieldErr);
+  let valid = true;
+  const fail = (id, msg) => { fieldErr(id, msg); valid = false; };
 
-  btn.disabled = true; btn.textContent = 'Cambiando...';
+  if (!isValidEmail(email))             fail('cp-email-error',    'Correo no válido');
+  if (!isValidBirthdayClient(birthday)) fail('cp-birthday-error', 'Fecha no válida');
+  if (!cur)                             fail('cp-current-error',  'Ingresa tu contraseña actual');
+  if (nw.length < 6)                    fail('cp-new-error',      'Mínimo 6 caracteres');
+  if (nw === cur)                       fail('cp-new-error',      'La nueva contraseña no puede ser igual a la actual');
+  if (nw !== cf)                        fail('cp-confirm-error',  'Las contraseñas no coinciden');
+  if (!valid) return;
+
+  btn.disabled = true; btn.textContent = 'Verificando...';
   try {
-    await api.changePassword(cur, nw);
+    await api.changePassword(cur, email, birthday, nw);
     showToast('Contraseña actualizada correctamente ✅', 'success');
     e.target.reset();
+    // Descargar ficha actualizada
+    const login = currentUser?.account?.login || 'cuenta';
+    downloadAccountCard(login, nw, email, birthday, false, true);
   } catch (err) {
     showToast(err.message, 'error');
   } finally {
@@ -1809,6 +2507,15 @@ document.querySelectorAll('.admin-status-btn').forEach(btn => {
 
 let adminShopEditingId = null;
 
+/** Activa/desactiva el input de stock según el checkbox Ilimitado */
+function toggleStockUnlimited(cb) {
+  const input = document.getElementById('asi-stock');
+  input.disabled = cb.checked;
+  if (cb.checked) input.value = '';
+  else { input.focus(); }
+}
+window.toggleStockUnlimited = toggleStockUnlimited;
+
 /** Carga la tabla de items de la tienda en el panel admin */
 async function loadAdminShop() {
   const tbody = document.getElementById('admin-shop-tbody');
@@ -1866,6 +2573,8 @@ async function openAdminShopModal(id) {
     document.getElementById('asi-category').value = 'general';
     document.getElementById('asi-image-url').value = '';
     document.getElementById('asi-stock').value = '';
+    document.getElementById('asi-stock-unlimited').checked = true;
+    document.getElementById('asi-stock').disabled = true;
     document.getElementById('asi-featured').checked = false;
     document.getElementById('asi-active').checked = true;
     openModal('admin-shop-item');
@@ -1885,7 +2594,10 @@ async function openAdminShopModal(id) {
       document.getElementById('asi-price-coins').value = item.price_coins || 0;
       document.getElementById('asi-category').value = item.category || 'general';
       document.getElementById('asi-image-url').value = item.image_url || '';
-      document.getElementById('asi-stock').value = item.stock !== null ? item.stock : '';
+      const isUnlimited = item.stock === null;
+      document.getElementById('asi-stock-unlimited').checked = isUnlimited;
+      document.getElementById('asi-stock').disabled = isUnlimited;
+      document.getElementById('asi-stock').value = isUnlimited ? '' : item.stock;
       document.getElementById('asi-featured').checked = !!item.featured;
       document.getElementById('asi-active').checked = !!item.active;
       openModal('admin-shop-item');
@@ -1904,6 +2616,7 @@ async function saveAdminShopItem() {
   if (!name)         { showToast('El nombre es requerido', 'error'); return; }
   if (!item_id || item_id <= 0) { showToast('Item ID de L2 es requerido', 'error'); return; }
 
+  const isUnlimited = document.getElementById('asi-stock-unlimited').checked;
   const stockVal = document.getElementById('asi-stock').value;
   const payload = {
     name,
@@ -1913,7 +2626,7 @@ async function saveAdminShopItem() {
     price_coins:  parseInt(document.getElementById('asi-price-coins').value) || 0,
     category:     document.getElementById('asi-category').value,
     image_url:    document.getElementById('asi-image-url').value.trim(),
-    stock:        stockVal !== '' ? parseInt(stockVal) : null,
+    stock:        isUnlimited ? null : (stockVal !== '' ? parseInt(stockVal) : null),
     featured:     document.getElementById('asi-featured').checked,
     active:       document.getElementById('asi-active').checked,
   };

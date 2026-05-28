@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const db     = require('../config/db');
+const { getActivePvpZone } = require('../config/pvpZoneUtils');
 
 // Mapa de classid → nombre de clase (L2JMobius H5)
 const CLASS_NAMES = {
@@ -42,14 +43,23 @@ function enrichCharacter(c) {
   };
 }
 
+// Subqueries reutilizables para obtener nombre/título real cuando el personaje está en zona PvP.
+// Usar subquery correlacionada (LIMIT 1) evita duplicados que causaría un LEFT JOIN
+// si character_variables tiene más de una fila para el mismo charId+var.
+const REAL_NAME_SUBQ  = `(SELECT val FROM character_variables WHERE charId = c.charId AND var = 'PVPZ_REAL_NAME'  LIMIT 1)`;
+const REAL_TITLE_SUBQ = `(SELECT val FROM character_variables WHERE charId = c.charId AND var = 'PVPZ_REAL_TITLE' LIMIT 1)`;
+
 /* ─── GET /api/rankings/pvp  (Top PvP kills global) ───────────── */
 router.get('/pvp', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 50, 100);
     const [rows] = await db.execute(
-      `SELECT c.charId, c.char_name, c.level, c.race, c.classid,
-              c.pvpkills, c.pkkills, c.title, c.title_color,
-              c.online, cl.clan_name
+      `SELECT c.charId,
+              COALESCE(${REAL_NAME_SUBQ},  c.char_name) AS char_name,
+              c.level, c.race, c.classid,
+              c.pvpkills, c.pkkills,
+              COALESCE(${REAL_TITLE_SUBQ}, c.title)     AS title,
+              c.title_color, c.online, cl.clan_name
        FROM characters c
        JOIN accounts a ON a.login = c.account_name
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
@@ -70,9 +80,12 @@ router.get('/pk', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 50, 100);
     const [rows] = await db.execute(
-      `SELECT c.charId, c.char_name, c.level, c.race, c.classid,
-              c.pvpkills, c.pkkills, c.title, c.title_color, c.online,
-              cl.clan_name
+      `SELECT c.charId,
+              COALESCE(${REAL_NAME_SUBQ},  c.char_name) AS char_name,
+              c.level, c.race, c.classid,
+              c.pvpkills, c.pkkills,
+              COALESCE(${REAL_TITLE_SUBQ}, c.title)     AS title,
+              c.title_color, c.online, cl.clan_name
        FROM characters c
        JOIN accounts a ON a.login = c.account_name
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
@@ -88,22 +101,64 @@ router.get('/pk', async (req, res) => {
   }
 });
 
-/* ─── GET /api/rankings/pvpzone  (Top killer por zona PvP rotativa) */
+/* ─── GET /api/rankings/pvpzone  (Top killer + jugadores en zona) */
 router.get('/pvpzone', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 25, 50);
 
-    // La zona PvP rotativa guarda kills en la tabla pvp_zone_kills (creada por nosotros)
-    // Si la tabla no existe, devolvemos ranking basado en pvpkills con filtro activo
+    // ── 1. Zona activa ───────────────────────────────────────────
+    const activeZone = getActivePvpZone();
+
+    // ── 2. Jugadores ACTUALMENTE en la zona ─────────────────────
+    // PVPZ_REAL_NAME se escribe al entrar a la zona y se borra al salir.
+    const [inZoneRows] = await db.execute(
+      `SELECT DISTINCT c.charId,
+              cv_name.val  AS char_name,
+              cv_title.val AS real_title,
+              c.level, c.race, c.classid,
+              c.pvpkills, c.pkkills, c.title_color, c.online,
+              cl.clan_name
+       FROM character_variables cv_name
+       JOIN characters c ON c.charId = cv_name.charId
+         AND c.deletetime = 0 AND c.online = 1
+       JOIN accounts a ON a.login = c.account_name
+       LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
+       LEFT JOIN character_variables cv_title
+         ON cv_title.charId = c.charId AND cv_title.var = 'PVPZ_REAL_TITLE'
+       WHERE cv_name.var = 'PVPZ_REAL_NAME'
+         AND a.accessLevel < 100`
+    );
+    const playersInZone = inZoneRows.map(r => enrichCharacter({
+      ...r,
+      title: r.real_title || r.title
+    }));
+
+    // ── 3. Ranking de kills en la zona ──────────────────────────
+    // pvp_zone_kills.char_name guarda el nombre REAL.
+    // Cuando el jugador está en zona, characters.char_name es la profesión
+    // → buscamos primero en character_variables por el nombre real.
+    // Usamos subquery para encontrar el charId sin crear filas duplicadas.
     let rows;
     try {
       [rows] = await db.execute(
         `SELECT z.char_name, z.zone_name, z.kills, z.last_kill,
-                c.level, c.race, c.classid, c.title, c.title_color,
-                c.pvpkills, c.pkkills, c.online,
-                cl.clan_name
+                c.level, c.race, c.classid,
+                COALESCE(
+                  (SELECT val FROM character_variables
+                   WHERE charId = c.charId AND var = 'PVPZ_REAL_TITLE' LIMIT 1),
+                  c.title
+                ) AS title,
+                c.title_color,
+                c.pvpkills, c.pkkills, c.online, cl.clan_name
          FROM pvp_zone_kills z
-         JOIN characters c ON c.char_name = z.char_name AND c.deletetime = 0
+         -- Encontrar charId: primero busca el nombre real en character_variables (jugador en zona),
+         -- si no está, usa char_name directo en characters.
+         JOIN characters c ON c.charId = COALESCE(
+           (SELECT charId FROM character_variables
+            WHERE var = 'PVPZ_REAL_NAME' AND val = z.char_name LIMIT 1),
+           (SELECT charId FROM characters
+            WHERE char_name = z.char_name AND deletetime = 0 LIMIT 1)
+         ) AND c.deletetime = 0
          JOIN accounts a ON a.login = c.account_name
          LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
          WHERE a.accessLevel < 100
@@ -112,24 +167,34 @@ router.get('/pvpzone', async (req, res) => {
         [limit]
       );
     } catch {
-      // Tabla no existe aún — fallback a pvpkills general de jugadores online/recientes
+      // Tabla pvp_zone_kills no existe — fallback a pvpkills general
       [rows] = await db.execute(
-        `SELECT c.charId, c.char_name, c.level, c.race, c.classid,
-                c.pvpkills AS kills, c.pkkills, c.title, c.title_color,
-                c.online, cl.clan_name,
+        `SELECT c.charId,
+                COALESCE(${REAL_NAME_SUBQ},  c.char_name) AS char_name,
+                c.level, c.race, c.classid,
+                c.pvpkills AS kills, c.pkkills,
+                COALESCE(${REAL_TITLE_SUBQ}, c.title)     AS title,
+                c.title_color, c.online, cl.clan_name,
                 'Zona PvP Rotativa' AS zone_name,
                 NULL AS last_kill
          FROM characters c
          LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
          JOIN accounts a ON a.login = c.account_name
-         WHERE c.deletetime = 0 AND c.pvpkills > 0 AND c.accesslevel >= 0 AND a.accessLevel < 100
+         WHERE c.deletetime = 0 AND c.pvpkills > 0
+           AND c.accesslevel >= 0 AND a.accessLevel < 100
          ORDER BY c.pvpkills DESC
          LIMIT ?`,
         [limit]
       );
     }
 
-    res.json(rows.map((r, i) => ({ rank: i + 1, ...enrichCharacter(r) })));
+    res.json({
+      zoneName:           activeZone.name,
+      nextRotationIn:     activeZone.nextRotationIn,
+      playersInZone,
+      playersInZoneCount: playersInZone.length,
+      ranking: rows.map((r, i) => ({ rank: i + 1, ...enrichCharacter(r) }))
+    });
   } catch (err) {
     console.error('[Rankings/PvPZone]', err.message);
     res.status(500).json({ error: 'Error obteniendo ranking de zona' });
@@ -145,7 +210,11 @@ router.get('/clans', async (req, res) => {
               cl.reputation_score, cl.ally_name,
               COUNT(c.charId) AS member_count,
               SUM(c.pvpkills) AS total_pvp,
-              leader.char_name AS leader_name
+              COALESCE(
+                (SELECT val FROM character_variables
+                 WHERE charId = leader.charId AND var = 'PVPZ_REAL_NAME' LIMIT 1),
+                leader.char_name
+              ) AS leader_name
        FROM clan_data cl
        LEFT JOIN characters c ON c.clanid = cl.clan_id AND c.deletetime = 0
        JOIN characters leader ON leader.charId = cl.leader_id
@@ -167,8 +236,10 @@ router.get('/clans', async (req, res) => {
 router.get('/online', async (req, res) => {
   try {
     const [rows] = await db.execute(
-      `SELECT c.char_name, c.level, c.race, c.classid, c.title, c.title_color,
-              cl.clan_name
+      `SELECT COALESCE(${REAL_NAME_SUBQ},  c.char_name) AS char_name,
+              c.level, c.race, c.classid,
+              COALESCE(${REAL_TITLE_SUBQ}, c.title)     AS title,
+              c.title_color, cl.clan_name
        FROM characters c
        LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
        JOIN accounts a ON a.login = c.account_name
@@ -188,7 +259,10 @@ router.get('/olympiad', async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 25, 50);
     const [rows] = await db.execute(
-      `SELECT c.char_name, c.level, c.race, c.classid, c.title, c.title_color,
+      `SELECT COALESCE(${REAL_NAME_SUBQ},  c.char_name) AS char_name,
+              c.level, c.race, c.classid,
+              COALESCE(${REAL_TITLE_SUBQ}, c.title)     AS title,
+              c.title_color,
               c.pvpkills, o.olympiad_points, o.competitions_won, o.competitions_lost,
               cl.clan_name,
               CASE WHEN h.charId IS NOT NULL THEN 1 ELSE 0 END AS is_hero

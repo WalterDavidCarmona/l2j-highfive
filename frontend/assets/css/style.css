@@ -111,12 +111,34 @@ a:hover { color: #fff; }
   border: 1px solid rgba(34,197,94,0.3);
   font-size: .8rem;
   color: var(--green);
+  transition: background .4s, border-color .4s, color .4s;
 }
-.online-badge::before {
-  content:''; width:7px; height:7px;
+.online-badge.badge-offline {
+  background: rgba(239,68,68,0.15);
+  border-color: rgba(239,68,68,0.3);
+  color: #f87171;
+}
+
+/* Dot de estado del servidor (navbar + hero) */
+.server-status-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.server-status-dot.dot-online {
   background: var(--green);
-  border-radius:50%;
+  box-shadow: 0 0 6px rgba(34,197,94,.7);
   animation: pulse 2s infinite;
+}
+.server-status-dot.dot-offline {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239,68,68,.6);
+}
+
+/* Hero stat servidor */
+#stat-server-status {
+  display: flex; align-items: center; justify-content: center; gap: .4rem;
 }
 
 @keyframes pulse {
@@ -273,8 +295,48 @@ main { padding-top: 64px; position: relative; z-index: 1; }
 }
 .form-input::placeholder { color: var(--text-muted); }
 .form-select option { background: var(--bg-dark); }
-.form-hint { margin-top: .3rem; font-size: .78rem; color: var(--text-muted); }
-.form-error { color: var(--red); font-size: .82rem; margin-top: .3rem; }
+.form-hint        { margin-top: .3rem; font-size: .78rem; color: var(--text-muted); }
+.form-hint.hidden { display: none; }
+.form-error       { color: var(--red); font-size: .82rem; margin-top: .3rem; display: block; }
+.form-error.hidden { display: none; }
+
+/* Separador de sección dentro de formulario */
+.form-section-label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(124,58,237,.25);
+  padding-bottom: .3rem;
+  margin: 1.1rem 0 .75rem;
+}
+
+/* Botón tipo link (sin borde, sin fondo) */
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: .82rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn-link:hover { color: var(--text-main); }
+
+/* Badge de identidad verificada en modal recuperación */
+.recover-verified-badge {
+  background: rgba(34,197,94,.12);
+  border: 1px solid rgba(34,197,94,.35);
+  color: #4ade80;
+  border-radius: var(--radius);
+  padding: .55rem 1rem;
+  font-size: .85rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.1rem;
+}
 
 /* ====================================================================
    TABLES (Rankings)
@@ -557,16 +619,7 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   transform: scale(1.05);
 }
 
-.form-error {
-  color: var(--red);
-  font-size: 0.82rem;
-  margin-top: 0.3rem;
-  display: block;
-}
-
-.form-error.hidden {
-  display: none;
-}
+/* .form-error y .form-hint definidos arriba en la sección de formularios */
 
 /* ====================================================================
    INACTIVITY WARNING MODAL
@@ -817,14 +870,125 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   text-transform: uppercase; letter-spacing: 1px;
 }
 .shop-item-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
-.shop-item-name { font-weight: 700; margin-bottom: .3rem; }
-.shop-item-desc { font-size: .8rem; color: var(--text-muted); flex: 1; margin-bottom: .75rem; line-height: 1.5; }
-.shop-item-footer { display: flex; align-items: center; justify-content: space-between; }
+.shop-item-name { font-weight: 700; margin-bottom: .3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shop-item-desc {
+  font-size: .8rem; color: var(--text-muted); flex: 1; margin-bottom: .75rem; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.shop-item-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .4rem; margin-top: auto;
+}
+.shop-item-footer .shop-price { flex-shrink: 0; }
+.shop-item-footer .shop-add-btn { flex-shrink: 0; }
+.shop-item-stock {
+  font-size: .75rem; color: var(--text-muted);
+  background: rgba(255,255,255,.05); border-radius: 4px;
+  padding: .15rem .45rem; margin-top: .4rem; display: inline-block;
+}
 .shop-price {
   font-family: var(--font-title);
   font-size: 1.1rem; color: var(--gold); font-weight: 700;
 }
 .shop-price .coin-icon { font-size: .9rem; }
+.shop-add-btn { white-space: nowrap; }
+
+/* Cart badge on button */
+.cart-fab { position: relative; }
+.cart-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--red); color: #fff;
+  font-size: .65rem; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  margin-left: .35rem;
+}
+
+/* ── Cart drawer ─────────────────────────────────────────────────── */
+.cart-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 1200;
+}
+.cart-overlay.open { display: block; }
+
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: min(400px, 100vw);
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  z-index: 1201;
+  box-shadow: -8px 0 40px rgba(0,0,0,.5);
+}
+.cart-drawer.open { transform: translateX(0); }
+
+.cart-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-title); font-size: 1.1rem; font-weight: 700;
+}
+.cart-body {
+  flex: 1; overflow-y: auto; padding: 1rem 1.5rem;
+  display: flex; flex-direction: column; gap: .75rem;
+}
+.cart-empty {
+  text-align: center; color: var(--text-muted);
+  padding: 3rem 1rem; line-height: 1.8; font-size: .9rem;
+}
+.cart-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.cart-total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: .25rem;
+}
+.cart-total-coins { font-family: var(--font-title); color: var(--gold); font-size: 1.1rem; }
+
+/* Cart item */
+.cart-item {
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: .75rem;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.cart-item-name { font-weight: 600; font-size: .9rem; }
+.cart-item-price { font-size: .75rem; color: var(--text-muted); }
+.cart-item-controls {
+  display: flex; align-items: center; gap: .4rem;
+}
+.cart-qty-btn {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text-main); font-size: 1rem;
+  cursor: pointer; transition: background .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.cart-qty-btn:hover:not(:disabled) { background: rgba(255,255,255,.15); }
+.cart-qty-btn:disabled { opacity: .35; cursor: not-allowed; }
+.cart-qty-input {
+  width: 52px; height: 28px;
+  text-align: center;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text-main); font-size: .85rem;
+  padding: 0 .25rem;
+}
+.cart-qty-input::-webkit-inner-spin-button,
+.cart-qty-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.cart-remove-btn {
+  margin-left: auto;
+  background: none; border: none;
+  cursor: pointer; font-size: 1rem; opacity: .6;
+  transition: opacity .15s;
+}
+.cart-remove-btn:hover { opacity: 1; }
 
 /* ====================================================================
    NEWS
@@ -896,11 +1060,202 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   display: flex; align-items: center; gap: 1.5rem;
   margin-bottom: 2rem;
 }
+/* Variante centrada usada en el hero */
+.pvpzone-widget--centered {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: .75rem;
+  padding: 1.75rem 2rem;
+}
 .pvpzone-icon { font-size: 2.5rem; }
 .pvpzone-info { flex: 1; }
-.pvpzone-label { font-size: .75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--red); margin-bottom: .3rem; }
-.pvpzone-name { font-family: var(--font-title); font-size: 1.4rem; color: var(--text-main); }
+.pvpzone-label {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: var(--red);
+  margin-bottom: .25rem;
+}
+.pvpzone-name {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: .05em;
+  color: #fff;
+  text-shadow:
+    0  1px 0 #7c3aed,
+    0  2px 0 #6d28d9,
+    0  3px 0 #5b21b6,
+    0  4px 0 #4c1d95,
+    0  5px 5px rgba(0,0,0,.45),
+    0  7px 14px rgba(124,58,237,.3);
+}
 .pvpzone-players { font-size: .85rem; color: var(--text-muted); margin-top: .2rem; }
+
+/* Ícono del personaje L2 (imagen generada) */
+.pvpzone-char-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(239,68,68,.4);
+  box-shadow:
+    0 0 18px rgba(239,68,68,.35),
+    0 0 40px rgba(120,10,10,.3),
+    inset 0 0 12px rgba(0,0,0,.6);
+  flex-shrink: 0;
+  transition: box-shadow .3s, transform .3s;
+}
+.pvpzone-char-icon:hover {
+  box-shadow:
+    0 0 28px rgba(239,68,68,.55),
+    0 0 60px rgba(120,10,10,.45),
+    inset 0 0 12px rgba(0,0,0,.6);
+  transform: scale(1.06);
+}
+.pvpzone-char-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  /* Zoom sobre la parte superior (torso/cabeza del personaje) */
+  transform: scale(1.35) translateY(6%);
+  transform-origin: center top;
+}
+
+/* ── Panel "En la zona ahora" ────────────────────────── */
+.in-zone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .6rem;
+}
+.in-zone-title {
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+.in-zone-badge {
+  background: rgba(239,68,68,.18);
+  border: 1px solid rgba(239,68,68,.35);
+  color: #f87171;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: .2rem .65rem;
+  border-radius: 20px;
+}
+.in-zone-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.in-zone-player {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(239,68,68,.2);
+  border-radius: var(--radius);
+  padding: .4rem .75rem;
+  font-size: .82rem;
+  transition: border-color .2s, background .2s;
+}
+.in-zone-player:hover {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.4);
+}
+.in-zone-name  { font-weight: 700; color: var(--text-main); }
+.in-zone-class { color: var(--text-dim); font-size: .75rem; }
+.in-zone-lvl   { color: var(--gold); font-size: .72rem; font-weight: 600; }
+.in-zone-clan  { color: var(--cyan); font-size: .72rem; }
+.in-zone-empty {
+  color: var(--text-dim);
+  font-size: .85rem;
+  font-style: italic;
+  padding: .5rem 0;
+}
+
+/* ── Contador 3D zona PvP ───────────────────────────── */
+.pvpzone-countdown-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+}
+.pvpzone-countdown-label {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(239,68,68,.75);
+}
+.pvpzone-countdown {
+  font-family: var(--font-title), 'Courier New', monospace;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  color: #fff;
+  /* Efecto 3D con text-shadow en capas */
+  text-shadow:
+    0  1px 0 #c0392b,
+    0  2px 0 #a93226,
+    0  3px 0 #922b21,
+    0  4px 0 #7b241c,
+    0  5px 0 #641e16,
+    0  6px 0 #4d0000,
+    0  7px 6px rgba(0,0,0,.5),
+    0  9px 18px rgba(239,68,68,.25);
+  /* Animación de pulso suave */
+  animation: countdown3d-pulse 1s ease-in-out infinite alternate;
+  line-height: 1;
+  padding: .25rem 0;
+}
+@keyframes countdown3d-pulse {
+  from { text-shadow:
+    0  1px 0 #c0392b,
+    0  2px 0 #a93226,
+    0  3px 0 #922b21,
+    0  4px 0 #7b241c,
+    0  5px 0 #641e16,
+    0  6px 0 #4d0000,
+    0  7px 6px rgba(0,0,0,.5),
+    0  9px 18px rgba(239,68,68,.25);
+    transform: scale(1);
+  }
+  to   { text-shadow:
+    0  1px 0 #c0392b,
+    0  2px 0 #a93226,
+    0  3px 0 #922b21,
+    0  4px 0 #7b241c,
+    0  5px 0 #641e16,
+    0  6px 0 #4d0000,
+    0  8px 10px rgba(0,0,0,.6),
+    0 12px 24px rgba(239,68,68,.35);
+    transform: scale(1.02);
+  }
+}
+/* Último minuto: cambia a dorado urgente */
+.pvpzone-countdown.urgent {
+  color: #ffd700;
+  text-shadow:
+    0  1px 0 #b8860b,
+    0  2px 0 #9a7209,
+    0  3px 0 #7d5e07,
+    0  4px 0 #614905,
+    0  5px 0 #4a3604,
+    0  6px 0 #2e2100,
+    0  7px 6px rgba(0,0,0,.5),
+    0  9px 18px rgba(255,215,0,.4);
+  animation: countdown3d-urgent 0.5s ease-in-out infinite alternate;
+}
+@keyframes countdown3d-urgent {
+  from { transform: scale(1);    opacity: 1;   }
+  to   { transform: scale(1.04); opacity: .88; }
+}
 
 /* ====================================================================
    ALERTS / TOASTS
@@ -1572,4 +1927,350 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   .grid-2 { grid-template-columns: 1fr; }
   .modal  { padding: 1.5rem; }
   .pvpzone-widget { flex-direction: column; text-align: center; }
+  .pvpzone-widget--centered { padding: 1.25rem 1rem; }
+  .pvpzone-char-icon { width: 72px; height: 72px; }
+  .pvpzone-countdown { font-size: 1.8rem; }
+  .pvpzone-name      { font-size: 1.3rem; }
+}
+
+/* ====================================================================
+   DISCORD POPUP  —  Arcane Threshold aesthetic
+   Stone materiality · ornamental gold · electric glow
+   ==================================================================== */
+
+/* ── Overlay ──────────────────────────────────────────────────────────── */
+.discord-popup-overlay {
+  position: fixed; inset: 0; z-index: 1099;
+  background: rgba(4, 4, 12, .72);
+  backdrop-filter: blur(6px) saturate(1.2);
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s ease;
+}
+.discord-popup-overlay--visible {
+  opacity: 1; pointer-events: all;
+}
+
+/* ── Card shell ───────────────────────────────────────────────────────── */
+.discord-popup {
+  position: fixed;
+  bottom: 2rem; right: 2rem;
+  z-index: 1100;
+  width: 320px;
+
+  /* deep stone background with blue-purple undertow */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, #0f0f24 0%, #07070f 100%);
+
+  /* layered gold/purple border */
+  border: 1.5px solid #f59e0b;
+  border-radius: 14px;
+  outline: 1px solid rgba(245,158,11,.18);
+  outline-offset: 4px;
+
+  /* outer purple aura + deep shadow */
+  box-shadow:
+    0 0 0 4px rgba(124,58,237,.14),
+    0 0 28px 6px  rgba(124,58,237,.22),
+    0 0 60px 10px rgba(124,58,237,.10),
+    0 28px 70px   rgba(0,0,0,.85),
+    inset 0 0 40px rgba(7,7,22,.7);
+
+  padding: 0;
+  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+
+  opacity: 0;
+  transform: translateY(28px) scale(.95);
+  pointer-events: none;
+  transition: opacity .45s ease, transform .45s cubic-bezier(.34,1.46,.64,1);
+}
+.discord-popup--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* stone-texture horizontal line pattern across card */
+.discord-popup::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(255,255,255,.018) 3px,
+    rgba(255,255,255,.018) 4px
+  );
+  pointer-events: none; z-index: 0;
+  border-radius: 14px;
+}
+
+/* very faint cross/plus background pattern */
+.discord-popup::after {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(245,158,11,.12) 1px, transparent 1px),
+    radial-gradient(circle, rgba(245,158,11,.06) 1px, transparent 1px);
+  background-size: 22px 22px, 11px 11px;
+  background-position: 0 0, 11px 11px;
+  pointer-events: none; z-index: 0;
+  border-radius: 14px;
+}
+
+/* ── Corner diamond ornaments (CSS-only via box pseudo-layers) ────────── */
+/* We use 4 absolutely-positioned pseudo-diamonds on the card children     */
+
+/* ── Header band (dark stone, houses rune seal / logo) ──────────────── */
+.discord-popup__logo-wrap {
+  position: relative; z-index: 1;
+  width: 100%;
+  background: linear-gradient(180deg, #09091a 0%, #0b0b1e 100%);
+  border-bottom: 1.5px solid #f59e0b;
+  padding: 1.5rem 1rem 1.25rem;
+  display: flex; flex-direction: column; align-items: center; gap: .75rem;
+
+  /* stone stripe texture */
+  background-image:
+    linear-gradient(180deg, #09091a 0%, #0b0b1e 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 6px,
+      rgba(255,255,255,.025) 6px,
+      rgba(255,255,255,.025) 7px
+    );
+  background-blend-mode: normal, overlay;
+}
+
+/* ── Gold corner 4-pointed stars via clip-path on ::before / ::after ─── */
+/* Top-left corner ornament */
+.discord-popup__logo-wrap::before {
+  content: "";
+  position: absolute; top: 8px; left: 8px;
+  width: 14px; height: 14px;
+  background: #f59e0b;
+  clip-path: polygon(50% 0%,55% 42%,100% 50%,55% 58%,50% 100%,45% 58%,0% 50%,45% 42%);
+  z-index: 2;
+}
+/* Top-right corner ornament */
+.discord-popup__logo-wrap::after {
+  content: "";
+  position: absolute; top: 8px; right: 8px;
+  width: 14px; height: 14px;
+  background: #f59e0b;
+  clip-path: polygon(50% 0%,55% 42%,100% 50%,55% 58%,50% 100%,45% 58%,0% 50%,45% 42%);
+  z-index: 2;
+}
+
+/* ── Logo Discord ─────────────────────────────────────────────────────── */
+.discord-popup__logo {
+  position: relative; z-index: 1;
+  width: 60px; height: 60px;
+  background: radial-gradient(circle at 38% 38%, #7c8ff7 0%, #5865F2 55%, #3d4bc7 100%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+
+  /* cyan emanation rings */
+  box-shadow:
+    0 0 0 3px  rgba(0,212,255,.25),
+    0 0 0 7px  rgba(0,212,255,.10),
+    0 0 0 13px rgba(0,212,255,.05),
+    0 0 28px   rgba(88,101,242,.65),
+    0 0 50px   rgba(0,212,255,.18);
+}
+.discord-popup__logo svg {
+  width: 34px; height: 34px;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.35));
+}
+
+/* ── Left / right gold vertical rule lines ────────────────────────────── */
+.discord-popup__body {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: .55rem;
+  width: 100%;
+  padding: 1.25rem 2rem 1.5rem;
+
+  /* left vertical gold line */
+  border-left: 1px solid rgba(245,158,11,.30);
+  /* right vertical gold line */
+  border-right: 1px solid rgba(245,158,11,.30);
+}
+
+/* gold divider between logo area and body */
+.discord-popup__divider {
+  position: relative; z-index: 1;
+  width: calc(100% - 48px);
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%, #f59e0b 20%, #fbbf24 50%, #f59e0b 80%, transparent 100%);
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+.discord-popup__divider::before,
+.discord-popup__divider::after {
+  content: "";
+  position: absolute; top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 6px; height: 6px;
+  background: #f59e0b;
+}
+.discord-popup__divider::before { left: -3px; }
+.discord-popup__divider::after  { right: -3px; }
+
+/* ── Tag text ─────────────────────────────────────────────────────────── */
+.discord-popup__tag {
+  font-family: var(--font-title);
+  font-size: .6rem; letter-spacing: .2em;
+  color: #5865F2; text-transform: uppercase;
+  margin: 0;
+  opacity: .9;
+}
+
+/* ── Title ────────────────────────────────────────────────────────────── */
+.discord-popup__title {
+  font-family: var(--font-title);
+  font-size: 1.25rem; font-weight: 700;
+  line-height: 1.2; margin: 0;
+  /* gold-to-white gradient text */
+  background: linear-gradient(160deg, #fbbf24 0%, #e2e8f0 55%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 4px rgba(245,158,11,.25));
+}
+
+/* La palabra "Discord" en el título — más grande y dorada */
+.discord-popup__title span {
+  display: block;
+  font-size: 1.65rem;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #fcd34d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 8px rgba(245,158,11,.45));
+}
+
+/* ── Description ──────────────────────────────────────────────────────── */
+.discord-popup__desc {
+  font-size: .78rem; color: #64748b;
+  line-height: 1.5; margin: 0;
+  letter-spacing: .03em;
+}
+
+/* ── Join button ──────────────────────────────────────────────────────── */
+.discord-popup__btn {
+  position: relative;
+  display: block; width: 100%;
+  background: linear-gradient(180deg, #6875f5 0%, #5865F2 45%, #4752c4 100%);
+  color: #fff; font-weight: 700;
+  font-family: var(--font-title); font-size: .88rem;
+  letter-spacing: .06em; text-transform: uppercase;
+  text-decoration: none;
+  padding: .72rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid rgba(245,158,11,.55);
+  cursor: pointer; overflow: hidden;
+  transition: background .2s, transform .15s, box-shadow .2s, border-color .2s;
+  box-shadow:
+    0 0 0 0 transparent,
+    0 4px 18px rgba(88,101,242,.45),
+    0 0 12px rgba(245,158,11,.18);
+  z-index: 1;
+}
+/* inner highlight stripe at top of button */
+.discord-popup__btn::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,.14) 0%, transparent 100%);
+  border-radius: 10px 10px 0 0;
+  pointer-events: none;
+}
+/* gold shimmer on hover */
+.discord-popup__btn::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  background: linear-gradient(#0d0d1c,#0d0d1c) padding-box,
+              linear-gradient(135deg, #f59e0b, transparent 60%) border-box;
+  opacity: 0;
+  transition: opacity .25s;
+  pointer-events: none;
+}
+.discord-popup__btn:hover {
+  background: linear-gradient(180deg, #7c8ff7 0%, #6172e8 45%, #5865F2 100%);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 2px rgba(245,158,11,.35),
+    0 8px 28px rgba(88,101,242,.6),
+    0 0 20px rgba(245,158,11,.25);
+  border-color: rgba(245,158,11,.8);
+}
+.discord-popup__btn:hover::after { opacity: 1; }
+.discord-popup__btn:active { transform: translateY(0); }
+
+/* ── Bottom band ──────────────────────────────────────────────────────── */
+.discord-popup__footer {
+  position: relative; z-index: 1;
+  width: 100%;
+  background: linear-gradient(0deg, #08081a 0%, #0b0b1e 100%);
+  border-top: 1.5px solid #f59e0b;
+  padding: .75rem 1rem;
+  display: flex; flex-direction: column; align-items: center; gap: .35rem;
+}
+/* Bottom-left corner ornament */
+.discord-popup__footer::before {
+  content: "";
+  position: absolute; bottom: 8px; left: 8px;
+  width: 14px; height: 14px;
+  background: #f59e0b;
+  clip-path: polygon(50% 0%,55% 42%,100% 50%,55% 58%,50% 100%,45% 58%,0% 50%,45% 42%);
+}
+/* Bottom-right corner ornament */
+.discord-popup__footer::after {
+  content: "";
+  position: absolute; bottom: 8px; right: 8px;
+  width: 14px; height: 14px;
+  background: #f59e0b;
+  clip-path: polygon(50% 0%,55% 42%,100% 50%,55% 58%,50% 100%,45% 58%,0% 50%,45% 42%);
+}
+
+/* ── Skip text ────────────────────────────────────────────────────────── */
+.discord-popup__skip {
+  background: none; border: none; cursor: pointer;
+  color: #64748b; font-size: .72rem;
+  padding: .2rem .4rem; border-radius: 6px;
+  transition: color .2s;
+  text-decoration: underline; text-underline-offset: 3px;
+  z-index: 1;
+}
+.discord-popup__skip:hover { color: #94a3b8; }
+
+/* ── Close button ─────────────────────────────────────────────────────── */
+.discord-popup__close {
+  position: absolute; top: .65rem; right: .75rem;
+  background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.2);
+  cursor: pointer;
+  color: #64748b; font-size: .9rem;
+  line-height: 1; padding: .22rem .44rem; border-radius: 6px;
+  transition: color .2s, background .2s, border-color .2s;
+  z-index: 10;
+}
+.discord-popup__close:hover {
+  color: #fbbf24;
+  background: rgba(245,158,11,.15);
+  border-color: rgba(245,158,11,.5);
+}
+
+/* ── Mobile ───────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .discord-popup {
+    bottom: 0; right: 0; left: 0;
+    width: 100%; border-radius: 14px 14px 0 0;
+    padding: 0;
+  }
 }

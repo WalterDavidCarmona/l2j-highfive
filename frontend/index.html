@@ -45,7 +45,8 @@
 
   <div class="navbar-actions">
     <div class="online-badge" id="nav-online">
-      <span id="nav-online-count">...</span> online
+      <span class="server-status-dot" id="nav-status-dot"></span>
+      <span id="nav-status-label">...</span>
     </div>
     <!-- Logged out -->
     <div data-auth-show="guest">
@@ -63,6 +64,49 @@
     <span></span><span></span><span></span>
   </button>
 </nav>
+
+<!-- ================================================================
+     DISCORD POPUP
+     Editar el enlace de Discord aquí ↓
+     ================================================================ -->
+<div id="discord-popup" class="discord-popup" role="dialog" aria-modal="true" aria-label="Únete a nuestro Discord">
+  <button class="discord-popup__close" id="discord-popup-close" aria-label="Cerrar">✕</button>
+
+  <!-- Banda superior: sello rúnico + logo Discord -->
+  <div class="discord-popup__logo-wrap">
+    <div class="discord-popup__logo">
+      <!-- Logo oficial SVG de Discord -->
+      <svg viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#fff" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Divisor dorado arcano -->
+  <div class="discord-popup__divider"></div>
+
+  <!-- Cuerpo del popup -->
+  <div class="discord-popup__body">
+    <p class="discord-popup__tag">⬥ COMUNIDAD OFICIAL ⬥</p>
+    <h2 class="discord-popup__title">Únete a nuestro<br><span>Discord</span></h2>
+    <p class="discord-popup__desc">Anuncios · Eventos · Soporte</p>
+
+    <!-- ► CAMBIAR ESTE ENLACE cuando tengas el canal de Discord ◄ -->
+    <a href="https://discord.gg/TU-ENLACE-AQUI"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="discord-popup__btn"
+       id="discord-popup-btn">
+      Unirse al Discord
+    </a>
+  </div>
+
+  <!-- Banda inferior arcana con ornamentos de esquina -->
+  <div class="discord-popup__footer">
+    <button class="discord-popup__skip" id="discord-popup-skip">No mostrar de nuevo</button>
+  </div>
+</div>
+<div id="discord-popup-overlay" class="discord-popup-overlay"></div>
 
 <!-- ================================================================
      MAIN CONTENT
@@ -94,12 +138,18 @@
         </div>
 
         <!-- Zona PvP activa -->
-        <div class="pvpzone-widget" style="margin-top:3rem;max-width:600px;margin-left:auto;margin-right:auto">
-          <div class="pvpzone-icon">🗡️</div>
-          <div class="pvpzone-info">
-            <div class="pvpzone-label">⚡ ZONA PvP ACTIVA AHORA</div>
-            <div class="pvpzone-name" id="home-pvpzone">Cargando...</div>
-            <div class="pvpzone-players">Zona rotativa — cambia cada hora</div>
+        <div class="pvpzone-widget pvpzone-widget--centered" style="margin-top:3rem;max-width:640px;margin-left:auto;margin-right:auto">
+          <!-- Ícono personaje L2 -->
+          <div class="pvpzone-char-icon">
+            <img src="assets/images/pvpzone_knight.png" alt="Guerrero L2" draggable="false">
+          </div>
+          <!-- Etiqueta + nombre zona -->
+          <div class="pvpzone-label">⚡ ZONA PvP ACTIVA AHORA</div>
+          <div class="pvpzone-name" id="home-pvpzone">Cargando...</div>
+          <!-- Contador 3D -->
+          <div class="pvpzone-countdown-wrap">
+            <div class="pvpzone-countdown-label">PRÓXIMA ROTACIÓN EN</div>
+            <div class="pvpzone-countdown" id="home-pvpzone-timer">--:--</div>
           </div>
           <button class="btn btn-gold btn-sm" onclick="navigate('rankings');document.querySelector('[data-ranking-tab=pvpzone]').click()">
             Ver Ranking
@@ -107,7 +157,7 @@
         </div>
 
         <!-- Stats Bar -->
-        <div class="hero-stats" style="max-width:600px;margin:0 auto">
+        <div class="hero-stats" style="max-width:640px;margin:0 auto">
           <div class="hero-stat">
             <div class="hero-stat-value" id="stat-online">...</div>
             <div class="hero-stat-label">Online</div>
@@ -121,8 +171,11 @@
             <div class="hero-stat-label">Personajes</div>
           </div>
           <div class="hero-stat">
-            <div class="hero-stat-value text-gold">H5</div>
-            <div class="hero-stat-label">Chronicle</div>
+            <div class="hero-stat-value" id="stat-server-status">
+              <span class="server-status-dot" id="hero-status-dot"></span>
+              <span id="hero-status-label">...</span>
+            </div>
+            <div class="hero-stat-label">Servidor</div>
           </div>
         </div>
       </div>
@@ -175,9 +228,6 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title"><span class="icon">🏆</span> Rankings</h2>
-        <div class="online-badge">
-          <span id="online-players-count">...</span> jugadores online
-        </div>
       </div>
 
       <!-- PvP Zone Widget -->
@@ -198,6 +248,17 @@
           <button class="tab-btn"        data-ranking-tab="pvpzone">🏆 Zona PvP</button>
           <button class="tab-btn"        data-ranking-tab="clans">🛡️ Clanes</button>
           <button class="tab-btn"        data-ranking-tab="olympiad">🏅 Olimpiada</button>
+        </div>
+      </div>
+
+      <!-- Panel: jugadores actualmente en la zona PvP (solo visible en tab pvpzone) -->
+      <div id="pvpzone-in-zone-panel" style="display:none;margin-bottom:1.25rem">
+        <div class="in-zone-header">
+          <span class="in-zone-title">⚔️ EN LA ZONA AHORA</span>
+          <span class="in-zone-badge"><span id="pvpzone-in-zone-count">0</span> jugadores</span>
+        </div>
+        <div id="pvpzone-in-zone-list" class="in-zone-list">
+          <div class="in-zone-empty">Sin jugadores en la zona ahora mismo</div>
         </div>
       </div>
 
@@ -256,16 +317,18 @@
   <!-- ──── SHOP ──── -->
   <section id="section-shop" class="section">
     <div class="container">
+      <!-- Header con balance + botón carrito -->
       <div class="section-header">
         <h2 class="section-title"><span class="icon">🛒</span> Tienda Web</h2>
-        <div class="flex gap-2" style="align-items:center">
-          <div class="coins-display">
-            🪙 <span id="shop-coins">0</span> Monedas
-          </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="coins-display">🪙 <span id="shop-coins">0</span> Monedas</div>
+          <button class="btn btn-gold btn-sm cart-fab" id="btn-open-cart" onclick="openCart()">
+            🛒 Carrito <span class="cart-badge" id="cart-badge">0</span>
+          </button>
         </div>
       </div>
 
-      <!-- Char select + Categorías -->
+      <!-- Filtros + personaje -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
         <div class="tabs">
           <button class="tab-btn active" data-shop-cat="all">Todo</button>
@@ -283,6 +346,7 @@
         </div>
       </div>
 
+      <!-- Grid de ítems -->
       <div id="shop-grid" class="shop-grid"></div>
 
       <!-- Historial -->
@@ -293,6 +357,33 @@
       </div>
     </div>
   </section>
+
+  <!-- ──── CART DRAWER ──── -->
+  <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <span>🛒 Carrito</span>
+      <button class="btn-icon" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cart-body">
+      <!-- ítems del carrito se renderizan aquí -->
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total:</span>
+        <span class="cart-total-coins">🪙 <strong id="cart-total">0</strong></span>
+      </div>
+      <div class="cart-total-row" style="font-size:.8rem;color:var(--text-muted)">
+        Saldo: 🪙 <span id="cart-balance">0</span>
+      </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:.75rem" id="btn-checkout" onclick="cartCheckout()">
+        ✅ Confirmar compra
+      </button>
+      <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:.5rem" onclick="clearCart()">
+        🗑 Vaciar carrito
+      </button>
+    </div>
+  </div>
 
   <!-- ──── OLIMPIADA BETS ──── -->
   <section id="section-bets" class="section">
@@ -506,21 +597,45 @@
           <!-- Cuenta -->
           <div id="panel-tab-account" class="hidden">
             <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Seguridad de la Cuenta</h3>
-            <div class="card" style="max-width:480px">
-              <h4 style="margin-bottom:1.25rem">Cambiar Contraseña</h4>
+            <div class="card" style="max-width:520px">
+              <h4 style="margin-bottom:.4rem">🔒 Cambiar Contraseña</h4>
+              <p class="form-hint" style="margin-bottom:1.2rem">
+                Para cambiar tu contraseña debes verificar tu identidad completando <strong>todos</strong> los campos.
+              </p>
               <form id="form-change-pass">
+
+                <div class="form-section-label">Verificación de identidad</div>
+
+                <div class="form-group">
+                  <label class="form-label">Correo electrónico registrado</label>
+                  <input type="email" id="cp-email" class="form-input" required
+                         placeholder="tu@correo.com" autocomplete="email">
+                  <div id="cp-email-error" class="form-error hidden"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Fecha de nacimiento registrada</label>
+                  <input type="date" id="cp-birthday" class="form-input" required autocomplete="bday">
+                  <div id="cp-birthday-error" class="form-error hidden"></div>
+                </div>
+
+                <div class="form-section-label" style="margin-top:1rem">Cambio de contraseña</div>
+
                 <div class="form-group">
                   <label class="form-label">Contraseña actual</label>
                   <input type="password" id="cp-current" class="form-input" required placeholder="••••••••">
+                  <div id="cp-current-error" class="form-error hidden"></div>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Nueva contraseña</label>
                   <input type="password" id="cp-new" class="form-input" required placeholder="Mínimo 6 caracteres">
+                  <div id="cp-new-error" class="form-error hidden"></div>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Confirmar nueva contraseña</label>
                   <input type="password" id="cp-confirm" class="form-input" required placeholder="Repite la nueva contraseña">
+                  <div id="cp-confirm-error" class="form-error hidden"></div>
                 </div>
+
                 <button type="submit" class="btn btn-primary btn-full">Cambiar Contraseña</button>
               </form>
             </div>
@@ -703,6 +818,9 @@
 
       <button type="submit" class="btn btn-primary btn-full btn-lg">INICIAR SESIÓN</button>
     </form>
+    <div style="text-align:center;margin-top:.75rem">
+      <button type="button" class="btn-link" onclick="openModal('recover')">¿Olvidaste tu contraseña?</button>
+    </div>
     <div class="modal-divider">¿No tienes cuenta?</div>
     <button class="btn btn-secondary btn-full" onclick="openModal('register')">Crear cuenta gratis</button>
   </div>
@@ -836,8 +954,13 @@
       </div>
       <!-- Stock -->
       <div class="form-group" style="margin-bottom:0">
-        <label class="form-label">Stock (vacío = ilimitado)</label>
-        <input type="number" id="asi-stock" class="form-input" min="0" placeholder="Ilimitado">
+        <label class="form-label">Stock</label>
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <input type="number" id="asi-stock" class="form-input" min="0" placeholder="Cantidad" style="flex:1">
+          <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;cursor:pointer;font-size:.85rem;color:var(--text-muted)">
+            <input type="checkbox" id="asi-stock-unlimited" onchange="toggleStockUnlimited(this)"> ∞ Ilimitado
+          </label>
+        </div>
       </div>
       <!-- URL Imagen (full width) -->
       <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
@@ -877,28 +1000,145 @@
       <button class="modal-close">✕</button>
     </div>
     <form id="form-register">
+
+      <!-- Usuario -->
       <div class="form-group">
         <label class="form-label">Usuario</label>
         <input type="text" id="reg-login" class="form-input" required
-               placeholder="4-14 caracteres (a-z, 0-9, _)" autocomplete="username">
-        <div class="form-hint">Solo letras minúsculas, números y guión bajo</div>
+               placeholder="4-14 caracteres: letras, números, _"
+               autocomplete="username" maxlength="14" autocapitalize="none">
+        <div id="reg-login-hint" class="form-hint">
+          Solo letras <strong>a–z</strong>, números <strong>0–9</strong> y guión bajo <strong>_</strong> · mínimo 4 caracteres
+        </div>
+        <div id="reg-login-preview" class="form-hint hidden" style="color:var(--accent)"></div>
+        <div id="reg-login-error"   class="form-error hidden"></div>
       </div>
+
+      <!-- Contraseña -->
       <div class="form-group">
         <label class="form-label">Contraseña</label>
         <input type="password" id="reg-password" class="form-input" required
                placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        <div id="reg-pass-error" class="form-error hidden"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirmar contraseña</label>
         <input type="password" id="reg-confirm" class="form-input" required
                placeholder="Repite la contraseña" autocomplete="new-password">
+        <div id="reg-confirm-error" class="form-error hidden"></div>
       </div>
+
+      <!-- Identidad -->
+      <div class="form-section-label">🔒 Datos de identidad — para recuperar tu cuenta</div>
+
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" id="reg-email" class="form-input" required
+               placeholder="tu@correo.com" autocomplete="email">
+        <div class="form-hint">Se usa solo para recuperar la contraseña</div>
+        <div id="reg-email-error" class="form-error hidden"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar correo electrónico</label>
+        <input type="email" id="reg-email-confirm" class="form-input" required
+               placeholder="Repite tu correo" autocomplete="email">
+        <div id="reg-email-confirm-error" class="form-error hidden"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de nacimiento</label>
+        <input type="date" id="reg-birthday" class="form-input" required
+               autocomplete="bday">
+        <div class="form-hint">Usada para verificar tu identidad</div>
+        <div id="reg-birthday-error" class="form-error hidden"></div>
+      </div>
+
+      <!-- CAPTCHA Matemático -->
+      <div class="form-group captcha-container">
+        <label class="form-label">Verificación anti-bot</label>
+        <div class="captcha-question" id="reg-captcha-question">¿Cuánto es 5 + 3?</div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="reg-captcha" class="form-input" required
+                 placeholder="Tu respuesta" style="flex:1;" inputmode="numeric">
+          <button type="button" class="btn-icon" id="btn-reg-captcha-refresh" title="Nueva pregunta">🔄</button>
+        </div>
+        <div id="reg-captcha-error" class="form-error hidden"></div>
+      </div>
+
       <div class="form-hint" style="margin-bottom:1rem">
-        ⚠️ Esta cuenta se usará para conectarte al servidor de juego.
+        ⚠️ Guarda tus datos en un lugar seguro. Al registrarte se descargará automáticamente un archivo con tus credenciales.
       </div>
       <button type="submit" class="btn btn-primary btn-full btn-lg">CREAR CUENTA</button>
     </form>
     <div class="modal-divider">¿Ya tienes cuenta?</div>
+    <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- ── Modal: Recuperar Contraseña ── -->
+<div class="modal-overlay" id="modal-recover">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">🔑 Recuperar Contraseña</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Paso 1: Verificar identidad -->
+    <div id="recover-step1">
+      <p class="form-hint" style="margin-bottom:1.2rem">
+        Ingresa el correo y la fecha de nacimiento con los que te registraste. Si coinciden, podrás establecer una nueva contraseña.
+      </p>
+      <form id="form-recover-step1">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="rec-email" class="form-input" required
+                 placeholder="tu@correo.com" autocomplete="email">
+          <div id="rec-email-error" class="form-error hidden"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de nacimiento</label>
+          <input type="date" id="rec-birthday" class="form-input" required autocomplete="bday">
+          <div id="rec-birthday-error" class="form-error hidden"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Verificar identidad</button>
+      </form>
+    </div>
+
+    <!-- Paso 2: Nueva contraseña (oculto hasta pasar paso 1) -->
+    <div id="recover-step2" class="hidden">
+      <div class="recover-verified-badge">✅ Identidad verificada</div>
+      <form id="form-recover-step2">
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña</label>
+          <input type="password" id="rec-newpass" class="form-input" required
+                 placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          <div id="rec-newpass-error" class="form-error hidden"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar nueva contraseña</label>
+          <input type="password" id="rec-confirm" class="form-input" required
+                 placeholder="Repite la contraseña" autocomplete="new-password">
+          <div id="rec-confirm-error" class="form-error hidden"></div>
+        </div>
+
+        <!-- CAPTCHA recuperación -->
+        <div class="form-group captcha-container">
+          <label class="form-label">Verificación anti-bot</label>
+          <div class="captcha-question" id="rec-captcha-question">¿Cuánto es 5 + 3?</div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="text" id="rec-captcha" class="form-input" required
+                   placeholder="Tu respuesta" style="flex:1;" inputmode="numeric">
+            <button type="button" class="btn-icon" id="btn-rec-captcha-refresh" title="Nueva pregunta">🔄</button>
+          </div>
+          <div id="rec-captcha-error" class="form-error hidden"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Guardar nueva contraseña</button>
+        <button type="button" class="btn btn-secondary btn-full" style="margin-top:.5rem"
+                onclick="resetRecoverModal()">← Volver a verificar</button>
+      </form>
+    </div>
+
+    <div class="modal-divider">¿Recordaste tu contraseña?</div>
     <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
   </div>
 </div>
@@ -1181,13 +1421,48 @@ async function refreshOnlineCount() {
     const res = await api.getServerStatus();
     const count = res.online || 0;
     document.getElementById('nav-online-count').textContent = count;
-    document.getElementById('online-players-count').textContent = count;
     document.getElementById('home-pvpzone').textContent = res.pvpZone?.name || '—';
     document.getElementById('ranking-pvpzone').textContent = res.pvpZone?.name || '—';
   } catch {}
 }
 refreshOnlineCount();
 setInterval(refreshOnlineCount, 30000);
+
+// ── Discord Popup ─────────────────────────────────────────────────
+(function() {
+  const STORAGE_KEY = 'discord_popup_dismissed';
+  const popup    = document.getElementById('discord-popup');
+  const overlay  = document.getElementById('discord-popup-overlay');
+  const btnClose = document.getElementById('discord-popup-close');
+  const btnSkip  = document.getElementById('discord-popup-skip');
+
+  function closePopup() {
+    popup.classList.remove('discord-popup--visible');
+    overlay.classList.remove('discord-popup-overlay--visible');
+  }
+
+  function dismissForever() {
+    localStorage.setItem(STORAGE_KEY, '1');
+    closePopup();
+  }
+
+  // Mostrar sólo si el usuario no lo descartó permanentemente
+  if (!localStorage.getItem(STORAGE_KEY)) {
+    setTimeout(() => {
+      popup.classList.add('discord-popup--visible');
+      overlay.classList.add('discord-popup-overlay--visible');
+    }, 1200); // Aparece 1.2s después de cargar la página
+  }
+
+  btnClose.addEventListener('click', closePopup);
+  overlay.addEventListener('click', closePopup);
+  btnSkip.addEventListener('click', dismissForever);
+
+  // ESC cierra el popup
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePopup();
+  });
+})();
 </script>
 
 </body>
