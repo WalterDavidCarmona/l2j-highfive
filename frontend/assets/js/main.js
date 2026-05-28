@@ -1347,6 +1347,20 @@ async function loadPanel() {
 
   try {
     if (!currentUser) await fetchCurrentUser();
+
+    // Refrescar saldo en tiempo real desde el backend
+    // (web_coins ya viene en /auth/me pero lo re-consultamos para tener el valor más fresco)
+    api.getShopBalance().then(b => {
+      const coins = b.coins || 0;
+      // Sincronizar todos los elementos que muestran monedas
+      ['panel-coins', 'shop-coins', 'recharge-coins'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = coins.toLocaleString();
+      });
+      // Actualizar también en currentUser para que renderPanelAccount use el valor fresco
+      if (currentUser?.account) currentUser.account.web_coins = coins;
+    }).catch(() => {});
+
     renderPanelAccount();
     renderPanelChars();
   } catch (err) {
@@ -1366,6 +1380,14 @@ function renderPanelAccount() {
 
   const lastActive = document.getElementById('panel-lastactive');
   if (lastActive) lastActive.textContent = acc.lastactive ? formatDate(new Date(parseInt(acc.lastactive))) : '-';
+
+  // Mostrar monedas que vienen en /auth/me (valor inicial; loadPanel las actualiza en vivo)
+  if (acc.web_coins != null) {
+    ['panel-coins', 'shop-coins'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = Number(acc.web_coins).toLocaleString();
+    });
+  }
 }
 
 function renderPanelChars() {

@@ -159,7 +159,7 @@ router.get('/me', auth, async (req, res) => {
     const { login } = req.user;
 
     const [accRows] = await db.execute(
-      'SELECT login, accessLevel, lastactive, lastIP, email, birthday FROM accounts WHERE login = ?',
+      'SELECT login, accessLevel, lastactive, lastIP, email, birthday, web_coins FROM accounts WHERE login = ?',
       [login]
     );
     if (accRows.length === 0)
