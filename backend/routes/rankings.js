@@ -234,7 +234,7 @@ router.get('/clans', async (req, res) => {
        LEFT JOIN characters c ON c.clanid = cl.clan_id AND c.deletetime = 0
        JOIN characters leader ON leader.charId = cl.leader_id
        JOIN accounts la ON la.login = leader.account_name
-       WHERE la.accessLevel >= 0
+       WHERE la.accessLevel = 0
        GROUP BY cl.clan_id
        ORDER BY cl.reputation_score DESC, total_pvp DESC
        LIMIT ?`,
