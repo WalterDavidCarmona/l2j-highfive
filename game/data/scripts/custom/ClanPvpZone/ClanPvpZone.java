@@ -941,7 +941,7 @@ public class ClanPvpZone extends Script
 	// ---------------------------------------------------------------------------
 	private class ClanPvpBypass implements IBypassHandler
 	{
-		private static final String[] COMMANDS =
+		private final String[] COMMANDS =
 		{
 			"clanpvz_register"
 		};
