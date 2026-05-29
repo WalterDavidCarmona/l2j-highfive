@@ -2523,3 +2523,29 @@ main { padding-top: 64px; position: relative; z-index: 1; }
   color: #fbbf24;
   background: rgba(245,158,11,.1);
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   PvP Zone Widget — Estado CERRADA (servidor offline / zona inactiva)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Widget completo en modo offline */
+.pvpzone-widget.pvpzone-offline {
+  opacity: .85;
+  filter: grayscale(.35);
+}
+.pvpzone-widget.pvpzone-offline .pvpzone-char-icon {
+  filter: grayscale(.5) brightness(.75);
+}
+
+/* Etiqueta de estado cerrado */
+.pvpzone-label--closed {
+  color: #ef4444 !important;
+  text-shadow: 0 0 8px rgba(239,68,68,.4) !important;
+}
+
+/* Nombre de zona en modo cerrado */
+.pvpzone-name--closed {
+  color: #94a3b8 !important;
+  text-shadow: none !important;
+  font-size: 1.1rem !important;
+}

@@ -695,6 +695,64 @@ function startPvpZoneCountdown(el, secondsRemaining) {
   _pvpCountdownInterval = setInterval(update, 1000);
 }
 
+/**
+ * Actualiza todos los widgets de Zona PvP según el estado del servidor.
+ * @param {object|null} pvpZone  Datos de zona del API
+ * @param {boolean}     isOnline Si el servidor de juego está online
+ */
+function _updatePvpZoneWidget(pvpZone, isOnline) {
+  const zoneActive = isOnline && pvpZone?.enabled && !pvpZone?.closed;
+
+  // ── Widget del hero (pantalla principal) ──────────────────────────
+  const heroWidget  = document.querySelector('.pvpzone-widget.pvpzone-widget--centered');
+  const heroLabel   = heroWidget?.querySelector('.pvpzone-label');
+  const heroName    = document.getElementById('home-pvpzone');
+  const heroTimer   = document.getElementById('home-pvpzone-timer');
+  const heroTimerWrap = heroWidget?.querySelector('.pvpzone-countdown-wrap');
+  const heroBtn     = heroWidget?.querySelector('.btn-gold');
+
+  if (heroWidget) {
+    heroWidget.classList.toggle('pvpzone-offline', !zoneActive);
+  }
+  if (heroLabel) {
+    heroLabel.textContent = zoneActive ? '⚡ ZONA PvP ACTIVA AHORA' : '⚔️ ZONA PvP CERRADA';
+    heroLabel.classList.toggle('pvpzone-label--closed', !zoneActive);
+  }
+  if (heroName) {
+    heroName.textContent = zoneActive ? (pvpZone.name || '—') : (isOnline ? 'Sin zona activa' : 'Servidor Offline');
+    heroName.classList.toggle('pvpzone-name--closed', !zoneActive);
+  }
+  if (heroTimer && heroTimerWrap) {
+    if (zoneActive && pvpZone?.nextRotationIn > 0) {
+      heroTimerWrap.style.display = '';
+      startPvpZoneCountdown(heroTimer, pvpZone.nextRotationIn);
+    } else {
+      heroTimerWrap.style.display = 'none';
+      if (_pvpCountdownInterval) clearInterval(_pvpCountdownInterval);
+    }
+  }
+  if (heroBtn) {
+    heroBtn.style.display = zoneActive ? '' : 'none';
+  }
+
+  // ── Widget del panel de rankings ───────────────────────────────────
+  const rankLabel  = document.querySelector('#section-rankings .pvpzone-widget .pvpzone-label');
+  const rankName   = document.getElementById('ranking-pvpzone');
+  const rankTimer  = document.getElementById('ranking-pvpzone-players');
+
+  if (rankLabel) {
+    rankLabel.textContent = zoneActive ? '⚡ ZONA PvP ACTIVA' : '⚔️ ZONA PvP CERRADA';
+    rankLabel.classList.toggle('pvpzone-label--closed', !zoneActive);
+  }
+  if (rankName) {
+    rankName.textContent = zoneActive ? (pvpZone?.name || '—') : (isOnline ? 'Sin zona activa' : 'Servidor Offline');
+    rankName.classList.toggle('pvpzone-name--closed', !zoneActive);
+  }
+  if (rankTimer && !zoneActive) {
+    rankTimer.textContent = '';
+  }
+}
+
 async function loadHome() {
   try {
     const status = await api.getServerStatus();
@@ -726,15 +784,8 @@ async function loadHome() {
       heroLabel.textContent = isOnline ? 'Online' : 'Offline';
     }
 
-    // Zona PvP activa con countdown sincronizado al servidor
-    const pvpZoneEl  = document.getElementById('home-pvpzone');
-    const pvpTimerEl = document.getElementById('home-pvpzone-timer');
-    if (pvpZoneEl && status.pvpZone) {
-      pvpZoneEl.textContent = status.pvpZone.name || '—';
-    }
-    if (pvpTimerEl && status.pvpZone?.nextRotationIn > 0) {
-      startPvpZoneCountdown(pvpTimerEl, status.pvpZone.nextRotationIn);
-    }
+    // Zona PvP — mostrar estado real según disponibilidad del servidor
+    _updatePvpZoneWidget(status.pvpZone, isOnline);
   } catch (err) {
     console.warn('Server status:', err.message);
     // Error de red → mostrar offline
@@ -746,6 +797,8 @@ async function loadHome() {
     const heroLbl = document.getElementById('hero-status-label');
     if (navLbl)  navLbl.textContent  = 'Offline';
     if (heroLbl) heroLbl.textContent = 'Offline';
+    // Zona PvP también como cerrada cuando no hay conexión
+    _updatePvpZoneWidget(null, false);
   }
 }
 
@@ -767,9 +820,18 @@ async function loadRankings() {
   renderRanking(currentRankingTab);
 }
 
+const RANKING_HEADERS = {
+  default: `<tr><th>#</th><th>Personaje / Clan</th><th>Nivel</th><th>Clase</th><th>Kills</th><th>PK / Extra</th><th>Estado</th></tr>`,
+  clans:   `<tr><th>#</th><th>Clan</th><th>Líder</th><th class="text-gold">⭐ Reputación</th><th>⚔ Kills (PvP)</th><th>💀 PK</th><th>Miembros</th></tr>`
+};
+
 async function renderRanking(type) {
   const tbody = document.getElementById('ranking-tbody');
   if (!tbody) return;
+
+  // Cambiar cabeceras según el tipo de ranking
+  const thead = document.getElementById('ranking-thead');
+  if (thead) thead.innerHTML = RANKING_HEADERS[type] || RANKING_HEADERS.default;
 
   tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:2rem">
     <div class="spinner" style="margin:0 auto"></div></td></tr>`;
@@ -858,12 +920,15 @@ function renderRankingRow(type, row) {
   if (type === 'clans') {
     return `<tr>
       <td>${getRankBadge(row.rank)}</td>
-      <td><strong>${escHtml(row.clan_name)}</strong></td>
-      <td><span class="text-cyan">Lv ${row.clan_level}</span></td>
+      <td>
+        <strong>${escHtml(row.clan_name)}</strong>
+        <div style="font-size:.75rem;color:var(--text-muted)">Lv ${row.clan_level}${row.ally_name ? ' · ' + escHtml(row.ally_name) : ''}</div>
+      </td>
       <td>${escHtml(row.leader_name || '-')}</td>
+      <td><span class="text-gold" style="font-weight:700;font-size:1rem">⭐ ${(row.reputation_score||0).toLocaleString()}</span></td>
       <td><span class="kills-badge kills-pvp">⚔ ${(row.total_pvp||0).toLocaleString()}</span></td>
-      <td>${row.member_count || 0} miembros</td>
-      <td><span class="text-gold">${(row.reputation_score||0).toLocaleString()} pts</span></td>
+      <td><span class="kills-badge kills-pk">💀 ${(row.total_pk||0).toLocaleString()}</span></td>
+      <td style="color:var(--text-muted)">${row.member_count || 0}</td>
     </tr>`;
   }
 

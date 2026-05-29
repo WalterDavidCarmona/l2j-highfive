@@ -48,8 +48,13 @@ router.get('/status', async (req, res) => {
     // Si el gameserver está offline, los jugadores online deben ser 0
     const onlineCount = gameOnline ? online : 0;
 
-    // Zona PvP activa — leída directamente del PvpZone.ini del gameserver
+    // Zona PvP activa — leída directamente del PvpZone.ini del gameserver.
+    // Si el servidor de juego está offline, la zona se marca como cerrada.
     const pvpZone = getActivePvpZone();
+    if (!gameOnline) {
+      pvpZone.enabled = false;
+      pvpZone.closed  = true;   // flag explícito para el frontend
+    }
 
     // Top clanes por reputación
     const [topClans] = await db.execute(

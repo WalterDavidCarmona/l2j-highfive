@@ -240,9 +240,9 @@ async function runCycle() {
   // Limpiar notificaciones expiradas (tarea de mantenimiento)
   db.execute('DELETE FROM pvp_zone_notifications WHERE expires_at <= NOW()').catch(() => {});
 
-  if (!enabled || coinsTopKiller <= 0) return;
-
   // Zona activa según PvpZone.ini + rotación
+  // El tracking de zona y el snapshot se mantienen SIEMPRE (independiente de si
+  // el reward está habilitado) para que el ranking muestre kills de sesión correctos.
   const activeZone = getActivePvpZone();
   if (!activeZone.enabled || !activeZone.name || activeZone.name === 'Sin zona') return;
 
@@ -257,17 +257,16 @@ async function runCycle() {
   // ── Zona sin cambios ───────────────────────────────────────────────
   if (storedIndex === activeZone.index) return;
 
-  // ── Zona cambió → premiar top killer de la sesión que terminó ─────
-  // storedName es el nombre legible del INI (solo para mostrar en notif/logs).
-  // El cálculo de kills NO depende de ese nombre: usa el snapshot __session__.
+  // ── Zona cambió → premiar top killer (solo si reward habilitado) ───
   console.log(`[PvpReward] 🔄 Rotación detectada: "${storedName}" → "${activeZone.name}"`);
 
-  if (storedName) {
+  if (enabled && coinsTopKiller > 0 && storedName) {
     await awardTopKiller(storedName, coinsTopKiller);
+  } else {
+    console.log(`[PvpReward] ℹ️  Reward deshabilitado — zona rotó sin premio`);
   }
 
-  // Guardar nueva zona activa y tomar snapshot de kills actuales
-  // como punto de partida de la nueva sesión
+  // Siempre guardar nueva zona y tomar snapshot (para el ranking)
   await saveCurrentZone(activeZone.index, activeZone.name);
   await snapshotCurrentKills();
 }

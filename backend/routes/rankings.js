@@ -140,8 +140,15 @@ router.get('/pvpzone', async (req, res) => {
     // Usamos subquery para encontrar el charId sin crear filas duplicadas.
     let rows;
     try {
+      // Kills de la sesión actual = total acumulado − snapshot al inicio de la sesión.
+      // pvp_zone_session_snapshot con zone_name='__session__' se actualiza en cada
+      // rotación de zona por pvpRewardWorker. Si no hay snapshot (tabla vacía o
+      // sin entrada para ese char) se asume 0 → se muestran los kills totales.
       [rows] = await db.execute(
-        `SELECT z.char_name, z.zone_name, z.kills, z.last_kill,
+        `SELECT z.char_name,
+                (SUM(z.kills) - COALESCE(s.kills_at_start, 0)) AS kills,
+                MAX(z.last_kill)  AS last_kill,
+                MIN(z.zone_name)  AS zone_name,
                 c.level, c.race, c.classid,
                 COALESCE(
                   (SELECT val FROM character_variables
@@ -151,6 +158,9 @@ router.get('/pvpzone', async (req, res) => {
                 c.title_color,
                 c.pvpkills, c.pkkills, c.online, cl.clan_name
          FROM pvp_zone_kills z
+         -- Delta de sesión: restar kills al inicio del snapshot actual
+         LEFT JOIN pvp_zone_session_snapshot s
+           ON s.char_name = z.char_name AND s.zone_name = '__session__'
          -- Encontrar charId: primero busca el nombre real en character_variables (jugador en zona),
          -- si no está, usa char_name directo en characters.
          JOIN characters c ON c.charId = COALESCE(
@@ -162,7 +172,11 @@ router.get('/pvpzone', async (req, res) => {
          JOIN accounts a ON a.login = c.account_name
          LEFT JOIN clan_data cl ON cl.clan_id = c.clanid
          WHERE a.accessLevel < 100
-         ORDER BY z.kills DESC
+         GROUP BY z.char_name, s.kills_at_start,
+                  c.charId, c.level, c.race, c.classid, c.title,
+                  c.title_color, c.pvpkills, c.pkkills, c.online, cl.clan_name
+         HAVING kills > 0
+         ORDER BY kills DESC
          LIMIT ?`,
         [limit]
       );
@@ -208,8 +222,9 @@ router.get('/clans', async (req, res) => {
     const [rows] = await db.execute(
       `SELECT cl.clan_id, cl.clan_name, cl.clan_level,
               cl.reputation_score, cl.ally_name,
-              COUNT(c.charId) AS member_count,
-              SUM(c.pvpkills) AS total_pvp,
+              COUNT(c.charId)    AS member_count,
+              SUM(c.pvpkills)    AS total_pvp,
+              SUM(c.pkkills)     AS total_pk,
               COALESCE(
                 (SELECT val FROM character_variables
                  WHERE charId = leader.charId AND var = 'PVPZ_REAL_NAME' LIMIT 1),
@@ -219,7 +234,7 @@ router.get('/clans', async (req, res) => {
        LEFT JOIN characters c ON c.clanid = cl.clan_id AND c.deletetime = 0
        JOIN characters leader ON leader.charId = cl.leader_id
        JOIN accounts la ON la.login = leader.account_name
-       WHERE la.accessLevel < 100
+       WHERE la.accessLevel >= 0
        GROUP BY cl.clan_id
        ORDER BY cl.reputation_score DESC, total_pvp DESC
        LIMIT ?`,
