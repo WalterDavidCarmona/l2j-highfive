@@ -89,6 +89,12 @@ public class ClanPvpZone extends Script
 	private static int[] _bossZoneIds = new int[0];
 
 	// ---------------------------------------------------------------------------
+	// Config: bloqueo de dungeons en Zona Hellbound
+	// ---------------------------------------------------------------------------
+	private static boolean BLOCK_DUNGEONS_ENABLED = true;
+	private static int[] DUNGEON_NPC_IDS = new int[0];
+
+	// ---------------------------------------------------------------------------
 	// Estado del evento
 	// ---------------------------------------------------------------------------
 	public enum EventState
@@ -157,6 +163,17 @@ public class ClanPvpZone extends Script
 		}
 
 		BypassHandler.getInstance().registerHandler(new ClanPvpBypass());
+
+		// Registrar NPCs de dungeon para bloquearlos durante el evento
+		if (BLOCK_DUNGEONS_ENABLED && (DUNGEON_NPC_IDS.length > 0))
+		{
+			for (int npcId : DUNGEON_NPC_IDS)
+			{
+				addFirstTalkId(npcId);
+				addTalkId(npcId);
+			}
+			LOGGER.info("ClanPvpZone: Bloqueo de dungeons activo para " + DUNGEON_NPC_IDS.length + " NPCs: " + java.util.Arrays.toString(DUNGEON_NPC_IDS));
+		}
 
 		LOGGER.info("ClanPvpZone: Activo | MinClanes=" + MIN_CLANS
 			+ " | Countdown=" + COUNTDOWN_MINUTES + "min"
@@ -261,6 +278,32 @@ public class ClanPvpZone extends Script
 					LOGGER.warning("ClanPvpZone: ID de BossZone invalido: " + parts[i]);
 				}
 			}
+		}
+
+		// Bloqueo de dungeons durante el evento
+		BLOCK_DUNGEONS_ENABLED = Boolean.parseBoolean(props.getProperty("BlockDungeonsEnabled", "True").trim());
+		final String dungeonNpcStr = props.getProperty("DungeonNpcIds", "").trim();
+		if (!dungeonNpcStr.isEmpty())
+		{
+			final String[] parts = dungeonNpcStr.split(",");
+			final int[] ids = new int[parts.length];
+			int count = 0;
+			for (String part : parts)
+			{
+				try
+				{
+					ids[count++] = Integer.parseInt(part.trim());
+				}
+				catch (NumberFormatException e)
+				{
+					LOGGER.warning("ClanPvpZone: ID de NPC de dungeon invalido: " + part.trim());
+				}
+			}
+			DUNGEON_NPC_IDS = java.util.Arrays.copyOf(ids, count);
+		}
+		else
+		{
+			DUNGEON_NPC_IDS = new int[0];
 		}
 
 		// Cargar configuracion AntiFeed desde PVP.ini
@@ -648,10 +691,17 @@ public class ClanPvpZone extends Script
 
 		removeParticipantListeners(player);
 
-		// Teletransportar al jugador eliminado al punto de retorno
+		// Teletransportar al jugador eliminado al punto de retorno, revivido y full
 		if (player.isOnline())
 		{
 			clearPvpFlag(player);
+			if (player.isDead())
+			{
+				player.doRevive();
+			}
+			player.setCurrentHp(player.getMaxHp());
+			player.setCurrentMp(player.getMaxMp());
+			player.setCurrentCp(player.getMaxCp());
 			_internalTeleport.add(player.getObjectId());
 			player.teleToLocation(RETURN_X, RETURN_Y, RETURN_Z, 0);
 			player.sendPacket(new ExShowScreenMessage("Has sido eliminado del Clan PvP Zone.", 5000));
@@ -943,6 +993,13 @@ public class ClanPvpZone extends Script
 			if (p.isOnline())
 			{
 				clearPvpFlag(p);
+				if (p.isDead())
+				{
+					p.doRevive();
+				}
+				p.setCurrentHp(p.getMaxHp());
+				p.setCurrentMp(p.getMaxMp());
+				p.setCurrentCp(p.getMaxCp());
 				_internalTeleport.add(p.getObjectId());
 				p.teleToLocation(RETURN_X, RETURN_Y, RETURN_Z, 0);
 				p.sendMessage("[Clan PvP Zone] Has sido teletransportado. Hasta la proxima!");
@@ -978,6 +1035,13 @@ public class ClanPvpZone extends Script
 				if (p.isOnline())
 				{
 					clearPvpFlag(p);
+					if (p.isDead())
+					{
+						p.doRevive();
+					}
+					p.setCurrentHp(p.getMaxHp());
+					p.setCurrentMp(p.getMaxMp());
+					p.setCurrentCp(p.getMaxCp());
 					_internalTeleport.add(p.getObjectId());
 					p.teleToLocation(RETURN_X, RETURN_Y, RETURN_Z, 0);
 				}
@@ -1159,6 +1223,95 @@ public class ClanPvpZone extends Script
 		{
 			return COMMANDS;
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Bloqueo de dungeons en Zona Hellbound
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Intercept el primer click sobre un NPC de dungeon.
+	 * Si el evento esta activo y el bloqueo esta habilitado, muestra el mensaje
+	 * de bloqueo en lugar del dialogo normal del NPC.
+	 */
+	@Override
+	public String onFirstTalk(Npc npc, Player player)
+	{
+		if (!ENABLED || !BLOCK_DUNGEONS_ENABLED)
+		{
+			return null; // Bloqueo desactivado: dejar pasar al handler normal
+		}
+
+		if (isDungeonNpc(npc.getId()) && isEventActive())
+		{
+			return buildDungeonBlockedHtml();
+		}
+
+		return null; // Evento inactivo: dejar pasar al handler normal del NPC
+	}
+
+	/**
+	 * Intercepta los eventos de dialogo (bypasses) de NPCs de dungeon.
+	 * Si el evento esta activo, remuestra el mensaje de bloqueo para evitar
+	 * que el jugador avance en el menu del dungeon.
+	 */
+	@Override
+	public String onEvent(String event, Npc npc, Player player)
+	{
+		if (!ENABLED || !BLOCK_DUNGEONS_ENABLED || (npc == null))
+		{
+			return null;
+		}
+
+		if (isDungeonNpc(npc.getId()) && isEventActive())
+		{
+			return buildDungeonBlockedHtml();
+		}
+
+		return null;
+	}
+
+	/** Retorna true si el npcId pertenece a la lista de NPCs de dungeon configurados. */
+	private boolean isDungeonNpc(int npcId)
+	{
+		for (int id : DUNGEON_NPC_IDS)
+		{
+			if (id == npcId)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** Retorna true si el evento esta en fase de combate o raid (fases activas). */
+	private boolean isEventActive()
+	{
+		return (_state == EventState.ACTIVE) || (_state == EventState.RAID);
+	}
+
+	/** Construye el HTML que se muestra al jugador cuando intenta usar un dungeon bloqueado. */
+	private String buildDungeonBlockedHtml()
+	{
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+		sb.append("<table width=270 cellpadding=0 cellspacing=2>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td align=center height=4></td></tr>");
+		sb.append("<tr><td align=center><font color=\"FF4444\">Acceso Restringido</font></td></tr>");
+		sb.append("<tr><td align=center height=4></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td height=6></td></tr>");
+		sb.append("<tr><td><font color=\"C0B090\">");
+		sb.append("Este dungeon no esta disponible mientras el<br>");
+		sb.append("evento <font color=\"LEVEL\">Clan PvP Zone</font> esta activo.<br><br>");
+		sb.append("<font color=\"808080\">Espera a que el evento finalice para<br>acceder a este dungeon.</font>");
+		sb.append("</font></td></tr>");
+		sb.append("<tr><td height=8></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("</table>");
+		sb.append("</body></html>");
+		return sb.toString();
 	}
 
 	// ---------------------------------------------------------------------------
