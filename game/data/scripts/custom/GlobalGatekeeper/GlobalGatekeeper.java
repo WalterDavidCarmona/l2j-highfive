@@ -97,6 +97,12 @@ public class GlobalGatekeeper extends Script
 	 */
 	private static final Map<Integer, Long> PENDING_PARTY_INVITES = new ConcurrentHashMap<>();
 
+	/**
+	 * Ubicacion de spawn asignada a cada miembro pendiente.
+	 * Clave: objectId del miembro | Valor: Location donde debe llegar (igual que el lider).
+	 */
+	private static final Map<Integer, Location> PENDING_PARTY_SPAWNS = new ConcurrentHashMap<>();
+
 	// ---------------------------------------------------------------------------
 	// Default Teleport Lists (fallback si no se encuentra el config)
 	// ---------------------------------------------------------------------------
@@ -441,8 +447,11 @@ public class GlobalGatekeeper extends Script
 			return buildErrorPage("La Zona Party PvP no tiene puntos de spawn configurados.", "main");
 		}
 
+		// Elegir un spawn unico para todo el grupo (lider + miembros llegan al mismo punto)
+		final Location groupSpawn = getRandomPartySpawn();
+
 		// Teletransportar al lider inmediatamente
-		executeTeleport(leader, getRandomPartySpawn());
+		executeTeleport(leader, groupSpawn);
 		leader.sendMessage("Has llevado a tu grupo a " + PARTY_PVP_ZONE_NAME + ".");
 
 		// Enviar invitacion a cada miembro (excepto lider)
@@ -455,8 +464,9 @@ public class GlobalGatekeeper extends Script
 				continue;
 			}
 
-			// Registrar invitacion pendiente (timestamp actual)
+			// Registrar invitacion pendiente y reservar el mismo spawn que el lider
 			PENDING_PARTY_INVITES.put(member.getObjectId(), System.currentTimeMillis());
+			PENDING_PARTY_SPAWNS.put(member.getObjectId(), groupSpawn);
 
 			// Enviar popup de invitacion
 			sendPartyInvite(member, leaderName);
@@ -593,6 +603,7 @@ public class GlobalGatekeeper extends Script
 				case "gk_party_accept":
 				{
 					final Long inviteTime = PENDING_PARTY_INVITES.remove(player.getObjectId());
+					final Location reservedSpawn = PENDING_PARTY_SPAWNS.remove(player.getObjectId());
 
 					if (inviteTime == null)
 					{
@@ -631,15 +642,15 @@ public class GlobalGatekeeper extends Script
 						return false;
 					}
 
-					// Obtener spawn aleatorio
-					final Location spawn = getRandomPartySpawn();
+					// Usar el mismo spawn reservado para este grupo (mismo que el lider)
+					final Location spawn = (reservedSpawn != null) ? reservedSpawn : getRandomPartySpawn();
 					if (spawn == null)
 					{
 						player.sendMessage("[Party PvP] La zona no esta configurada.");
 						return false;
 					}
 
-					// Teletransportar
+					// Teletransportar al mismo punto que el lider
 					executeTeleport(player, spawn);
 					player.sendMessage("[Party PvP] Bienvenido a " + PARTY_PVP_ZONE_NAME + "!");
 					return true;
@@ -648,6 +659,7 @@ public class GlobalGatekeeper extends Script
 				case "gk_party_decline":
 				{
 					final boolean hadInvite = PENDING_PARTY_INVITES.remove(player.getObjectId()) != null;
+					PENDING_PARTY_SPAWNS.remove(player.getObjectId());
 					if (hadInvite)
 					{
 						player.sendMessage("[Party PvP] Rechazaste la invitacion a " + PARTY_PVP_ZONE_NAME + ".");
