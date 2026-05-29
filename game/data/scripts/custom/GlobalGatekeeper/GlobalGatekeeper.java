@@ -818,127 +818,152 @@ public class GlobalGatekeeper extends Script
 
 		final StringBuilder sb = new StringBuilder();
 		sb.append("<html><body>");
-		sb.append("<table width=270 cellpadding=0 cellspacing=2>");
+		sb.append("<table width=270 cellpadding=0 cellspacing=0>");
 
 		// Cabecera
 		sb.append("<tr><td align=center><img src=\"L2UI_CH3.herotower_deco\" width=256 height=32></td></tr>");
+		sb.append("<tr><td height=2></td></tr>");
 		sb.append("<tr><td align=center><font color=\"C8A84B\">").append(CLAN_PVP_ZONE_NAME).append("</font></td></tr>");
 		sb.append("<tr><td align=center><font color=\"707070\">Evento de Clanes con RaidBoss</font></td></tr>");
-		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td height=3></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=256 height=1></td></tr>");
 		sb.append("<tr><td height=5></td></tr>");
 
 		if (clanEvent == null)
 		{
-			// Script no cargado
 			sb.append("<tr><td align=center><font color=\"FF5555\">El evento no esta disponible.</font></td></tr>");
 		}
 		else
 		{
 			final ClanPvpZone.EventState state = clanEvent.getState();
+			final int registered = clanEvent.getRegisteredClanCount();
+			final int minClans = clanEvent.getMinClans();
+			final int maxClans = clanEvent.getMaxClans();
 
-			// --- Bloque de estado del evento ---
-			sb.append("<tr><td>");
-			sb.append("<table width=250 bgcolor=080808 cellpadding=4>");
+			// --- Bloque de estado ---
+			sb.append("<tr><td align=center>");
+			sb.append("<table width=256 bgcolor=0A0A0A cellpadding=0 cellspacing=0>");
 
+			// Fila de estado
 			switch (state)
 			{
 				case IDLE:
-				{
-					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"C8A84B\">En espera</font></td></tr>");
-					sb.append("<tr><td align=center><font color=\"9A9280\">Clanes inscritos: <font color=\"FFDF00\">")
-						.append(clanEvent.getRegisteredClanCount()).append("/").append(clanEvent.getMinClans())
-						.append("</font></font></td></tr>");
-					// Lista de clanes registrados
-					final Collection<String> names = clanEvent.getRegisteredClanNames();
-					if (!names.isEmpty())
-					{
-						sb.append("<tr><td><font color=\"707070\">");
-						for (String clanName : names)
-						{
-							sb.append("&lt;").append(clanName).append("&gt;<br>");
-						}
-						sb.append("</font></td></tr>");
-					}
+					sb.append("<tr><td align=center height=22><font color=\"AAAAAA\">Estado: </font><font color=\"C8A84B\">Abierto - Inscripciones</font></td></tr>");
 					break;
-				}
 				case COUNTDOWN:
-				{
 					final int sec = clanEvent.getCountdownSeconds();
 					final String timeLeft = (sec >= 60) ? (sec / 60) + "m " + (sec % 60) + "s" : sec + "s";
-					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"FFAA00\">Cuenta regresiva</font></td></tr>");
-					sb.append("<tr><td align=center><font color=\"FF6347\">Comienza en: <b>").append(timeLeft).append("</b></font></td></tr>");
-					sb.append("<tr><td align=center><font color=\"9A9280\">Clanes inscritos: <font color=\"FFDF00\">")
-						.append(clanEvent.getRegisteredClanCount()).append("/").append(clanEvent.getMinClans())
-						.append("</font> (aun puedes unirte!)</font></td></tr>");
-					final Collection<String> namesC = clanEvent.getRegisteredClanNames();
-					if (!namesC.isEmpty())
-					{
-						sb.append("<tr><td><font color=\"707070\">");
-						for (String clanName : namesC)
-						{
-							sb.append("&lt;").append(clanName).append("&gt;<br>");
-						}
-						sb.append("</font></td></tr>");
-					}
+					sb.append("<tr><td align=center height=22><font color=\"FFAA00\">Cuenta regresiva: </font><font color=\"FF6347\"><b>").append(timeLeft).append("</b></font></td></tr>");
 					break;
-				}
 				case ACTIVE:
-					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"FF5555\">COMBATE ACTIVO</font></td></tr>");
-					sb.append("<tr><td align=center><font color=\"9A9280\">El combate entre clanes esta en progreso.<br>No se puede ingresar.</font></td></tr>");
+					sb.append("<tr><td align=center height=22><font color=\"FF5555\">COMBATE EN PROGRESO</font></td></tr>");
 					break;
 				case RAID:
-					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"FF0000\">RAIDBOSS ACTIVO</font></td></tr>");
-					sb.append("<tr><td align=center><font color=\"9A9280\">El clan ganador esta enfrentando al RaidBoss.</font></td></tr>");
+					sb.append("<tr><td align=center height=22><font color=\"FF0000\">RAIDBOSS ACTIVO</font></td></tr>");
 					break;
+			}
+
+			sb.append("<tr><td><img src=\"L2UI.SquareGray\" width=256 height=1></td></tr>");
+
+			// Contador de clanes (solo en IDLE y COUNTDOWN)
+			if ((state == ClanPvpZone.EventState.IDLE) || (state == ClanPvpZone.EventState.COUNTDOWN))
+			{
+				sb.append("<tr><td align=center height=20>");
+				sb.append("<font color=\"9A9280\">Clanes: </font>");
+				sb.append("<font color=\"FFDF00\">").append(registered).append("</font>");
+				sb.append("<font color=\"707070\"> / ").append(maxClans).append(" </font>");
+				sb.append("<font color=\"606060\">(min: ").append(minClans).append(")</font>");
+				sb.append("</td></tr>");
+
+				// Lista de clanes inscritos
+				final Collection<String> names = clanEvent.getRegisteredClanNames();
+				if (!names.isEmpty())
+				{
+					sb.append("<tr><td><img src=\"L2UI.SquareGray\" width=256 height=1></td></tr>");
+					sb.append("<tr><td align=center height=4></td></tr>");
+					for (String clanName : names)
+					{
+						sb.append("<tr><td align=center>");
+						sb.append("<font color=\"C8A84B\">&lt;").append(clanName).append("&gt;</font>");
+						sb.append("</td></tr>");
+					}
+					sb.append("<tr><td height=4></td></tr>");
+				}
+				else
+				{
+					sb.append("<tr><td height=4></td></tr>");
+				}
+			}
+			else
+			{
+				sb.append("<tr><td align=center height=20><font color=\"707070\">No se puede ingresar durante el evento.</font></td></tr>");
+				sb.append("<tr><td height=4></td></tr>");
 			}
 
 			sb.append("</table>");
 			sb.append("</td></tr>");
 			sb.append("<tr><td height=6></td></tr>");
 
-			// --- Descripcion del evento ---
-			sb.append("<tr><td><font color=\"9A9280\" font size=-1>");
+			// --- Descripcion del evento (tabla con ancho fijo para evitar overflow) ---
+			sb.append("<tr><td align=center>");
+			sb.append("<table width=256 cellpadding=3 cellspacing=0>");
+			sb.append("<tr><td><font color=\"9A9280\">");
 			sb.append("Cada kill otorga <font color=\"C8A84B\">reputacion</font> a tu clan.<br>");
-			sb.append("El ultimo clan vivo enfrenta al <font color=\"FF5555\">RaidBoss</font>.<br>");
-			sb.append("El clan vencedor recibe <font color=\"FFDF00\">recompensa</font> para cada miembro.");
+			sb.append("El ultimo clan en pie enfrenta al <font color=\"FF5555\">RaidBoss</font>.<br>");
+			sb.append("El clan vencedor recibe <font color=\"FFDF00\">recompensa</font> por miembro.");
 			sb.append("</font></td></tr>");
+			sb.append("</table>");
+			sb.append("</td></tr>");
 			sb.append("<tr><td height=6></td></tr>");
 
 			// --- Boton de accion segun estado ---
 			if (!hasClan)
 			{
-				sb.append("<tr><td align=center><font color=\"FF5555\">[X] Necesitas pertenecer a un clan.</font></td></tr>");
+				sb.append("<tr><td align=center><font color=\"FF5555\">[X] Debes pertenecer a un clan.</font></td></tr>");
 			}
 			else if ((state == ClanPvpZone.EventState.IDLE) || (state == ClanPvpZone.EventState.COUNTDOWN))
 			{
 				final int clanId = player.getClan().getId();
 				if (clanEvent.isClanOnCooldown(clanId))
 				{
-					sb.append("<tr><td align=center><font color=\"FFAA00\">[Cooldown] Tu clan gano el ultimo evento.<br>Espera a que otro clan gane.</font></td></tr>");
+					sb.append("<tr><td align=center>");
+					sb.append("<table width=256 bgcolor=1A1000 cellpadding=3><tr><td align=center>");
+					sb.append("<font color=\"FFAA00\">Tu clan gano el ultimo evento.</font><br>");
+					sb.append("<font color=\"707070\">Espera a que otro clan gane primero.</font>");
+					sb.append("</td></tr></table></td></tr>");
 				}
 				else if (clanEvent.isClanRegistered(clanId))
 				{
-					sb.append("<tr><td align=center><font color=\"44BB44\">[OK] Tu clan esta inscrito. En espera de inicio.</font></td></tr>");
+					sb.append("<tr><td align=center>");
+					sb.append("<table width=256 bgcolor=001A00 cellpadding=3><tr><td align=center>");
+					sb.append("<font color=\"44BB44\">[OK] Tu clan esta inscrito.</font><br>");
+					sb.append("<font color=\"707070\">En espera de inicio del evento.</font>");
+					sb.append("</td></tr></table></td></tr>");
+				}
+				else if (registered >= maxClans)
+				{
+					sb.append("<tr><td align=center><font color=\"FF5555\">Cupo lleno (").append(maxClans).append(" clanes).</font></td></tr>");
 				}
 				else
 				{
-					sb.append("<tr><td height=4></td></tr>");
+					sb.append("<tr><td height=2></td></tr>");
 					appendButton(sb, "Inscribir Clan al Evento", "bypass -h clanpvz_register");
 				}
 			}
 			else
 			{
-				sb.append("<tr><td align=center><font color=\"707070\">El evento esta en progreso. Espera la proxima ronda.</font></td></tr>");
+				sb.append("<tr><td align=center><font color=\"707070\">El evento esta en progreso.<br>Espera la proxima ronda.</font></td></tr>");
 			}
 		}
 
 		// Pie de pagina
+		sb.append("<tr><td height=6></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=256 height=1></td></tr>");
 		sb.append("<tr><td height=4></td></tr>");
-		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
-		sb.append("<tr><td height=3></td></tr>");
 		sb.append("<tr><td align=center>");
 		sb.append("<button value=\"Atras\" action=\"bypass -h Script GlobalGatekeeper main\" width=120 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 		sb.append("</td></tr>");
+		sb.append("<tr><td height=4></td></tr>");
 		sb.append("</table></body></html>");
 		return sb.toString();
 	}

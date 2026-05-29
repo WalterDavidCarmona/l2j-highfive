@@ -71,6 +71,7 @@ public class ClanPvpZone extends Script
 	// ---------------------------------------------------------------------------
 	private static boolean ENABLED = true;
 	private static int MIN_CLANS = 2;
+	private static int MAX_CLANS = 4;
 	private static int COUNTDOWN_MINUTES = 5;
 	private static int REP_PER_KILL = 100;
 	private static int RAID_BOSS_ID = 25286;
@@ -181,6 +182,7 @@ public class ClanPvpZone extends Script
 
 		ENABLED = Boolean.parseBoolean(props.getProperty("Enabled", "True").trim());
 		MIN_CLANS = Integer.parseInt(props.getProperty("MinClansToStart", "2").trim());
+		MAX_CLANS = Math.max(MIN_CLANS, Integer.parseInt(props.getProperty("MaxClansToStart", "4").trim()));
 		COUNTDOWN_MINUTES = Integer.parseInt(props.getProperty("CountdownMinutes", "5").trim());
 		REP_PER_KILL = Integer.parseInt(props.getProperty("ClanReputationPerKill", "100").trim());
 		RAID_BOSS_ID = Integer.parseInt(props.getProperty("RaidBossId", "25286").trim());
@@ -293,6 +295,11 @@ public class ClanPvpZone extends Script
 		return MIN_CLANS;
 	}
 
+	public int getMaxClans()
+	{
+		return MAX_CLANS;
+	}
+
 	public int getCountdownSeconds()
 	{
 		return _countdownSeconds.get();
@@ -333,6 +340,11 @@ public class ClanPvpZone extends Script
 		if ((_state != EventState.IDLE) && (_state != EventState.COUNTDOWN))
 		{
 			return "El evento ya ha comenzado. Espera la proxima ronda.";
+		}
+
+		if (_registeredClans.size() >= MAX_CLANS)
+		{
+			return "El evento ya tiene el maximo de " + MAX_CLANS + " clanes inscritos.";
 		}
 
 		final int clanId = clan.getId();
