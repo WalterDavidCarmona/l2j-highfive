@@ -310,6 +310,7 @@ function navigate(sectionId) {
   // Lazy load del contenido
   switch (sectionId) {
     case 'rankings':  loadRankings();   break;
+    case 'downloads': /* estático, sin carga async */ break;
     case 'news':      loadNews();       break;
     case 'shop':      loadShop();       break;
     case 'bets':      loadBets();       break;
