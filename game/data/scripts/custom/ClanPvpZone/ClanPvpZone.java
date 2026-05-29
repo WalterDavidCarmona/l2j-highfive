@@ -618,6 +618,13 @@ public class ClanPvpZone extends Script
 			}
 		}
 
+		// En fase Raid: notificar que el RaidBoss elimino a un participante
+		if (_state == EventState.RAID)
+		{
+			Broadcast.toAllOnlinePlayers(
+				"[Clan PvP Zone] " + killed.getName() + " fue eliminado por el RaidBoss!", false);
+		}
+
 		// Eliminar al jugador muerto del evento tras breve retardo (permite animacion de muerte)
 		ThreadPool.schedule(() -> eliminatePlayer(killed), 3000);
 	}
@@ -651,11 +658,54 @@ public class ClanPvpZone extends Script
 			player.sendMessage("[Clan PvP Zone] Has sido eliminado. El evento continua sin ti.");
 		}
 
-		// Verificar si queda solo un clan
+		// Verificar si queda solo un clan (fase combate)
 		if (_state == EventState.ACTIVE)
 		{
 			checkRemainingClans();
 		}
+
+		// En fase Raid: actualizar participantes y verificar aniquilacion total
+		if (_state == EventState.RAID)
+		{
+			_raidParticipants.remove(player);
+			if (_raidParticipants.isEmpty())
+			{
+				ThreadPool.schedule(this::onClanWipedByRaidBoss, 2000);
+			}
+		}
+	}
+
+	/** Clan aniquilado por el RaidBoss: anuncia, despawnea el boss y finaliza el evento. */
+	private void onClanWipedByRaidBoss()
+	{
+		if (_state != EventState.RAID)
+		{
+			return; // Proteccion contra doble ejecucion
+		}
+
+		stopRaidCurseRemoval();
+
+		final String clanName = _registeredClans.getOrDefault(_raidWinnerClanId, "Desconocido");
+
+		// Anuncio global en pantalla y chat
+		Broadcast.toAllOnlinePlayersOnScreen(
+			"CLAN PVP ZONE: El clan <" + clanName + "> fue aniquilado por el RaidBoss!");
+		Broadcast.toAllOnlinePlayers(
+			"[Clan PvP Zone] El clan <" + clanName + "> ha sido eliminado por el RaidBoss. El torneo no tiene ganador esta vez.",
+			false);
+
+		LOGGER.info("ClanPvpZone: Clan " + clanName + " aniquilado por el RaidBoss. Eliminando boss y finalizando evento.");
+
+		// Despawnear el RaidBoss
+		final Npc boss = _raidBoss;
+		_raidBoss = null;
+		if ((boss != null) && !boss.isDead())
+		{
+			boss.deleteMe();
+		}
+
+		// Finalizar evento sin limpiar participantes (ya fueron teletransportados en eliminatePlayer)
+		endEvent(false);
 	}
 
 	private void checkRemainingClans()
