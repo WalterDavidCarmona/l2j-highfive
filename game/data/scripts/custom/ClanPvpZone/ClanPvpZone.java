@@ -551,6 +551,9 @@ public class ClanPvpZone extends Script
 					spawn.getY() + Rnd.get(-40, 40),
 					spawn.getZ(), 0);
 
+				online.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
+				online.startPvPFlag();
+
 				online.sendPacket(new ExShowScreenMessage(
 					"CLAN PVP ZONE - El evento ha comenzado! Elimina a los clanes rivales!", 8000));
 				online.sendMessage("[Clan PvP Zone] El evento ha comenzado! Solo el ultimo clan vivo avanzara al RaidBoss.");
@@ -727,6 +730,8 @@ public class ClanPvpZone extends Script
 			whitelistInBossZones(p);
 			_internalTeleport.add(p.getObjectId());
 			p.teleToLocation(raidArea.getX() + Rnd.get(-40, 40), raidArea.getY() + Rnd.get(-40, 40), raidArea.getZ(), 0);
+			p.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
+			p.startPvPFlag();
 			p.sendPacket(new ExShowScreenMessage(
 				"!HAN AVANZADO AL RAIDBOSS! Preparate para el combate final!", 8000));
 			p.sendMessage("[Clan PvP Zone] Tu clan ha avanzado! El RaidBoss aparecera en 5 segundos. !Eliminalo para ganar la recompensa!");
