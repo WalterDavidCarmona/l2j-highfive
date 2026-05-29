@@ -477,6 +477,39 @@ public class AugmentMaster extends Script
 			return null;
 		}
 
+		// Expandable info for a premium combo: combo_info_N
+		// Must be before startsWith("apply_") — "combo_info_" does not start with "apply_"
+		// but kept here for logical grouping with the premium combo block.
+		if (event.startsWith("combo_info_"))
+		{
+			try
+			{
+				final int comboId = Integer.parseInt(event.substring(11));
+				sendComboInfoHtml(npc, player, comboId);
+			}
+			catch (NumberFormatException e)
+			{
+				LOGGER.warning("AugmentMaster: Invalid combo ID in event: " + event);
+			}
+			return null;
+		}
+
+		// Apply premium combo: apply_combo_N
+		// MUST be before startsWith("apply_") — "apply_combo_7".startsWith("apply_") is true.
+		if (event.startsWith("apply_combo_"))
+		{
+			try
+			{
+				final int comboId = Integer.parseInt(event.substring(12));
+				applyPremiumCombo(npc, player, comboId);
+			}
+			catch (NumberFormatException e)
+			{
+				LOGGER.warning("AugmentMaster: Invalid combo ID in event: " + event);
+			}
+			return null;
+		}
+
 		// Apply standard augmentation
 		if (event.startsWith("apply_"))
 		{
@@ -502,36 +535,6 @@ public class AugmentMaster extends Script
 		if (event.equals("remove_confirm"))
 		{
 			removeAugment(npc, player);
-			return null;
-		}
-
-		// Expandable info for a premium combo: combo_info_N
-		if (event.startsWith("combo_info_"))
-		{
-			try
-			{
-				final int comboId = Integer.parseInt(event.substring(11));
-				sendComboInfoHtml(npc, player, comboId);
-			}
-			catch (NumberFormatException e)
-			{
-				LOGGER.warning("AugmentMaster: Invalid combo ID in event: " + event);
-			}
-			return null;
-		}
-
-		// Apply premium combo: apply_combo_N
-		if (event.startsWith("apply_combo_"))
-		{
-			try
-			{
-				final int comboId = Integer.parseInt(event.substring(12));
-				applyPremiumCombo(npc, player, comboId);
-			}
-			catch (NumberFormatException e)
-			{
-				LOGGER.warning("AugmentMaster: Invalid combo ID in event: " + event);
-			}
 			return null;
 		}
 
