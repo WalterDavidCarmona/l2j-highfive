@@ -11,7 +11,11 @@
  *   - Zona Clan PvP : solo si el jugador pertenece a un clan
  *   - Zona Party PvP: solo el LIDER del grupo puede usarlo.
  *                     Los demas miembros reciben una invitacion con YES/NO.
- *                     Cada jugador aparece en un punto de spawn aleatorio (4 configurables).
+ *                     Todos spawnan en la misma ubicacion que el lider.
+ *                     Flag PvP activo dentro de la zona, removido al salir.
+ *                     Salir del party teleporta a Giran (dialogo confirmacion via .leaveparty).
+ *                     Desconectarse / restart / unstuck / morir -> To Village -> Giran.
+ *                     El lider no puede invitar nuevos miembros mientras esta en la zona.
  *
  * Config: game/config/Custom/GlobalGatekeeper.ini
  * NPC XML: game/data/stats/npcs/custom/GlobalGatekeeper.xml (ID 50009)
@@ -26,7 +30,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.logging.Logger;
 
 import custom.ClanPvpZone.ClanPvpZone;
@@ -35,13 +41,25 @@ import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.commons.util.Rnd;
 import org.l2jmobius.gameserver.handler.BypassHandler;
 import org.l2jmobius.gameserver.handler.IBypassHandler;
+import org.l2jmobius.gameserver.handler.IVoicedCommandHandler;
+import org.l2jmobius.gameserver.handler.VoicedCommandHandler;
+import org.l2jmobius.gameserver.managers.CustomPvpZoneRegistry;
 import org.l2jmobius.gameserver.model.Location;
+import org.l2jmobius.gameserver.model.World;
 import org.l2jmobius.gameserver.model.actor.Creature;
 import org.l2jmobius.gameserver.model.actor.Npc;
 import org.l2jmobius.gameserver.model.actor.Player;
+import org.l2jmobius.gameserver.model.events.EventType;
+import org.l2jmobius.gameserver.model.events.holders.actor.creature.OnCreatureTeleported;
+import org.l2jmobius.gameserver.model.events.holders.actor.player.OnPlayerLogout;
+import org.l2jmobius.gameserver.model.events.listeners.AbstractEventListener;
+import org.l2jmobius.gameserver.model.events.listeners.ConsumerEventListener;
+import org.l2jmobius.gameserver.model.groups.Party;
+import org.l2jmobius.gameserver.model.groups.PartyMessageType;
 import org.l2jmobius.gameserver.model.item.enums.ItemProcessType;
 import org.l2jmobius.gameserver.model.olympiad.OlympiadManager;
 import org.l2jmobius.gameserver.model.script.Script;
+import org.l2jmobius.gameserver.network.serverpackets.ExShowScreenMessage;
 import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 
 /**
@@ -103,6 +121,33 @@ public class GlobalGatekeeper extends Script
 	 */
 	private static final Map<Integer, Location> PENDING_PARTY_SPAWNS = new ConcurrentHashMap<>();
 
+	/**
+	 * objectId del lider asignado a cada miembro pendiente.
+	 * Necesario para que el miembro pueda registrar a que lider pertenecia en la zona.
+	 */
+	private static final Map<Integer, Integer> PENDING_PARTY_LEADERS = new ConcurrentHashMap<>();
+
+	// ---------------------------------------------------------------------------
+	// Party PvP Zone — tracking de participantes activos
+	// ---------------------------------------------------------------------------
+
+	/** Coordenadas de retorno al salir de la zona (Giran Town). */
+	private static final int PARTY_PVP_RETURN_X = 82698;
+	private static final int PARTY_PVP_RETURN_Y = 148638;
+	private static final int PARTY_PVP_RETURN_Z = -3473;
+
+	/** IDs de jugadores actualmente en Zona Party PvP. */
+	private static final Set<Integer> PPVP_PARTICIPANTS = ConcurrentHashMap.newKeySet();
+
+	/** playerId → objectId del lider de su grupo (para detectar salida del party). */
+	private static final Map<Integer, Integer> PPVP_LEADER = new ConcurrentHashMap<>();
+
+	/** Teleports internos (nuestro codigo): no deben disparar la deteccion de salida. */
+	private static final Set<Integer> PPVP_INTERNAL_TP = ConcurrentHashMap.newKeySet();
+
+	/** Tarea periodica que verifica si algun miembro abandono el party por la UI estandar. */
+	private static volatile ScheduledFuture<?> _ppvpPartyCheckTask = null;
+
 	// ---------------------------------------------------------------------------
 	// Default Teleport Lists (fallback si no se encuentra el config)
 	// ---------------------------------------------------------------------------
@@ -148,6 +193,14 @@ public class GlobalGatekeeper extends Script
 
 			// Registrar bypass handler para las respuestas YES/NO de la invitacion Party PvP
 			BypassHandler.getInstance().registerHandler(new PartyPvpBypass());
+
+			// Registrar voiced command .leaveparty para confirmacion de salida del grupo en la zona
+			VoicedCommandHandler.getInstance().registerHandler(new LeavePartyVoiceCommand());
+
+			// Configurar CustomPvpZoneRegistry para bloquear invitaciones de party
+			// y manejar restart/unstuck con retorno a Giran
+			CustomPvpZoneRegistry.setReturnLocation(PARTY_PVP_RETURN_X, PARTY_PVP_RETURN_Y, PARTY_PVP_RETURN_Z);
+			CustomPvpZoneRegistry.setPartyBlockEnabled(true);
 
 			LOGGER.info("GlobalGatekeeper: Activado | NPC ID: " + NPC_ID
 				+ " | Precio: " + TELEPORT_PRICE
@@ -450,12 +503,19 @@ public class GlobalGatekeeper extends Script
 		// Elegir un spawn unico para todo el grupo (lider + miembros llegan al mismo punto)
 		final Location groupSpawn = getRandomPartySpawn();
 
+		// Marcar el teleport del lider como interno para no disparar el listener de salida
+		PPVP_INTERNAL_TP.add(leader.getObjectId());
+
 		// Teletransportar al lider inmediatamente
 		executeTeleport(leader, groupSpawn);
 		leader.sendMessage("Has llevado a tu grupo a " + PARTY_PVP_ZONE_NAME + ".");
 
+		// Registrar al lider en la zona Party PvP
+		addToPartyPvpZone(leader, leader.getObjectId());
+
 		// Enviar invitacion a cada miembro (excepto lider)
 		final String leaderName = leader.getName();
+		final int leaderId = leader.getObjectId();
 		int invited = 0;
 		for (Player member : leader.getParty().getMembers())
 		{
@@ -464,9 +524,10 @@ public class GlobalGatekeeper extends Script
 				continue;
 			}
 
-			// Registrar invitacion pendiente y reservar el mismo spawn que el lider
+			// Registrar invitacion pendiente, spawn y lider asignados
 			PENDING_PARTY_INVITES.put(member.getObjectId(), System.currentTimeMillis());
 			PENDING_PARTY_SPAWNS.put(member.getObjectId(), groupSpawn);
+			PENDING_PARTY_LEADERS.put(member.getObjectId(), leaderId);
 
 			// Enviar popup de invitacion
 			sendPartyInvite(member, leaderName);
@@ -582,12 +643,14 @@ public class GlobalGatekeeper extends Script
 	// Bypass Handler para invitaciones Party PvP (gk_party_accept / gk_party_decline)
 	// Funciona independientemente de si el jugador esta hablando con el NPC.
 	// ---------------------------------------------------------------------------
-	private static class PartyPvpBypass implements IBypassHandler
+	private class PartyPvpBypass implements IBypassHandler
 	{
 		private static final String[] COMMANDS =
 		{
 			"gk_party_accept",
-			"gk_party_decline"
+			"gk_party_decline",
+			"gk_ppvp_leave_confirm",
+			"gk_ppvp_leave_cancel"
 		};
 
 		@Override
@@ -604,6 +667,7 @@ public class GlobalGatekeeper extends Script
 				{
 					final Long inviteTime = PENDING_PARTY_INVITES.remove(player.getObjectId());
 					final Location reservedSpawn = PENDING_PARTY_SPAWNS.remove(player.getObjectId());
+					final Integer reservedLeader = PENDING_PARTY_LEADERS.remove(player.getObjectId());
 
 					if (inviteTime == null)
 					{
@@ -650,8 +714,16 @@ public class GlobalGatekeeper extends Script
 						return false;
 					}
 
+					// Marcar como teleport interno antes de ejecutar
+					PPVP_INTERNAL_TP.add(player.getObjectId());
+
 					// Teletransportar al mismo punto que el lider
 					executeTeleport(player, spawn);
+
+					// Registrar en la zona Party PvP
+					final int leaderObjId = (reservedLeader != null) ? reservedLeader.intValue() : -1;
+					addToPartyPvpZone(player, leaderObjId);
+
 					player.sendMessage("[Party PvP] Bienvenido a " + PARTY_PVP_ZONE_NAME + "!");
 					return true;
 				}
@@ -660,10 +732,39 @@ public class GlobalGatekeeper extends Script
 				{
 					final boolean hadInvite = PENDING_PARTY_INVITES.remove(player.getObjectId()) != null;
 					PENDING_PARTY_SPAWNS.remove(player.getObjectId());
+					PENDING_PARTY_LEADERS.remove(player.getObjectId());
 					if (hadInvite)
 					{
 						player.sendMessage("[Party PvP] Rechazaste la invitacion a " + PARTY_PVP_ZONE_NAME + ".");
 					}
+					return true;
+				}
+
+				case "gk_ppvp_leave_confirm":
+				{
+					// El jugador confirmo que quiere salir del party
+					if (!PPVP_PARTICIPANTS.contains(player.getObjectId()))
+					{
+						player.sendMessage("[Party PvP] No estas en la Zona Party PvP.");
+						return false;
+					}
+
+					// Sacar del party
+					final Party party = player.getParty();
+					if (party != null)
+					{
+						party.removePartyMember(player, PartyMessageType.LEFT);
+					}
+
+					// Sacar de la zona y enviar a Giran
+					removeFromPartyPvpZone(player, true);
+					player.sendPacket(new ExShowScreenMessage("Saliste del grupo. Enviando a Giran...", 4000));
+					return true;
+				}
+
+				case "gk_ppvp_leave_cancel":
+				{
+					player.sendMessage("[Party PvP] Cancelaste la salida del grupo.");
 					return true;
 				}
 			}
@@ -1066,6 +1167,286 @@ public class GlobalGatekeeper extends Script
 			i++;
 		}
 		return null;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Party PvP Zone — gestion de participantes
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Registra al jugador en la Zona Party PvP:
+	 * - Aplica flag PvP de larga duracion
+	 * - Registra en CustomPvpZoneRegistry (maneja restart/unstuck con retorno a Giran)
+	 * - Bloquea invitaciones de party al lider (setPartyBlockEnabled ya activo globalmente)
+	 * - Agrega listeners de logout y teleport externo
+	 * - Inicia la tarea de verificacion de party si no esta corriendo
+	 */
+	private void addToPartyPvpZone(Player player, int leaderObjectId)
+	{
+		PPVP_PARTICIPANTS.add(player.getObjectId());
+		PPVP_LEADER.put(player.getObjectId(), leaderObjectId);
+		CustomPvpZoneRegistry.register(player.getObjectId());
+
+		// Flag PvP activo dentro de la zona
+		player.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
+		player.startPvPFlag();
+
+		// Listeners por jugador
+		addPpvpListeners(player);
+
+		// Iniciar verificacion de party si no corre ya
+		startPartyCheckIfNeeded();
+
+		player.sendMessage("[Party PvP] Estas en la Zona Party PvP. Usa .leaveparty para salir del grupo con confirmacion.");
+		player.sendPacket(new ExShowScreenMessage("ZONA PARTY PVP - PvP activo!", 5000));
+	}
+
+	/**
+	 * Retira al jugador de la Zona Party PvP:
+	 * - Quita flag PvP instantaneamente
+	 * - Desregistra del CustomPvpZoneRegistry
+	 * - Elimina listeners
+	 * - Opcionalmente teletransporta a Giran
+	 */
+	private void removeFromPartyPvpZone(Player player, boolean teleportToGiran)
+	{
+		if (!PPVP_PARTICIPANTS.remove(player.getObjectId()))
+		{
+			return; // Ya fue removido
+		}
+
+		PPVP_LEADER.remove(player.getObjectId());
+		CustomPvpZoneRegistry.unregister(player.getObjectId());
+
+		// Quitar flag PvP de forma instantanea
+		player.setPvpFlagLasts(0);
+		player.stopPvPFlag();
+
+		// Quitar listeners
+		removePpvpListeners(player);
+
+		// Detener tarea de verificacion si ya no hay participantes
+		if (PPVP_PARTICIPANTS.isEmpty())
+		{
+			stopPartyCheck();
+		}
+
+		if (teleportToGiran && player.isOnline())
+		{
+			PPVP_INTERNAL_TP.add(player.getObjectId());
+			player.teleToLocation(PARTY_PVP_RETURN_X, PARTY_PVP_RETURN_Y, PARTY_PVP_RETURN_Z, 0);
+			player.sendMessage("[Party PvP] Has salido de la Zona Party PvP. Bienvenido a Giran.");
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Listeners de participantes Party PvP
+	// ---------------------------------------------------------------------------
+
+	private void addPpvpListeners(Player player)
+	{
+		player.addListener(new ConsumerEventListener(
+			player,
+			EventType.ON_PLAYER_LOGOUT,
+			(OnPlayerLogout event) -> onPpvpLogout(event),
+			this));
+
+		player.addListener(new ConsumerEventListener(
+			player,
+			EventType.ON_CREATURE_TELEPORTED,
+			(OnCreatureTeleported event) -> onPpvpTeleported(event),
+			this));
+	}
+
+	private void removePpvpListeners(Player player)
+	{
+		for (AbstractEventListener listener : player.getListeners(EventType.ON_PLAYER_LOGOUT))
+		{
+			if (listener.getOwner() == this)
+			{
+				listener.unregisterMe();
+			}
+		}
+		for (AbstractEventListener listener : player.getListeners(EventType.ON_CREATURE_TELEPORTED))
+		{
+			if (listener.getOwner() == this)
+			{
+				listener.unregisterMe();
+			}
+		}
+	}
+
+	/** Jugador se desconecta / hace restart: limpiar zona y quitar flag. */
+	private void onPpvpLogout(OnPlayerLogout event)
+	{
+		final Player player = event.getPlayer();
+		if (!PPVP_PARTICIPANTS.contains(player.getObjectId()))
+		{
+			return;
+		}
+		// El CustomPvpZoneRegistry enviara al jugador a Giran en el proximo login.
+		// Aqui solo hacemos cleanup local.
+		removeFromPartyPvpZone(player, false); // no teleport: se esta desconectando
+	}
+
+	/**
+	 * Detecta teleports externos (SOE, /unstuck, To Village al morir).
+	 * Si no es un teleport interno nuestro, el jugador abandono la zona:
+	 * se le redirige a Giran.
+	 */
+	private void onPpvpTeleported(OnCreatureTeleported event)
+	{
+		final Creature creature = event.getCreature();
+		if (!(creature instanceof Player))
+		{
+			return;
+		}
+
+		final Player player = (Player) creature;
+		if (!PPVP_PARTICIPANTS.contains(player.getObjectId()))
+		{
+			return;
+		}
+
+		// Si es un teleport que nosotros iniciamos, ignorar
+		if (PPVP_INTERNAL_TP.remove(player.getObjectId()))
+		{
+			return;
+		}
+
+		// Teleport externo (SOE, /unstuck, To Village, etc.): sacar de zona y enviar a Giran
+		removeFromPartyPvpZone(player, true);
+	}
+
+	// ---------------------------------------------------------------------------
+	// Verificacion periodica de abandono de party
+	// ---------------------------------------------------------------------------
+
+	private synchronized void startPartyCheckIfNeeded()
+	{
+		if (_ppvpPartyCheckTask != null)
+		{
+			return;
+		}
+		_ppvpPartyCheckTask = ThreadPool.scheduleAtFixedRate(this::checkPartyMembership, 2000, 2000);
+	}
+
+	private synchronized void stopPartyCheck()
+	{
+		if (_ppvpPartyCheckTask != null)
+		{
+			_ppvpPartyCheckTask.cancel(false);
+			_ppvpPartyCheckTask = null;
+		}
+	}
+
+	/**
+	 * Cada 2 segundos verifica si algun participante salio del party por la UI estandar.
+	 * Si ya no esta en el mismo party que su lider -> sacarlo de la zona y enviar a Giran.
+	 */
+	private void checkPartyMembership()
+	{
+		if (PPVP_PARTICIPANTS.isEmpty())
+		{
+			stopPartyCheck();
+			return;
+		}
+
+		for (Integer playerId : PPVP_PARTICIPANTS)
+		{
+			final Player player = World.getInstance().getPlayer(playerId);
+			if ((player == null) || !player.isOnline())
+			{
+				continue;
+			}
+
+			final Integer leaderObjId = PPVP_LEADER.get(playerId);
+			if (leaderObjId == null)
+			{
+				continue;
+			}
+
+			// El lider se verifica a si mismo: su leaderObjId es su propio id, siempre ok
+			if (leaderObjId.intValue() == playerId.intValue())
+			{
+				continue;
+			}
+
+			// Verificar que el miembro siga en el mismo party que el lider
+			final Party party = player.getParty();
+			if ((party == null) || (party.getLeaderObjectId() != leaderObjId.intValue()))
+			{
+				// Salio del party por la UI estandar -> sacar de zona
+				removeFromPartyPvpZone(player, true);
+				player.sendPacket(new ExShowScreenMessage("Saliste del grupo: enviado a Giran.", 5000));
+			}
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Voiced command .leaveparty — dialogo de confirmacion
+	// ---------------------------------------------------------------------------
+
+	private class LeavePartyVoiceCommand implements IVoicedCommandHandler
+	{
+		private static final String[] COMMANDS = { "leaveparty" };
+
+		@Override
+		public boolean useVoicedCommand(String command, Player player, String target)
+		{
+			if (!"leaveparty".equals(command))
+			{
+				return false;
+			}
+
+			if (!PPVP_PARTICIPANTS.contains(player.getObjectId()))
+			{
+				// Fuera de la zona: usar la logica normal, no hacer nada especial
+				return false;
+			}
+
+			// Mostrar dialogo de confirmacion via NpcHtmlMessage
+			final NpcHtmlMessage html = new NpcHtmlMessage(0);
+			html.setHtml(buildLeavePartyConfirmHtml(player));
+			player.sendPacket(html);
+			return true;
+		}
+
+		@Override
+		public String[] getVoicedCommandList()
+		{
+			return COMMANDS;
+		}
+	}
+
+	private static String buildLeavePartyConfirmHtml(Player player)
+	{
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+		sb.append("<table width=270 cellpadding=0 cellspacing=2>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td align=center height=4></td></tr>");
+		sb.append("<tr><td align=center><font color=\"C8A84B\">Salir del Grupo</font></td></tr>");
+		sb.append("<tr><td align=center height=4></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td height=8></td></tr>");
+		sb.append("<tr><td><font color=\"C0B090\">");
+		sb.append("Si sales del grupo mientras estas en la<br>");
+		sb.append("<font color=\"LEVEL\">Zona Party PvP</font>, seras enviado a<br>");
+		sb.append("<font color=\"C8A84B\">Giran Town</font> inmediatamente.");
+		sb.append("</font></td></tr>");
+		sb.append("<tr><td height=10></td></tr>");
+		sb.append("<tr><td align=center>");
+		sb.append("<table width=250 cellspacing=4><tr>");
+		sb.append("<td><button value=\"Confirmar\" action=\"bypass -h gk_ppvp_leave_confirm\" width=118 height=26 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
+		sb.append("<td><button value=\"Cancelar\" action=\"bypass -h gk_ppvp_leave_cancel\" width=118 height=26 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></td>");
+		sb.append("</tr></table>");
+		sb.append("</td></tr>");
+		sb.append("<tr><td height=4></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("</table>");
+		sb.append("</body></html>");
+		return sb.toString();
 	}
 
 	// ---------------------------------------------------------------------------
