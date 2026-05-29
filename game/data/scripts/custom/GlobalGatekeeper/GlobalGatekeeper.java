@@ -21,12 +21,15 @@ package custom.GlobalGatekeeper;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import custom.ClanPvpZone.ClanPvpZone;
 
 import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.commons.util.Rnd;
@@ -336,9 +339,8 @@ public class GlobalGatekeeper extends Script
 			case "partypvp":
 				return buildPartyPvpPage(player);
 
-			// ---- Zonas especiales: teleport ----
-			case "tp_clanpvp":
-				return handleClanPvpTeleport(player);
+			// ---- Zona Clan PvP: el teleport directo ya no existe;
+			//      el registro se hace via bypass clanpvz_register desde buildClanPvpPage ----
 			case "tp_partypvp":
 				return handlePartyPvpTeleport(npc, player);
 		}
@@ -405,28 +407,7 @@ public class GlobalGatekeeper extends Script
 		return null;
 	}
 
-	/** Zona Clan PvP: requiere tener clan. */
-	private String handleClanPvpTeleport(Player player)
-	{
-		final String blocked = checkRestrictions(player, "clanpvp");
-		if (blocked != null)
-		{
-			return blocked;
-		}
-
-		if (player.getClan() == null)
-		{
-			return buildErrorPage("Debes pertenecer a un clan para acceder a esta zona.", "clanpvp");
-		}
-
-		if (CLAN_PVP_ZONE == null)
-		{
-			return buildErrorPage("La Zona Clan PvP no esta configurada. Edita GlobalGatekeeper.ini", "main");
-		}
-
-		executeTeleport(player, CLAN_PVP_ZONE);
-		return null;
-	}
+	// handleClanPvpTeleport eliminado: el registro lo maneja ClanPvpZone via bypass clanpvz_register.
 
 	/**
 	 * Zona Party PvP: SOLO el lider del grupo puede usarlo.
@@ -825,37 +806,133 @@ public class GlobalGatekeeper extends Script
 		return sb.toString();
 	}
 
-	/** Pagina de info de la Zona Clan PvP. */
+	/**
+	 * Pagina del evento Clan PvP Zone.
+	 * Muestra el estado del evento e integra el boton de inscripcion
+	 * que llama al bypass handler de ClanPvpZone.
+	 */
 	private String buildClanPvpPage(Player player)
 	{
+		final ClanPvpZone clanEvent = ClanPvpZone.getInstance();
 		final boolean hasClan = player.getClan() != null;
+
 		final StringBuilder sb = new StringBuilder();
 		sb.append("<html><body>");
 		sb.append("<table width=270 cellpadding=0 cellspacing=2>");
 
+		// Cabecera
 		sb.append("<tr><td align=center><img src=\"L2UI_CH3.herotower_deco\" width=256 height=32></td></tr>");
 		sb.append("<tr><td align=center><font color=\"C8A84B\">").append(CLAN_PVP_ZONE_NAME).append("</font></td></tr>");
+		sb.append("<tr><td align=center><font color=\"707070\">Evento de Clanes con RaidBoss</font></td></tr>");
 		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
 		sb.append("<tr><td height=5></td></tr>");
 
-		sb.append("<tr><td><font color=\"9A9280\">");
-		sb.append("Zona exclusiva para miembros de clan.<br>");
-		sb.append("El PvP esta siempre activo en este area.<br><br>");
-		sb.append("Solo pueden entrar jugadores con clan.");
-		sb.append("</font></td></tr>");
-		sb.append("<tr><td height=8></td></tr>");
-
-		if (hasClan)
+		if (clanEvent == null)
 		{
-			sb.append("<tr><td align=center><font color=\"44BB44\">[OK] Clan: ").append(player.getClan().getName()).append("</font></td></tr>");
-			sb.append("<tr><td height=4></td></tr>");
-			appendButton(sb, "Entrar a " + CLAN_PVP_ZONE_NAME, "bypass -h Script GlobalGatekeeper tp_clanpvp");
+			// Script no cargado
+			sb.append("<tr><td align=center><font color=\"FF5555\">El evento no esta disponible.</font></td></tr>");
 		}
 		else
 		{
-			sb.append("<tr><td align=center><font color=\"FF5555\">[X] No perteneces a ningun clan</font></td></tr>");
+			final ClanPvpZone.EventState state = clanEvent.getState();
+
+			// --- Bloque de estado del evento ---
+			sb.append("<tr><td>");
+			sb.append("<table width=250 bgcolor=080808 cellpadding=4>");
+
+			switch (state)
+			{
+				case IDLE:
+				{
+					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"C8A84B\">En espera</font></td></tr>");
+					sb.append("<tr><td align=center><font color=\"9A9280\">Clanes inscritos: <font color=\"FFDF00\">")
+						.append(clanEvent.getRegisteredClanCount()).append("/").append(clanEvent.getMinClans())
+						.append("</font></font></td></tr>");
+					// Lista de clanes registrados
+					final Collection<String> names = clanEvent.getRegisteredClanNames();
+					if (!names.isEmpty())
+					{
+						sb.append("<tr><td><font color=\"707070\">");
+						for (String clanName : names)
+						{
+							sb.append("&lt;").append(clanName).append("&gt;<br>");
+						}
+						sb.append("</font></td></tr>");
+					}
+					break;
+				}
+				case COUNTDOWN:
+				{
+					final int sec = clanEvent.getCountdownSeconds();
+					final String timeLeft = (sec >= 60) ? (sec / 60) + "m " + (sec % 60) + "s" : sec + "s";
+					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"FFAA00\">Cuenta regresiva</font></td></tr>");
+					sb.append("<tr><td align=center><font color=\"FF6347\">Comienza en: <b>").append(timeLeft).append("</b></font></td></tr>");
+					sb.append("<tr><td align=center><font color=\"9A9280\">Clanes inscritos: <font color=\"FFDF00\">")
+						.append(clanEvent.getRegisteredClanCount()).append("/").append(clanEvent.getMinClans())
+						.append("</font> (aun puedes unirte!)</font></td></tr>");
+					final Collection<String> namesC = clanEvent.getRegisteredClanNames();
+					if (!namesC.isEmpty())
+					{
+						sb.append("<tr><td><font color=\"707070\">");
+						for (String clanName : namesC)
+						{
+							sb.append("&lt;").append(clanName).append("&gt;<br>");
+						}
+						sb.append("</font></td></tr>");
+					}
+					break;
+				}
+				case ACTIVE:
+					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"FF5555\">COMBATE ACTIVO</font></td></tr>");
+					sb.append("<tr><td align=center><font color=\"9A9280\">El combate entre clanes esta en progreso.<br>No se puede ingresar.</font></td></tr>");
+					break;
+				case RAID:
+					sb.append("<tr><td align=center><font color=\"AAAAAA\">Estado: </font><font color=\"FF0000\">RAIDBOSS ACTIVO</font></td></tr>");
+					sb.append("<tr><td align=center><font color=\"9A9280\">El clan ganador esta enfrentando al RaidBoss.</font></td></tr>");
+					break;
+			}
+
+			sb.append("</table>");
+			sb.append("</td></tr>");
+			sb.append("<tr><td height=6></td></tr>");
+
+			// --- Descripcion del evento ---
+			sb.append("<tr><td><font color=\"9A9280\" font size=-1>");
+			sb.append("Cada kill otorga <font color=\"C8A84B\">reputacion</font> a tu clan.<br>");
+			sb.append("El ultimo clan vivo enfrenta al <font color=\"FF5555\">RaidBoss</font>.<br>");
+			sb.append("El clan vencedor recibe <font color=\"FFDF00\">recompensa</font> para cada miembro.");
+			sb.append("</font></td></tr>");
+			sb.append("<tr><td height=6></td></tr>");
+
+			// --- Boton de accion segun estado ---
+			if (!hasClan)
+			{
+				sb.append("<tr><td align=center><font color=\"FF5555\">[X] Necesitas pertenecer a un clan.</font></td></tr>");
+			}
+			else if ((state == ClanPvpZone.EventState.IDLE) || (state == ClanPvpZone.EventState.COUNTDOWN))
+			{
+				final int clanId = player.getClan().getId();
+				if (clanEvent.isClanOnCooldown(clanId))
+				{
+					sb.append("<tr><td align=center><font color=\"FFAA00\">[Cooldown] Tu clan gano el ultimo evento.<br>Espera a que otro clan gane.</font></td></tr>");
+				}
+				else if (clanEvent.isClanRegistered(clanId))
+				{
+					sb.append("<tr><td align=center><font color=\"44BB44\">[OK] Tu clan esta inscrito. En espera de inicio.</font></td></tr>");
+				}
+				else
+				{
+					sb.append("<tr><td height=4></td></tr>");
+					appendButton(sb, "Inscribir Clan al Evento", "bypass -h clanpvz_register");
+				}
+			}
+			else
+			{
+				sb.append("<tr><td align=center><font color=\"707070\">El evento esta en progreso. Espera la proxima ronda.</font></td></tr>");
+			}
 		}
 
+		// Pie de pagina
 		sb.append("<tr><td height=4></td></tr>");
 		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
 		sb.append("<tr><td height=3></td></tr>");
