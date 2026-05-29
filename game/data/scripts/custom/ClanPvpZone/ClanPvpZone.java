@@ -235,6 +235,15 @@ public class ClanPvpZone extends Script
 			LOGGER.warning("ClanPvpZone: No se configuraron ClanSpawn1-4. Usando coordenadas de Freya por defecto.");
 		}
 
+		// Garantizar que MAX_CLANS nunca supere la cantidad de spawns disponibles.
+		// Si hubiera mas clanes que spawns, dos clanes compartiran punto de spawn.
+		if (MAX_CLANS > CLAN_SPAWNS.size())
+		{
+			LOGGER.warning("ClanPvpZone: MaxClansToStart (" + MAX_CLANS + ") supera los spawns configurados ("
+				+ CLAN_SPAWNS.size() + "). Ajustando MAX_CLANS a " + CLAN_SPAWNS.size() + ".");
+			MAX_CLANS = CLAN_SPAWNS.size();
+		}
+
 		// BossZone IDs (separados por coma)
 		final String zoneIdStr = props.getProperty("BossZoneIds", "").trim();
 		if (!zoneIdStr.isEmpty())
@@ -461,8 +470,8 @@ public class ClanPvpZone extends Script
 
 				_internalTeleport.add(online.getObjectId());
 				online.teleToLocation(
-					spawn.getX() + Rnd.get(-80, 80),
-					spawn.getY() + Rnd.get(-80, 80),
+					spawn.getX() + Rnd.get(-40, 40),
+					spawn.getY() + Rnd.get(-40, 40),
 					spawn.getZ(), 0);
 
 				online.sendPacket(new ExShowScreenMessage(
@@ -640,7 +649,7 @@ public class ClanPvpZone extends Script
 			}
 			whitelistInBossZones(p);
 			_internalTeleport.add(p.getObjectId());
-			p.teleToLocation(raidArea.getX() + Rnd.get(-80, 80), raidArea.getY() + Rnd.get(-80, 80), raidArea.getZ(), 0);
+			p.teleToLocation(raidArea.getX() + Rnd.get(-40, 40), raidArea.getY() + Rnd.get(-40, 40), raidArea.getZ(), 0);
 			p.sendPacket(new ExShowScreenMessage(
 				"!HAN AVANZADO AL RAIDBOSS! Preparate para el combate final!", 8000));
 			p.sendMessage("[Clan PvP Zone] Tu clan ha avanzado! El RaidBoss aparecera en 5 segundos. !Eliminalo para ganar la recompensa!");
