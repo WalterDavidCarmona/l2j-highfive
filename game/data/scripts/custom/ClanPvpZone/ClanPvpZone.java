@@ -766,23 +766,17 @@ public class ClanPvpZone extends Script
 				return;
 			}
 
-			// Ajustar nivel
-			if (RAID_BOSS_LEVEL > 0)
-			{
-				_raidBoss.setLevel(RAID_BOSS_LEVEL);
-			}
-
 			// Multiplicar HP: agrega un bonus flat = baseMaxHp * (multiplier - 1)
+			// Nota: el nivel del boss se configura en su template XML (RaidBossLevel en ini es solo referencia).
 			if (RAID_BOSS_HP_MULTIPLIER > 1.0)
 			{
 				final double bonusHp = _raidBoss.getMaxHp() * (RAID_BOSS_HP_MULTIPLIER - 1.0);
-				_raidBoss.getStat().addStatFunc(new FuncAdd(Stat.MAX_HP, 0x20, _raidBoss, bonusHp));
+				_raidBoss.getStat().addStatFunc(new FuncAdd(Stat.MAX_HP, 0x20, _raidBoss, bonusHp, null));
 				_raidBoss.setCurrentHp(_raidBoss.getMaxHp());
 				_raidBoss.setCurrentMp(_raidBoss.getMaxMp());
 			}
 
-			LOGGER.info("ClanPvpZone: RaidBoss ajustado - Nivel=" + _raidBoss.getLevel()
-				+ " MaxHP=" + (long) _raidBoss.getMaxHp());
+			LOGGER.info("ClanPvpZone: RaidBoss spawneado - MaxHP=" + (long) _raidBoss.getMaxHp());
 
 			// Agregar listener de muerte directamente al NPC instanciado
 			_raidBoss.addListener(new ConsumerEventListener(
