@@ -644,6 +644,7 @@ public class ClanPvpZone extends Script
 		// Teletransportar al jugador eliminado al punto de retorno
 		if (player.isOnline())
 		{
+			clearPvpFlag(player);
 			_internalTeleport.add(player.getObjectId());
 			player.teleToLocation(RETURN_X, RETURN_Y, RETURN_Z, 0);
 			player.sendPacket(new ExShowScreenMessage("Has sido eliminado del Clan PvP Zone.", 5000));
@@ -889,6 +890,7 @@ public class ClanPvpZone extends Script
 			removeParticipantListeners(p);
 			if (p.isOnline())
 			{
+				clearPvpFlag(p);
 				_internalTeleport.add(p.getObjectId());
 				p.teleToLocation(RETURN_X, RETURN_Y, RETURN_Z, 0);
 				p.sendMessage("[Clan PvP Zone] Has sido teletransportado. Hasta la proxima!");
@@ -923,6 +925,7 @@ public class ClanPvpZone extends Script
 				removeParticipantListeners(p);
 				if (p.isOnline())
 				{
+					clearPvpFlag(p);
 					_internalTeleport.add(p.getObjectId());
 					p.teleToLocation(RETURN_X, RETURN_Y, RETURN_Z, 0);
 				}
@@ -1011,6 +1014,17 @@ public class ClanPvpZone extends Script
 				// Zone no cargada o tipo incorrecto — ignorar
 			}
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// PvP flag helpers
+	// ---------------------------------------------------------------------------
+
+	/** Quita el flag PvP del jugador de forma instantanea al salir de la zona. */
+	private static void clearPvpFlag(Player player)
+	{
+		player.setPvpFlagLasts(0);
+		player.updatePvPFlag(0);
 	}
 
 	// ---------------------------------------------------------------------------
