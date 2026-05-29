@@ -785,20 +785,26 @@ public class AugmentMaster extends Script
 			takeItems(player, ITEM_ID, ITEM_COUNT);
 		}
 
-		// Remove existing augment if any
+		// Remove existing augment if any — also strip bonus from the live player
 		if (weapon.isAugmented())
 		{
+			weapon.getAugmentation().removeBonus(player);
 			weapon.removeAugmentation();
 		}
 
 		// Build the combined augmentation ID:
 		//   High 16 bits (stat34) = passive skill option ID
 		//   Low  16 bits (stat12) = stat bonus option ID
-		// Both options are applied simultaneously by the engine.
+		// The engine decodes both halves and looks each up in OptionsData independently.
 		final int stat34 = combo.passiveOptionId;
 		final int stat12 = combo.statOptionId;
 		final int augmentationId = (stat34 << 16) | stat12;
 		weapon.setAugmentation(new Augmentation(augmentationId));
+		// ItemSkillsListener.applyBonus is only triggered on equip state changes.
+		// Since the weapon is already equipped we must apply the bonus manually.
+		weapon.getAugmentation().applyBonus(player);
+		player.sendSkillList();
+		player.broadcastUserInfo();
 		player.sendItemList(false);
 
 		// Success page
@@ -915,9 +921,10 @@ public class AugmentMaster extends Script
 			takeItems(player, ITEM_ID, ITEM_COUNT);
 		}
 
-		// Remove existing augment if any
+		// Remove existing augment if any — also strip bonus from the live player
 		if (weapon.isAugmented())
 		{
+			weapon.getAugmentation().removeBonus(player);
 			weapon.removeAugmentation();
 		}
 
@@ -939,6 +946,11 @@ public class AugmentMaster extends Script
 		final int augmentationId = (stat34 << 16) + stat12;
 		final Augmentation newAugmentation = new Augmentation(augmentationId);
 		weapon.setAugmentation(newAugmentation);
+		// ItemSkillsListener.applyBonus is only triggered on equip state changes.
+		// Since the weapon is already equipped we must apply the bonus manually.
+		weapon.getAugmentation().applyBonus(player);
+		player.sendSkillList();
+		player.broadcastUserInfo();
 		player.sendItemList(false);
 
 		// Success HTML
@@ -985,7 +997,10 @@ public class AugmentMaster extends Script
 			takeItems(player, REMOVE_ITEM_ID, REMOVE_ITEM_COUNT);
 		}
 
+		weapon.getAugmentation().removeBonus(player);
 		weapon.removeAugmentation();
+		player.sendSkillList();
+		player.broadcastUserInfo();
 		player.sendItemList(false);
 
 		sendHtml(npc, player, "1004000-removed.htm");
