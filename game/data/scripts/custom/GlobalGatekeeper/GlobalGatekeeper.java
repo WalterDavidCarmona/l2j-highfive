@@ -924,6 +924,8 @@ public class GlobalGatekeeper extends Script
 			else if ((state == ClanPvpZone.EventState.IDLE) || (state == ClanPvpZone.EventState.COUNTDOWN))
 			{
 				final int clanId = player.getClan().getId();
+				final boolean isLeader = player.getClan().getLeaderId() == player.getObjectId();
+
 				if (clanEvent.isClanOnCooldown(clanId))
 				{
 					sb.append("<tr><td align=center>");
@@ -939,10 +941,19 @@ public class GlobalGatekeeper extends Script
 					sb.append("<font color=\"44BB44\">[OK] Tu clan esta inscrito.</font><br>");
 					sb.append("<font color=\"707070\">En espera de inicio del evento.</font>");
 					sb.append("</td></tr></table></td></tr>");
+					if (isLeader)
+					{
+						sb.append("<tr><td height=3></td></tr>");
+						appendButton(sb, "Cancelar Inscripcion", "bypass -h clanpvz_unregister");
+					}
 				}
 				else if (registered >= maxClans)
 				{
 					sb.append("<tr><td align=center><font color=\"FF5555\">Cupo lleno (").append(maxClans).append(" clanes).</font></td></tr>");
+				}
+				else if (!isLeader)
+				{
+					sb.append("<tr><td align=center><font color=\"FFAA00\">[!] Solo el lider del clan puede inscribirse.</font></td></tr>");
 				}
 				else
 				{

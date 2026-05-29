@@ -346,6 +346,11 @@ public class ClanPvpZone extends Script
 			return "Debes pertenecer a un clan para inscribirte.";
 		}
 
+		if (clan.getLeaderId() != player.getObjectId())
+		{
+			return "Solo el lider del clan puede inscribirse al evento.";
+		}
+
 		if ((_state != EventState.IDLE) && (_state != EventState.COUNTDOWN))
 		{
 			return "El evento ya ha comenzado. Espera la proxima ronda.";
@@ -384,9 +389,76 @@ public class ClanPvpZone extends Script
 		return null; // exito
 	}
 
+	/**
+	 * Retira la inscripcion del clan del jugador.
+	 * Solo el lider puede hacerlo y solo en fase IDLE o COUNTDOWN.
+	 * Si tras retirar quedan menos clanes que el minimo, cancela el countdown.
+	 * @return Mensaje de error, o null si la operacion fue exitosa.
+	 */
+	public synchronized String unregisterClan(Player player)
+	{
+		if (!ENABLED)
+		{
+			return "El evento no esta disponible.";
+		}
+
+		final Clan clan = player.getClan();
+		if (clan == null)
+		{
+			return "No perteneces a ningun clan.";
+		}
+
+		if (clan.getLeaderId() != player.getObjectId())
+		{
+			return "Solo el lider del clan puede cancelar la inscripcion.";
+		}
+
+		if ((_state != EventState.IDLE) && (_state != EventState.COUNTDOWN))
+		{
+			return "No puedes cancelar la inscripcion una vez que el evento ha comenzado.";
+		}
+
+		if (!_registeredClans.containsKey(clan.getId()))
+		{
+			return "Tu clan no esta inscrito en el evento.";
+		}
+
+		_registeredClans.remove(clan.getId());
+		LOGGER.info("ClanPvpZone: Clan retirado: " + clan.getName() + " (" + _registeredClans.size() + " clanes restantes)");
+
+		Broadcast.toAllOnlinePlayers(
+			"[Clan PvP Zone] El clan <" + clan.getName() + "> ha cancelado su inscripcion. ("
+				+ _registeredClans.size() + "/" + MIN_CLANS + " clanes)", false);
+
+		// Si habia cuenta regresiva y ahora hay menos del minimo, cancelarla
+		if ((_state == EventState.COUNTDOWN) && (_registeredClans.size() < MIN_CLANS))
+		{
+			stopCountdown();
+		}
+
+		return null;
+	}
+
 	// ---------------------------------------------------------------------------
 	// Fase: COUNTDOWN
 	// ---------------------------------------------------------------------------
+
+	/** Cancela el countdown y vuelve a IDLE cuando hay insuficientes clanes. */
+	private void stopCountdown()
+	{
+		if (_countdownTask != null)
+		{
+			_countdownTask.cancel(false);
+			_countdownTask = null;
+		}
+		_state = EventState.IDLE;
+		_countdownSeconds.set(0);
+
+		Broadcast.toAllOnlinePlayers(
+			"[Clan PvP Zone] Cuenta regresiva cancelada: no hay suficientes clanes inscritos.", false);
+		LOGGER.info("ClanPvpZone: Countdown cancelado por falta de clanes. Estado: IDLE.");
+	}
+
 	private void startCountdown()
 	{
 		_state = EventState.COUNTDOWN;
@@ -964,7 +1036,8 @@ public class ClanPvpZone extends Script
 	{
 		private final String[] COMMANDS =
 		{
-			"clanpvz_register"
+			"clanpvz_register",
+			"clanpvz_unregister"
 		};
 
 		@Override
@@ -986,6 +1059,19 @@ public class ClanPvpZone extends Script
 				{
 					player.sendMessage("[Clan PvP Zone] !Tu clan ha sido inscrito exitosamente!");
 					player.sendPacket(new ExShowScreenMessage("Clan inscrito en el Clan PvP Zone!", 4000));
+				}
+			}
+			else if ("clanpvz_unregister".equals(command))
+			{
+				final String error = unregisterClan(player);
+				if (error != null)
+				{
+					player.sendMessage("[Clan PvP Zone] " + error);
+				}
+				else
+				{
+					player.sendMessage("[Clan PvP Zone] Tu clan ha sido retirado del evento.");
+					player.sendPacket(new ExShowScreenMessage("Inscripcion cancelada.", 3000));
 				}
 			}
 
