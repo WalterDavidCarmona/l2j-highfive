@@ -461,6 +461,14 @@ public class AugmentMaster extends Script
 			return null;
 		}
 
+		// Premium combos list — must be checked BEFORE the generic cat_ handler
+		// because "cat_PREMIUM".startsWith("cat_") is true and would swallow it.
+		if (event.equals("cat_PREMIUM"))
+		{
+			sendPremiumCombosHtml(npc, player);
+			return null;
+		}
+
 		// Category pages (standard augments)
 		if (event.startsWith("cat_"))
 		{
@@ -494,13 +502,6 @@ public class AugmentMaster extends Script
 		if (event.equals("remove_confirm"))
 		{
 			removeAugment(npc, player);
-			return null;
-		}
-
-		// Premium combos list
-		if (event.equals("cat_PREMIUM"))
-		{
-			sendPremiumCombosHtml(npc, player);
 			return null;
 		}
 
