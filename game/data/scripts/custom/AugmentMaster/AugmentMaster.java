@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.l2jmobius.commons.util.Rnd;
+import org.l2jmobius.gameserver.config.custom.PremiumSystemConfig;
 import org.l2jmobius.gameserver.data.xml.ItemData;
 import org.l2jmobius.gameserver.model.actor.Npc;
 import org.l2jmobius.gameserver.model.actor.Player;
@@ -42,6 +43,7 @@ import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 /**
  * Augment Master NPC - Allows players to choose and apply weapon augmentations.
  * Configuration: game/config/Custom/AugmentMaster.ini
+ * Premium combos: game/config/Custom/PremiumSystem.ini → AugmentPremiumCombosEnabled
  * @author Custom
  */
 public class AugmentMaster extends Script
@@ -55,6 +57,8 @@ public class AugmentMaster extends Script
 	private static final int REMOVE_ITEM_ID;
 	private static final long REMOVE_ITEM_COUNT;
 	private static final int[] AVAILABLE_OPTIONS;
+	// Loaded from PremiumSystem.ini
+	private static final boolean PREMIUM_COMBO_ENABLED;
 
 	static
 	{
@@ -75,12 +79,12 @@ public class AugmentMaster extends Script
 		REMOVE_ITEM_COUNT = Long.parseLong(CONFIG.getProperty("RemoveItemCount", "0").trim());
 
 		final String raw = CONFIG.getProperty("AugmentOptionIds",
-			// Active Skills
+			// Active Skills (Music Refresh 16299 intentionally excluded)
 			"16200,16201,16202,16203,16204,16205,16206,16207,16208,16209,16210,16211," +
 			"16212,16213,16214,16215,16216,16217,16218,16219,16220," +
 			"16221,16222,16223,16224,16225,16226,16227,16228,16229,16230," +
 			"16231,16232,16235,16287,16288,16289,16290,16291,16293,16294," +
-			"16295,16296,16297,16298,16299,16300,16301,16302,16303,16304," +
+			"16295,16296,16297,16298,16300,16301,16302,16303,16304," +
 			// Chance: On Attack
 			"16238,16239,16240,16241,16242,16243,16305,16306,16307,16308,16309,16310," +
 			// Chance: On Critical
@@ -103,6 +107,20 @@ public class AugmentMaster extends Script
 		{
 			AVAILABLE_OPTIONS[i] = Integer.parseInt(tokens[i].trim());
 		}
+
+		// Load premium combo setting from PremiumSystem.ini
+		boolean premiumComboEnabled = false;
+		try
+		{
+			final Properties premProps = new Properties();
+			premProps.load(new FileInputStream("./config/Custom/PremiumSystem.ini"));
+			premiumComboEnabled = Boolean.parseBoolean(premProps.getProperty("AugmentPremiumCombosEnabled", "false").trim());
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("AugmentMaster: Could not read PremiumSystem.ini for premium combos, feature disabled.");
+		}
+		PREMIUM_COMBO_ENABLED = premiumComboEnabled;
 	}
 
 	// ── Augment Type Enum ────────────────────────────────────────────────────────
@@ -140,6 +158,35 @@ public class AugmentMaster extends Script
 			this.name = name;
 			this.description = description;
 			this.type = type;
+		}
+	}
+
+	// ── Premium Combo Record ─────────────────────────────────────────────────────
+	private static class PremiumComboInfo
+	{
+		final int id;
+		final String name;
+		final String buildType;
+		final String fullDescription;
+		final int passiveOptionId;
+		final String passiveName;
+		final String passiveDesc;
+		final int statOptionId;
+		final String statName;
+
+		PremiumComboInfo(int id, String name, String buildType, String fullDescription,
+			int passiveOptionId, String passiveName, String passiveDesc,
+			int statOptionId, String statName)
+		{
+			this.id = id;
+			this.name = name;
+			this.buildType = buildType;
+			this.fullDescription = fullDescription;
+			this.passiveOptionId = passiveOptionId;
+			this.passiveName = passiveName;
+			this.passiveDesc = passiveDesc;
+			this.statOptionId = statOptionId;
+			this.statName = statName;
 		}
 	}
 
@@ -196,7 +243,7 @@ public class AugmentMaster extends Script
 		reg(16296, "Silence", "Blocks the target's magic skills.", AugmentType.ACTIVE);
 		reg(16297, "Skill Refresh", "Temporarily decreases skill reuse time.", AugmentType.ACTIVE);
 		reg(16298, "Skill Clarity", "Reduces MP consumption of a skill for a fixed time.", AugmentType.ACTIVE);
-		reg(16299, "Music Refresh", "Temporarily decreases the reuse time of song/dance skills.", AugmentType.ACTIVE);
+		// Note: Music Refresh (16299) removed — not offered by this NPC.
 		reg(16300, "Music Clarity", "Reduces MP consumption of songs and dances for a fixed duration.", AugmentType.ACTIVE);
 		reg(16301, "Spell Refresh", "Temporarily decreases magic reuse time.", AugmentType.ACTIVE);
 		reg(16302, "Spell Clarity", "Reduces MP consumption of all magic for a fixed duration.", AugmentType.ACTIVE);
@@ -322,6 +369,65 @@ public class AugmentMaster extends Script
 		AUGMENT_CATALOG.put(id, new AugmentInfo(id, name, desc, type));
 	}
 
+	// ── Premium Combo Catalog ────────────────────────────────────────────────────
+	// Each combo applies a passive skill (stat34/high 16-bits) AND a stat bonus
+	// (stat12/low 16-bits) simultaneously. Exclusive to premium players.
+	private static final List<PremiumComboInfo> PREMIUM_COMBOS = new ArrayList<>();
+
+	static
+	{
+		// id | display name     | build label      | full description
+		// passiveOptId | passive name  | passive description
+		// statOptId  | stat name
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			1, "Might + STR +1", "Physical Power",
+			"Permanently increases Physical Attack while the weapon is equipped AND permanently raises Strength by 1. Best for warriors, gladiators and dagger classes.",
+			16283, "Might", "Increases P. Atk. when weapon is equipped.",
+			16377, "STR +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			2, "Empower + INT +1", "Magic Power",
+			"Permanently increases Magic Attack while the weapon is equipped AND permanently raises Intelligence by 1. Best for mages, necromancers and nukers.",
+			16281, "Empower", "Increases M. Atk. when weapon is equipped.",
+			16379, "INT +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			3, "Shield + CON +1", "Survivability",
+			"Permanently increases Physical Defense while the weapon is equipped AND permanently raises Constitution by 1. Best for tanks and front-line fighters.",
+			16284, "Shield", "Increases P. Def. when weapon is equipped.",
+			16378, "CON +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			4, "Magic Barrier + MEN +1", "Magic Defense",
+			"Permanently increases Magic Defense while the weapon is equipped AND permanently raises Mentality by 1. Best for healers, bishops and magic-resist builds.",
+			16282, "Magic Barrier", "Increases M. Def. when weapon is equipped.",
+			16380, "MEN +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			5, "Focus + STR +1", "Critical Build",
+			"Permanently increases Critical Rate while the weapon is equipped AND permanently raises Strength by 1. Best for archers, assassins and dagger specialists.",
+			16333, "Focus", "Increases Critical Rate when weapon is equipped.",
+			16377, "STR +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			6, "Wild Magic + INT +1", "Magic Critical",
+			"Permanently increases Magic Critical Rate while the weapon is equipped AND permanently raises Intelligence by 1. Best for magic-critical caster builds.",
+			16336, "Wild Magic", "Increases Magic Critical Rate when weapon is equipped.",
+			16379, "INT +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			7, "Duel Might + STR +1", "PvP Physical",
+			"Permanently increases PvP Physical Attack while the weapon is equipped AND permanently raises Strength by 1. Best for dedicated PvP fighters.",
+			16285, "Duel Might", "Increases PvP P. Atk. when weapon is equipped.",
+			16377, "STR +1"));
+
+		PREMIUM_COMBOS.add(new PremiumComboInfo(
+			8, "Guidance + STR +1", "Accuracy Build",
+			"Permanently increases Accuracy while the weapon is equipped AND permanently raises Strength by 1. Best for classes that frequently miss their targets.",
+			16335, "Guidance", "Increases Accuracy when weapon is equipped.",
+			16377, "STR +1"));
+	}
+
 	// ── Constructor ──────────────────────────────────────────────────────────────
 	private AugmentMaster()
 	{
@@ -348,13 +454,14 @@ public class AugmentMaster extends Script
 			return null;
 		}
 
-		// Main page — return filename so the engine loads the static HTML
+		// Main menu — always use sendHtml so the engine uses getHtm() path correctly.
 		if (event.equals("main"))
 		{
-			return "1004000.htm";
+			sendHtml(npc, player, "1004000.htm");
+			return null;
 		}
 
-		// Category pages
+		// Category pages (standard augments)
 		if (event.startsWith("cat_"))
 		{
 			final String typeKey = event.substring(4);
@@ -362,7 +469,7 @@ public class AugmentMaster extends Script
 			return null;
 		}
 
-		// Apply augmentation
+		// Apply standard augmentation
 		if (event.startsWith("apply_"))
 		{
 			try
@@ -387,6 +494,43 @@ public class AugmentMaster extends Script
 		if (event.equals("remove_confirm"))
 		{
 			removeAugment(npc, player);
+			return null;
+		}
+
+		// Premium combos list
+		if (event.equals("cat_PREMIUM"))
+		{
+			sendPremiumCombosHtml(npc, player);
+			return null;
+		}
+
+		// Expandable info for a premium combo: combo_info_N
+		if (event.startsWith("combo_info_"))
+		{
+			try
+			{
+				final int comboId = Integer.parseInt(event.substring(11));
+				sendComboInfoHtml(npc, player, comboId);
+			}
+			catch (NumberFormatException e)
+			{
+				LOGGER.warning("AugmentMaster: Invalid combo ID in event: " + event);
+			}
+			return null;
+		}
+
+		// Apply premium combo: apply_combo_N
+		if (event.startsWith("apply_combo_"))
+		{
+			try
+			{
+				final int comboId = Integer.parseInt(event.substring(12));
+				applyPremiumCombo(npc, player, comboId);
+			}
+			catch (NumberFormatException e)
+			{
+				LOGGER.warning("AugmentMaster: Invalid combo ID in event: " + event);
+			}
 			return null;
 		}
 
@@ -427,6 +571,8 @@ public class AugmentMaster extends Script
 		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
 		html.append("<center><font color=\"").append(targetType.color).append("\">").append(targetType.displayName).append("</font></center>");
 		html.append("<font color=\"A2A0A2\">Cost per augment: </font><font color=\"FF9900\">").append(costText).append("</font><br>");
+		// Back to Menu at the TOP so it is always visible regardless of list length
+		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
 		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
 
 		if (list.isEmpty())
@@ -457,12 +603,220 @@ public class AugmentMaster extends Script
 		}
 
 		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
-		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">Back to Menu</a></center>");
+		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
 		html.append("</body></html>");
 
 		final NpcHtmlMessage msg = new NpcHtmlMessage(npc.getObjectId());
 		msg.setHtml(html.toString());
 		player.sendPacket(msg);
+	}
+
+	// ── Send Premium Combos HTML ─────────────────────────────────────────────────
+	private void sendPremiumCombosHtml(Npc npc, Player player)
+	{
+		final StringBuilder html = new StringBuilder();
+		html.append("<html><body>");
+		html.append("Augment Master:<br>");
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+		html.append("<center><font color=\"FFCC00\">★ Premium Augment Combos ★</font></center>");
+
+		// Gate: feature must be enabled in config
+		if (!PREMIUM_COMBO_ENABLED)
+		{
+			html.append("<br><center><font color=\"A2A0A2\">This feature is currently<br1>unavailable on this server.</font></center><br>");
+			html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+			html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
+			html.append("</body></html>");
+			sendPacket(npc, player, html.toString());
+			return;
+		}
+
+		// Gate: player must have premium status
+		if (!player.hasPremiumStatus())
+		{
+			html.append("<br>");
+			html.append("<center><font color=\"FF6666\">Premium Access Required</font></center><br1>");
+			html.append("<font color=\"A2A0A2\">Premium Combos are exclusive augmentations<br1>");
+			html.append("that combine a passive skill with a permanent<br1>");
+			html.append("stat bonus, applied simultaneously.<br><br1>");
+			html.append("Only players with an active Premium account<br1>");
+			html.append("can access this section.</font><br>");
+			html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+			html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
+			html.append("</body></html>");
+			sendPacket(npc, player, html.toString());
+			return;
+		}
+
+		final String itemName = getItemName(ITEM_ID);
+		final String costText = (ITEM_COUNT > 0) ? formatNumber(ITEM_COUNT) + " " + itemName : "Free";
+
+		html.append("<font color=\"A2A0A2\">Each combo grants a passive skill AND a<br1>");
+		html.append("permanent stat bonus simultaneously.</font><br>");
+		html.append("<font color=\"A2A0A2\">Cost per combo: </font><font color=\"FF9900\">").append(costText).append("</font><br>");
+		// Back to Menu at the top
+		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+
+		html.append("<table width=270 cellpadding=3 cellspacing=0 border=0>");
+		for (final PremiumComboInfo combo : PREMIUM_COMBOS)
+		{
+			html.append("<tr>");
+			html.append("<td width=135>");
+			html.append("<font color=\"FFCC00\">").append(combo.name).append("</font><br1>");
+			html.append("<font color=\"A2A0A2\">").append(combo.buildType).append("</font>");
+			html.append("</td>");
+			html.append("<td width=65 align=center>");
+			html.append("<button value=\"Info\" action=\"bypass -h Script AugmentMaster combo_info_").append(combo.id).append("\" width=60 height=22 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\">");
+			html.append("</td>");
+			html.append("<td width=65 align=center>");
+			html.append("<button value=\"Apply\" action=\"bypass -h Script AugmentMaster apply_combo_").append(combo.id).append("\" width=60 height=22 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\">");
+			html.append("</td>");
+			html.append("</tr>");
+			html.append("<tr><td colspan=3 height=4></td></tr>");
+		}
+		html.append("</table>");
+
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
+		html.append("</body></html>");
+		sendPacket(npc, player, html.toString());
+	}
+
+	// ── Send Combo Info HTML (expandable detail page) ────────────────────────────
+	private void sendComboInfoHtml(Npc npc, Player player, int comboId)
+	{
+		PremiumComboInfo combo = null;
+		for (final PremiumComboInfo c : PREMIUM_COMBOS)
+		{
+			if (c.id == comboId)
+			{
+				combo = c;
+				break;
+			}
+		}
+
+		if (combo == null)
+		{
+			sendPremiumCombosHtml(npc, player);
+			return;
+		}
+
+		final StringBuilder html = new StringBuilder();
+		html.append("<html><body>");
+		html.append("Augment Master:<br>");
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+		html.append("<center><font color=\"FFCC00\">").append(combo.name).append("</font></center>");
+		html.append("<center><font color=\"A2A0A2\">").append(combo.buildType).append(" Build</font></center><br>");
+
+		html.append("<font color=\"D4A0FF\">Passive Skill:</font><br1>");
+		html.append("<font color=\"FFFFFF\">  ").append(combo.passiveName).append("</font><br1>");
+		html.append("<font color=\"A2A0A2\">  ").append(combo.passiveDesc).append("</font><br>");
+
+		html.append("<font color=\"CCCCCC\">Stat Bonus:</font><br1>");
+		html.append("<font color=\"FFFFFF\">  ").append(combo.statName).append("</font><br>");
+
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+		html.append("<font color=\"A2A0A2\">").append(combo.fullDescription).append("</font><br>");
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+
+		html.append("<table width=270 cellpadding=2><tr>");
+		html.append("<td><button value=\"Apply\" action=\"bypass -h Script AugmentMaster apply_combo_").append(combo.id).append("\" width=130 height=25 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></td>");
+		html.append("<td><button value=\"Back\" action=\"bypass -h Script AugmentMaster cat_PREMIUM\" width=130 height=25 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></td>");
+		html.append("</tr></table>");
+		html.append("</body></html>");
+		sendPacket(npc, player, html.toString());
+	}
+
+	// ── Apply Premium Combo ──────────────────────────────────────────────────────
+	private void applyPremiumCombo(Npc npc, Player player, int comboId)
+	{
+		// Feature gate
+		if (!PREMIUM_COMBO_ENABLED)
+		{
+			player.sendMessage("Augment Master: Premium combos are not available on this server.");
+			sendHtml(npc, player, "1004000.htm");
+			return;
+		}
+
+		// Premium gate
+		if (!player.hasPremiumStatus())
+		{
+			player.sendMessage("Augment Master: Premium combos require an active Premium account.");
+			sendPremiumCombosHtml(npc, player);
+			return;
+		}
+
+		// Find the combo
+		PremiumComboInfo combo = null;
+		for (final PremiumComboInfo c : PREMIUM_COMBOS)
+		{
+			if (c.id == comboId)
+			{
+				combo = c;
+				break;
+			}
+		}
+
+		if (combo == null)
+		{
+			player.sendMessage("Augment Master: Unknown premium combo.");
+			sendPremiumCombosHtml(npc, player);
+			return;
+		}
+
+		// Weapon check
+		final Item weapon = player.getActiveWeaponInstance();
+		if (weapon == null)
+		{
+			sendHtml(npc, player, "1004000-noweapon.htm");
+			return;
+		}
+
+		// Cost check
+		if (ITEM_COUNT > 0)
+		{
+			if (getQuestItemsCount(player, ITEM_ID) < ITEM_COUNT)
+			{
+				sendHtml(npc, player, "1004000-noitem.htm");
+				return;
+			}
+			takeItems(player, ITEM_ID, ITEM_COUNT);
+		}
+
+		// Remove existing augment if any
+		if (weapon.isAugmented())
+		{
+			weapon.removeAugmentation();
+		}
+
+		// Build the combined augmentation ID:
+		//   High 16 bits (stat34) = passive skill option ID
+		//   Low  16 bits (stat12) = stat bonus option ID
+		// Both options are applied simultaneously by the engine.
+		final int stat34 = combo.passiveOptionId;
+		final int stat12 = combo.statOptionId;
+		final int augmentationId = (stat34 << 16) | stat12;
+		weapon.setAugmentation(new Augmentation(augmentationId));
+		player.sendItemList(false);
+
+		// Success page
+		final StringBuilder html = new StringBuilder();
+		html.append("<html><body>");
+		html.append("Augment Master:<br>");
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+		html.append("<font color=\"FFCC00\">Premium Combo Applied!</font><br><br>");
+		html.append("Weapon: <font color=\"LEVEL\">").append(weapon.getName()).append("</font><br>");
+		html.append("<font color=\"D4A0FF\">Passive: ").append(combo.passiveName).append("</font><br1>");
+		html.append("<font color=\"CCCCCC\">Stat: ").append(combo.statName).append("</font><br>");
+		html.append("<br>");
+		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
+		html.append("<table width=270 cellpadding=2><tr>");
+		html.append("<td><button value=\"More Combos\" action=\"bypass -h Script AugmentMaster cat_PREMIUM\" width=130 height=25 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></td>");
+		html.append("<td><button value=\"Main Menu\" action=\"bypass -h Script AugmentMaster main\" width=130 height=25 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></td>");
+		html.append("</tr></table>");
+		html.append("</body></html>");
+		sendPacket(npc, player, html.toString());
 	}
 
 	// ── Send Remove Confirm HTML ─────────────────────────────────────────────────
@@ -508,9 +862,7 @@ public class AugmentMaster extends Script
 		html.append("</tr></table>");
 		html.append("</body></html>");
 
-		final NpcHtmlMessage msg = new NpcHtmlMessage(npc.getObjectId());
-		msg.setHtml(html.toString());
-		player.sendPacket(msg);
+		sendPacket(npc, player, html.toString());
 	}
 
 	// ── Apply Augment Logic ──────────────────────────────────────────────────────
@@ -599,12 +951,10 @@ public class AugmentMaster extends Script
 		html.append("<font color=\"A2A0A2\">").append(info.description).append("</font><br>");
 		html.append("<br>");
 		html.append("<img src=\"L2UI.SquareGray\" width=\"270\" height=\"1\"><br>");
-		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">Back to Menu</a></center>");
+		html.append("<center><a action=\"bypass -h Script AugmentMaster main\">&#171; Back to Menu</a></center>");
 		html.append("</body></html>");
 
-		final NpcHtmlMessage msg = new NpcHtmlMessage(npc.getObjectId());
-		msg.setHtml(html.toString());
-		player.sendPacket(msg);
+		sendPacket(npc, player, html.toString());
 	}
 
 	// ── Remove Augment Logic ─────────────────────────────────────────────────────
@@ -638,6 +988,14 @@ public class AugmentMaster extends Script
 		player.sendItemList(false);
 
 		sendHtml(npc, player, "1004000-removed.htm");
+	}
+
+	// ── Utility: Send HTML Packet ─────────────────────────────────────────────────
+	private void sendPacket(Npc npc, Player player, String htmlContent)
+	{
+		final NpcHtmlMessage msg = new NpcHtmlMessage(npc.getObjectId());
+		msg.setHtml(htmlContent);
+		player.sendPacket(msg);
 	}
 
 	// ── Utility: Send Static HTML File ───────────────────────────────────────────
