@@ -645,7 +645,7 @@ public class GlobalGatekeeper extends Script
 	// ---------------------------------------------------------------------------
 	private class PartyPvpBypass implements IBypassHandler
 	{
-		private static final String[] COMMANDS =
+		private final String[] COMMANDS =
 		{
 			"gk_party_accept",
 			"gk_party_decline",
@@ -1389,10 +1389,10 @@ public class GlobalGatekeeper extends Script
 
 	private class LeavePartyVoiceCommand implements IVoicedCommandHandler
 	{
-		private static final String[] COMMANDS = { "leaveparty" };
+		private final String[] COMMANDS = { "leaveparty" };
 
 		@Override
-		public boolean useVoicedCommand(String command, Player player, String target)
+		public boolean onCommand(String command, Player player, String params)
 		{
 			if (!"leaveparty".equals(command))
 			{
@@ -1401,7 +1401,7 @@ public class GlobalGatekeeper extends Script
 
 			if (!PPVP_PARTICIPANTS.contains(player.getObjectId()))
 			{
-				// Fuera de la zona: usar la logica normal, no hacer nada especial
+				// Fuera de la zona: no hacer nada especial
 				return false;
 			}
 
@@ -1413,7 +1413,7 @@ public class GlobalGatekeeper extends Script
 		}
 
 		@Override
-		public String[] getVoicedCommandList()
+		public String[] getCommandList()
 		{
 			return COMMANDS;
 		}
