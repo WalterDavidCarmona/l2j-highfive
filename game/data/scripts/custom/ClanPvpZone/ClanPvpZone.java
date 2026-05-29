@@ -45,6 +45,8 @@ import org.l2jmobius.gameserver.model.events.listeners.ConsumerEventListener;
 import org.l2jmobius.gameserver.model.item.enums.ItemProcessType;
 import org.l2jmobius.gameserver.model.script.Script;
 import org.l2jmobius.gameserver.model.skill.Skill;
+import org.l2jmobius.gameserver.model.stats.Stat;
+import org.l2jmobius.gameserver.model.stats.functions.FuncAdd;
 import org.l2jmobius.gameserver.model.skill.enums.SkillFinishType;
 import org.l2jmobius.gameserver.model.zone.type.BossZone;
 import org.l2jmobius.gameserver.network.serverpackets.ExShowScreenMessage;
@@ -75,6 +77,8 @@ public class ClanPvpZone extends Script
 	private static int COUNTDOWN_MINUTES = 5;
 	private static int REP_PER_KILL = 100;
 	private static int RAID_BOSS_ID = 25286;
+	private static int RAID_BOSS_LEVEL = 90;
+	private static double RAID_BOSS_HP_MULTIPLIER = 10.0;
 	private static int RAID_BOSS_X = 114714;
 	private static int RAID_BOSS_Y = -117072;
 	private static int RAID_BOSS_Z = -11080;
@@ -186,6 +190,8 @@ public class ClanPvpZone extends Script
 		COUNTDOWN_MINUTES = Integer.parseInt(props.getProperty("CountdownMinutes", "5").trim());
 		REP_PER_KILL = Integer.parseInt(props.getProperty("ClanReputationPerKill", "100").trim());
 		RAID_BOSS_ID = Integer.parseInt(props.getProperty("RaidBossId", "25286").trim());
+		RAID_BOSS_LEVEL = Integer.parseInt(props.getProperty("RaidBossLevel", "90").trim());
+		RAID_BOSS_HP_MULTIPLIER = Double.parseDouble(props.getProperty("RaidBossHpMultiplier", "10").trim());
 		RAID_BOSS_X = Integer.parseInt(props.getProperty("RaidBossX", "114714").trim());
 		RAID_BOSS_Y = Integer.parseInt(props.getProperty("RaidBossY", "-117072").trim());
 		RAID_BOSS_Z = Integer.parseInt(props.getProperty("RaidBossZ", "-11080").trim());
@@ -759,6 +765,24 @@ public class ClanPvpZone extends Script
 				endEvent(false);
 				return;
 			}
+
+			// Ajustar nivel
+			if (RAID_BOSS_LEVEL > 0)
+			{
+				_raidBoss.setLevel(RAID_BOSS_LEVEL);
+			}
+
+			// Multiplicar HP: agrega un bonus flat = baseMaxHp * (multiplier - 1)
+			if (RAID_BOSS_HP_MULTIPLIER > 1.0)
+			{
+				final double bonusHp = _raidBoss.getMaxHp() * (RAID_BOSS_HP_MULTIPLIER - 1.0);
+				_raidBoss.getStat().addStatFunc(new FuncAdd(Stat.MAX_HP, 0x20, _raidBoss, bonusHp));
+				_raidBoss.setCurrentHp(_raidBoss.getMaxHp());
+				_raidBoss.setCurrentMp(_raidBoss.getMaxMp());
+			}
+
+			LOGGER.info("ClanPvpZone: RaidBoss ajustado - Nivel=" + _raidBoss.getLevel()
+				+ " MaxHP=" + (long) _raidBoss.getMaxHp());
 
 			// Agregar listener de muerte directamente al NPC instanciado
 			_raidBoss.addListener(new ConsumerEventListener(
