@@ -351,6 +351,11 @@ public class ClanPvpZone extends Script
 			return "Solo el lider del clan puede inscribirse al evento.";
 		}
 
+		if (clan.getLevel() < 10)
+		{
+			return "Tu clan debe ser nivel 10 para participar (nivel actual: " + clan.getLevel() + ").";
+		}
+
 		if ((_state != EventState.IDLE) && (_state != EventState.COUNTDOWN))
 		{
 			return "El evento ya ha comenzado. Espera la proxima ronda.";
