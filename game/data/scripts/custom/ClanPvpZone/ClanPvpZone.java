@@ -136,6 +136,19 @@ public class ClanPvpZone extends Script
 	private final AtomicBoolean _raidPhaseStarting = new AtomicBoolean(false);
 
 	// ---------------------------------------------------------------------------
+	// AntiFeed (leido desde PVP.ini, seccion AntiFeed - Zona Clan PvP)
+	// ---------------------------------------------------------------------------
+	private static boolean ANTIFEED_ENABLED = true;
+	/** Intervalo en milisegundos. Par bloqueado si el mismo killer mato al mismo target antes de este tiempo. */
+	private static long ANTIFEED_INTERVAL_MS = 120_000L;
+	/**
+	 * Registro de kills recientes del evento: clave = "killerObjectId_killedObjectId",
+	 * valor = timestamp (ms) del ultimo kill de ese par.
+	 * Se limpia al finalizar el evento.
+	 */
+	private final Map<String, Long> _killTimestamps = new ConcurrentHashMap<>();
+
+	// ---------------------------------------------------------------------------
 	// Constructor
 	// ---------------------------------------------------------------------------
 	private ClanPvpZone()
@@ -245,6 +258,55 @@ public class ClanPvpZone extends Script
 				}
 			}
 		}
+
+		// Cargar configuracion AntiFeed desde PVP.ini
+		loadAntiFeedConfig();
+	}
+
+	/** Lee la seccion AntiFeed de PVP.ini para la Zona Clan PvP. */
+	private void loadAntiFeedConfig()
+	{
+		final Properties pvpProps = new Properties();
+		try (InputStream is = new FileInputStream("./config/PVP.ini"))
+		{
+			pvpProps.load(is);
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("ClanPvpZone: No se pudo leer PVP.ini para AntiFeed: " + e.getMessage() + " - Usando valores por defecto.");
+		}
+
+		ANTIFEED_ENABLED = Boolean.parseBoolean(pvpProps.getProperty("AntiFeedClanPvpEnabled", "True").trim());
+		final int intervalSec = Integer.parseInt(pvpProps.getProperty("AntiFeedClanPvpInterval", "120").trim());
+		ANTIFEED_INTERVAL_MS = intervalSec * 1000L;
+
+		LOGGER.info("ClanPvpZone: AntiFeed - Enabled=" + ANTIFEED_ENABLED + " Interval=" + intervalSec + "s");
+	}
+
+	/** @return true si el kill killer->killed esta bloqueado por antifeed. */
+	private boolean isAntiFeedBlocked(Player killer, Player killed)
+	{
+		if (!ANTIFEED_ENABLED || (ANTIFEED_INTERVAL_MS <= 0))
+		{
+			return false;
+		}
+		final String key = killer.getObjectId() + "_" + killed.getObjectId();
+		final Long lastKill = _killTimestamps.get(key);
+		if (lastKill == null)
+		{
+			return false;
+		}
+		return (System.currentTimeMillis() - lastKill) < ANTIFEED_INTERVAL_MS;
+	}
+
+	/** Registra el timestamp del kill para el par killer->killed. */
+	private void registerKillTimestamp(Player killer, Player killed)
+	{
+		if (!ANTIFEED_ENABLED || (ANTIFEED_INTERVAL_MS <= 0))
+		{
+			return;
+		}
+		_killTimestamps.put(killer.getObjectId() + "_" + killed.getObjectId(), System.currentTimeMillis());
 	}
 
 	// ---------------------------------------------------------------------------
@@ -461,7 +523,7 @@ public class ClanPvpZone extends Script
 			return;
 		}
 
-		// Reputacion al clan del asesino
+		// Reputacion al clan del asesino (con control AntiFeed)
 		if (event.getAttacker() instanceof Player)
 		{
 			final Player killer = (Player) event.getAttacker();
@@ -472,12 +534,23 @@ public class ClanPvpZone extends Script
 
 				if ((killerClan != null) && (killedClan != null) && (killerClan.getId() != killedClan.getId()))
 				{
-					// Sumar reputacion al clan del asesino
-					killerClan.addReputationScore(REP_PER_KILL);
-					final int totalEventRep = _eventReputation.merge(killerClan.getId(), REP_PER_KILL, Integer::sum);
+					// ---- AntiFeed check ----
+					if (isAntiFeedBlocked(killer, killed))
+					{
+						// Kill real pero sin recompensa
+						killer.sendMessage("[Anti-Feed] Kill no recompensado: eliminaste a este jugador hace menos de "
+							+ (ANTIFEED_INTERVAL_MS / 1000) + " segundos. No se suma reputacion.");
+					}
+					else
+					{
+						// ---- Kill valido: dar reputacion ----
+						registerKillTimestamp(killer, killed);
+						killerClan.addReputationScore(REP_PER_KILL);
+						final int totalEventRep = _eventReputation.merge(killerClan.getId(), REP_PER_KILL, Integer::sum);
 
-					killer.sendMessage("[Clan PvP Zone] +" + REP_PER_KILL
-						+ " reputacion para tu clan! (Total en el evento: " + totalEventRep + ")");
+						killer.sendMessage("[Clan PvP Zone] +" + REP_PER_KILL
+							+ " reputacion para tu clan! (Total en el evento: " + totalEventRep + ")");
+					}
 				}
 			}
 		}
@@ -806,6 +879,7 @@ public class ClanPvpZone extends Script
 		_registeredClans.clear();
 		_eventReputation.clear();
 		_internalTeleport.clear();
+		_killTimestamps.clear();
 		_countdownSeconds.set(0);
 		_raidWinnerClanId = -1;
 		_raidPhaseStarting.set(false);

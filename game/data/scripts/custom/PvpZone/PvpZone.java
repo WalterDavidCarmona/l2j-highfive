@@ -91,6 +91,19 @@ public class PvpZone extends Script
 	private static final List<PvpZoneData> ZONES = new ArrayList<PvpZoneData>();
 
 	// ---------------------------------------------------------------------------
+	// AntiFeed (leido desde PVP.ini, seccion AntiFeed - Zona Party PvP)
+	// ---------------------------------------------------------------------------
+	private static boolean ANTIFEED_ENABLED = true;
+	/** Intervalo en milisegundos. Si killer mato a killed hace menos de este tiempo -> kill bloqueado. */
+	private static long ANTIFEED_INTERVAL_MS = 120_000L;
+	/**
+	 * Registro de kills recientes: clave = "killerObjectId_killedObjectId",
+	 * valor = timestamp (ms) del ultimo kill de ese par.
+	 * Se limpia en cada rotacion de zona.
+	 */
+	private static final Map<String, Long> ANTIFEED_KILL_TIMESTAMPS = new ConcurrentHashMap<String, Long>();
+
+	// ---------------------------------------------------------------------------
 	// Runtime state
 	// ---------------------------------------------------------------------------
 	private static int _currentZoneIndex = 0;
@@ -329,6 +342,55 @@ public class PvpZone extends Script
 			+ " BlockParty=" + BLOCK_PARTY
 			+ " Return=(" + RETURN_X + "," + RETURN_Y + "," + RETURN_Z + ")"
 			+ " Zones=" + ZONES.size() + " Streaks=" + STREAKS.size());
+
+		// Cargar configuracion AntiFeed desde PVP.ini
+		loadAntiFeedConfig();
+	}
+
+	/** Lee la seccion AntiFeed de PVP.ini para la Zona Party PvP. */
+	private void loadAntiFeedConfig()
+	{
+		final Properties pvpProps = new Properties();
+		try (java.io.InputStream is = new java.io.FileInputStream("./config/PVP.ini"))
+		{
+			pvpProps.load(is);
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("PvpZone: No se pudo leer PVP.ini para AntiFeed: " + e.getMessage() + " - Usando valores por defecto.");
+		}
+
+		ANTIFEED_ENABLED = Boolean.parseBoolean(pvpProps.getProperty("AntiFeedPartyPvpEnabled", "True").trim());
+		final int intervalSec = Integer.parseInt(pvpProps.getProperty("AntiFeedPartyPvpInterval", "120").trim());
+		ANTIFEED_INTERVAL_MS = intervalSec * 1000L;
+
+		LOGGER.info("PvpZone: AntiFeed - Enabled=" + ANTIFEED_ENABLED + " Interval=" + intervalSec + "s");
+	}
+
+	/** @return true si el kill killer->killed esta bloqueado por antifeed. */
+	private static boolean isAntiFeedBlocked(Player killer, Player killed)
+	{
+		if (!ANTIFEED_ENABLED || (ANTIFEED_INTERVAL_MS <= 0))
+		{
+			return false;
+		}
+		final String key = killer.getObjectId() + "_" + killed.getObjectId();
+		final Long lastKill = ANTIFEED_KILL_TIMESTAMPS.get(key);
+		if (lastKill == null)
+		{
+			return false;
+		}
+		return (System.currentTimeMillis() - lastKill) < ANTIFEED_INTERVAL_MS;
+	}
+
+	/** Registra el timestamp del kill para el par killer->killed. */
+	private static void registerKillTimestamp(Player killer, Player killed)
+	{
+		if (!ANTIFEED_ENABLED || (ANTIFEED_INTERVAL_MS <= 0))
+		{
+			return;
+		}
+		ANTIFEED_KILL_TIMESTAMPS.put(killer.getObjectId() + "_" + killed.getObjectId(), System.currentTimeMillis());
 	}
 
 	// ---------------------------------------------------------------------------
@@ -796,68 +858,82 @@ public class PvpZone extends Script
 			final Player killer = (Player) event.getAttacker();
 			if (PARTICIPANTS.contains(killer) && (killer.getObjectId() != killed.getObjectId()))
 			{
-				int streak = KILL_STREAKS.containsKey(killer.getObjectId()) ? KILL_STREAKS.get(killer.getObjectId()) : 0;
-				streak++;
-				KILL_STREAKS.put(killer.getObjectId(), streak);
-
-				// Track total kills in this zone with real name
-				final int totalKills = ZONE_KILLS.containsKey(killer.getObjectId()) ? ZONE_KILLS.get(killer.getObjectId()) + 1 : 1;
-				ZONE_KILLS.put(killer.getObjectId(), totalKills);
-				final String killerRealName = ORIGINAL_NAMES.get(killer.getObjectId());
-				if (killerRealName != null)
+				// ---- AntiFeed check ----
+				if (isAntiFeedBlocked(killer, killed))
 				{
-					ZONE_KILL_NAMES.put(killer.getObjectId(), killerRealName);
-				}
-				if (!ZONE_KILL_CLASSES.containsKey(killer.getObjectId()))
-				{
-					ZONE_KILL_CLASSES.put(killer.getObjectId(), ClassListData.getInstance().getClass(killer.getActiveClass()).getClassName());
-				}
-				// Persist kill to DB for web panel ranking
-				final String realName = killerRealName != null ? killerRealName : killer.getName();
-				final String currentZoneName = ZONES.get(_currentZoneIndex).name;
-				persistZoneKill(realName, currentZoneName, totalKills);
-
-				int rewardCount = REWARD_BASE_COUNT;
-				for (int[] streakData : STREAKS)
-				{
-					if (streak >= streakData[0])
-					{
-						rewardCount = streakData[1];
-					}
-				}
-
-				killer.addItem(ItemProcessType.REWARD, REWARD_ITEM_ID, rewardCount, killer, true);
-
-				// Update scoreboard for all participants
-				SCOREBOARD.put(killer, totalKills);
-				final Map<String, Integer> updatedScores = buildRealNameScoreboard();
-				for (Player participant : PARTICIPANTS)
-				{
-					participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
-				}
-
-				// Refresh PvP flag for killer
-				killer.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
-				killer.startPvPFlag();
-
-				if ((streak >= HERO_STREAK_REQUIRED) && !killer.isHero())
-				{
-					killer.setHero(true);
-					killer.broadcastUserInfo();
-					STREAK_HEROES.add(killer.getObjectId());
-					killer.sendPacket(new ExShowScreenMessage("Has alcanzado " + streak + " kills seguidas. Eres Hero!", 5000));
-
-					// Use real character name for the global announcement, not the class disguise
-					String heroRealName = ORIGINAL_NAMES.get(killer.getObjectId());
-					if (heroRealName == null)
-					{
-						heroRealName = killer.getName();
-					}
-					Broadcast.toAllOnlinePlayersOnScreen(heroRealName + " es Hero con " + streak + " kills seguidas en la Zona PvP!");
+					// Kill bloqueado: no recompensa, no streak, notificar al killer.
+					killer.sendMessage("[Anti-Feed] Kill no recompensado: eliminaste a este jugador hace menos de "
+						+ (ANTIFEED_INTERVAL_MS / 1000) + " segundos.");
+					// Aun asi reseteamos la racha del muerto (el kill fue real, solo sin premio)
 				}
 				else
 				{
-					killer.sendPacket(new ExShowScreenMessage("Racha: " + streak + " kills!", 2000));
+					// ---- Kill valido: procesar recompensa normalmente ----
+					registerKillTimestamp(killer, killed);
+
+					int streak = KILL_STREAKS.containsKey(killer.getObjectId()) ? KILL_STREAKS.get(killer.getObjectId()) : 0;
+					streak++;
+					KILL_STREAKS.put(killer.getObjectId(), streak);
+
+					// Track total kills in this zone with real name
+					final int totalKills = ZONE_KILLS.containsKey(killer.getObjectId()) ? ZONE_KILLS.get(killer.getObjectId()) + 1 : 1;
+					ZONE_KILLS.put(killer.getObjectId(), totalKills);
+					final String killerRealName = ORIGINAL_NAMES.get(killer.getObjectId());
+					if (killerRealName != null)
+					{
+						ZONE_KILL_NAMES.put(killer.getObjectId(), killerRealName);
+					}
+					if (!ZONE_KILL_CLASSES.containsKey(killer.getObjectId()))
+					{
+						ZONE_KILL_CLASSES.put(killer.getObjectId(), ClassListData.getInstance().getClass(killer.getActiveClass()).getClassName());
+					}
+					// Persist kill to DB for web panel ranking
+					final String realName = killerRealName != null ? killerRealName : killer.getName();
+					final String currentZoneName = ZONES.get(_currentZoneIndex).name;
+					persistZoneKill(realName, currentZoneName, totalKills);
+
+					int rewardCount = REWARD_BASE_COUNT;
+					for (int[] streakData : STREAKS)
+					{
+						if (streak >= streakData[0])
+						{
+							rewardCount = streakData[1];
+						}
+					}
+
+					killer.addItem(ItemProcessType.REWARD, REWARD_ITEM_ID, rewardCount, killer, true);
+
+					// Update scoreboard for all participants
+					SCOREBOARD.put(killer, totalKills);
+					final Map<String, Integer> updatedScores = buildRealNameScoreboard();
+					for (Player participant : PARTICIPANTS)
+					{
+						participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
+					}
+
+					// Refresh PvP flag for killer
+					killer.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
+					killer.startPvPFlag();
+
+					if ((streak >= HERO_STREAK_REQUIRED) && !killer.isHero())
+					{
+						killer.setHero(true);
+						killer.broadcastUserInfo();
+						STREAK_HEROES.add(killer.getObjectId());
+						killer.sendPacket(new ExShowScreenMessage("Has alcanzado " + streak + " kills seguidas. Eres Hero!", 5000));
+
+						// Use real character name for the global announcement, not the class disguise
+						String heroRealName = ORIGINAL_NAMES.get(killer.getObjectId());
+						if (heroRealName == null)
+						{
+							heroRealName = killer.getName();
+						}
+						Broadcast.toAllOnlinePlayersOnScreen(heroRealName + " es Hero con " + streak + " kills seguidas en la Zona PvP!");
+					}
+					else
+					{
+						killer.sendPacket(new ExShowScreenMessage("Racha: " + streak + " kills!", 2000));
+					}
 				}
 			}
 		}
@@ -967,11 +1043,12 @@ public class PvpZone extends Script
 		_currentZoneIndex = (_currentZoneIndex + 1) % ZONES.size();
 		_rotationStartTime = System.currentTimeMillis();
 
-		// Reset zone kills and scoreboard for the new zone
+		// Reset zone kills, scoreboard y antifeed timestamps para la nueva zona
 		ZONE_KILLS.clear();
 		ZONE_KILL_NAMES.clear();
 		ZONE_KILL_CLASSES.clear();
 		SCOREBOARD.clear();
+		ANTIFEED_KILL_TIMESTAMPS.clear();
 		// Clear DB kill records for the upcoming zone so it starts fresh
 		final String upcomingZoneName = ZONES.get((_currentZoneIndex) % ZONES.size()).name;
 		resetZoneKillsInDb(upcomingZoneName);
