@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="29100" level="83" type="Monster" name="Crystal Prison Guard">
 		<!-- Confirmed CT2.5 -->
@@ -678,8 +678,6 @@
 					<item id="9476" min="1" max="1" chance="14.2858" /> <!-- Dynasty Earrings - Fear Resistance -->
 				</group>
 				<group chance="4.107600212097168">
-					<item id="6577" min="1" max="1" chance="13.0435" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-					<item id="6578" min="1" max="1" chance="86.9565" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -735,8 +733,6 @@
 					<item id="10170" min="1" max="1" chance="100" /> <!-- Baylor's Earring -->
 				</group>
 				<group chance="8.215100288391113">
-					<item id="6577" min="1" max="1" chance="13.0435" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-					<item id="6578" min="1" max="1" chance="86.9565" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -1252,7 +1248,6 @@
 					<item id="2040" min="12" max="36" chance="72.1355" /> <!-- Reinforced Long Bow Shaft -->
 				</group>
 				<group chance="37.58039855957031">
-					<item id="6576" min="3" max="9" chance="100" /> <!-- Blessed Scroll: Enchant Armor (D-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -1411,7 +1406,6 @@
 				<group chance="61.102699279785156">
 					<item id="4589" min="4" max="12" chance="34.4262" /> <!-- Greater Dye of STR <Str+2 Con-2> -->
 					<item id="4590" min="8" max="22" chance="18.3607" /> <!-- Greater Dye of STR <Str+2 Dex-2> -->
-					<item id="6574" min="1" max="1" chance="47.2131" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -1571,7 +1565,6 @@
 					<item id="4607" min="5" max="15" chance="14.0187" /> <!-- Greater Dye of INT <Int+3 Men-3> -->
 					<item id="4608" min="2" max="4" chance="46.729" /> <!-- Greater Dye of INT <Int+3 Wit-3> -->
 					<item id="4609" min="2" max="6" chance="35.0467" /> <!-- Greater Dye of MEN <Men+3 Int-3> -->
-					<item id="6573" min="1" max="1" chance="4.2056" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -1735,7 +1728,6 @@
 					<item id="4616" min="5" max="15" chance="11.4068" /> <!-- Greater Dye of CON <Con+4 Dex-4> -->
 					<item id="4617" min="2" max="4" chance="38.0228" /> <!-- Greater Dye of DEX <Dex+4 Str-4> -->
 					<item id="4618" min="2" max="6" chance="28.5171" /> <!-- Greater Dye of DEX <Dex+4 Con-4> -->
-					<item id="6572" min="1" max="1" chance="22.0533" /> <!-- Blessed Scroll: Enchant Armor (B-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -1890,7 +1882,6 @@
 				</group>
 				<group chance="89.64219665527344">
 					<item id="730" min="1" max="1" chance="87.007" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-					<item id="6569" min="1" max="1" chance="1.3921" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 					<item id="729" min="1" max="1" chance="11.6009" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				</group>
 			</drop>
@@ -2048,7 +2039,6 @@
 				<group chance="74.54820251464844">
 					<item id="959" min="1" max="1" chance="8.9552" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 					<item id="960" min="1" max="1" chance="89.5522" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="6577" min="1" max="1" chance="1.4926" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -2215,7 +2205,6 @@
 				<group chance="70.93900299072266">
 					<item id="959" min="1" max="1" chance="8.9552" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 					<item id="960" min="1" max="1" chance="89.5522" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="6577" min="1" max="1" chance="1.4926" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -2863,13 +2852,13 @@
 			<height normal="51" />
 		</collision>
 	</npc>
-	<npc id="29163" level="82" type="GrandBoss" name="Tiat" title="Witch of the Dragon of Darkness">
+	<npc id="29163" level="90" type="GrandBoss" name="Tiat" title="Witch of the Dragon of Darkness">
 		<!-- Confirmed CT2.5 -->
 		<race>DRAGON</race>
 		<sex>FEMALE</sex>
 		<acquire raidPoints="3975" />
 		<stats str="60" int="76" dex="73" wit="70" con="57" men="80">
-			<vitals hp="5523846.14458983" hpRegen="548.283697654583" mp="184680.0" mpRegen="1000" />
+			<vitals hp="55523846.14458983" hpRegen="0.283697654583" mp="184680.0" mpRegen="1000" />
 			<attack physical="3093.77456970222" magical="2112.64697503607" random="30" critical="4" accuracy="4.75" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="530.6226053" magical="352.987813333333" />
 			<attribute>
@@ -3397,8 +3386,6 @@
 					<item id="6713" min="46" max="136" chance="14.1003" /> <!-- Sealed Major Arcana Boots Design -->
 				</group>
 				<group chance="64.87049865722656">
-					<item id="6578" min="1" max="1" chance="15.0943" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-					<item id="3936" min="1" max="3" chance="84.9057" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 			</drop>
 		</dropLists>
@@ -3454,7 +3441,6 @@
 				<group chance="74.33370208740234">
 					<item id="729" min="1" max="1" chance="11.6009" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 					<item id="730" min="1" max="1" chance="87.007" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-					<item id="6569" min="1" max="1" chance="1.3921" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 				</group>
 				<group chance="0.09000000357627869">
 					<item id="6659" min="1" max="1" chance="100" /> <!-- Earring of Zaken -->
@@ -3638,8 +3624,6 @@
 					<item id="14161" min="1" max="1" chance="33.3" /> <!-- Sealed Vesper Necklace -->
 				</group>
 				<group chance="4.1076">
-					<item id="6577" min="1" max="1" chance="13.0435" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-					<item id="6578" min="1" max="1" chance="86.9565" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				</group>
 				<group chance="100">
 					<item id="16164" min="2" max="4" chance="60" /> <!-- Life Stone - Level 86 -->
@@ -3761,8 +3745,6 @@
 					<item id="15762" min="1" max="1" chance="33.3" /> <!-- Sealed Elegia Necklace -->
 				</group>
 				<group chance="4.107600212097168">
-					<item id="6577" min="1" max="1" chance="13.0435" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-					<item id="6578" min="1" max="1" chance="86.9565" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				</group>
 				<group chance="30">
 					<item id="16026" min="1" max="1" chance="100" /> <!-- Blessed Necklace of Freya -->
@@ -3858,10 +3840,8 @@
 					<item id="14161" min="1" max="1" chance="33.3" /> <!-- Sealed Vesper Necklace -->
 				</group>
 				<group chance="100">
-					<item id="1538" min="1" max="30" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
-					<item id="3936" min="1" max="10" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="9000000" max="1100000" chance="100" /> <!-- Adena -->
@@ -4156,8 +4136,6 @@
 					<item id="10170" min="1" max="1" chance="8.33" /> <!-- Baylor's Earring -->
 				</group>
 				<group chance="4.107600212097168">
-					<item id="6577" min="1" max="1" chance="13.0435" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-					<item id="6578" min="1" max="1" chance="86.9565" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>

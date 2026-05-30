@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -134,20 +135,18 @@ public class CtF extends Event
 	/** The state of the Ctf. */
 	private static EventState _state = EventState.INACTIVE;
 	
+	// Zone rotation
+	private static final List<CtFArenaZone> ARENA_ZONES = new ArrayList<>();
+	private static final AtomicInteger ZONE_INDEX = new AtomicInteger(0);
+	private static final AtomicReference<CtFArenaZone> CURRENT_ZONE = new AtomicReference<>(null);
+
 	// Others
-	private static final int INSTANCE_ID = 3050;
-	private static final int BLUE_DOOR_ID = 24190002;
-	private static final int RED_DOOR_ID = 24190003;
 	/** Blue Flag NPC ID */
 	private static final int BLUE_TEAM_HEADQUARTERS = 82016;
-	/** Blue Flag x,y,z[,heading] Location. */
-	private static final Location BLUE_TEAM_HEADQUARTERS_LOC = new Location(148487, 46703, -3414, 297);
 	/** Blue Flag Item id */
 	private static final int BLUE_TEAM_FLAG_ITEM_ID = 13531;
 	/** Red Flag NPC ID */
 	private static final int RED_TEAM_HEADQUARTERS = 82017;
-	/** Red Flag x,y,z[,heading] location. */
-	private static final Location RED_TEAM_HEADQUARTERS_LOC = new Location(150452, 46714, -3414, 34490);
 	/** red Flag Item ID */
 	private static final int RED_TEAM_FLAG_ITEM_ID = 13534;
 	/** The NPC instance of Blue Flag. */
@@ -167,17 +166,11 @@ public class CtF extends Event
 	/** The Red Team flag carrier left hand item. */
 	private static Item RED_TEAM_CARRIER_L_HAND = null;
 	private static final Location MANAGER_SPAWN_LOC = new Location(83425, 148585, -3406, 32938);
-	private static final Location BLUE_BUFFER_SPAWN_LOC = new Location(147450, 46913, -3400, 49000);
-	private static final ZoneForm BLUE_SPAWN_LOC = ZoneManager.getInstance().getZoneByName("blue_team_spawn").getZone();
-	private static final ZoneType BLUE_PEACE_ZONE = ZoneManager.getInstance().getZoneByName("colosseum_peace1");
-	private static final Location RED_BUFFER_SPAWN_LOC = new Location(151545, 46528, -3400, 16000);
-	private static final ZoneForm RED_SPAWN_LOC = ZoneManager.getInstance().getZoneByName("red_team_spawn").getZone();
-	private static final ZoneType RED_PEACE_ZONE = ZoneManager.getInstance().getZoneByName("colosseum_peace2");
-	
+
 	// Settings
 	private static final int REGISTRATION_TIME = 10; // Minutes
 	private static final int WAIT_TIME = 1; // Minutes
-	private static final int FIGHT_TIME = 20; // Minutes
+	private static int FIGHT_TIME = 20; // Minutes — configurable via config.xml
 	private static final int INACTIVITY_TIME = 2; // Minutes
 	private static final int MINIMUM_PARTICIPANT_LEVEL = 76;
 	private static final int MAXIMUM_PARTICIPANT_LEVEL = 200;
@@ -201,14 +194,63 @@ public class CtF extends Event
 	private final Lock BLUE_LOCK = new ReentrantLock();
 	private final Lock RED_LOCK = new ReentrantLock();
 	
+	static class CtFArenaZone
+	{
+		final String name;
+		final int instanceId;
+		final int blueDoorId;
+		final int redDoorId;
+		final ZoneType bluePeaceZone;
+		final ZoneType redPeaceZone;
+		final ZoneForm blueSpawnZone;
+		final ZoneForm redSpawnZone;
+		final Location blueBufferLoc;
+		final Location redBufferLoc;
+		final Location blueFlagLoc;
+		final Location redFlagLoc;
+
+		CtFArenaZone(String name, int instanceId, int blueDoorId, int redDoorId,
+			String bluePeaceName, String redPeaceName,
+			String blueSpawnZoneName, String redSpawnZoneName,
+			Location blueBuffer, Location redBuffer,
+			Location blueFlag, Location redFlag)
+		{
+			this.name = name;
+			this.instanceId = instanceId;
+			this.blueDoorId = blueDoorId;
+			this.redDoorId = redDoorId;
+			this.bluePeaceZone = ZoneManager.getInstance().getZoneByName(bluePeaceName);
+			this.redPeaceZone = ZoneManager.getInstance().getZoneByName(redPeaceName);
+			final ZoneType bszt = ZoneManager.getInstance().getZoneByName(blueSpawnZoneName);
+			this.blueSpawnZone = (bszt != null) ? bszt.getZone() : null;
+			final ZoneType rszt = ZoneManager.getInstance().getZoneByName(redSpawnZoneName);
+			this.redSpawnZone = (rszt != null) ? rszt.getZone() : null;
+			this.blueBufferLoc = blueBuffer;
+			this.redBufferLoc = redBuffer;
+			this.blueFlagLoc = blueFlag;
+			this.redFlagLoc = redFlag;
+		}
+	}
+
 	private CtF()
 	{
+		loadConfig();
+
 		addTalkId(MANAGER, BLUE_TEAM_HEADQUARTERS, RED_TEAM_HEADQUARTERS);
 		addFirstTalkId(MANAGER, BLUE_TEAM_HEADQUARTERS, RED_TEAM_HEADQUARTERS);
-		addExitZoneId(BLUE_PEACE_ZONE.getId(), RED_PEACE_ZONE.getId());
-		addEnterZoneId(BLUE_PEACE_ZONE.getId(), RED_PEACE_ZONE.getId());
-		
-		loadConfig();
+		for (CtFArenaZone z : ARENA_ZONES)
+		{
+			if (z.bluePeaceZone != null)
+			{
+				addExitZoneId(z.bluePeaceZone.getId());
+				addEnterZoneId(z.bluePeaceZone.getId());
+			}
+			if (z.redPeaceZone != null)
+			{
+				addExitZoneId(z.redPeaceZone.getId());
+				addEnterZoneId(z.redPeaceZone.getId());
+			}
+		}
 	}
 	
 	private void loadConfig()
@@ -220,7 +262,7 @@ public class CtF extends Event
 			{
 				parseDatapackFile(HTML_PATH + "config.xml");
 			}
-			
+
 			@Override
 			public void parseDocument(Document document, File file)
 			{
@@ -242,8 +284,46 @@ public class CtF extends Event
 								params.set("Name", name);
 								params.set("SchedulingPattern", pattern);
 								final long delay = schedulingPattern.getDelayToNextFromNow();
-								getTimers().addTimer("Schedule" + count.incrementAndGet(), params, delay + 5000, null, null); // Added 5 seconds to prevent overlapping.
+								getTimers().addTimer("Schedule" + count.incrementAndGet(), params, delay + 5000, null, null);
 								LOGGER.info("Event " + name + " scheduled at " + TimeUtil.getDateTimeString(System.currentTimeMillis() + delay));
+								break;
+							}
+							case "fightTime":
+							{
+								final StatSet fa = new StatSet(parseAttributes(node));
+								FIGHT_TIME = fa.getInt("minutes", 20);
+								break;
+							}
+							case "zones":
+							{
+								ARENA_ZONES.clear();
+								for (Node zNode = node.getFirstChild(); zNode != null; zNode = zNode.getNextSibling())
+								{
+									if (!"zone".equals(zNode.getNodeName()))
+									{
+										continue;
+									}
+									final StatSet z = new StatSet(parseAttributes(zNode));
+									ARENA_ZONES.add(new CtFArenaZone(
+										z.getString("name", "Arena"),
+										z.getInt("instanceId", 3050),
+										z.getInt("blueDoor", 0),
+										z.getInt("redDoor", 0),
+										z.getString("bluePeace", ""),
+										z.getString("redPeace", ""),
+										z.getString("blueSpawnZone", ""),
+										z.getString("redSpawnZone", ""),
+										new Location(z.getInt("blueBufferX", 0), z.getInt("blueBufferY", 0), z.getInt("blueBufferZ", 0), z.getInt("blueBufferH", 0)),
+										new Location(z.getInt("redBufferX", 0), z.getInt("redBufferY", 0), z.getInt("redBufferZ", 0), z.getInt("redBufferH", 0)),
+										new Location(z.getInt("blueFlagX", 0), z.getInt("blueFlagY", 0), z.getInt("blueFlagZ", 0), z.getInt("blueFlagH", 0)),
+										new Location(z.getInt("redFlagX", 0), z.getInt("redFlagY", 0), z.getInt("redFlagZ", 0), z.getInt("redFlagH", 0))));
+								}
+								if (!ARENA_ZONES.isEmpty())
+								{
+									ZONE_INDEX.set(0);
+									CURRENT_ZONE.set(ARENA_ZONES.get(0));
+									LOGGER.info("CtF: Loaded " + ARENA_ZONES.size() + " arena zone(s). Active: " + CURRENT_ZONE.get().name);
+								}
 								break;
 							}
 						}
@@ -251,6 +331,23 @@ public class CtF extends Event
 				});
 			}
 		}.load();
+
+		// Fallback si el config.xml no define zonas
+		if (ARENA_ZONES.isEmpty())
+		{
+			LOGGER.warning("CtF: No zones defined in config.xml — using hardcoded Colosseum fallback.");
+			final CtFArenaZone fallback = new CtFArenaZone(
+				"Colosseum", 3050, 24190002, 24190003,
+				"colosseum_peace1", "colosseum_peace2",
+				"blue_team_spawn", "red_team_spawn",
+				new Location(147450, 46913, -3400, 49000),
+				new Location(151545, 46528, -3400, 16000),
+				new Location(148487, 46703, -3414, 297),
+				new Location(150452, 46714, -3414, 34490));
+			ARENA_ZONES.add(fallback);
+			ZONE_INDEX.set(0);
+			CURRENT_ZONE.set(fallback);
+		}
 	}
 	
 	@Override
@@ -389,15 +486,19 @@ public class CtF extends Event
 					return null;
 				}
 				
-				// Create the instance.
+				// Create the instance usando la zona activa.
+				final CtFArenaZone zone = CURRENT_ZONE.get();
 				final InstanceWorld world = new InstanceWorld();
-				world.setInstance(InstanceManager.getInstance().createDynamicInstance(INSTANCE_ID));
+				world.setInstance(InstanceManager.getInstance().createDynamicInstance(zone.instanceId));
 				InstanceManager.getInstance().addWorld(world);
 				PVP_WORLD = world;
-				
+
 				// Make sure doors are closed.
 				PVP_WORLD.getDoors().forEach(Door::closeMe);
-				
+
+				// Announce arena.
+				Broadcast.toAllOnlinePlayers("CtF Event: Arena -> " + zone.name + " | Fight time: " + FIGHT_TIME + " min.");
+
 				// Randomize player list and separate teams.
 				final List<Player> playerList = new ArrayList<>(PLAYER_LIST.size());
 				playerList.addAll(PLAYER_LIST);
@@ -414,7 +515,7 @@ public class CtF extends Event
 						BLUE_TEAM.add(participant);
 						PVP_WORLD.addAllowed(participant);
 						participant.leaveParty();
-						participant.teleToLocation(BLUE_SPAWN_LOC.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
+						participant.teleToLocation(zone.blueSpawnZone.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
 						participant.setTeam(Team.BLUE);
 						team = false;
 					}
@@ -423,11 +524,11 @@ public class CtF extends Event
 						RED_TEAM.add(participant);
 						PVP_WORLD.addAllowed(participant);
 						participant.leaveParty();
-						participant.teleToLocation(RED_SPAWN_LOC.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
+						participant.teleToLocation(zone.redSpawnZone.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
 						participant.setTeam(Team.RED);
 						team = true;
 					}
-					
+
 					addDeathListener(participant);
 				}
 				
@@ -506,8 +607,8 @@ public class CtF extends Event
 				}
 				
 				// Spawn managers.
-				addSpawn(MANAGER, BLUE_BUFFER_SPAWN_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
-				addSpawn(MANAGER, RED_BUFFER_SPAWN_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+				addSpawn(MANAGER, zone.blueBufferLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+				addSpawn(MANAGER, zone.redBufferLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
 				
 				// Initialize scores.
 				BLUE_SCORE = 0;
@@ -530,13 +631,20 @@ public class CtF extends Event
 				// Set state STARTED
 				setState(EventState.STARTED);
 				
-				// Open doors.
-				PVP_WORLD.openDoor(BLUE_DOOR_ID);
-				PVP_WORLD.openDoor(RED_DOOR_ID);
-				
+				// Open doors (solo si la zona tiene puertas definidas).
+				final CtFArenaZone zoneSF = CURRENT_ZONE.get();
+				if (zoneSF.blueDoorId != 0)
+				{
+					PVP_WORLD.openDoor(zoneSF.blueDoorId);
+				}
+				if (zoneSF.redDoorId != 0)
+				{
+					PVP_WORLD.openDoor(zoneSF.redDoorId);
+				}
+
 				// Spawn the flags
-				FLAG_BLUE_SPAWN = addSpawn(BLUE_TEAM_HEADQUARTERS, BLUE_TEAM_HEADQUARTERS_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
-				FLAG_RED_SPAWN = addSpawn(RED_TEAM_HEADQUARTERS, RED_TEAM_HEADQUARTERS_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+				FLAG_BLUE_SPAWN = addSpawn(BLUE_TEAM_HEADQUARTERS, zoneSF.blueFlagLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+				FLAG_RED_SPAWN = addSpawn(RED_TEAM_HEADQUARTERS, zoneSF.redFlagLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
 				
 				// add event FIGHT_TIME
 				for (Player participant : PLAYER_LIST)
@@ -563,9 +671,16 @@ public class CtF extends Event
 			}
 			case "EndFight":
 			{
-				// Close doors.
-				PVP_WORLD.closeDoor(BLUE_DOOR_ID);
-				PVP_WORLD.closeDoor(RED_DOOR_ID);
+				// Close doors (solo si la zona tiene puertas definidas).
+				final CtFArenaZone zoneEF = CURRENT_ZONE.get();
+				if (zoneEF.blueDoorId != 0)
+				{
+					PVP_WORLD.closeDoor(zoneEF.blueDoorId);
+				}
+				if (zoneEF.redDoorId != 0)
+				{
+					PVP_WORLD.closeDoor(zoneEF.redDoorId);
+				}
 				
 				// Reset flag carriers
 				if (BLUE_TEAM_CARRIER != null)
@@ -707,7 +822,16 @@ public class CtF extends Event
 					PVP_WORLD.destroy();
 					PVP_WORLD = null;
 				}
-				
+
+				// Rotar a la siguiente zona para el proximo evento.
+				if (ARENA_ZONES.size() > 1)
+				{
+					final int nextIndex = ZONE_INDEX.incrementAndGet() % ARENA_ZONES.size();
+					ZONE_INDEX.set(nextIndex);
+					CURRENT_ZONE.set(ARENA_ZONES.get(nextIndex));
+					Broadcast.toAllOnlinePlayers("CtF Event: Next arena -> " + CURRENT_ZONE.get().name);
+				}
+
 				// Enable players.
 				for (Player participant : PLAYER_LIST)
 				{
@@ -731,25 +855,26 @@ public class CtF extends Event
 			{
 				if (player.isDead() && player.isOnEvent())
 				{
+					final CtFArenaZone zoneRP = CURRENT_ZONE.get();
 					if (BLUE_TEAM.contains(player))
 					{
 						player.setIsPendingRevive(true);
-						player.teleToLocation(BLUE_SPAWN_LOC.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
-						
+						player.teleToLocation(zoneRP.blueSpawnZone.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
+
 						// Make player invulnerable for 30 seconds.
 						GHOST_WALKING.getSkill().applyEffects(player, player);
-						
+
 						// Reset existing activity timers.
 						resetActivityTimers(player); // In case player died in peace zone.
 					}
 					else if (RED_TEAM.contains(player))
 					{
 						player.setIsPendingRevive(true);
-						player.teleToLocation(RED_SPAWN_LOC.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
-						
+						player.teleToLocation(zoneRP.redSpawnZone.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
+
 						// Make player invulnerable for 30 seconds.
 						GHOST_WALKING.getSkill().applyEffects(player, player);
-						
+
 						// Reset existing activity timers.
 						resetActivityTimers(player); // In case player died in peace zone.
 					}
@@ -980,30 +1105,38 @@ public class CtF extends Event
 			final Player player = creature.asPlayer();
 			if (player.isOnEvent())
 			{
+				final CtFArenaZone activeZone = CURRENT_ZONE.get();
+				if (activeZone == null)
+				{
+					return;
+				}
+				final ZoneType bluePeace = activeZone.bluePeaceZone;
+				final ZoneType redPeace = activeZone.redPeaceZone;
+
 				// Kick enemy players.
-				if ((zone == BLUE_PEACE_ZONE) && (creature.getTeam() == Team.RED))
+				if ((zone == bluePeace) && (creature.getTeam() == Team.RED))
 				{
-					creature.teleToLocation(RED_SPAWN_LOC.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
+					creature.teleToLocation(activeZone.redSpawnZone.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
 					sendScreenMessage(player, "Entering the enemy headquarters is prohibited!", 7);
 				}
-				
-				if ((zone == RED_PEACE_ZONE) && (creature.getTeam() == Team.BLUE))
+
+				if ((zone == redPeace) && (creature.getTeam() == Team.BLUE))
 				{
-					creature.teleToLocation(BLUE_SPAWN_LOC.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
+					creature.teleToLocation(activeZone.blueSpawnZone.getRandomPoint(), PVP_WORLD.getInstanceId(), 50);
 					sendScreenMessage(player, "Entering the enemy headquarters is prohibited!", 7);
 				}
-				
+
 				// Start inactivity check.
 				if (creature.isPlayer() && //
-					(((zone == BLUE_PEACE_ZONE) && (creature.getTeam() == Team.BLUE)) || //
-						((zone == RED_PEACE_ZONE) && (creature.getTeam() == Team.RED))))
+					(((zone == bluePeace) && (creature.getTeam() == Team.BLUE)) || //
+						((zone == redPeace) && (creature.getTeam() == Team.RED))))
 				{
 					resetActivityTimers(player);
 				}
-				
+
 				if (playerIsCarrier(player) && //
-					(((zone == BLUE_PEACE_ZONE) && (creature.getTeam() == Team.RED)) || //
-						((zone == RED_PEACE_ZONE) && (creature.getTeam() == Team.BLUE))))
+					(((zone == bluePeace) && (creature.getTeam() == Team.RED)) || //
+						((zone == redPeace) && (creature.getTeam() == Team.BLUE))))
 				{
 					removeFlagCarrier(player);
 					enemyTeamFlag(player);
@@ -1568,14 +1701,15 @@ public class CtF extends Event
 	
 	private static void enemyTeamFlag(Player player)
 	{
+		final CtFArenaZone zone = CURRENT_ZONE.get();
 		if (BLUE_TEAM.contains(player))
 		{
-			FLAG_RED_SPAWN = addSpawn(RED_TEAM_HEADQUARTERS, RED_TEAM_HEADQUARTERS_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+			FLAG_RED_SPAWN = addSpawn(RED_TEAM_HEADQUARTERS, zone.redFlagLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
 		}
-		
+
 		if (RED_TEAM.contains(player))
 		{
-			FLAG_BLUE_SPAWN = addSpawn(BLUE_TEAM_HEADQUARTERS, BLUE_TEAM_HEADQUARTERS_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+			FLAG_BLUE_SPAWN = addSpawn(BLUE_TEAM_HEADQUARTERS, zone.blueFlagLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
 		}
 	}
 	

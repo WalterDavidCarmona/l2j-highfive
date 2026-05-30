@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="22800" level="84" type="Monster" name="Divinity Magus">
 		<!-- Confirmed CT2.5 -->
@@ -2737,15 +2737,7 @@
 		<exCrtEffect>false</exCrtEffect>
 		<sNpcPropHpRate>4</sNpcPropHpRate>
 		<ai type="BALANCED" aggroRange="300" clanHelpRange="300" />
-		<dropLists>
-			<drop>
-				<item id="6577" min="1" max="1" chance="0.0644740215200186" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.429825986300111" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.0644740215200186" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.429825986300111" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-			</drop>
-		</dropLists>
-		<collision>
+				<collision>
 			<radius normal="29" />
 			<height normal="42" />
 		</collision>
@@ -2785,15 +2777,7 @@
 		<exCrtEffect>false</exCrtEffect>
 		<sNpcPropHpRate>0.25</sNpcPropHpRate>
 		<ai type="BALANCED" aggroRange="300" clanHelpRange="300" />
-		<dropLists>
-			<drop>
-				<item id="6577" min="1" max="1" chance="0.0241696045297384" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.161130388031602" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.0241696045297384" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.161130388031602" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-			</drop>
-		</dropLists>
-		<collision>
+				<collision>
 			<radius normal="18" />
 			<height normal="15.5" />
 		</collision>
@@ -2832,15 +2816,7 @@
 		<exCrtEffect>false</exCrtEffect>
 		<sNpcPropHpRate>0.5</sNpcPropHpRate>
 		<ai type="BALANCED" aggroRange="300" clanHelpRange="300" />
-		<dropLists>
-			<drop>
-				<item id="6577" min="1" max="1" chance="0.0322304879277945" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.214869507685304" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.0322304879277945" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.214869507685304" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-			</drop>
-		</dropLists>
-		<collision>
+				<collision>
 			<radius normal="16" />
 			<height normal="16.5" />
 		</collision>
@@ -2902,8 +2878,6 @@
 				<item id="9628" min="1" max="1" chance="2.01829700942993" /> <!-- Leonard -->
 				<item id="9630" min="1" max="1" chance="1.35437438690186" /> <!-- Orichalcum -->
 				<item id="9629" min="1" max="1" chance="1.11885113342285" /> <!-- Adamantine -->
-				<item id="6577" min="1" max="1" chance="0.00169663116455078" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.0114522603607178" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="14166" min="1" max="1" chance="1.24316792602539" /> <!-- Life Stone - Level 84 -->
 				<item id="14167" min="1" max="1" chance="0.310406383514404" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="14168" min="1" max="1" chance="0.0310406383514404" /> <!-- High-Grade Life Stone - Level 84 -->
@@ -3092,7 +3066,6 @@
 				<item id="15644" min="1" max="1" chance="0.6953" /> <!-- Vesper Thrower Piece -->
 				<item id="15637" min="1" max="1" chance="0.6924" /> <!-- Vesper Shaper Piece -->
 				<item id="15819" min="1" max="1" chance="0.0813" /> <!-- Recipe - Vesper Fighter (60%) -->
-				<item id="6578" min="1" max="1" chance="0.0518" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="13458" min="1" max="1" chance="0.0016" /> <!-- Vesper Slasher -->
 			</spoil>
 		</dropLists>
@@ -3320,8 +3293,6 @@
 				<item id="14167" min="1" max="1" chance="0.113283956222534" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="14168" min="1" max="1" chance="0.0113283956222534" /> <!-- High-Grade Life Stone - Level 84 -->
 				<item id="959" min="1" max="1" chance="0.00374439967346191" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.000634644012451172" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.00418865048217773" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9549" min="1" max="1" chance="0.751355046340942" /> <!-- Wind Stone -->
 				<item id="15663" min="1" max="1" chance="0.169989398735046" /> <!-- Sealed Vesper Breastplate Piece -->
 				<item id="15666" min="1" max="1" chance="0.273817159172058" /> <!-- Sealed Vesper Gaiter Piece -->
@@ -3414,8 +3385,6 @@
 				<item id="4039" min="1" max="3" chance="69.0623" /> <!-- Mold Glue -->
 				<item id="9630" min="1" max="1" chance="21.8092" /> <!-- Orichalcum -->
 				<item id="2134" min="1" max="1" chance="8.2875" /> <!-- Gemstone S -->
-				<item id="6577" min="1" max="1" chance="0.0276" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.1842" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="13457" min="1" max="1" chance="0.0058" /> <!-- Vesper Cutter -->
 			</spoil>
 		</dropLists>
@@ -3484,8 +3453,6 @@
 				<item id="14167" min="1" max="1" chance="0.337599523979187" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="14168" min="1" max="1" chance="0.0337514077377319" /> <!-- High-Grade Life Stone - Level 84 -->
 				<item id="9554" min="1" max="1" chance="0.0559675242233276" /> <!-- Earth Crystal -->
-				<item id="6577" min="1" max="1" chance="0.00187982524108887" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.0124324805717468" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9548" min="1" max="1" chance="2.23904275534058" /> <!-- Earth Stone -->
 				<item id="15638" min="1" max="1" chance="0.164826495002747" /> <!-- Vesper Fighter Piece -->
 				<item id="14052" min="1" max="1" chance="6.99705133374023" /> <!-- Noble Enhancement Stone -->
@@ -3648,8 +3615,6 @@
 				<item id="14168" min="1" max="1" chance="0.0221045692062378" /> <!-- High-Grade Life Stone - Level 84 -->
 				<item id="14169" min="1" max="1" chance="0.00442817314147949" /> <!-- Top-Grade Life Stone - Level 84 -->
 				<item id="9554" min="1" max="1" chance="0.0366594661712647" /> <!-- Earth Crystal -->
-				<item id="6577" min="1" max="1" chance="0.00123408103942871" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.00816671276092529" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9548" min="1" max="1" chance="1.46674161186218" /> <!-- Earth Stone -->
 				<item id="15634" min="1" max="1" chance="0.108889503479004" /> <!-- Vesper Cutter Piece -->
 				<item id="15669" min="1" max="1" chance="1.24300997871399" /> <!-- Sealed Vesper Verteidiger Piece -->
@@ -3662,8 +3627,6 @@
 				<item id="13467" min="1" max="1" chance="0.0029" /> <!-- Vesper Thrower -->
 				<item id="15634" min="1" max="1" chance="1.2436" /> <!-- Vesper Cutter Piece -->
 				<item id="9554" min="1" max="1" chance="0.4187" /> <!-- Earth Crystal -->
-				<item id="6577" min="1" max="1" chance="0.014" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.093" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 			</spoil>
 		</dropLists>
 		<collision>
@@ -3733,8 +3696,6 @@
 				<item id="14167" min="1" max="1" chance="0.414186239204407" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="14168" min="1" max="1" chance="0.0414252519607544" /> <!-- High-Grade Life Stone - Level 84 -->
 				<item id="9554" min="1" max="1" chance="0.0686664976501465" /> <!-- Earth Crystal -->
-				<item id="6577" min="1" max="1" chance="0.00228667390823364" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.0152444927215576" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9548" min="1" max="1" chance="2.7468256070137" /> <!-- Earth Stone -->
 				<item id="15642" min="1" max="1" chance="0.202221509971619" /> <!-- Vesper Caster Piece -->
 				<item id="15644" min="1" max="1" chance="0.20480644569397" /> <!-- Vesper Thrower Piece -->
@@ -3904,8 +3865,6 @@
 				<item id="9628" min="1" max="1" chance="8.8764" /> <!-- Leonard -->
 				<item id="2134" min="1" max="1" chance="2.2635" /> <!-- Gemstone S -->
 				<item id="9554" min="1" max="1" chance="0.2263" /> <!-- Earth Crystal -->
-				<item id="6577" min="1" max="1" chance="0.0075" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.0503" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="13459" min="1" max="1" chance="0.0016" /> <!-- Vesper Buster -->
 			</spoil>
 		</dropLists>
@@ -4137,7 +4096,6 @@
 			<spoil>
 				<item id="4044" min="1" max="3" chance="77.371" /> <!-- Thons -->
 				<item id="9630" min="1" max="1" chance="24.433" /> <!-- Orichalcum -->
-				<item id="6578" min="1" max="1" chance="0.2063" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="15816" min="1" max="1" chance="0.3238" /> <!-- Recipe - Sealed Vesper Slasher (60%) -->
 				<item id="13460" min="1" max="1" chance="0.0065" /> <!-- Vesper Shaper -->
 			</spoil>
@@ -4462,8 +4420,6 @@
 			<spoil>
 				<item id="14052" min="1" max="25" chance="89.2155" /> <!-- Noble Enhancement Stone -->
 				<item id="2134" min="1" max="1" chance="92.7842" /> <!-- Gemstone S -->
-				<item id="6577" min="1" max="1" chance="0.3093" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="2.0619" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 			</spoil>
 		</dropLists>
 		<collision>

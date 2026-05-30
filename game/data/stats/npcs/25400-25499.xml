@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="25400" level="34" type="Monster" name="Page of Watchman" title="Raid Fighter">
 		<!-- Confirmed CT2.5 -->
@@ -252,7 +252,6 @@
 				<item id="2499" min="1" max="1" chance="4.00399344541931" /> <!-- Elven Long Sword -->
 				<item id="2047" min="4" max="12" chance="30.5138181073227" /> <!-- Claymore Blade -->
 				<item id="2967" min="8" max="22" chance="16.0537946722488" /> <!-- Elven Long Sword Blade -->
-				<item id="6573" min="1" max="1" chance="4.79939985275269" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -571,7 +570,6 @@
 				<item id="72" min="1" max="1" chance="3.93854441699982" /> <!-- Stormbringer -->
 				<item id="2059" min="8" max="22" chance="17.1916734607315" /> <!-- Flamberge Blade -->
 				<item id="2060" min="4" max="12" chance="34.4573378639603" /> <!-- Stormbringer Blade -->
-				<item id="6573" min="1" max="1" chance="6.00040006637573" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -685,7 +683,6 @@
 				<item id="4607" min="1" max="3" chance="31.6811356857452" /> <!-- Greater Dye of INT <Int+3 Men-3> -->
 				<item id="4608" min="2" max="4" chance="21.1207336093979" /> <!-- Greater Dye of INT <Int+3 Wit-3> -->
 				<item id="4609" min="2" max="6" chance="15.8405678428726" /> <!-- Greater Dye of MEN <Men+3 Int-3> -->
-				<item id="6573" min="1" max="1" chance="1.9008596759491" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1012,7 +1009,6 @@
 				<item id="4607" min="1" max="3" chance="28.0738158346863" /> <!-- Greater Dye of INT <Int+3 Men-3> -->
 				<item id="4608" min="2" max="4" chance="18.7158563861237" /> <!-- Greater Dye of INT <Int+3 Wit-3> -->
 				<item id="4609" min="2" max="6" chance="14.0369079173431" /> <!-- Greater Dye of MEN <Men+3 Int-3> -->
-				<item id="6573" min="1" max="1" chance="1.68442144876099" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1286,7 +1282,6 @@
 				<item id="4622" min="1" max="3" chance="20.8965207066422" /> <!-- Greater Dye of MEN <Men+4 Wit-4> -->
 				<item id="4623" min="2" max="4" chance="13.9310138044281" /> <!-- Greater Dye of WIT <Wit+4 Int-4> -->
 				<item id="4624" min="1" max="1" chance="41.792956712883" /> <!-- Greater Dye of WIT <Wit+4 Men-4> -->
-				<item id="6572" min="1" max="1" chance="8.0799100821991" /> <!-- Blessed Scroll: Enchant Armor (B-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1581,7 +1576,6 @@
 				<item id="1938" min="60" max="180" chance="16.4578505803833" /> <!-- Mithril Banded Mail Material -->
 				<item id="1939" min="28" max="84" chance="46.0776622690125" /> <!-- Mithril Banded Gaiters Material -->
 				<item id="2028" min="27" max="81" chance="6.46378524630737" /> <!-- Shilen Knife Edge -->
-				<item id="6575" min="1" max="1" chance="12.6939001083374" /> <!-- Blessed Scroll: Enchant Weapon (D-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1691,7 +1685,6 @@
 				<item id="4610" min="1" max="3" chance="28.0738103266754" /> <!-- Greater Dye of MEN <Men+3 Wit-3> -->
 				<item id="4611" min="2" max="4" chance="18.7158735511169" /> <!-- Greater Dye of WIT <Wit+3 Int-3> -->
 				<item id="4612" min="2" max="6" chance="14.0369051633377" /> <!-- Greater Dye of WIT <Wit+3 Men-3> -->
-				<item id="6574" min="1" max="1" chance="14.4379144378738" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1848,8 +1841,6 @@
 				<item id="4104" min="5" max="15" chance="19.3267651499863" /> <!-- Great Sword Blade -->
 				<item id="4107" min="9" max="27" chance="10.5707312506828" /> <!-- Keshanberk Blade -->
 				<item id="4108" min="14" max="42" chance="6.79546157694626" /> <!-- Sword of Valhalla Blade -->
-				<item id="6572" min="1" max="1" chance="11.6748786455154" /> <!-- Blessed Scroll: Enchant Armor (B-Grade) -->
-				<item id="6572" min="1" max="1" chance="11.6748786455154" /> <!-- Blessed Scroll: Enchant Armor (B-Grade) -->
 				<item id="948" min="1" max="3" chance="54.7258423793793" /> <!-- Scroll: Enchant Armor (B-Grade) -->
 			</drop>
 		</dropLists>
@@ -2004,7 +1995,6 @@
 				<item id="4607" min="1" max="3" chance="29.2053286526184" /> <!-- Greater Dye of INT <Int+3 Men-3> -->
 				<item id="4608" min="2" max="4" chance="19.4701974249115" /> <!-- Greater Dye of INT <Int+3 Wit-3> -->
 				<item id="4609" min="2" max="6" chance="14.6026643263092" /> <!-- Greater Dye of MEN <Men+3 Int-3> -->
-				<item id="6573" min="1" max="1" chance="1.75231191549683" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2228,7 +2218,6 @@
 				<item id="4610" min="1" max="3" chance="29.2053491392364" /> <!-- Greater Dye of MEN <Men+3 Wit-3> -->
 				<item id="4611" min="2" max="4" chance="19.470232759491" /> <!-- Greater Dye of WIT <Wit+3 Int-3> -->
 				<item id="4612" min="2" max="6" chance="14.6026745696182" /> <!-- Greater Dye of WIT <Wit+3 Men-3> -->
-				<item id="6574" min="1" max="1" chance="15.0198468641739" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2375,7 +2364,6 @@
 				<item id="5535" min="3" max="9" chance="70.1021197181778" /> <!-- Carnage Bow Stave -->
 				<item id="729" min="1" max="1" chance="5.91838493066406" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				<item id="730" min="1" max="1" chance="44.3880145214844" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.710202110351563" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2525,7 +2513,6 @@
 				<item id="5544" min="8" max="22" chance="12.6682327846603" /> <!-- Branch of the Mother Tree Head -->
 				<item id="959" min="1" max="1" chance="2.39706521844482" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="23.9707057190475" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.399528714607239" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2686,7 +2673,6 @@
 				<item id="6696" min="4" max="12" chance="40.483365963089" /> <!-- Heavens Divider Edge -->
 				<item id="959" min="1" max="1" chance="5.09845501379395" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="50.9846640037384" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.849780457565308" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2843,7 +2829,6 @@
 				<item id="5541" min="12" max="36" chance="25.2256538229675" /> <!-- Tallum Glaive Edge -->
 				<item id="959" min="1" max="1" chance="3.81564065100098" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="38.1564917262115" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.635968513900757" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -3351,7 +3336,6 @@
 				<item id="4119" min="3" max="9" chance="76.2545344327393" /> <!-- Demon's Dagger Edge -->
 				<item id="947" min="1" max="1" chance="18.0660616646118" /> <!-- Scroll: Enchant Weapon (B-Grade) -->
 				<item id="948" min="1" max="3" chance="56.4564237486877" /> <!-- Scroll: Enchant Armor (B-Grade) -->
-				<item id="6571" min="1" max="1" chance="1.29041131521606" /> <!-- Blessed Scroll: Enchant Weapon (B-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -3550,7 +3534,6 @@
 				<item id="5539" min="3" max="9" chance="67.7176124247742" /> <!-- Blood Tornado Edge -->
 				<item id="729" min="1" max="1" chance="5.78474251309967" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				<item id="730" min="1" max="1" chance="43.3856935097504" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.69416511240387" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -3701,8 +3684,6 @@
 				<item id="5497" min="23" max="67" chance="10.936699621376" /> <!-- Sealed Tallum Boots Lining -->
 				<item id="98" min="1" max="1" chance="1.78664878601074" /> <!-- Halberd -->
 				<item id="5542" min="3" max="9" chance="70.7823514581299" /> <!-- Halberd Edge -->
-				<item id="6570" min="1" max="1" chance="9.06982021309376" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="1.08838005088329" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -3861,7 +3842,6 @@
 				<item id="4607" min="1" max="3" chance="33.127559900589" /> <!-- Greater Dye of INT <Int+3 Men-3> -->
 				<item id="4608" min="2" max="4" chance="22.085015345726" /> <!-- Greater Dye of INT <Int+3 Wit-3> -->
 				<item id="4609" min="2" max="6" chance="16.5637799502945" /> <!-- Greater Dye of MEN <Men+3 Int-3> -->
-				<item id="6573" min="1" max="1" chance="1.98764474235535" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4130,7 +4110,6 @@
 				<item id="5486" min="3" max="7" chance="32.4182143154297" /> <!-- Sealed Dark Crystal Robe Fabric -->
 				<item id="235" min="1" max="1" chance="1.74877942016602" /> <!-- Bloody Orchid -->
 				<item id="5536" min="3" max="9" chance="69.8990172106934" /> <!-- Bloody Orchid Head -->
-				<item id="6570" min="1" max="1" chance="8.87759971618652" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 				<item id="729" min="1" max="1" chance="8.87759971618652" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
@@ -4450,7 +4429,6 @@
 				<item id="4607" min="1" max="3" chance="33.2293712472382" /> <!-- Greater Dye of INT <Int+3 Men-3> -->
 				<item id="4608" min="2" max="4" chance="22.1528895012589" /> <!-- Greater Dye of INT <Int+3 Wit-3> -->
 				<item id="4609" min="2" max="6" chance="16.6146856236191" /> <!-- Greater Dye of MEN <Men+3 Int-3> -->
-				<item id="6573" min="1" max="1" chance="1.99375339595032" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4626,7 +4604,6 @@
 				<item id="2067" min="4" max="12" chance="7.81866820749664" /> <!-- Crystal Staff Head -->
 				<item id="2068" min="5" max="13" chance="6.94993608020782" /> <!-- Stick of Faith Shaft -->
 				<item id="2069" min="17" max="49" chance="2.06232959049225" /> <!-- Heavy Doom Axe Blade -->
-				<item id="6574" min="1" max="1" chance="51.4315986633301" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -5074,7 +5051,6 @@
 				<item id="4610" min="1" max="3" chance="33.127538931839" /> <!-- Greater Dye of MEN <Men+3 Wit-3> -->
 				<item id="4611" min="2" max="4" chance="22.0850259545593" /> <!-- Greater Dye of WIT <Wit+3 Int-3> -->
 				<item id="4612" min="2" max="6" chance="16.5637694659195" /> <!-- Greater Dye of WIT <Wit+3 Men-3> -->
-				<item id="6574" min="1" max="1" chance="17.036966734108" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>

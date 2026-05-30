@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event name="Tournament1v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../xsd/event.xsd">
+	<!--
+		SCHEDULE: Activar por admin con //admin startEvent Tournament1v1
+		Descomentar para activacion automatica (ej: domingos a las 20:00):
+	-->
+	<!-- <schedule pattern="0 20 * * 0" /> -->
+</event>

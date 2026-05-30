@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="25500" level="44" type="Monster" name="Alligator of Istary" title="Raid Fighter">
 		<!-- Confirmed CT2.5 -->
@@ -95,7 +95,6 @@
 				<item id="4553" min="1" max="3" chance="33.3565157747803" /> <!-- Greater Dye of STR <Str+1 Con-1> -->
 				<item id="4554" min="2" max="4" chance="22.2377025094528" /> <!-- Greater Dye of STR <Str+1 Dex-1> -->
 				<item id="4555" min="2" max="6" chance="16.6782578873901" /> <!-- Greater Dye of CON <Con+1 Str-1> -->
-				<item id="6575" min="1" max="1" chance="3.70632174097443" /> <!-- Blessed Scroll: Enchant Weapon (D-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -256,7 +255,6 @@
 				<item id="2076" min="2" max="6" chance="44.1895065446472" /> <!-- Body Slasher Blade -->
 				<item id="951" min="1" max="1" chance="53.1163078531036" /> <!-- Scroll: Enchant Weapon (C-Grade) -->
 				<item id="952" min="12" max="36" chance="16.2299849355011" /> <!-- Scroll: Enchant Armor (C-Grade) -->
-				<item id="6573" min="1" max="1" chance="1.94760674752808" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -359,7 +357,6 @@
 				<item id="2935" min="24" max="72" chance="22.9434635487671" /> <!-- Reinforced Mithril Gaiters Fragment -->
 				<item id="281" min="1" max="1" chance="7.05037603213692" /> <!-- Crystallized Ice Bow -->
 				<item id="2074" min="12" max="36" chance="18.339823629118" /> <!-- Crystallized Ice Bow Shaft -->
-				<item id="6574" min="1" max="1" chance="46.0337982177734" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -749,8 +746,6 @@
 				<item id="6714" min="16" max="48" chance="13.2726616612358" /> <!-- Sealed Major Arcana Circlet Pattern -->
 				<item id="6367" min="1" max="1" chance="0.734770422222138" /> <!-- Angel Slayer -->
 				<item id="6691" min="3" max="9" chance="56.5930303285103" /> <!-- Angel Slayer Blade -->
-				<item id="6578" min="1" max="1" chance="4.52527626508713" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="1" chance="50.9091223860359" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -903,8 +898,6 @@
 				<item id="6714" min="16" max="48" chance="18.9352267082748" /> <!-- Sealed Major Arcana Circlet Pattern -->
 				<item id="6367" min="1" max="1" chance="1.04824998604774" /> <!-- Angel Slayer -->
 				<item id="6691" min="12" max="36" chance="20.1838495470333" /> <!-- Angel Slayer Blade -->
-				<item id="6578" min="1" max="1" chance="6.45590763274384" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="6570" min="1" max="1" chance="16.1397916775589" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -970,7 +963,6 @@
 				<item id="5545" min="14" max="42" chance="9.91090200388336" /> <!-- Dark Legion's Edge Blade -->
 				<item id="959" min="1" max="1" chance="5.24477399871826" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="52.4478571207809" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.874168044319153" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1198,8 +1190,6 @@
 				<item id="126" min="1" max="1" chance="2.64983438027191" /> <!-- Artisan's Sword -->
 				<item id="128" min="1" max="1" chance="2.64983438027191" /> <!-- Knight's Sword -->
 				<item id="2021" min="1" max="3" chance="41.4459620089416" /> <!-- Spinebone Sword Blade -->
-				<item id="6575" min="1" max="1" chance="1.57595063406754" /> <!-- Blessed Scroll: Enchant Weapon (D-Grade) -->
-				<item id="6576" min="1" max="1" chance="14.1837763430061" /> <!-- Blessed Scroll: Enchant Armor (D-Grade) -->
 				<item id="956" min="3" max="9" chance="39.3993726017838" /> <!-- Scroll: Enchant Armor (D-Grade) -->
 			</drop>
 		</dropLists>
@@ -1371,7 +1361,6 @@
 				<item id="9468" min="1" max="1" chance="0.667094490611553" /> <!-- Dynasty Necklace - Sleep Resistance -->
 				<item id="9474" min="1" max="1" chance="0.667094490611553" /> <!-- Dynasty Necklace - Hold Resistance -->
 				<item id="9477" min="1" max="1" chance="0.667094490611553" /> <!-- Dynasty Necklace - Fear Resistance -->
-				<item id="6578" min="1" max="1" chance="2.30741661285162" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1452,7 +1441,6 @@
 				<item id="9462" min="1" max="1" chance="0.428266828866005" /> <!-- Dynasty Necklace - Poison Resistance -->
 				<item id="9465" min="1" max="1" chance="0.428266828866005" /> <!-- Dynasty Necklace - Bleed Resistance -->
 				<item id="9471" min="1" max="1" chance="0.428266828866005" /> <!-- Dynasty Necklace - Paralysis Resistance -->
-				<item id="6578" min="1" max="1" chance="1.48133275663376" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="10300" min="1" max="1" chance="1" /> <!-- Transformation Sealbook - Kechi -->
 			</drop>
 		</dropLists>
@@ -2264,9 +2252,7 @@
 				<item id="5298" min="1" max="1" chance="1.53359827535629" /> <!-- Sealed Dark Crystal Leggings -->
 				<item id="5482" min="4" max="12" chance="21.1269841033173" /> <!-- Sealed Dark Crystal Leggings Design -->
 				<item id="9626" min="1" max="1" chance="3.98403854878807" /> <!-- Giant's Codex - Discipline -->
-				<item id="6570" min="1" max="1" chance="3.32003212399006" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 				<item id="729" min="1" max="1" chance="3.32003212399006" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.398397241378784" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 				<item id="9912" min="190" max="380" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -2416,7 +2402,6 @@
 				<item id="5520" min="2" max="4" chance="28.3750701895256" /> <!-- Sealed Dark Crystal Breastplate Pattern -->
 				<item id="5524" min="4" max="12" chance="16.2636058481598" /> <!-- Sealed Dark Crystal Gaiters Pattern -->
 				<item id="9626" min="1" max="1" chance="8.21370005607605" /> <!-- Giant's Codex - Discipline -->
-				<item id="6578" min="1" max="1" chance="2.73790001869202" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9912" min="190" max="380" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -2575,7 +2560,6 @@
 				<item id="9626" min="1" max="1" chance="4.07275744815826" /> <!-- Giant's Codex - Discipline -->
 				<item id="959" min="1" max="1" chance="1.22183609269714" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="12.2182723444748" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.203633443283081" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				<item id="9912" min="188" max="377" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -2645,7 +2629,6 @@
 				<item id="6710" min="9" max="27" chance="8.00385657592773" /> <!-- Sealed Draconic Leather Helmet Pattern -->
 				<item id="6714" min="2" max="6" chance="36.0175332119751" /> <!-- Sealed Major Arcana Circlet Pattern -->
 				<item id="9626" min="1" max="1" chance="8.28884983062744" /> <!-- Giant's Codex - Discipline -->
-				<item id="6578" min="1" max="1" chance="2.76294994354248" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9912" min="191" max="389" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -3810,9 +3793,7 @@
 				<item id="5298" min="1" max="1" chance="1.17061608080292" /> <!-- Sealed Dark Crystal Leggings -->
 				<item id="5482" min="4" max="12" chance="16.1265096131287" /> <!-- Sealed Dark Crystal Leggings Design -->
 				<item id="9625" min="1" max="1" chance="4.56162582452393" /> <!-- Giant's Codex - Oblivion -->
-				<item id="6570" min="1" max="1" chance="2.5342343615799" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 				<item id="729" min="1" max="1" chance="2.5342343615799" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.304105739181519" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 				<item id="9912" min="184" max="368" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -4035,9 +4016,7 @@
 				<item id="6685" min="1" max="1" chance="0.215625025749207" /> <!-- Sealed Major Arcana Glove -->
 				<item id="6686" min="1" max="1" chance="0.215704445648193" /> <!-- Sealed Major Arcana Boots -->
 				<item id="9625" min="1" max="1" chance="4.82280967111206" /> <!-- Giant's Codex - Oblivion -->
-				<item id="6570" min="1" max="1" chance="2.67933637217331" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 				<item id="729" min="1" max="1" chance="2.67933637217331" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.321517843940735" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 				<item id="9912" min="186" max="378" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -4344,9 +4323,7 @@
 				<item id="6685" min="1" max="1" chance="0.219011282043457" /> <!-- Sealed Major Arcana Glove -->
 				<item id="6686" min="1" max="1" chance="0.219246778045654" /> <!-- Sealed Major Arcana Boots -->
 				<item id="9625" min="1" max="1" chance="4.89871251795959" /> <!-- Giant's Codex - Oblivion -->
-				<item id="6570" min="1" max="1" chance="2.72150458368874" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 				<item id="729" min="1" max="1" chance="2.72150458368874" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.326577989650726" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 				<item id="9912" min="188" max="377" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -4575,8 +4552,6 @@
 				<item id="9626" min="1" max="1" chance="2.72355565183067" /> <!-- Giant's Codex - Discipline -->
 				<item id="9587" min="1" max="1" chance="4.64242467882729" /> <!-- Striped Scale Shirt -->
 				<item id="9591" min="1" max="1" chance="3.57109867165947" /> <!-- Steel Bracelet -->
-				<item id="6577" min="1" max="1" chance="0.13617718353653" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="0.907843896543503" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9912" min="199" max="391" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -4731,7 +4706,6 @@
 				<item id="9591" min="1" max="1" chance="3.03684897418213" /> <!-- Steel Bracelet -->
 				<item id="959" min="1" max="1" chance="0.694828561386108" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="6.94830267366028" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.115801916931152" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				<item id="9912" min="200" max="400" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>
@@ -4794,7 +4768,6 @@
 				<item id="9626" min="1" max="1" chance="3.54884740876007" /> <!-- Giant's Codex - Discipline -->
 				<item id="9587" min="1" max="1" chance="6.04918785523224" /> <!-- Striped Scale Shirt -->
 				<item id="9591" min="1" max="1" chance="4.65321074188614" /> <!-- Steel Bracelet -->
-				<item id="6578" min="1" max="1" chance="1.18295428098679" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="9912" min="202" max="408" chance="100" /> <!-- Knight's Epaulette -->
 			</drop>
 		</dropLists>

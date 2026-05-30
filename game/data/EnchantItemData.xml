@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xsd/enchantItemData.xsd">
 	<!-- Scrolls: Enchant Weapon -->
-	<enchant id="729" targetGrade="A" maxEnchant="16" />
-	<enchant id="947" targetGrade="B" maxEnchant="16" />
-	<enchant id="951" targetGrade="C" maxEnchant="16" />
-	<enchant id="955" targetGrade="D" maxEnchant="16" />
-	<enchant id="959" targetGrade="S" maxEnchant="16" />
+	<enchant id="729" targetGrade="A" maxEnchant="20" />
+	<enchant id="947" targetGrade="B" maxEnchant="20" />
+	<enchant id="951" targetGrade="C" maxEnchant="20" />
+	<enchant id="955" targetGrade="D" maxEnchant="20" />
+	<enchant id="959" targetGrade="S" maxEnchant="20" />
 
 	<!-- Scrolls: Enchant Armor -->
-	<enchant id="730" targetGrade="A" maxEnchant="16" />
-	<enchant id="948" targetGrade="B" maxEnchant="16" />
-	<enchant id="952" targetGrade="C" maxEnchant="16" />
-	<enchant id="956" targetGrade="D" maxEnchant="16" scrollGroupId="0" /> <!-- Default scroll groups binding. -->
-	<enchant id="960" targetGrade="S" maxEnchant="16" />
+	<enchant id="730" targetGrade="A" maxEnchant="20" />
+	<enchant id="948" targetGrade="B" maxEnchant="20" />
+	<enchant id="952" targetGrade="C" maxEnchant="20" />
+	<enchant id="956" targetGrade="D" maxEnchant="20" scrollGroupId="0" /> <!-- Default scroll groups binding. -->
+	<enchant id="960" targetGrade="S" maxEnchant="20" />
 
 	<!-- Blessed Scrolls: Enchant Weapon -->
-	<enchant id="6569" targetGrade="A" maxEnchant="16" />
-	<enchant id="6571" targetGrade="B" maxEnchant="16" />
-	<enchant id="6573" targetGrade="C" maxEnchant="16" />
-	<enchant id="6575" targetGrade="D" maxEnchant="16" />
-	<enchant id="6577" targetGrade="S" maxEnchant="16" />
+	<enchant id="6569" targetGrade="A" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6571" targetGrade="B" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6573" targetGrade="C" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6575" targetGrade="D" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6577" targetGrade="S" maxEnchant="20" scrollGroupId="1" />
 	<!-- Blessed Scrolls: Enchant Armor -->
-	<enchant id="6570" targetGrade="A" maxEnchant="16" />
-	<enchant id="6572" targetGrade="B" maxEnchant="16" />
-	<enchant id="6574" targetGrade="C" maxEnchant="16" />
-	<enchant id="6576" targetGrade="D" maxEnchant="16" />
-	<enchant id="6578" targetGrade="S" maxEnchant="16" />
+	<enchant id="6570" targetGrade="A" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6572" targetGrade="B" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6574" targetGrade="C" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6576" targetGrade="D" maxEnchant="20" scrollGroupId="1" />
+	<enchant id="6578" targetGrade="S" maxEnchant="20" scrollGroupId="1" />
 
 	<!-- Not used anymore. -->
 	<!-- Crystal Scrolls: Enchant Weapon -->
@@ -42,35 +42,35 @@
 	<!-- <enchant id="962" targetGrade="S" bonusRate="100" /> -->
 
 	<!-- Weapon Enchant Scrolls -->
-	<enchant id="22006" targetGrade="D" bonusRate="10" maxEnchant="16" />
-	<enchant id="22007" targetGrade="C" bonusRate="10" maxEnchant="16" />
-	<enchant id="22008" targetGrade="B" bonusRate="10" maxEnchant="16" />
-	<enchant id="22009" targetGrade="A" bonusRate="10" maxEnchant="16" />
-	<enchant id="20517" targetGrade="S" bonusRate="10" maxEnchant="16" />
+	<enchant id="22006" targetGrade="D" bonusRate="10" maxEnchant="20" />
+	<enchant id="22007" targetGrade="C" bonusRate="10" maxEnchant="20" />
+	<enchant id="22008" targetGrade="B" bonusRate="10" maxEnchant="20" />
+	<enchant id="22009" targetGrade="A" bonusRate="10" maxEnchant="20" />
+	<enchant id="20517" targetGrade="S" bonusRate="10" maxEnchant="20" />
 	<!-- Armor Enchant Scrolls -->
-	<enchant id="22010" targetGrade="D" bonusRate="10" maxEnchant="16" />
-	<enchant id="22011" targetGrade="C" bonusRate="10" maxEnchant="16" />
-	<enchant id="22012" targetGrade="B" bonusRate="10" maxEnchant="16" />
-	<enchant id="22013" targetGrade="A" bonusRate="10" maxEnchant="16" />
-	<enchant id="20518" targetGrade="S" bonusRate="10" maxEnchant="16" />
+	<enchant id="22010" targetGrade="D" bonusRate="10" maxEnchant="20" />
+	<enchant id="22011" targetGrade="C" bonusRate="10" maxEnchant="20" />
+	<enchant id="22012" targetGrade="B" bonusRate="10" maxEnchant="20" />
+	<enchant id="22013" targetGrade="A" bonusRate="10" maxEnchant="20" />
+	<enchant id="20518" targetGrade="S" bonusRate="10" maxEnchant="20" />
 
 	<!-- Ancient Weapon Enchant Crystal -->
-	<enchant id="22014" targetGrade="B" maxEnchant="16" bonusRate="10" />
-	<enchant id="22015" targetGrade="A" maxEnchant="16" bonusRate="10" />
-	<enchant id="20519" targetGrade="S" maxEnchant="16" bonusRate="10" />
+	<enchant id="22014" targetGrade="B" maxEnchant="20" bonusRate="10" />
+	<enchant id="22015" targetGrade="A" maxEnchant="20" bonusRate="10" />
+	<enchant id="20519" targetGrade="S" maxEnchant="20" bonusRate="10" />
 	<!-- Ancient Armor Enchant Crystal -->
-	<enchant id="22016" targetGrade="B" maxEnchant="16" bonusRate="10" />
-	<enchant id="22017" targetGrade="A" maxEnchant="16" bonusRate="10" />
-	<enchant id="20520" targetGrade="S" maxEnchant="16" bonusRate="10" />
+	<enchant id="22016" targetGrade="B" maxEnchant="20" bonusRate="10" />
+	<enchant id="22017" targetGrade="A" maxEnchant="20" bonusRate="10" />
+	<enchant id="20520" targetGrade="S" maxEnchant="20" bonusRate="10" />
 
 	<!-- Divine Weapon Enchant Crystal -->
-	<enchant id="22018" targetGrade="B" bonusRate="100" />
-	<enchant id="22019" targetGrade="A" bonusRate="100" />
-	<enchant id="20521" targetGrade="S" bonusRate="100" />
+	<enchant id="22018" targetGrade="B" maxEnchant="20" bonusRate="100" />
+	<enchant id="22019" targetGrade="A" maxEnchant="20" bonusRate="100" />
+	<enchant id="20521" targetGrade="S" maxEnchant="20" bonusRate="100" />
 	<!-- Divine Armor Enchant Crystal -->
-	<enchant id="22020" targetGrade="B" bonusRate="100" />
-	<enchant id="22021" targetGrade="A" bonusRate="100" />
-	<enchant id="20522" targetGrade="S" bonusRate="100" />
+	<enchant id="22020" targetGrade="B" maxEnchant="20" bonusRate="100" />
+	<enchant id="22021" targetGrade="A" maxEnchant="20" bonusRate="100" />
+	<enchant id="20522" targetGrade="S" maxEnchant="20" bonusRate="100" />
 
 	<!-- Scroll: Enchant Weapon of Destruction -->
 	<enchant id="22221" targetGrade="S" maxEnchant="15" />
@@ -109,7 +109,7 @@
 	</enchant>
 
 	<!-- Event - Herdsman's Love Scroll Event -->
-	<enchant id="15381" maxEnchant="16">
+	<enchant id="15381" maxEnchant="20">
 		<item id="15383" /> <!-- Weaver's Multi-colored Clothes (7-day limited period) -->
 		<item id="15384" /> <!-- Weaver's Multi-colored Clothes (30-day limited period) -->
 		<item id="15385" /> <!-- Weaver's Multi-colored Clothes (60-day limited period) -->

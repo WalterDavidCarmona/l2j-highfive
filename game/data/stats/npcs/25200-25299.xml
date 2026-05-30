@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="25200" level="71" type="Monster" name="Family of Sheshark" title="Raid Fighter">
 		<!-- Confirmed CT2.5 -->
@@ -147,7 +147,6 @@
 				<item id="5545" min="33" max="99" chance="3.74365446920013" /> <!-- Dark Legion's Edge Blade -->
 				<item id="959" min="1" max="1" chance="3.89152707537842" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="38.9153576647873" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.648616816230774" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -299,8 +298,6 @@
 				<item id="6710" min="126" max="378" chance="7.81358967982864" /> <!-- Sealed Draconic Leather Helmet Pattern -->
 				<item id="6714" min="208" max="624" chance="4.73324779527664" /> <!-- Sealed Major Arcana Circlet Pattern -->
 				<item id="6695" min="5" max="15" chance="25.7418032070923" /> <!-- Demon Splinter Blade -->
-				<item id="6578" min="1" max="1" chance="8.74129048455048" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="3" chance="49.1699109925003" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -446,7 +443,6 @@
 				<item id="1954" min="192" max="576" chance="4.80632751858521" /> <!-- Karmian Stocking Design -->
 				<item id="951" min="1" max="1" chance="54.5486342503357" /> <!-- Scroll: Enchant Weapon (C-Grade) -->
 				<item id="952" min="12" max="36" chance="16.667640276947" /> <!-- Scroll: Enchant Armor (C-Grade) -->
-				<item id="6573" min="1" max="1" chance="2.00012561920166" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -593,7 +589,6 @@
 				<item id="1907" min="154" max="462" chance="3.17065297180939" /> <!-- Necklace of Darkness Gem -->
 				<item id="262" min="1" max="1" chance="9.10901827480125" /> <!-- Scallop Jamadhr -->
 				<item id="2053" min="12" max="36" chance="21.763881734354" /> <!-- Scallop Jamadhr Edge -->
-				<item id="6573" min="1" max="1" chance="5.45919990539551" /> <!-- Blessed Scroll: Enchant Weapon (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -740,7 +735,6 @@
 				<item id="2062" min="5" max="15" chance="18.1524566513329" /> <!-- Scythe Edge -->
 				<item id="2075" min="9" max="27" chance="10.0846981396294" /> <!-- Orcish Glaive Blade -->
 				<item id="2076" min="14" max="42" chance="6.48305370192719" /> <!-- Body Slasher Blade -->
-				<item id="6574" min="1" max="1" chance="51.4315986633301" /> <!-- Blessed Scroll: Enchant Armor (C-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1038,7 +1032,6 @@
 				<item id="5534" min="12" max="36" chance="25.6363462899227" /> <!-- Soul Bow Stave -->
 				<item id="959" min="1" max="1" chance="3.87354486816406" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="38.73553519104" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.645619647827148" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1350,7 +1343,6 @@
 				<item id="5547" min="8" max="22" chance="24.1785513856812" /> <!-- Elemental Sword Edge -->
 				<item id="729" min="1" max="1" chance="10.2359267345123" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				<item id="730" min="1" max="1" chance="76.7696710935974" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="1.22830414942932" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1500,8 +1492,6 @@
 				<item id="6714" min="16" max="48" chance="19.118479208313" /> <!-- Sealed Major Arcana Circlet Pattern -->
 				<item id="7575" min="1" max="1" chance="1.05839392191696" /> <!-- Draconic Bow -->
 				<item id="7579" min="12" max="36" chance="20.6149058675118" /> <!-- Draconic Bow Shaft -->
-				<item id="6578" min="1" max="1" chance="6.5183868289032" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="1" chance="73.331512463089" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1570,7 +1560,6 @@
 				<item id="4081" min="20" max="60" chance="5.89906064465332" /> <!-- Doom Plate Armor Temper -->
 				<item id="97" min="1" max="1" chance="2.13512442399597" /> <!-- Lance -->
 				<item id="4115" min="12" max="36" chance="19.582275173172" /> <!-- Lance Blade -->
-				<item id="6572" min="1" max="1" chance="18.6202975047302" /> <!-- Blessed Scroll: Enchant Armor (B-Grade) -->
 				<item id="948" min="3" max="9" chance="29.0942029225159" /> <!-- Scroll: Enchant Armor (B-Grade) -->
 			</drop>
 		</dropLists>
@@ -1721,8 +1710,6 @@
 				<item id="6346" min="28" max="84" chance="17.274423655632" /> <!-- Sealed Majestic Ring Gemstone -->
 				<item id="236" min="1" max="1" chance="1.28929037490845" /> <!-- Soul Separator -->
 				<item id="5537" min="3" max="9" chance="61.1370096739197" /> <!-- Soul Separator Head -->
-				<item id="6578" min="1" max="1" chance="3.85161662108898" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="6569" min="1" max="1" chance="1.15548348419666" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1793,7 +1780,6 @@
 				<item id="5532" min="8" max="22" chance="15.6394960905037" /> <!-- Meteor Shower Head -->
 				<item id="729" min="1" max="1" chance="6.68001881694794" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				<item id="730" min="1" max="1" chance="50.1002850818634" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.801597651481628" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1863,7 +1849,6 @@
 				<item id="5534" min="12" max="36" chance="25.5202338859463" /> <!-- Soul Bow Stave -->
 				<item id="959" min="1" max="1" chance="3.85600163464355" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="38.560102464035" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.642695644973755" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2013,7 +1998,6 @@
 				<item id="5547" min="8" max="22" chance="17.0117724742546" /> <!-- Elemental Sword Edge -->
 				<item id="729" min="1" max="1" chance="7.201896905056" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				<item id="730" min="1" max="1" chance="54.0143819891739" /> <!-- Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="0.864222662166595" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2312,7 +2296,6 @@
 				<item id="6691" min="12" max="36" chance="20.3791091875" /> <!-- Angel Slayer Blade -->
 				<item id="959" min="1" max="1" chance="3.9110315135498" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="39.1104024821014" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.651867701126099" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2377,7 +2360,6 @@
 				<item id="7579" min="12" max="36" chance="27.6310867441063" /> <!-- Draconic Bow Shaft -->
 				<item id="959" min="1" max="1" chance="5.24214118139648" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="52.4215288887634" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.873729221832275" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2527,7 +2509,6 @@
 				<item id="5528" min="14" max="42" chance="21.1694468838692" /> <!-- Sealed Majestic Circlet Design -->
 				<item id="236" min="1" max="1" chance="2.15126777972412" /> <!-- Soul Separator -->
 				<item id="5537" min="12" max="36" chance="25.5028326383667" /> <!-- Soul Separator Head -->
-				<item id="6578" min="1" max="1" chance="6.42666185650635" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="730" min="1" max="3" chance="60.2496381923218" /> <!-- Scroll: Enchant Armor (A-Grade) -->
 			</drop>
 		</dropLists>
@@ -2588,8 +2569,6 @@
 				<item id="6675" min="1" max="1" chance="4.72129708192444" /> <!-- Sealed Imperial Crusader Gaiters -->
 				<item id="6701" min="53" max="157" chance="9.56151084883118" /> <!-- Sealed Imperial Crusader Breastplate Part -->
 				<item id="6702" min="24" max="72" chance="26.9241416948395" /> <!-- Sealed Imperial Crusader Gaiters Pattern -->
-				<item id="6578" min="1" max="1" chance="6.5183868289032" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="1" chance="73.331512463089" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2747,7 +2726,6 @@
 				<item id="5538" min="12" max="36" chance="25.2309504894791" /> <!-- Dragon Grinder Edge -->
 				<item id="959" min="1" max="1" chance="3.81564065100098" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="38.1564917262115" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.635968513900757" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2902,8 +2880,6 @@
 				<item id="5479" min="20" max="60" chance="7.10474168410873" /> <!-- Sealed Tallum Leather Armor Pattern -->
 				<item id="269" min="1" max="1" chance="3.06601896917343" /> <!-- Blood Tornado -->
 				<item id="5539" min="12" max="36" chance="30.3674794133949" /> <!-- Blood Tornado Edge -->
-				<item id="6570" min="1" max="1" chance="15.5644613294621" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
-				<item id="6569" min="1" max="1" chance="1.86773814868736" /> <!-- Blessed Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -2972,8 +2948,6 @@
 				<item id="6343" min="140" max="420" chance="2.97821593772888" /> <!-- Sealed Phoenix Necklace Beads -->
 				<item id="6341" min="81" max="243" chance="6.65883170294189" /> <!-- Sealed Phoenix Earring Gemstone -->
 				<item id="6345" min="40" max="120" chance="18.65025121698" /> <!-- Sealed Phoenix Ring Gemstone -->
-				<item id="6572" min="1" max="1" chance="20.222959114315" /> <!-- Blessed Scroll: Enchant Armor (B-Grade) -->
-				<item id="6571" min="1" max="1" chance="2.16674082159805" /> <!-- Blessed Scroll: Enchant Weapon (B-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -3349,7 +3323,6 @@
 				<item id="2504" min="1" max="1" chance="1.54536086958313" /> <!-- Meteor Shower -->
 				<item id="5543" min="4" max="12" chance="46.3502540832672" /> <!-- Dasparion's Staff Head -->
 				<item id="5532" min="8" max="22" chance="24.4891236648712" /> <!-- Meteor Shower Head -->
-				<item id="6570" min="1" max="1" chance="15.6898498535156" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 				<item id="729" min="1" max="1" chance="15.6898498535156" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 			</drop>
 		</dropLists>
@@ -3506,7 +3479,6 @@
 				<item id="6694" min="12" max="36" chance="20.7484077634048" /> <!-- Saint Spear Blade -->
 				<item id="959" min="1" max="1" chance="3.9110315135498" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="39.1104024821014" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.651867701126099" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -3656,7 +3628,6 @@
 				<item id="6346" min="28" max="84" chance="28.5214224471588" /> <!-- Sealed Majestic Ring Gemstone -->
 				<item id="289" min="1" max="1" chance="2.12875111291122" /> <!-- Soul Bow -->
 				<item id="5534" min="12" max="36" chance="25.2531496744423" /> <!-- Soul Bow Stave -->
-				<item id="6578" min="1" max="1" chance="6.35939417652893" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="730" min="1" max="3" chance="59.6190070075531" /> <!-- Scroll: Enchant Armor (A-Grade) -->
 			</drop>
 		</dropLists>
@@ -3871,7 +3842,6 @@
 				<item id="4619" min="1" max="3" chance="41.3920529053803" /> <!-- Greater Dye of INT <Int+4 Men-4> -->
 				<item id="4620" min="2" max="4" chance="27.5946714710541" /> <!-- Greater Dye of INT <Int+4 Wit-4> -->
 				<item id="4621" min="2" max="6" chance="20.6960721514893" /> <!-- Greater Dye of MEN <Men+4 Int-4> -->
-				<item id="6571" min="1" max="1" chance="1.71480173867798" /> <!-- Blessed Scroll: Enchant Weapon (B-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4026,8 +3996,6 @@
 				<item id="6372" min="1" max="1" chance="0.529196723937988" /> <!-- Heaven's Divider -->
 				<item id="6688" min="8" max="22" chance="16.3036166183472" /> <!-- Forgotten Blade Edge -->
 				<item id="6696" min="4" max="12" chance="31.0548905685425" /> <!-- Heavens Divider Edge -->
-				<item id="6578" min="1" max="1" chance="6.5183868289032" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="1" chance="73.331512463089" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4252,7 +4220,6 @@
 				<item id="4113" min="12" max="36" chance="37.363584824276" /> <!-- Great Axe Head -->
 				<item id="947" min="1" max="1" chance="30.1198162875252" /> <!-- Scroll: Enchant Weapon (B-Grade) -->
 				<item id="948" min="3" max="9" chance="31.3748537154923" /> <!-- Scroll: Enchant Armor (B-Grade) -->
-				<item id="6571" min="1" max="1" chance="2.15142908755875" /> <!-- Blessed Scroll: Enchant Weapon (B-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4326,7 +4293,6 @@
 				<item id="5537" min="12" max="36" chance="25.2358523247681" /> <!-- Soul Separator Head -->
 				<item id="959" min="1" max="1" chance="3.81564065100098" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="38.1564917262115" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.635968513900757" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4409,7 +4375,6 @@
 				<item id="6697" min="3" max="7" chance="23.9974680282898" /> <!-- Arcana Mace Head -->
 				<item id="959" min="1" max="1" chance="3.9110315135498" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="39.1104024821014" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.651867701126099" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4471,8 +4436,6 @@
 				<item id="6696" min="4" max="12" chance="36.8804608571549" /> <!-- Heavens Divider Edge -->
 				<item id="7575" min="1" max="1" chance="1.88540755904388" /> <!-- Draconic Bow -->
 				<item id="7579" min="12" max="36" chance="36.7230938752823" /> <!-- Draconic Bow Shaft -->
-				<item id="6578" min="1" max="1" chance="11.6117732575912" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="3" chance="65.3164265104752" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4628,7 +4591,6 @@
 				<item id="6691" min="12" max="36" chance="36.3030950443039" /> <!-- Angel Slayer Blade -->
 				<item id="959" min="1" max="1" chance="6.9670563704834" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="69.6707193028412" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="1.16122792774963" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				<item id="10296" min="1" max="1" chance="1" /> <!-- Transformation Sealbook: Anakim -->
 			</drop>
 		</dropLists>
@@ -4811,8 +4773,6 @@
 				<item id="6702" min="24" max="72" chance="14.4349851655807" /> <!-- Sealed Imperial Crusader Gaiters Pattern -->
 				<item id="6367" min="1" max="1" chance="1.41861648364449" /> <!-- Angel Slayer -->
 				<item id="6691" min="12" max="36" chance="27.315184404417" /> <!-- Angel Slayer Blade -->
-				<item id="6578" min="1" max="1" chance="8.73691266308975" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="3" chance="49.1452856706505" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4965,7 +4925,6 @@
 				<item id="6702" min="24" max="72" chance="21.6526258566513" /> <!-- Sealed Imperial Crusader Gaiters Pattern -->
 				<item id="959" min="1" max="1" chance="5.24214118139648" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="52.4215288887634" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.873729221832275" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -5110,7 +5069,6 @@
 				<item id="213" min="1" max="1" chance="1.08554225786591" /> <!-- Branch of the Mother Tree -->
 				<item id="5533" min="4" max="12" chance="38.599681918087" /> <!-- Elysian Head -->
 				<item id="5544" min="8" max="22" chance="20.5662353667183" /> <!-- Branch of the Mother Tree Head -->
-				<item id="6578" min="1" max="1" chance="6.4858721222229" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 				<item id="730" min="1" max="3" chance="60.8047315154724" /> <!-- Scroll: Enchant Armor (A-Grade) -->
 			</drop>
 		</dropLists>
@@ -5260,8 +5218,6 @@
 				<item id="6707" min="12" max="36" chance="21.621151780796" /> <!-- Sealed Draconic Leather Armor Part -->
 				<item id="6367" min="1" max="1" chance="0.734770422222138" /> <!-- Angel Slayer -->
 				<item id="6691" min="3" max="9" chance="56.5930303285103" /> <!-- Angel Slayer Blade -->
-				<item id="6578" min="1" max="1" chance="4.52527626508713" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="3936" min="1" max="1" chance="50.9091223860359" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>

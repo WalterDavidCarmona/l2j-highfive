@@ -78,9 +78,9 @@ public class AdminEvents implements IAdminCommandHandler
 		{
 			try
 			{
-				if (eventName != null)
+				if (!eventName.isEmpty())
 				{
-					final Event event = (Event) ScriptManager.getInstance().getScript(eventName);
+					final Event event = findEvent(eventName);
 					if (event != null)
 					{
 						if (event.eventStart(activeChar))
@@ -88,10 +88,10 @@ public class AdminEvents implements IAdminCommandHandler
 							activeChar.sendSysMessage("Event " + eventName + " started.");
 							return true;
 						}
-						
 						activeChar.sendSysMessage("There is problem starting " + eventName + " event.");
 						return true;
 					}
+					activeChar.sendSysMessage("Event not found: " + eventName);
 				}
 			}
 			catch (Exception e)
@@ -104,9 +104,9 @@ public class AdminEvents implements IAdminCommandHandler
 		{
 			try
 			{
-				if (eventName != null)
+				if (!eventName.isEmpty())
 				{
-					final Event event = (Event) ScriptManager.getInstance().getScript(eventName);
+					final Event event = findEvent(eventName);
 					if (event != null)
 					{
 						if (event.eventStop())
@@ -114,15 +114,15 @@ public class AdminEvents implements IAdminCommandHandler
 							activeChar.sendSysMessage("Event " + eventName + " stopped.");
 							return true;
 						}
-						
-						activeChar.sendSysMessage("There is problem with stoping " + eventName + " event.");
+						activeChar.sendSysMessage("There is problem stopping " + eventName + " event.");
 						return true;
 					}
+					activeChar.sendSysMessage("Event not found: " + eventName);
 				}
 			}
 			catch (Exception e)
 			{
-				activeChar.sendSysMessage("Usage: //event_start <eventname>");
+				activeChar.sendSysMessage("Usage: //event_stop <eventname>");
 				return false;
 			}
 		}
@@ -130,12 +130,16 @@ public class AdminEvents implements IAdminCommandHandler
 		{
 			try
 			{
-				if (eventName != null)
+				if (!eventName.isEmpty())
 				{
-					final Event event = (Event) ScriptManager.getInstance().getScript(eventName);
+					final Event event = findEvent(eventName);
 					if (event != null)
 					{
 						event.eventBypass(activeChar, eventBypass);
+					}
+					else
+					{
+						activeChar.sendSysMessage("Event not found: " + eventName);
 					}
 				}
 			}
@@ -149,6 +153,59 @@ public class AdminEvents implements IAdminCommandHandler
 		return false;
 	}
 	
+	private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(AdminEvents.class.getName());
+
+	/**
+	 * Busca un evento por nombre con multiples estrategias de fallback.
+	 */
+	private Event findEvent(String name)
+	{
+		// Intento 1: getScript directo
+		try
+		{
+			final Quest q = ScriptManager.getInstance().getScript(name);
+			if (q instanceof Event)
+			{
+				return (Event) q;
+			}
+			if (q != null)
+			{
+				LOG.warning("AdminEvents.findEvent: getScript('" + name + "') retorno " + q.getClass().getName() + " que NO es instanceof Event");
+			}
+		}
+		catch (Exception e)
+		{
+			LOG.warning("AdminEvents.findEvent: excepcion en getScript('" + name + "'): " + e.getMessage());
+		}
+
+		// Intento 2: iteracion de _scripts por nombre simple de clase o getName()
+		for (Quest q : ScriptManager.getInstance().getScripts().values())
+		{
+			final String simpleName = q.getClass().getSimpleName();
+			final String qName      = q.getName();
+			if (simpleName.equals(name) || qName.equals(name))
+			{
+				if (q instanceof Event)
+				{
+					return (Event) q;
+				}
+				LOG.warning("AdminEvents.findEvent: encontrado '" + name + "' pero NO es instanceof Event, es " + q.getClass().getName());
+			}
+		}
+
+		// Diagnostico: listar todos los Events cargados
+		final StringBuilder loaded = new StringBuilder();
+		for (Quest q : ScriptManager.getInstance().getScripts().values())
+		{
+			if (q instanceof Event)
+			{
+				loaded.append(q.getClass().getSimpleName()).append(" ");
+			}
+		}
+		LOG.warning("AdminEvents.findEvent: '" + name + "' NO encontrado. Events cargados: [" + loaded.toString().trim() + "]");
+		return null;
+	}
+
 	private void showMenu(Player activeChar)
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage();

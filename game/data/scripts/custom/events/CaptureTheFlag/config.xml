@@ -1,15 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <event name="Capture The Flag" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../xsd/event.xsd">
-	<!-- 
-		The pattern attribute specifies the schedule time of the event.
-		- Minutes (0-59)
-		- Hours (0-23)
-		- Day of the month (1-31)
-		- Month (1-12)
-		- Day of the week (0-7)
-		You can use * as a wildcard value.
-		You can use multiple schedule elements.
+	<!--
+		SCHEDULE: El evento inicia automaticamente en horas impares.
+		Formato cron: Minutos Horas DiaMes Mes DiaSemana
+		0 1-23/2 * * *  =  01:00, 03:00, 05:00, 07:00, 09:00, 11:00, 13:00, 15:00, 17:00, 19:00, 21:00, 23:00
 	-->
-	<!-- Run at 20:00 (8:00 PM) every day. -->
-	<!-- <schedule pattern="0 20 * * *" /> -->
+	<schedule pattern="0 1-23/2 * * *" />
+
+	<!--
+		FIGHT_TIME: Duracion del combate en minutos.
+		Default: 20
+	-->
+	<fightTime minutes="20" />
+
+	<!--
+		ZONE ROTATION: Lista de zonas que se van rotando en orden al terminar cada evento.
+		Cada zona define:
+		  - name           : Nombre descriptivo (informativo y anunciado al iniciar)
+		  - instanceId     : ID de la instancia a cargar
+		  - blueDoor       : ID de la puerta del equipo azul (0 = sin puerta)
+		  - redDoor        : ID de la puerta del equipo rojo  (0 = sin puerta)
+		  - bluePeace      : Nombre de la ZoneType de paz del equipo azul
+		  - redPeace       : Nombre de la ZoneType de paz del equipo rojo
+		  - blueSpawnZone  : Nombre de la ZoneType de spawn aleatorio azul
+		  - redSpawnZone   : Nombre de la ZoneType de spawn aleatorio rojo
+		  - blueBufferX/Y/Z/H : Spawn del buffer del equipo azul
+		  - redBufferX/Y/Z/H  : Spawn del buffer del equipo rojo
+		  - blueFlagX/Y/Z/H  : Posicion del HQ / bandera azul
+		  - redFlagX/Y/Z/H   : Posicion del HQ / bandera roja
+	-->
+	<zones>
+		<zone name="Colosseum"
+			instanceId="3050"
+			blueDoor="24190002"
+			redDoor="24190003"
+			bluePeace="colosseum_peace1"
+			redPeace="colosseum_peace2"
+			blueSpawnZone="blue_team_spawn"
+			redSpawnZone="red_team_spawn"
+			blueBufferX="147450" blueBufferY="46913" blueBufferZ="-3400" blueBufferH="49000"
+			redBufferX="151545"  redBufferY="46528"  redBufferZ="-3400"  redBufferH="16000"
+			blueFlagX="148487"   blueFlagY="46703"   blueFlagZ="-3414"   blueFlagH="297"
+			redFlagX="150452"    redFlagY="46714"    redFlagZ="-3414"    redFlagH="34490"
+		/>
+		<!-- Segunda zona: descomenta y configura los valores reales
+		<zone name="Tully Workshop"
+			instanceId="9001"
+			bluePeace="tully_ctf_peace1"
+			redPeace="tully_ctf_peace2"
+			blueSpawnZone="tully_blue_spawn"
+			redSpawnZone="tully_red_spawn"
+			blueBufferX="0" blueBufferY="0" blueBufferZ="0" blueBufferH="0"
+			redBufferX="0"  redBufferY="0"  redBufferZ="0"  redBufferH="0"
+			blueFlagX="0"   blueFlagY="0"   blueFlagZ="0"   blueFlagH="0"
+			redFlagX="0"    redFlagY="0"    redFlagZ="0"    redFlagH="0"
+		/>
+		-->
+	</zones>
 </event>

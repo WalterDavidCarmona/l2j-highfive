@@ -11,6 +11,54 @@
 						</xs:simpleContent>
 					</xs:complexType>
 				</xs:element>
+				<xs:element name="fightTime" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:attribute type="xs:int" name="minutes" use="optional" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="zones" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="zone" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute type="xs:string" name="name" />
+									<xs:attribute type="xs:int"    name="instanceId" />
+									<xs:attribute type="xs:int"    name="blueDoor" />
+									<xs:attribute type="xs:int"    name="redDoor" />
+									<xs:attribute type="xs:string" name="bluePeace" />
+									<xs:attribute type="xs:string" name="redPeace" />
+									<xs:attribute type="xs:int"    name="blueSpawnX" />
+									<xs:attribute type="xs:int"    name="blueSpawnY" />
+									<xs:attribute type="xs:int"    name="blueSpawnZ" />
+									<xs:attribute type="xs:int"    name="blueSpawnH" />
+									<xs:attribute type="xs:int"    name="redSpawnX" />
+									<xs:attribute type="xs:int"    name="redSpawnY" />
+									<xs:attribute type="xs:int"    name="redSpawnZ" />
+									<xs:attribute type="xs:int"    name="redSpawnH" />
+									<xs:attribute type="xs:int"    name="blueBufferX" />
+									<xs:attribute type="xs:int"    name="blueBufferY" />
+									<xs:attribute type="xs:int"    name="blueBufferZ" />
+									<xs:attribute type="xs:int"    name="blueBufferH" />
+									<xs:attribute type="xs:int"    name="redBufferX" />
+									<xs:attribute type="xs:int"    name="redBufferY" />
+									<xs:attribute type="xs:int"    name="redBufferZ" />
+									<xs:attribute type="xs:int"    name="redBufferH" />
+									<!-- CTF-specific: spawn zones por nombre y posiciones de banderas -->
+									<xs:attribute type="xs:string" name="blueSpawnZone" />
+									<xs:attribute type="xs:string" name="redSpawnZone" />
+									<xs:attribute type="xs:int"    name="blueFlagX" />
+									<xs:attribute type="xs:int"    name="blueFlagY" />
+									<xs:attribute type="xs:int"    name="blueFlagZ" />
+									<xs:attribute type="xs:int"    name="blueFlagH" />
+									<xs:attribute type="xs:int"    name="redFlagX" />
+									<xs:attribute type="xs:int"    name="redFlagY" />
+									<xs:attribute type="xs:int"    name="redFlagZ" />
+									<xs:attribute type="xs:int"    name="redFlagH" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 			<xs:attributeGroup ref="boundsAttributeGroup" />
 		</xs:complexType>

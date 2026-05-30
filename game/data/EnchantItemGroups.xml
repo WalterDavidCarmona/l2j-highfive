@@ -28,6 +28,50 @@
 		<current enchant="16-65535" chance="0" />
 	</enchantRateGroup>
 
+	<!-- Blessed Scroll armor enchant group. -->
+	<enchantRateGroup name="BLESSED_ARMOR_GROUP">
+		<current enchant="0-2" chance="100" />
+		<current enchant="3-15" chance="66" />
+		<current enchant="16" chance="70" />
+		<current enchant="17" chance="50" />
+		<current enchant="18" chance="30" />
+		<current enchant="19" chance="10" />
+		<current enchant="20-65535" chance="0" />
+	</enchantRateGroup>
+
+	<!-- Blessed Scroll full armor enchant group. -->
+	<enchantRateGroup name="BLESSED_FULL_ARMOR_GROUP">
+		<current enchant="0-3" chance="100" />
+		<current enchant="4-15" chance="66" />
+		<current enchant="16" chance="70" />
+		<current enchant="17" chance="50" />
+		<current enchant="18" chance="30" />
+		<current enchant="19" chance="10" />
+		<current enchant="20-65535" chance="0" />
+	</enchantRateGroup>
+
+	<!-- Blessed Scroll fighter weapon enchant group. -->
+	<enchantRateGroup name="BLESSED_FIGHTER_WEAPON_GROUP">
+		<current enchant="0-2" chance="100" />
+		<current enchant="3-15" chance="66" />
+		<current enchant="16" chance="70" />
+		<current enchant="17" chance="50" />
+		<current enchant="18" chance="30" />
+		<current enchant="19" chance="10" />
+		<current enchant="20-65535" chance="0" />
+	</enchantRateGroup>
+
+	<!-- Blessed Scroll mage weapon enchant group. -->
+	<enchantRateGroup name="BLESSED_MAGE_WEAPON_GROUP">
+		<current enchant="0-2" chance="100" />
+		<current enchant="3-15" chance="66" />
+		<current enchant="16" chance="70" />
+		<current enchant="17" chance="50" />
+		<current enchant="18" chance="30" />
+		<current enchant="19" chance="10" />
+		<current enchant="20-65535" chance="0" />
+	</enchantRateGroup>
+
 	<!-- Default scrolls enchanting route line. -->
 	<enchantScrollGroup id="0">
 		<!-- Bind armor group to all item slots except full armor. -->
@@ -57,6 +101,34 @@
 		<enchantRate group="MAGE_WEAPON_GROUP">
 			<item slot="rhand" magicWeapon="true" /> <!-- Right hand: Weapons, Magic weapon -->
 			<item slot="lrhand" magicWeapon="true" /> <!-- Two hands: Weapons, Magic weapon -->
+		</enchantRate>
+	</enchantScrollGroup>
+
+	<!-- Blessed Scrolls enchanting route (scrollGroupId="1"). -->
+	<enchantScrollGroup id="1">
+		<enchantRate group="BLESSED_ARMOR_GROUP">
+			<item slot="lhand" />
+			<item slot="head" />
+			<item slot="chest" />
+			<item slot="legs" />
+			<item slot="feet" />
+			<item slot="gloves" />
+			<item slot="neck" />
+			<item slot="rear;lear" />
+			<item slot="rfinger;lfinger" />
+			<item slot="belt" />
+			<item slot="shirt" />
+		</enchantRate>
+		<enchantRate group="BLESSED_FULL_ARMOR_GROUP">
+			<item slot="fullarmor" />
+		</enchantRate>
+		<enchantRate group="BLESSED_FIGHTER_WEAPON_GROUP">
+			<item slot="rhand" magicWeapon="false" />
+			<item slot="lrhand" magicWeapon="false" />
+		</enchantRate>
+		<enchantRate group="BLESSED_MAGE_WEAPON_GROUP">
+			<item slot="rhand" magicWeapon="true" />
+			<item slot="lrhand" magicWeapon="true" />
 		</enchantRate>
 	</enchantScrollGroup>
 </list>

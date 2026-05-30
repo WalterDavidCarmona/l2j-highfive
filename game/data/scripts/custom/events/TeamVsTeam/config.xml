@@ -34,23 +34,21 @@
 			redDoor="24190003"
 			bluePeace="colosseum_peace1"
 			redPeace="colosseum_peace2"
+			blueSpawnX="-12524" blueSpawnY="277861" blueSpawnZ="-11936" blueSpawnH="0"
+			redSpawnX="-12496"  redSpawnY="281546"  redSpawnZ="-11936"  redSpawnH="0"
+			blueBufferX="-12505" blueBufferY="277782" blueBufferZ="-11936" blueBufferH="49000"
+			redBufferX="-12511"  redBufferY="281608"  redBufferZ="-11936"  redBufferH="16000"
+		/>
+		<!-- Tully Workshop: sin puertas (blueDoor/redDoor omitidos = 0).
+		     Actualizar blueSpawnX/Y/Z, redSpawnX/Y/Z, buffer coords y peace zones con valores reales. -->
+		<zone name="Tully Workshop"
+			instanceId="9001"
+			bluePeace="tully_workshop_peace1"
+			redPeace="tully_workshop_peace2"
 			blueSpawnX="147447" blueSpawnY="46722" blueSpawnZ="-3416" blueSpawnH="0"
 			redSpawnX="151536"  redSpawnY="46722"  redSpawnZ="-3416"  redSpawnH="0"
 			blueBufferX="147450" blueBufferY="46913" blueBufferZ="-3400" blueBufferH="49000"
 			redBufferX="151545"  redBufferY="46528"  redBufferZ="-3400"  redBufferH="16000"
 		/>
-		<!-- Ejemplo de segunda zona: descomenta y configura las coordenadas correctas
-		<zone name="Aden Battlefield"
-			instanceId="3049"
-			blueDoor="24190002"
-			redDoor="24190003"
-			bluePeace="colosseum_peace1"
-			redPeace="colosseum_peace2"
-			blueSpawnX="147447" blueSpawnY="46722" blueSpawnZ="-3416" blueSpawnH="0"
-			redSpawnX="151536"  redSpawnY="46722"  redSpawnZ="-3416"  redSpawnH="0"
-			blueBufferX="147450" blueBufferY="46913" blueBufferZ="-3400" blueBufferH="49000"
-			redBufferX="151545"  redBufferY="46528"  redBufferZ="-3400"  redBufferH="16000"
-		/>
-		-->
 	</zones>
 </event>

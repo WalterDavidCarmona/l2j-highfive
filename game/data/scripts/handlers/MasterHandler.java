@@ -65,7 +65,7 @@ import handlers.actions.shiftclick.StaticObjectShiftClick;
 import handlers.actions.shiftclick.SummonShiftClick;
 import handlers.bypass.communityboard.ClanBoard;
 import handlers.bypass.communityboard.DropSearchBoard;
-import handlers.bypass.communityboard.FavoriteBoard;
+import handlers.bypass.communityboard.TournamentBoard;
 import handlers.bypass.communityboard.FriendsBoard;
 import handlers.bypass.communityboard.HomeBoard;
 import handlers.bypass.communityboard.HomepageBoard;
@@ -216,6 +216,7 @@ import handlers.chat.commands.user.Unstuck;
 import handlers.chat.commands.voiced.AutoPlay;
 import handlers.chat.commands.voiced.AutoPotion;
 import handlers.chat.commands.voiced.Banking;
+import handlers.chat.commands.voiced.Noble;
 import handlers.chat.commands.voiced.ChangePassword;
 import handlers.chat.commands.voiced.ChatAdmin;
 import handlers.chat.commands.voiced.ExperienceGain;
@@ -479,7 +480,7 @@ public class MasterHandler
 			// Community Board
 			ClanBoard.class,
 			DropSearchBoard.class,
-			FavoriteBoard.class,
+			TournamentBoard.class,
 			FriendsBoard.class,
 			HomeBoard.class,
 			HomepageBoard.class,
@@ -560,6 +561,7 @@ public class MasterHandler
 			OnlineInfoConfig.ENABLE_ONLINE_COMMAND ? Online.class : null,
 			PremiumSystemConfig.PREMIUM_SYSTEM_ENABLED ? Premium.class : null,
 			AutoPotionsConfig.AUTO_POTIONS_ENABLED ? AutoPotion.class : null,
+			Noble.class,
 		},
 		{
 			// Target Handlers

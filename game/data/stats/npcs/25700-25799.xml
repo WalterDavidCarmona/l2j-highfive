@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="25700" level="85" type="RaidBoss" name="Glakias" title="Archery Knight Captain">
 		<!-- Confirmed CT2.5 -->
@@ -131,7 +131,6 @@
 				<item id="13887" min="1" max="1" chance="1.69453350784588" /> <!-- Sealed Vesper Sigil -->
 				<item id="959" min="1" max="1" chance="4.48477320593262" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				<item id="960" min="1" max="1" chance="44.8478322195282" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.747495587722778" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -937,8 +936,6 @@
 				<item id="15698" min="1" max="1" chance="1.01629347412348" /> <!-- Sealed Moirai Leather Breastplate -->
 				<item id="15701" min="1" max="1" chance="1.62610655219793" /> <!-- Sealed Moirai Leather Legging -->
 				<item id="10223" min="1" max="1" chance="0.496300011873245" /> <!-- Icarus Spitter -->
-				<item id="6578" min="1" max="1" chance="5.54530869854736" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
-				<item id="6570" min="1" max="1" chance="13.8632911549683" /> <!-- Blessed Scroll: Enchant Armor (A-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1107,7 +1104,6 @@
 				<item id="14108" min="1" max="1" chance="0.483815421438217" /> <!-- Sealed Vesper Gaiters -->
 				<item id="13887" min="1" max="1" chance="1.15199436478615" /> <!-- Sealed Vesper Sigil -->
 				<item id="959" min="1" max="1" chance="2.74400408407593" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="3.04889600137329" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1179,7 +1175,6 @@
 				<item id="14114" min="1" max="1" chance="0.67883468337059" /> <!-- Sealed Vesper Leather Boots -->
 				<item id="14117" min="1" max="1" chance="0.678826537370682" /> <!-- Sealed Vesper Shoes -->
 				<item id="959" min="1" max="1" chance="3.07998816479111" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="3.42221196185684" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1245,7 +1240,6 @@
 				<item id="14111" min="1" max="1" chance="0.846364312150002" /> <!-- Sealed Vesper Shield -->
 				<item id="13887" min="1" max="1" chance="0.846364312150002" /> <!-- Sealed Vesper Sigil -->
 				<item id="959" min="1" max="1" chance="3.35998265359497" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6578" min="1" max="1" chance="3.73331721212769" /> <!-- Blessed Scroll: Enchant Armor (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1316,7 +1310,6 @@
 				<item id="14114" min="1" max="1" chance="0.802268281754017" /> <!-- Sealed Vesper Leather Boots -->
 				<item id="14117" min="1" max="1" chance="0.80225865455389" /> <!-- Sealed Vesper Shoes -->
 				<item id="959" min="1" max="1" chance="3.6400290152669" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.606670794761181" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1385,7 +1378,6 @@
 				<item id="14111" min="1" max="1" chance="0.987437261886597" /> <!-- Sealed Vesper Shield -->
 				<item id="13887" min="1" max="1" chance="0.987437261886597" /> <!-- Sealed Vesper Sigil -->
 				<item id="959" min="1" max="1" chance="3.91997198315382" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.653327901642322" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -1446,7 +1438,6 @@
 				<item id="14108" min="1" max="1" chance="0.74052564393568" /> <!-- Sealed Vesper Gaiters -->
 				<item id="13887" min="1" max="1" chance="1.76323724088335" /> <!-- Sealed Vesper Sigil -->
 				<item id="959" min="1" max="1" chance="4.20000078174353" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="6577" min="1" max="1" chance="0.699999313623905" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 			</drop>
 		</dropLists>
 		<collision>
@@ -4430,7 +4421,6 @@
 				<item id="6707" min="12" max="36" chance="21.62115241" /> <!-- Sealed Draconic Leather Armor Part -->
 				<item id="6367" min="1" max="1" chance="0.7347704126" /> <!-- Angel Slayer -->
 				<item id="6691" min="3" max="9" chance="56.5930295874" /> <!-- Angel Slayer Blade -->
-				<item id="3936" min="1" max="1" chance="50.9091236248" /> <!-- Blessed Scroll of Resurrection -->
 			</drop>
 		</dropLists>
 		<collision>

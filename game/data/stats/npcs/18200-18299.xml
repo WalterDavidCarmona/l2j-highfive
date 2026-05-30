@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="18200" level="78" type="Monster" name="Charm of Corner">
 		<!-- Confirmed CT2.5 -->
@@ -3694,8 +3694,6 @@
 				<item id="8631" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (B-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="10262" min="1" max="1" chance="40" /> <!-- Critical Hit Juice -->
 				<item id="10265" min="1" max="1" chance="40" /> <!-- Evasion Juice -->
 				<item id="10260" min="1" max="1" chance="38.1" /> <!-- Alacrity Juice -->
@@ -3759,8 +3757,6 @@
 				<item id="8631" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (B-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="10262" min="1" max="1" chance="40" /> <!-- Critical Hit Juice -->
 				<item id="10265" min="1" max="1" chance="40" /> <!-- Evasion Juice -->
 				<item id="10260" min="1" max="1" chance="38.1" /> <!-- Alacrity Juice -->
@@ -3824,8 +3820,6 @@
 				<item id="8631" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (B-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="10262" min="1" max="1" chance="40" /> <!-- Critical Hit Juice -->
 				<item id="10265" min="1" max="1" chance="40" /> <!-- Evasion Juice -->
 				<item id="10260" min="1" max="1" chance="38.1" /> <!-- Alacrity Juice -->
@@ -3887,8 +3881,6 @@
 				<item id="8632" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (A-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8738" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 61 -->
 				<item id="8737" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 58 -->
 				<item id="8736" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 55 -->
@@ -3953,8 +3945,6 @@
 				<item id="8632" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (A-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8738" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 61 -->
 				<item id="8737" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 58 -->
 				<item id="8736" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 55 -->
@@ -4018,8 +4008,6 @@
 				<item id="8632" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (A-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8738" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 61 -->
 				<item id="8737" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 58 -->
 				<item id="8736" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 55 -->
@@ -4083,8 +4071,6 @@
 				<item id="8632" min="1" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (A-Grade) -->
 				<item id="736" min="4" max="8" chance="90.91" /> <!-- Scroll of Escape -->
 				<item id="737" min="1" max="3" chance="90.91" /> <!-- Scroll of Resurrection -->
-				<item id="1538" min="1" max="2" chance="46.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8738" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 61 -->
 				<item id="8737" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 58 -->
 				<item id="8736" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 55 -->
@@ -4146,8 +4132,6 @@
 				<item id="8638" min="3" max="6" chance="54.47" /> <!-- Elixir of CP (A-Grade) -->
 				<item id="8627" min="2" max="2" chance="52.54" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8742" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 76 -->
 				<item id="8741" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 70 -->
 				<item id="8740" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 67 -->
@@ -4209,8 +4193,6 @@
 				<item id="8638" min="3" max="6" chance="54.47" /> <!-- Elixir of CP (A-Grade) -->
 				<item id="8627" min="2" max="2" chance="52.54" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8742" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 76 -->
 				<item id="8741" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 70 -->
 				<item id="8740" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 67 -->
@@ -4271,8 +4253,6 @@
 				<item id="8638" min="3" max="6" chance="54.47" /> <!-- Elixir of CP (A-Grade) -->
 				<item id="8627" min="2" max="2" chance="52.54" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8742" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 76 -->
 				<item id="8741" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 70 -->
 				<item id="8740" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 67 -->
@@ -4335,8 +4315,6 @@
 				<item id="8638" min="3" max="6" chance="54.47" /> <!-- Elixir of CP (A-Grade) -->
 				<item id="8627" min="2" max="2" chance="52.54" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="67.68" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8742" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 76 -->
 				<item id="8741" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 70 -->
 				<item id="8740" min="1" max="1" chance="36" /> <!-- Mid-Grade Life Stone - Level 67 -->
@@ -4402,8 +4380,6 @@
 				<item id="8627" min="2" max="2" chance="52.54" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="53.39" /> <!-- Elixir of Mental Strength (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="61.68" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="8742" min="1" max="1" chance="31.1" /> <!-- Mid-Grade Life Stone - Level 76 -->
 				<item id="8741" min="1" max="1" chance="32.56" /> <!-- Mid-Grade Life Stone - Level 70 -->
 				<item id="8740" min="1" max="1" chance="32" /> <!-- Mid-Grade Life Stone - Level 67 -->
@@ -4467,13 +4443,11 @@
 				<item id="8639" min="4" max="4" chance="97.14" /> <!-- Elixir of CP (S-Grade) -->
 				<item id="8627" min="2" max="2" chance="69.52" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="66.67" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
 				<item id="9574" min="1" max="1" chance="32" /> <!-- Mid-Grade Life Stone - Level 80 -->
 				<item id="10262" min="3" max="3" chance="40" /> <!-- Critical Hit Juice -->
 				<item id="10265" min="3" max="3" chance="40" /> <!-- Evasion Juice -->
 				<item id="14167" min="1" max="1" chance="38.1" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="10260" min="3" max="3" chance="38" /> <!-- Alacrity Juice -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="10264" min="3" max="3" chance="32.88" /> <!-- Casting Spd. Juice -->
 				<item id="10269" min="3" max="3" chance="33.72" /> <!-- Defense Juice -->
 				<item id="10268" min="3" max="3" chance="33.72" /> <!-- Speed Juice -->
@@ -4542,13 +4516,11 @@
 				<item id="8639" min="4" max="4" chance="97.14" /> <!-- Elixir of CP (S-Grade) -->
 				<item id="8627" min="2" max="2" chance="69.52" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="66.67" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
 				<item id="9574" min="1" max="1" chance="32" /> <!-- Mid-Grade Life Stone - Level 80 -->
 				<item id="10262" min="3" max="3" chance="40" /> <!-- Critical Hit Juice -->
 				<item id="10265" min="3" max="3" chance="40" /> <!-- Evasion Juice -->
 				<item id="14167" min="1" max="1" chance="38.1" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="10260" min="3" max="3" chance="38" /> <!-- Alacrity Juice -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="10264" min="3" max="3" chance="32.88" /> <!-- Casting Spd. Juice -->
 				<item id="10269" min="3" max="3" chance="33.72" /> <!-- Defense Juice -->
 				<item id="10268" min="3" max="3" chance="33.72" /> <!-- Speed Juice -->
@@ -4617,13 +4589,11 @@
 				<item id="8639" min="4" max="4" chance="97.14" /> <!-- Elixir of CP (S-Grade) -->
 				<item id="8627" min="2" max="2" chance="69.52" /> <!-- Elixir of Life (S-Grade) -->
 				<item id="8633" min="2" max="2" chance="66.67" /> <!-- Elixir of Mental Strength (S-Grade) -->
-				<item id="1538" min="1" max="2" chance="55.24" /> <!-- Blessed Scroll of Escape -->
 				<item id="9574" min="1" max="1" chance="32" /> <!-- Mid-Grade Life Stone - Level 80 -->
 				<item id="10262" min="3" max="3" chance="40" /> <!-- Critical Hit Juice -->
 				<item id="10265" min="3" max="3" chance="40" /> <!-- Evasion Juice -->
 				<item id="14167" min="1" max="1" chance="38.1" /> <!-- Mid-Grade Life Stone - Level 84 -->
 				<item id="10260" min="3" max="3" chance="38" /> <!-- Alacrity Juice -->
-				<item id="3936" min="1" max="1" chance="37.14" /> <!-- Blessed Scroll of Resurrection -->
 				<item id="10264" min="3" max="3" chance="32.88" /> <!-- Casting Spd. Juice -->
 				<item id="10269" min="3" max="3" chance="33.72" /> <!-- Defense Juice -->
 				<item id="10268" min="3" max="3" chance="33.72" /> <!-- Speed Juice -->

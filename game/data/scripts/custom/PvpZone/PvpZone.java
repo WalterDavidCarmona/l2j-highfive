@@ -32,6 +32,7 @@ import org.l2jmobius.gameserver.handler.BypassHandler;
 import org.l2jmobius.gameserver.handler.IBypassHandler;
 import org.l2jmobius.gameserver.managers.PunishmentManager;
 import org.l2jmobius.gameserver.managers.ZoneManager;
+import org.l2jmobius.gameserver.model.zone.ZoneId;
 import org.l2jmobius.gameserver.model.zone.type.BossZone;
 import org.l2jmobius.gameserver.model.Location;
 import org.l2jmobius.gameserver.model.actor.Creature;
@@ -74,6 +75,9 @@ public class PvpZone extends Script
 	private static int REWARD_BASE_COUNT = 50000;
 	private static int HERO_STREAK_REQUIRED = 5;
 	private static int RESPAWN_DELAY = 5;
+	// Anti-feed para rachas: evita que matar al mismo objetivo repetidamente sume streak
+	private static boolean ANTIFEED_STREAK_ENABLED = true;
+	private static int ANTIFEED_STREAK_COOLDOWN_SECONDS = 60;
 	// Top killer reward per zone rotation
 	private static int TOP_KILLER_REWARD_ITEM_ID = 0;
 	private static int TOP_KILLER_REWARD_COUNT = 1;
@@ -115,6 +119,8 @@ public class PvpZone extends Script
 	private static final Map<Integer, ClanBackup> CLAN_BACKUPS = new ConcurrentHashMap<Integer, ClanBackup>();
 	/** Original personal title of each participant, saved on entry and restored on exit */
 	private static final Map<Integer, String> ORIGINAL_TITLES = new ConcurrentHashMap<Integer, String>();
+	/** Anti-feed de racha: "killerId:killedId" -> timestamp del ultimo kill valido para streak. */
+	private static final Map<String, Long> STREAK_ANTI_FEED = new ConcurrentHashMap<String, Long>();
 
 	private static final int NPC_ID = 30999;
 	private static final int NOBLESSE_BLESSING_ID = 1323;
@@ -259,6 +265,8 @@ public class PvpZone extends Script
 		REWARD_BASE_COUNT = Integer.parseInt(props.getProperty("RewardBaseCount", "50000").trim());
 		HERO_STREAK_REQUIRED = Integer.parseInt(props.getProperty("HeroStreakRequired", "5").trim());
 		RESPAWN_DELAY = Integer.parseInt(props.getProperty("RespawnDelay", "5").trim());
+		ANTIFEED_STREAK_ENABLED = Boolean.parseBoolean(props.getProperty("AntiFeedStreakEnabled", "True").trim());
+		ANTIFEED_STREAK_COOLDOWN_SECONDS = Integer.parseInt(props.getProperty("AntiFeedStreakCooldownSeconds", "60").trim());
 		TOP_KILLER_REWARD_ITEM_ID = Integer.parseInt(props.getProperty("TopKillerRewardItemId", "0").trim());
 		TOP_KILLER_REWARD_COUNT = Integer.parseInt(props.getProperty("TopKillerRewardCount", "1").trim());
 		ZONE_TITLE = props.getProperty("ZoneTitle", "Lineage2IA").trim();
@@ -327,6 +335,7 @@ public class PvpZone extends Script
 			+ " RewardId=" + REWARD_ITEM_ID + " BaseCount=" + REWARD_BASE_COUNT
 			+ " HeroStreak=" + HERO_STREAK_REQUIRED + " RespawnDelay=" + RESPAWN_DELAY
 			+ " BlockParty=" + BLOCK_PARTY
+			+ " AntiFeedStreak=" + ANTIFEED_STREAK_ENABLED + " Cooldown=" + ANTIFEED_STREAK_COOLDOWN_SECONDS + "s"
 			+ " Return=(" + RETURN_X + "," + RETURN_Y + "," + RETURN_Z + ")"
 			+ " Zones=" + ZONES.size() + " Streaks=" + STREAKS.size());
 	}
@@ -496,6 +505,9 @@ public class PvpZone extends Script
 		CustomPvpZoneRegistry.register(player.getObjectId());
 		KILL_STREAKS.put(player.getObjectId(), 0);
 
+		// Bloquear summon de aliados hacia/desde esta zona
+		player.setInsideZone(ZoneId.NO_SUMMON_FRIEND, true);
+
 		// Add event listeners
 		addDeathListener(player);
 		addLogoutListener(player);
@@ -646,6 +658,8 @@ public class PvpZone extends Script
 
 		CustomPvpZoneRegistry.unregister(player.getObjectId());
 		KILL_STREAKS.remove(player.getObjectId());
+		final int pid = player.getObjectId();
+		STREAK_ANTI_FEED.entrySet().removeIf(e -> e.getKey().startsWith(pid + ":") || e.getKey().endsWith(":" + pid));
 		ZONE_KILLS.remove(player.getObjectId());
 		ZONE_KILL_NAMES.remove(player.getObjectId());
 		ZONE_KILL_CLASSES.remove(player.getObjectId());
@@ -705,6 +719,9 @@ public class PvpZone extends Script
 			player.sendMessage("Tu status de Hero ha sido removido.");
 		}
 
+		// Restaurar permiso de summon de aliados
+		player.setInsideZone(ZoneId.NO_SUMMON_FRIEND, false);
+
 		// Remove PvP flag immediately
 		player.setPvpFlagLasts(0);
 		player.stopPvPFlag();
@@ -723,6 +740,13 @@ public class PvpZone extends Script
 		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.FINISH, buildRealNameScoreboard(), true));
 		// Dismiss the ExPVPMatchCCRecord window on the client side
 		player.sendPacket(ExPVPMatchCCRetire.STATIC);
+
+		// Actualizar el ranking para los participantes que siguen en la zona
+		final Map<String, Integer> updatedScores = buildRealNameScoreboard();
+		for (Player participant : PARTICIPANTS)
+		{
+			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
+		}
 
 		// Clear timer UI
 		player.sendPacket(new ExSendUIEvent(player, true, true, 0, 0, ""));
@@ -750,12 +774,16 @@ public class PvpZone extends Script
 			return;
 		}
 
-		// Player teleported by external means (SOE, /unstuck, GM, etc.) — remove from zone
+		// Teleport externo (SOE, /unstuck, Gate Chant, GM, etc.)
 		if (PARTICIPANTS.contains(player))
 		{
-			removeFromZone(player, true);
-			player.sendPacket(new ExShowScreenMessage("Has salido de la zona PvP.", 5000));
-			player.sendMessage("Has abandonado la zona PvP.");
+			// Bloquear: devolver al jugador a la zona en lugar de sacarlo
+			INTERNAL_TELEPORT.add(player.getObjectId());
+			final PvpZoneData zone = ZONES.get(_currentZoneIndex);
+			final Location spawn = zone.getRandomSpawn();
+			player.teleToLocation(spawn.getX() + Rnd.get(-50, 50), spawn.getY() + Rnd.get(-50, 50), spawn.getZ(), 0);
+			player.sendMessage("[ZonaPvP] No puedes ser transportado fuera de la zona mientras participas.");
+			player.sendPacket(new ExShowScreenMessage("No puedes salir de la Zona PvP por summon o scroll.", 5000));
 		}
 	}
 
@@ -797,9 +825,33 @@ public class PvpZone extends Script
 			if (PARTICIPANTS.contains(killer) && (killer.getObjectId() != killed.getObjectId()))
 			{
 				// ---- Kill valido: procesar recompensa ----
+				// Anti-feed de racha: el mismo killer no puede sumar streak contra el mismo killed
+				// en menos de ANTIFEED_STREAK_COOLDOWN_SECONDS segundos.
+				boolean streakCounts = true;
+				if (ANTIFEED_STREAK_ENABLED)
+				{
+					final String pairKey = killer.getObjectId() + ":" + killed.getObjectId();
+					final long now = System.currentTimeMillis();
+					final Long lastKill = STREAK_ANTI_FEED.get(pairKey);
+					final long cooldownMs = ANTIFEED_STREAK_COOLDOWN_SECONDS * 1000L;
+					if ((lastKill != null) && ((now - lastKill) < cooldownMs))
+					{
+						streakCounts = false;
+						final long remainSec = (cooldownMs - (now - lastKill)) / 1000L;
+						killer.sendMessage("[Anti-Feed] Kill no suma racha: mismo objetivo (espera " + remainSec + "s).");
+					}
+					else
+					{
+						STREAK_ANTI_FEED.put(pairKey, now);
+					}
+				}
+
 				int streak = KILL_STREAKS.containsKey(killer.getObjectId()) ? KILL_STREAKS.get(killer.getObjectId()) : 0;
-				streak++;
-				KILL_STREAKS.put(killer.getObjectId(), streak);
+				if (streakCounts)
+				{
+					streak++;
+					KILL_STREAKS.put(killer.getObjectId(), streak);
+				}
 
 				// Track total kills in this zone with real name
 				final int totalKills = ZONE_KILLS.containsKey(killer.getObjectId()) ? ZONE_KILLS.get(killer.getObjectId()) + 1 : 1;
@@ -818,16 +870,19 @@ public class PvpZone extends Script
 				final String currentZoneName = ZONES.get(_currentZoneIndex).name;
 				persistZoneKill(realName, currentZoneName, totalKills);
 
-				int rewardCount = REWARD_BASE_COUNT;
-				for (int[] streakData : STREAKS)
+				if (streakCounts)
 				{
-					if (streak >= streakData[0])
+					int rewardCount = REWARD_BASE_COUNT;
+					for (int[] streakData : STREAKS)
 					{
-						rewardCount = streakData[1];
+						if (streak >= streakData[0])
+						{
+							rewardCount = streakData[1];
+						}
 					}
-				}
 
-				killer.addItem(ItemProcessType.REWARD, REWARD_ITEM_ID, rewardCount, killer, true);
+					killer.addItem(ItemProcessType.REWARD, REWARD_ITEM_ID, rewardCount, killer, true);
+				}
 
 				// Update scoreboard for all participants
 				SCOREBOARD.put(killer, totalKills);
@@ -841,24 +896,27 @@ public class PvpZone extends Script
 				killer.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
 				killer.startPvPFlag();
 
-				if ((streak >= HERO_STREAK_REQUIRED) && !killer.isHero())
+				if (streakCounts)
 				{
-					killer.setHero(true);
-					killer.broadcastUserInfo();
-					STREAK_HEROES.add(killer.getObjectId());
-					killer.sendPacket(new ExShowScreenMessage("Has alcanzado " + streak + " kills seguidas. Eres Hero!", 5000));
-
-					// Use real character name for the global announcement, not the class disguise
-					String heroRealName = ORIGINAL_NAMES.get(killer.getObjectId());
-					if (heroRealName == null)
+					if ((streak >= HERO_STREAK_REQUIRED) && !killer.isHero())
 					{
-						heroRealName = killer.getName();
+						killer.setHero(true);
+						killer.broadcastUserInfo();
+						STREAK_HEROES.add(killer.getObjectId());
+						killer.sendPacket(new ExShowScreenMessage("Has alcanzado " + streak + " kills seguidas. Eres Hero!", 5000));
+
+						// Use real character name for the global announcement, not the class disguise
+						String heroRealName = ORIGINAL_NAMES.get(killer.getObjectId());
+						if (heroRealName == null)
+						{
+							heroRealName = killer.getName();
+						}
+						Broadcast.toAllOnlinePlayersOnScreen(heroRealName + " es Hero con " + streak + " kills seguidas en la Zona PvP!");
 					}
-					Broadcast.toAllOnlinePlayersOnScreen(heroRealName + " es Hero con " + streak + " kills seguidas en la Zona PvP!");
-				}
-				else
-				{
-					killer.sendPacket(new ExShowScreenMessage("Racha: " + streak + " kills!", 2000));
+					else
+					{
+						killer.sendPacket(new ExShowScreenMessage("Racha: " + streak + " kills!", 2000));
+					}
 				}
 			}
 		}
@@ -968,8 +1026,9 @@ public class PvpZone extends Script
 		_currentZoneIndex = (_currentZoneIndex + 1) % ZONES.size();
 		_rotationStartTime = System.currentTimeMillis();
 
-		// Reset zone kills y scoreboard para la nueva zona
+		// Reset zone kills, anti-feed y scoreboard para la nueva zona
 		ZONE_KILLS.clear();
+		STREAK_ANTI_FEED.clear();
 		ZONE_KILL_NAMES.clear();
 		ZONE_KILL_CLASSES.clear();
 		SCOREBOARD.clear();

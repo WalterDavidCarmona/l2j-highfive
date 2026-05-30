@@ -181,10 +181,10 @@ public class TvT extends Event
 	private static final int INACTIVITY_TIME = 2; // Minutes
 	private static final int MINIMUM_PARTICIPANT_LEVEL = 76;
 	private static final int MAXIMUM_PARTICIPANT_LEVEL = 200;
-	private static final int MINIMUM_PARTICIPANT_COUNT = 4;
+	private static final int MINIMUM_PARTICIPANT_COUNT = 2;
 	private static final int MAXIMUM_PARTICIPANT_COUNT = 24; // Scoreboard has 25 slots
 	private static final int PARTY_MEMBER_COUNT = 7;
-	private static final ItemHolder REWARD = new ItemHolder(57, 100000); // Adena
+	private static final ItemHolder REWARD = new ItemHolder(6673, 10); // Adena
 	
 	// Misc
 	private static final Map<Player, Integer> PLAYER_SCORES = new ConcurrentHashMap<>();
@@ -612,10 +612,16 @@ public class TvT extends Event
 				// Set state STARTED
 				setState(EventState.STARTED);
 
-				// Open doors usando la zona activa.
+				// Open doors usando la zona activa (solo si la zona tiene puertas definidas).
 				final ArenaZone zoneSF = CURRENT_ZONE.get();
-				PVP_WORLD.openDoor(zoneSF.blueDoorId);
-				PVP_WORLD.openDoor(zoneSF.redDoorId);
+				if (zoneSF.blueDoorId != 0)
+				{
+					PVP_WORLD.openDoor(zoneSF.blueDoorId);
+				}
+				if (zoneSF.redDoorId != 0)
+				{
+					PVP_WORLD.openDoor(zoneSF.redDoorId);
+				}
 				
 				// add event FIGHT_TIME
 				for (Player participant : PLAYER_LIST)
@@ -642,10 +648,16 @@ public class TvT extends Event
 			}
 			case "EndFight":
 			{
-				// Close doors usando la zona activa.
+				// Close doors usando la zona activa (solo si la zona tiene puertas definidas).
 				final ArenaZone zoneEF = CURRENT_ZONE.get();
-				PVP_WORLD.closeDoor(zoneEF.blueDoorId);
-				PVP_WORLD.closeDoor(zoneEF.redDoorId);
+				if (zoneEF.blueDoorId != 0)
+				{
+					PVP_WORLD.closeDoor(zoneEF.blueDoorId);
+				}
+				if (zoneEF.redDoorId != 0)
+				{
+					PVP_WORLD.closeDoor(zoneEF.redDoorId);
+				}
 				
 				// Disable players.
 				for (Player participant : PLAYER_LIST)

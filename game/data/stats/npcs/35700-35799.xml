@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="35700" level="75" type="FortDoorman" name="Doorman">
 		<!-- Confirmed CT2.5 -->
@@ -1965,7 +1965,6 @@
 			<drop>
 				<group chance="14.633999824523926">
 					<item id="9580" min="1" max="1" chance="36.585" /> <!-- Thin Leather Shirt -->
-					<item id="1538" min="1" max="1" chance="63.415" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
 					<item id="9912" min="120" max="240" chance="100" /> <!-- Knight's Epaulette -->
@@ -3735,7 +3734,6 @@
 			<drop>
 				<group chance="19.511999130249023">
 					<item id="9580" min="1" max="1" chance="36.585" /> <!-- Thin Leather Shirt -->
-					<item id="1538" min="1" max="1" chance="63.415" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
 					<item id="9912" min="160" max="320" chance="100" /> <!-- Knight's Epaulette -->

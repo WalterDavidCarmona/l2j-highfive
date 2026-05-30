@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="29001" level="40" type="GrandBoss" name="Queen Ant">
 		<!-- Confirmed CT2.5 -->
@@ -1203,10 +1203,8 @@
 					<item id="729" min="1" max="19" chance="100" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				</group>
 				<group chance="100">
-					<item id="1538" min="1" max="59" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
-					<item id="3936" min="1" max="39" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="14000000" max="18000000" chance="100" /> <!-- Adena -->
@@ -1839,10 +1837,8 @@
 					<item id="959" min="1" max="19" chance="100" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 				<group chance="100">
-					<item id="1538" min="1" max="59" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
-					<item id="3936" min="1" max="39" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="14000000" max="18000000" chance="100" /> <!-- Adena -->
@@ -2875,10 +2871,8 @@
 					<item id="13467" min="1" max="1" chance="9.09" /> <!-- Vesper Thrower -->
 				</group>
 				<group chance="60">
-					<item id="1538" min="1" max="30" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="60">
-					<item id="3936" min="1" max="10" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="9000000" max="11000000" chance="100" /> <!-- Adena -->
@@ -3668,7 +3662,6 @@
 					<item id="8921" min="1" max="1" chance="47.2441" /> <!-- Demon Circlet -->
 					<item id="959" min="1" max="1" chance="4.7244" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 					<item id="960" min="1" max="1" chance="47.2441" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="6577" min="1" max="1" chance="0.7874" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -3846,7 +3839,6 @@
 				<group chance="20.40530014038086">
 					<item id="959" min="1" max="1" chance="8.9552" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 					<item id="960" min="1" max="1" chance="89.5522" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="6577" min="1" max="1" chance="1.4926" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 			</drop>
 		</dropLists>
@@ -4025,10 +4017,8 @@
 					<item id="729" min="1" max="19" chance="100" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				</group>
 				<group chance="100">
-					<item id="1538" min="1" max="59" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
-					<item id="3936" min="1" max="39" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="14000000" max="18000000" chance="100" /> <!-- Adena -->
@@ -4242,10 +4232,8 @@
 					<item id="729" min="1" max="19" chance="100" /> <!-- Scroll: Enchant Weapon (A-Grade) -->
 				</group>
 				<group chance="100">
-					<item id="1538" min="1" max="59" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="100">
-					<item id="3936" min="1" max="39" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="14000000" max="18000000" chance="100" /> <!-- Adena -->
@@ -4395,10 +4383,8 @@
 					<item id="959" min="1" max="19" chance="100" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 				<group chance="60">
-					<item id="1538" min="1" max="59" chance="100" /> <!-- Blessed Scroll of Escape -->
 				</group>
 				<group chance="60">
-					<item id="3936" min="1" max="39" chance="100" /> <!-- Blessed Scroll of Resurrection -->
 				</group>
 				<group chance="100">
 					<item id="57" min="14000000" max="18000000" chance="100" /> <!-- Adena -->
@@ -5850,7 +5836,6 @@
 				<group chance="36.84199905395508">
 					<item id="959" min="1" max="1" chance="8.9552" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 					<item id="960" min="1" max="1" chance="89.5522" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="6577" min="1" max="1" chance="1.4926" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 				</group>
 				<group chance="1.0">
 					<item id="10298" min="1" max="1" chance="100" /> <!-- Transformation Sealbook: Gordon -->
@@ -5928,7 +5913,6 @@
 				<group chance="52.37620162963867">
 					<item id="959" min="1" max="1" chance="4.7244" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
 					<item id="960" min="1" max="1" chance="47.2441" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="6577" min="1" max="1" chance="0.7874" /> <!-- Blessed Scroll: Enchant Weapon (S-Grade) -->
 					<item id="8920" min="1" max="1" chance="47.2441" /> <!-- Angel Halo -->
 				</group>
 			</drop>

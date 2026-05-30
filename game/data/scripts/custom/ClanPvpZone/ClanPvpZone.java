@@ -39,6 +39,7 @@ import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.clan.Clan;
 import org.l2jmobius.gameserver.model.events.EventType;
 import org.l2jmobius.gameserver.model.events.holders.actor.creature.OnCreatureDeath;
+import org.l2jmobius.gameserver.model.events.holders.actor.creature.OnCreatureTeleported;
 import org.l2jmobius.gameserver.model.events.holders.actor.player.OnPlayerLogout;
 import org.l2jmobius.gameserver.model.events.listeners.AbstractEventListener;
 import org.l2jmobius.gameserver.model.events.listeners.ConsumerEventListener;
@@ -46,6 +47,7 @@ import org.l2jmobius.gameserver.model.item.enums.ItemProcessType;
 import org.l2jmobius.gameserver.model.script.Script;
 import org.l2jmobius.gameserver.model.skill.Skill;
 import org.l2jmobius.gameserver.model.skill.enums.SkillFinishType;
+import org.l2jmobius.gameserver.model.zone.ZoneId;
 import org.l2jmobius.gameserver.model.zone.type.BossZone;
 import org.l2jmobius.gameserver.network.serverpackets.ExShowScreenMessage;
 import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
@@ -830,6 +832,9 @@ public class ClanPvpZone extends Script
 
 		removeParticipantListeners(player);
 
+		// Restaurar permiso de summon de aliados
+		player.setInsideZone(ZoneId.NO_SUMMON_FRIEND, false);
+
 		// Teletransportar al jugador eliminado al punto de retorno, revivido y full
 		if (player.isOnline())
 		{
@@ -1129,6 +1134,7 @@ public class ClanPvpZone extends Script
 				continue;
 			}
 			removeParticipantListeners(p);
+			p.setInsideZone(ZoneId.NO_SUMMON_FRIEND, false);
 			if (p.isOnline())
 			{
 				clearPvpFlag(p);
@@ -1236,24 +1242,68 @@ public class ClanPvpZone extends Script
 			EventType.ON_PLAYER_LOGOUT,
 			(OnPlayerLogout event) -> eliminatePlayer(event.getPlayer()),
 			this));
+
+		player.addListener(new ConsumerEventListener(
+			player,
+			EventType.ON_CREATURE_TELEPORTED,
+			(OnCreatureTeleported event) -> onParticipantTeleported(event.getCreature()),
+			this));
 	}
 
 	private void removeParticipantListeners(Player player)
 	{
-		for (AbstractEventListener listener : player.getListeners(EventType.ON_CREATURE_DEATH))
+		for (EventType type : new EventType[]{ EventType.ON_CREATURE_DEATH, EventType.ON_PLAYER_LOGOUT, EventType.ON_CREATURE_TELEPORTED })
 		{
-			if (listener.getOwner() == this)
+			for (AbstractEventListener listener : player.getListeners(type))
 			{
-				listener.unregisterMe();
+				if (listener.getOwner() == this)
+				{
+					listener.unregisterMe();
+				}
 			}
 		}
-		for (AbstractEventListener listener : player.getListeners(EventType.ON_PLAYER_LOGOUT))
+	}
+
+	private void onParticipantTeleported(org.l2jmobius.gameserver.model.actor.Creature creature)
+	{
+		if (!(creature instanceof Player))
 		{
-			if (listener.getOwner() == this)
-			{
-				listener.unregisterMe();
-			}
+			return;
 		}
+		final Player player = (Player) creature;
+
+		// Ignorar teleports internos (los que nosotros mismos programamos)
+		if (_internalTeleport.remove(player.getObjectId()))
+		{
+			return;
+		}
+
+		// Si el jugador es participante activo, devolverlo a su spawn de clan
+		if (!_allParticipants.contains(player))
+		{
+			return;
+		}
+
+		// Obtener spawn del clan del jugador
+		Location returnLoc = null;
+		if ((player.getClan() != null) && _clanSpawnMap.containsKey(player.getClan().getId()))
+		{
+			returnLoc = _clanSpawnMap.get(player.getClan().getId());
+		}
+		else if (!_clanSpawnMap.isEmpty())
+		{
+			returnLoc = _clanSpawnMap.values().iterator().next();
+		}
+
+		if (returnLoc == null)
+		{
+			return;
+		}
+
+		_internalTeleport.add(player.getObjectId());
+		player.teleToLocation(returnLoc.getX() + Rnd.get(-50, 50), returnLoc.getY() + Rnd.get(-50, 50), returnLoc.getZ(), 0);
+		player.sendMessage("[Clan PvP Zone] No puedes ser transportado fuera de la zona mientras participas.");
+		player.sendPacket(new ExShowScreenMessage("No puedes salir de la Clan PvP Zone por summon o scroll.", 5000));
 	}
 
 	// ---------------------------------------------------------------------------
@@ -1395,6 +1445,9 @@ public class ClanPvpZone extends Script
 					_allParticipants.add(player);
 					addParticipantListeners(player);
 					whitelistInBossZones(player);
+
+					// Bloquear summon de aliados hacia/desde esta zona
+					player.setInsideZone(ZoneId.NO_SUMMON_FRIEND, true);
 
 					// Teletransportar al spawn del clan
 					_internalTeleport.add(player.getObjectId());
