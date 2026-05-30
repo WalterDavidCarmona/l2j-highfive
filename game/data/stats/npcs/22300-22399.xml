@@ -5804,7 +5804,7 @@
 			<height normal="28" grown="34.5" />
 		</collision>
 	</npc>
-	<npc id="22373" level="83" type="Monster" name="Cosmic Scout">
+	<npc id="22373" level="90" type="Monster" name="Cosmic Scout">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -5827,7 +5827,7 @@
 		<sex>MALE</sex>
 		<acquire exp="91939" sp="9694" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="18734.280667127" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
+			<vitals hp="118734.280667127" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
 			<attack physical="10447.7711554943" magical="7217.43231271078" random="10" critical="4" accuracy="5" attackSpeed="253" type="FIST" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -5863,44 +5863,9 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="9599" min="1" max="2" chance="44.35" /> <!-- Ancient Tome of the Demon -->
-				<group chance="70">
-					<item id="57" min="3173" max="6405" chance="100" /> <!-- Adena -->
-				</group>
-				<group chance="2.8577001094818115">
-					<item id="15703" min="1" max="1" chance="0.0885" /> <!-- Sealed Moirai Gauntlet -->
-					<item id="15704" min="1" max="1" chance="0.0885" /> <!-- Sealed Moirai Leather Gloves -->
-					<item id="15705" min="1" max="1" chance="0.0885" /> <!-- Sealed Moirai Gloves -->
-					<item id="15654" min="1" max="1" chance="33.2449" /> <!-- Sealed Moirai Gauntlet Piece -->
-					<item id="15655" min="1" max="1" chance="33.2449" /> <!-- Sealed Moirai Leather Gloves Piece -->
-					<item id="15656" min="1" max="1" chance="33.2447" /> <!-- Sealed Moirai Gloves Piece -->
-				</group>
-				<group chance="45.355098724365234">
-					<item id="1873" min="2" max="6" chance="14.0819" /> <!-- Silver Nugget -->
-					<item id="1868" min="18" max="54" chance="9.7791" /> <!-- Thread -->
-					<item id="1876" min="1" max="1" chance="35.2047" /> <!-- Mithril Ore -->
-					<item id="1895" min="3" max="9" chance="7.1846" /> <!-- Metallic Fiber -->
-					<item id="4042" min="1" max="1" chance="2.9337" /> <!-- Enria -->
-					<item id="9551" min="1" max="1" chance="1.4082" /> <!-- Holy Stone -->
-					<item id="960" min="1" max="1" chance="0.0704" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="1345" min="40" max="120" chance="29.3374" /> <!-- Shining Arrow -->
-				</group>
+				<item id="10639" min="5" max="10" chance="70.00" />
+				<item id="57" min="500000" max="200000" chance="70.00" /> <!-- Adena -->
 			</drop>
-			<spoil>
-				<item id="15654" min="1" max="1" chance="2.6714" /> <!-- Sealed Moirai Gauntlet Piece -->
-				<item id="15655" min="1" max="1" chance="2.6714" /> <!-- Sealed Moirai Leather Gloves Piece -->
-				<item id="15656" min="1" max="1" chance="2.6714" /> <!-- Sealed Moirai Gloves Piece -->
-				<item id="15657" min="1" max="1" chance="2.6714" /> <!-- Sealed Moirai Boots Piece -->
-				<item id="15658" min="1" max="1" chance="2.6714" /> <!-- Sealed Moirai Leather Boots Piece -->
-				<item id="15659" min="1" max="1" chance="2.6714" /> <!-- Sealed Moirai Shoes Piece -->
-				<item id="9630" min="1" max="1" chance="1.5747" /> <!-- Orichalcum -->
-				<item id="15784" min="1" max="1" chance="0.3554" /> <!-- Recipe - Sealed Moirai Gauntlet (60%) -->
-				<item id="15785" min="1" max="1" chance="0.3554" /> <!-- Recipe - Sealed Moirai Leather Gloves (60%) -->
-				<item id="15786" min="1" max="1" chance="0.3554" /> <!-- Recipe - Sealed Moirai Gloves (60%) -->
-				<item id="15787" min="1" max="1" chance="0.3554" /> <!-- Recipe - Sealed Moirai Boots (60%) -->
-				<item id="15788" min="1" max="1" chance="0.3554" /> <!-- Recipe - Sealed Moirai Leather Boots (60%) -->
-				<item id="15789" min="1" max="1" chance="0.3554" /> <!-- Recipe - Sealed Moirai Shoes (60%) -->
-			</spoil>
 		</dropLists>
 		<collision>
 			<radius normal="15" />
@@ -6016,7 +5981,7 @@
 			<height normal="22.3" />
 		</collision>
 	</npc>
-	<npc id="22375" level="83" type="Monster" name="Cosmic Priest">
+	<npc id="22375" level="90" type="Monster" name="Cosmic Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="95" />
@@ -6046,7 +6011,7 @@
 		<equipment rhand="99" /> <!-- rhand: Apprentice's Spellbook -->
 		<acquire exp="533949" sp="56299" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="112316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="1112316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="9203.55601890295" magical="6357.91515855911" random="50" critical="1" accuracy="9" attackSpeed="253" type="BLUNT" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -6083,44 +6048,16 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="9599" min="3" max="9" chance="65.57" /> <!-- Ancient Tome of the Demon -->
-				<group chance="70">
-					<item id="57" min="18763" max="37877" chance="100" /> <!-- Adena -->
-				</group>
-				<group chance="11.236000061035156">
-					<item id="15694" min="1" max="1" chance="0.1331" /> <!-- Sealed Moirai Helmet -->
-					<item id="15695" min="1" max="1" chance="0.1331" /> <!-- Sealed Moirai Leather Helmet -->
-					<item id="15645" min="1" max="1" chance="49.8669" /> <!-- Sealed Moirai Helmet Piece -->
-					<item id="15646" min="1" max="1" chance="49.8669" /> <!-- Sealed Moirai Leather Helmet Piece -->
-				</group>
-				<group chance="46.621299743652344">
-					<item id="1879" min="3" max="9" chance="37.5045" /> <!-- Cokes -->
-					<item id="1885" min="2" max="6" chance="28.1284" /> <!-- High-Grade Suede -->
-					<item id="9628" min="1" max="1" chance="10.5895" /> <!-- Leonard -->
-					<item id="9630" min="1" max="1" chance="7.1061" /> <!-- Orichalcum -->
-					<item id="9629" min="1" max="1" chance="5.8703" /> <!-- Adamantine -->
-					<item id="9551" min="1" max="1" chance="10.8012" /> <!-- Holy Stone -->
-				</group>
+				<item id="10639" min="5" max="10" chance="70.00" />
+				<item id="57" min="500000" max="200000" chance="70.00" /> <!-- Adena -->
 			</drop>
-			<spoil>
-				<item id="15645" min="1" max="1" chance="13.6502" /> <!-- Sealed Moirai Helmet Piece -->
-				<item id="15646" min="1" max="1" chance="13.6502" /> <!-- Sealed Moirai Leather Helmet Piece -->
-				<item id="15647" min="1" max="1" chance="13.6502" /> <!-- Sealed Moirai Circlet Piece -->
-				<item id="15693" min="1" max="1" chance="24.4687" /> <!-- Sealed Moirai Shield Piece -->
-				<item id="15692" min="1" max="1" chance="24.4687" /> <!-- Sealed Moirai Sigil Piece -->
-				<item id="15775" min="1" max="1" chance="1.8215" /> <!-- Recipe - Sealed Moirai Helmet (60%) -->
-				<item id="15776" min="1" max="1" chance="1.8215" /> <!-- Recipe - Sealed Moirai Leather Helmet(60%) -->
-				<item id="15777" min="1" max="1" chance="1.8215" /> <!-- Recipe - Sealed Moirai Circlet (60%) -->
-				<item id="15791" min="1" max="1" chance="2.6022" /> <!-- Recipe - Sealed Moirai Shield (60%) -->
-				<item id="15790" min="1" max="1" chance="2.6022" /> <!-- Recipe - Sealed Moirai Sigil (60%) -->
-			</spoil>
 		</dropLists>
 		<collision>
 			<radius normal="5.5" grown="6.5" />
 			<height normal="28" grown="34.5" />
 		</collision>
 	</npc>
-	<npc id="22376" level="83" type="Monster" name="Cosmic Lord">
+	<npc id="22376" level="90" type="Monster" name="Cosmic Lord">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="160" />
@@ -6145,7 +6082,7 @@
 		<sex>MALE</sex>
 		<acquire exp="1086079" sp="114515" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="336949.124088359" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="1336949.124088359" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="7996.03660225228" magical="5523.74780111493" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -6182,35 +6119,9 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="9599" min="7" max="21" chance="74.58" /> <!-- Ancient Tome of the Demon -->
-				<group chance="70">
-					<item id="57" min="49794" max="100522" chance="100" /> <!-- Adena -->
-				</group>
-				<group chance="47.299198150634766">
-					<item id="15766" min="1" max="1" chance="0.1289" /> <!-- Sealed Moirai Ring -->
-					<item id="15767" min="1" max="1" chance="0.0859" /> <!-- Sealed Moirai Earring -->
-					<item id="15768" min="1" max="1" chance="0.0644" /> <!-- Sealed Moirai Necklace -->
-					<item id="15772" min="1" max="1" chance="48.7164" /> <!-- Sealed Moirai Ring Gem -->
-					<item id="15773" min="1" max="1" chance="27.3794" /> <!-- Sealed Moirai Earring Gem -->
-					<item id="15774" min="1" max="1" chance="23.625" /> <!-- Sealed Moirai Necklace Gem -->
-				</group>
-				<group chance="49.884300231933594">
-					<item id="1866" min="60" max="180" chance="18.6046" /> <!-- Suede -->
-					<item id="1871" min="240" max="720" chance="6.9767" /> <!-- Charcoal -->
-					<item id="5220" min="4" max="12" chance="14.8837" /> <!-- Metal Hardener -->
-					<item id="1885" min="38" max="114" chance="3.6243" /> <!-- High-Grade Suede -->
-					<item id="4041" min="1" max="1" chance="29.1202" /> <!-- Mold Hardener -->
-					<item id="9551" min="1" max="1" chance="26.7905" /> <!-- Holy Stone -->
-				</group>
+				<item id="10639" min="5" max="10" chance="70.00" />
+				<item id="57" min="500000" max="200000" chance="70.00" /> <!-- Adena -->
 			</drop>
-			<spoil>
-				<item id="15772" min="1" max="3" chance="70.1627" /> <!-- Sealed Moirai Ring Gem -->
-				<item id="15773" min="1" max="1" chance="78.865" /> <!-- Sealed Moirai Earring Gem -->
-				<item id="15774" min="1" max="1" chance="68.0508" /> <!-- Sealed Moirai Necklace Gem -->
-				<item id="15812" min="1" max="1" chance="18.5649" /> <!-- Recipe - Sealed Moirai Ring (70%) -->
-				<item id="15813" min="1" max="1" chance="12.3751" /> <!-- Recipe - Sealed Moirai Earring (70%) -->
-				<item id="15814" min="1" max="1" chance="9.2816" /> <!-- Recipe - Sealed Moirai Necklace (70%) -->
-			</spoil>
 		</dropLists>
 		<collision>
 			<radius normal="33" />
