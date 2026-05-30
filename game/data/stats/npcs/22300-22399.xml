@@ -2045,7 +2045,7 @@
 			<height normal="35" />
 		</collision>
 	</npc>
-	<npc id="22325" level="81" type="Monster" name="Blind Watchman">
+	<npc id="22325" level="85" type="Monster" name="Blind Watchman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="110" />
@@ -2077,7 +2077,7 @@
 		<sex>MALE</sex>
 		<acquire exp="25716" sp="2667" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="3461.77253215841" hpRegen="8.5" mp="1708.8" mpRegen="3" />
+			<vitals hp="53461.77253215841" hpRegen="8.5" mp="1708.8" mpRegen="3" />
 			<attack physical="1112.35801218417" magical="768.532752324125" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="358.024515764706" magical="261.986808235294" />
 			<attribute>
