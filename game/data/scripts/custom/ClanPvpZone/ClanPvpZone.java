@@ -48,6 +48,7 @@ import org.l2jmobius.gameserver.model.skill.Skill;
 import org.l2jmobius.gameserver.model.skill.enums.SkillFinishType;
 import org.l2jmobius.gameserver.model.zone.type.BossZone;
 import org.l2jmobius.gameserver.network.serverpackets.ExShowScreenMessage;
+import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 import org.l2jmobius.gameserver.util.Broadcast;
 
 /**
@@ -85,6 +86,7 @@ public class ClanPvpZone extends Script
 	private static int RETURN_Y = 148638;
 	private static int RETURN_Z = -3473;
 	private static int RAID_CURSE_SKILL_ID = 4215;
+	private static int MIN_CLAN_LEVEL = 10;
 	private static final List<Location> CLAN_SPAWNS = new ArrayList<>();
 	private static int[] _bossZoneIds = new int[0];
 
@@ -101,6 +103,8 @@ public class ClanPvpZone extends Script
 	{
 		IDLE,
 		COUNTDOWN,
+		/** Esperando confirmacion de los miembros (30 segundos). */
+		CONFIRMING,
 		ACTIVE,
 		RAID
 	}
@@ -141,6 +145,26 @@ public class ClanPvpZone extends Script
 
 	/** Flag para evitar iniciar la fase raid multiples veces. */
 	private final AtomicBoolean _raidPhaseStarting = new AtomicBoolean(false);
+
+	// ---------------------------------------------------------------------------
+	// Fase CONFIRMING: invitaciones de participacion (30 segundos)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Invitaciones pendientes de confirmacion: playerId -> clanId.
+	 * Se llena cuando el countdown termina y se vacia cuando el jugador acepta,
+	 * declina o se agota el tiempo.
+	 */
+	private final Map<Integer, Integer> _pendingInvites = new ConcurrentHashMap<>();
+
+	/**
+	 * Spawn pre-asignado a cada clan: clanId -> Location.
+	 * Se calcula una sola vez en sendJoinInvitations() para asegurar consistencia.
+	 */
+	private final Map<Integer, Location> _clanSpawnMap = new ConcurrentHashMap<>();
+
+	/** Tarea de timeout de la fase CONFIRMING (cancelada si el evento finaliza antes). */
+	private ScheduledFuture<?> _inviteTimeoutTask = null;
 
 	// ---------------------------------------------------------------------------
 	// AntiFeed (leido desde PVP.ini, seccion AntiFeed - Zona Clan PvP)
@@ -213,6 +237,7 @@ public class ClanPvpZone extends Script
 		RETURN_Y = Integer.parseInt(props.getProperty("ReturnY", "148638").trim());
 		RETURN_Z = Integer.parseInt(props.getProperty("ReturnZ", "-3473").trim());
 		RAID_CURSE_SKILL_ID = Integer.parseInt(props.getProperty("RaidCurseSkillId", "4215").trim());
+		MIN_CLAN_LEVEL = Integer.parseInt(props.getProperty("MinClanLevel", "10").trim());
 
 		// Spawns de clanes (hasta 8 slots)
 		CLAN_SPAWNS.clear();
@@ -367,6 +392,11 @@ public class ClanPvpZone extends Script
 		return _lastWinnerClanId == clanId;
 	}
 
+	public int getMinClanLevel()
+	{
+		return MIN_CLAN_LEVEL;
+	}
+
 	public Collection<String> getRegisteredClanNames()
 	{
 		return _registeredClans.values();
@@ -394,9 +424,9 @@ public class ClanPvpZone extends Script
 			return "Solo el lider del clan puede inscribirse al evento.";
 		}
 
-		if (clan.getLevel() < 10)
+		if (clan.getLevel() < MIN_CLAN_LEVEL)
 		{
-			return "Tu clan debe ser nivel 10 para participar (nivel actual: " + clan.getLevel() + ").";
+			return "Tu clan debe ser nivel " + MIN_CLAN_LEVEL + " para participar (nivel actual: " + clan.getLevel() + ").";
 		}
 
 		if ((_state != EventState.IDLE) && (_state != EventState.COUNTDOWN))
@@ -543,33 +573,40 @@ public class ClanPvpZone extends Script
 	}
 
 	// ---------------------------------------------------------------------------
-	// Fase: ACTIVE
+	// Fase: CONFIRMING -> ACTIVE
 	// ---------------------------------------------------------------------------
+
+	/**
+	 * Llamado cuando el countdown llega a 0.
+	 * Entra en fase CONFIRMING: envia a cada miembro online de los clanes registrados
+	 * un HTML de invitacion con 30 segundos para aceptar o declinar.
+	 * Solo los jugadores que acepten seran teletransportados al evento.
+	 */
 	private void startEvent()
 	{
-		_state = EventState.ACTIVE;
+		_state = EventState.CONFIRMING;
 		_raidPhaseStarting.set(false);
 		_raidBossDeathHandled.set(false);
 		_clanPlayers.clear();
 		_allParticipants.clear();
 		_eventReputation.clear();
 		_internalTeleport.clear();
+		_pendingInvites.clear();
+		_clanSpawnMap.clear();
 
-		// Lista de clanes en orden de inscripcion
 		final List<Integer> clanIds = new ArrayList<>(_registeredClans.keySet());
-
 		int clanIndex = 0;
-		int totalParticipants = 0;
+		int totalInvited = 0;
 
 		for (int clanId : clanIds)
 		{
-			// Asignar punto de spawn por orden de inscripcion (ciclico si hay mas clanes que spawns)
+			// Pre-asignar spawn para este clan (ciclico)
 			final Location spawn = CLAN_SPAWNS.get(clanIndex % CLAN_SPAWNS.size());
-			final Set<Player> members = ConcurrentHashMap.newKeySet();
-			_clanPlayers.put(clanId, members);
+			_clanPlayers.put(clanId, ConcurrentHashMap.newKeySet());
 			_eventReputation.put(clanId, 0);
+			_clanSpawnMap.put(clanId, spawn);
 
-			// Teleportar todos los miembros online de este clan
+			// Enviar invitacion a cada miembro online
 			for (Player online : World.getInstance().getPlayers())
 			{
 				if ((online == null) || !online.isOnline() || (online.getClan() == null))
@@ -581,39 +618,141 @@ public class ClanPvpZone extends Script
 					continue;
 				}
 
-				members.add(online);
-				_allParticipants.add(online);
-				totalParticipants++;
-
-				addParticipantListeners(online);
-				whitelistInBossZones(online);
-
-				_internalTeleport.add(online.getObjectId());
-				online.teleToLocation(
-					spawn.getX() + Rnd.get(-40, 40),
-					spawn.getY() + Rnd.get(-40, 40),
-					spawn.getZ(), 0);
-
-				online.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
-				online.startPvPFlag();
-
-				online.sendPacket(new ExShowScreenMessage(
-					"CLAN PVP ZONE - El evento ha comenzado! Elimina a los clanes rivales!", 8000));
-				online.sendMessage("[Clan PvP Zone] El evento ha comenzado! Solo el ultimo clan vivo avanzara al RaidBoss.");
+				_pendingInvites.put(online.getObjectId(), clanId);
+				sendJoinInvitationHtml(online);
+				totalInvited++;
 			}
 
 			clanIndex++;
 		}
 
-		Broadcast.toAllOnlinePlayersOnScreen(
-			"CLAN PVP ZONE ha comenzado! " + clanIds.size() + " clanes en combate!");
 		Broadcast.toAllOnlinePlayers(
-			"[Clan PvP Zone] El evento ha comenzado! " + clanIds.size() + " clanes y " + totalParticipants + " jugadores en combate!",
+			"[Clan PvP Zone] El evento ha comenzado! Los miembros de los clanes tienen 30 segundos para confirmar su participacion.",
+			false);
+		broadcastToRegisteredMembers(new ExShowScreenMessage(
+			"CLAN PVP ZONE - Tienes 30 segundos para confirmar tu participacion!", 8000));
+
+		// Programar finalizacion de la fase de confirmacion
+		_inviteTimeoutTask = ThreadPool.schedule(this::finalizeJoinInvitations, 30000);
+
+		LOGGER.info("ClanPvpZone: Fase CONFIRMING iniciada. Invitaciones enviadas a " + totalInvited
+			+ " miembros de " + clanIds.size() + " clanes. Timeout: 30s.");
+	}
+
+	/**
+	 * Envia el HTML de invitacion al jugador para que confirme o decline
+	 * su participacion en el evento.
+	 */
+	private void sendJoinInvitationHtml(Player player)
+	{
+		final String clanName = (player.getClan() != null) ? player.getClan().getName() : "?";
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+		sb.append("<table width=270 cellpadding=0 cellspacing=2>");
+		sb.append("<tr><td align=center><img src=\"L2UI_CH3.herotower_deco\" width=256 height=32></td></tr>");
+		sb.append("<tr><td align=center><font color=\"C8A84B\">CLAN PVP ZONE</font></td></tr>");
+		sb.append("<tr><td align=center><font color=\"707070\">Invitacion al Evento</font></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td height=5></td></tr>");
+		sb.append("<tr><td align=center><font color=\"FFDF00\">!El evento ha comenzado!</font></td></tr>");
+		sb.append("<tr><td height=4></td></tr>");
+		sb.append("<tr><td><font color=\"C0B090\">");
+		sb.append("Tu clan <font color=\"C8A84B\">&lt;").append(clanName).append("&gt;</font><br>");
+		sb.append("ha sido convocado al combate de clanes.<br><br>");
+		sb.append("<font color=\"FFAA00\">&iquest;Deseas ingresar a la zona?</font><br><br>");
+		sb.append("<font color=\"808080\">Tienes <font color=\"FF6347\">30 segundos</font> para responder.<br>");
+		sb.append("Si no respondes, no seras enviado al evento.</font>");
+		sb.append("</font></td></tr>");
+		sb.append("<tr><td height=6></td></tr>");
+		sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
+		sb.append("<tr><td height=4></td></tr>");
+		sb.append("<tr><td align=center>");
+		sb.append("<button value=\"SI, INGRESAR\" action=\"bypass -h clanpvz_join_accept\"");
+		sb.append(" width=140 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+		sb.append("</td></tr>");
+		sb.append("<tr><td height=3></td></tr>");
+		sb.append("<tr><td align=center>");
+		sb.append("<button value=\"No, declinar\" action=\"bypass -h clanpvz_join_decline\"");
+		sb.append(" width=140 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+		sb.append("</td></tr>");
+		sb.append("</table></body></html>");
+
+		final NpcHtmlMessage html = new NpcHtmlMessage(0);
+		html.setHtml(sb.toString());
+		player.sendPacket(html);
+	}
+
+	/**
+	 * Llamado 30 segundos despues de enviar las invitaciones.
+	 * Notifica a los que no respondieron, verifica si quedan suficientes clanes
+	 * con participantes y transiciona al estado ACTIVE o cancela el evento.
+	 */
+	private synchronized void finalizeJoinInvitations()
+	{
+		if (_state != EventState.CONFIRMING)
+		{
+			return; // El evento fue cancelado o ya finalizado antes del timeout
+		}
+
+		_inviteTimeoutTask = null;
+
+		// Notificar a los que no respondieron
+		for (Integer playerId : _pendingInvites.keySet())
+		{
+			final Player player = World.getInstance().getPlayer(playerId);
+			if ((player != null) && player.isOnline())
+			{
+				player.sendMessage("[Clan PvP Zone] Tiempo agotado. No fuiste enviado al evento.");
+			}
+		}
+		_pendingInvites.clear();
+
+		// Contar clanes con al menos un miembro que acepto
+		int activeClanCount = 0;
+		int totalParticipants = 0;
+		for (Map.Entry<Integer, Set<Player>> entry : _clanPlayers.entrySet())
+		{
+			if (!entry.getValue().isEmpty())
+			{
+				activeClanCount++;
+				totalParticipants += entry.getValue().size();
+			}
+		}
+
+		if (activeClanCount < MIN_CLANS)
+		{
+			LOGGER.info("ClanPvpZone: Evento cancelado — solo " + activeClanCount
+				+ " clan(es) con participantes (minimo requerido: " + MIN_CLANS + ").");
+			Broadcast.toAllOnlinePlayers(
+				"[Clan PvP Zone] El evento fue cancelado: no hay suficientes participantes. Inscribete de nuevo para la proxima ronda.",
+				false);
+			endEvent(false);
+			return;
+		}
+
+		// Suficientes clanes: iniciar combate
+		_state = EventState.ACTIVE;
+
+		Broadcast.toAllOnlinePlayersOnScreen(
+			"CLAN PVP ZONE ha comenzado! " + activeClanCount + " clanes en combate!");
+		Broadcast.toAllOnlinePlayers(
+			"[Clan PvP Zone] El evento ha comenzado! " + activeClanCount + " clanes y " + totalParticipants + " jugadores en combate!",
 			false);
 
-		LOGGER.info("ClanPvpZone: Evento iniciado con " + clanIds.size() + " clanes y " + totalParticipants + " participantes.");
+		// Avisar a los participantes ya en zona
+		for (Player p : _allParticipants)
+		{
+			if ((p != null) && p.isOnline())
+			{
+				p.sendPacket(new ExShowScreenMessage(
+					"CLAN PVP ZONE - El combate ha comenzado! Elimina a los clanes rivales!", 8000));
+				p.sendMessage("[Clan PvP Zone] !El combate ha comenzado! Solo el ultimo clan vivo avanzara al RaidBoss.");
+			}
+		}
 
-		// Verificar inmediatamente si algún clan no tenia miembros online
+		LOGGER.info("ClanPvpZone: Evento iniciado con " + activeClanCount + " clanes y " + totalParticipants + " participantes.");
+
+		// Verificar si algun clan ya quedo sin miembros
 		ThreadPool.schedule(this::checkRemainingClans, 5000);
 	}
 
@@ -1020,6 +1159,12 @@ public class ClanPvpZone extends Script
 			_countdownTask.cancel(false);
 			_countdownTask = null;
 		}
+		// Cancelar timeout de confirmacion si aun estaba activo
+		if (_inviteTimeoutTask != null)
+		{
+			_inviteTimeoutTask.cancel(false);
+			_inviteTimeoutTask = null;
+		}
 		stopRaidCurseRemoval();
 
 		// Teletransportar y limpiar participantes que aun no fueron procesados
@@ -1063,6 +1208,8 @@ public class ClanPvpZone extends Script
 		_registeredClans.clear();
 		_eventReputation.clear();
 		_internalTeleport.clear();
+		_pendingInvites.clear();
+		_clanSpawnMap.clear();
 		_countdownSeconds.set(0);
 		_raidWinnerClanId = -1;
 		_raidPhaseStarting.set(false);
@@ -1177,7 +1324,9 @@ public class ClanPvpZone extends Script
 		private final String[] COMMANDS =
 		{
 			"clanpvz_register",
-			"clanpvz_unregister"
+			"clanpvz_unregister",
+			"clanpvz_join_accept",
+			"clanpvz_join_decline"
 		};
 
 		@Override
@@ -1188,30 +1337,89 @@ public class ClanPvpZone extends Script
 				return false;
 			}
 
-			if ("clanpvz_register".equals(command))
+			switch (command)
 			{
-				final String error = registerClan(player);
-				if (error != null)
+				case "clanpvz_register":
 				{
-					player.sendMessage("[Clan PvP Zone] " + error);
+					final String error = registerClan(player);
+					if (error != null)
+					{
+						player.sendMessage("[Clan PvP Zone] " + error);
+					}
+					else
+					{
+						player.sendMessage("[Clan PvP Zone] !Tu clan ha sido inscrito exitosamente!");
+						player.sendPacket(new ExShowScreenMessage("Clan inscrito en el Clan PvP Zone!", 4000));
+					}
+					break;
 				}
-				else
+				case "clanpvz_unregister":
 				{
-					player.sendMessage("[Clan PvP Zone] !Tu clan ha sido inscrito exitosamente!");
-					player.sendPacket(new ExShowScreenMessage("Clan inscrito en el Clan PvP Zone!", 4000));
+					final String error = unregisterClan(player);
+					if (error != null)
+					{
+						player.sendMessage("[Clan PvP Zone] " + error);
+					}
+					else
+					{
+						player.sendMessage("[Clan PvP Zone] Tu clan ha sido retirado del evento.");
+						player.sendPacket(new ExShowScreenMessage("Inscripcion cancelada.", 3000));
+					}
+					break;
 				}
-			}
-			else if ("clanpvz_unregister".equals(command))
-			{
-				final String error = unregisterClan(player);
-				if (error != null)
+				case "clanpvz_join_accept":
 				{
-					player.sendMessage("[Clan PvP Zone] " + error);
+					if (_state != EventState.CONFIRMING)
+					{
+						player.sendMessage("[Clan PvP Zone] La invitacion ya no es valida.");
+						return true;
+					}
+
+					final Integer clanId = _pendingInvites.remove(player.getObjectId());
+					if (clanId == null)
+					{
+						player.sendMessage("[Clan PvP Zone] Ya respondiste a la invitacion o el tiempo expiro.");
+						return true;
+					}
+
+					final Set<Player> members = _clanPlayers.get(clanId);
+					final Location spawn = _clanSpawnMap.get(clanId);
+					if ((members == null) || (spawn == null))
+					{
+						player.sendMessage("[Clan PvP Zone] Error interno. Contacta un GM.");
+						return true;
+					}
+
+					// Registrar al participante
+					members.add(player);
+					_allParticipants.add(player);
+					addParticipantListeners(player);
+					whitelistInBossZones(player);
+
+					// Teletransportar al spawn del clan
+					_internalTeleport.add(player.getObjectId());
+					player.teleToLocation(
+						spawn.getX() + Rnd.get(-40, 40),
+						spawn.getY() + Rnd.get(-40, 40),
+						spawn.getZ(), 0);
+
+					// Activar flag PvP
+					player.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
+					player.startPvPFlag();
+
+					player.sendPacket(new ExShowScreenMessage(
+						"CLAN PVP ZONE - !Confirmado! Preparate para el combate!", 6000));
+					player.sendMessage("[Clan PvP Zone] !Participacion confirmada! Seras teletransportado a la zona.");
+					break;
 				}
-				else
+				case "clanpvz_join_decline":
 				{
-					player.sendMessage("[Clan PvP Zone] Tu clan ha sido retirado del evento.");
-					player.sendPacket(new ExShowScreenMessage("Inscripcion cancelada.", 3000));
+					final Integer removed = _pendingInvites.remove(player.getObjectId());
+					if (removed != null)
+					{
+						player.sendMessage("[Clan PvP Zone] Has declinado participar en el evento.");
+					}
+					break;
 				}
 			}
 

@@ -964,6 +964,9 @@ public class GlobalGatekeeper extends Script
 					sb.append("<tr><td align=center><font color=\"FFAA00\">Inicia en: </font><font color=\"FF6347\">").append(t).append("</font></td></tr>");
 					break;
 				}
+				case CONFIRMING:
+					sb.append("<tr><td align=center><font color=\"FFAA00\">Confirmando participacion...</font></td></tr>");
+					break;
 				case ACTIVE:
 					sb.append("<tr><td align=center><font color=\"FF5555\">COMBATE EN PROGRESO</font></td></tr>");
 					break;
@@ -1004,7 +1007,7 @@ public class GlobalGatekeeper extends Script
 			sb.append("&nbsp;- Cada kill da <font color=\"C8A84B\">reputacion</font> al clan del killer.<br>");
 			sb.append("&nbsp;- El ultimo clan vivo enfrenta al <font color=\"FF5555\">RaidBoss</font>.<br>");
 			sb.append("&nbsp;- El clan vencedor recibe <font color=\"FFDF00\">recompensa</font> por miembro.<br>");
-			sb.append("&nbsp;- Requiere clan <font color=\"C8A84B\">nivel 10</font> o superior.</font></td></tr>");
+			sb.append("&nbsp;- Requiere clan <font color=\"C8A84B\">nivel ").append(clanEvent.getMinClanLevel()).append("</font> o superior.</font></td></tr>");
 			sb.append("<tr><td height=4></td></tr>");
 			sb.append("<tr><td align=center><img src=\"L2UI.SquareGray\" width=250 height=1></td></tr>");
 			sb.append("<tr><td height=3></td></tr>");
