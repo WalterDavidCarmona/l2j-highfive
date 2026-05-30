@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -123,22 +124,60 @@ public class TvT extends Event
 	/** The state of the Ctf. */
 	private static EventState _state = EventState.INACTIVE;
 	
-	// Others
-	private static final int INSTANCE_ID = 3049;
-	private static final int BLUE_DOOR_ID = 24190002;
-	private static final int RED_DOOR_ID = 24190003;
+	// Manager spawn (fijo, siempre en Giran)
 	private static final Location MANAGER_SPAWN_LOC = new Location(83425, 148585, -3406, 32938);
-	private static final Location BLUE_BUFFER_SPAWN_LOC = new Location(147450, 46913, -3400, 49000);
-	private static final Location RED_BUFFER_SPAWN_LOC = new Location(151545, 46528, -3400, 16000);
-	private static final Location BLUE_SPAWN_LOC = new Location(147447, 46722, -3416);
-	private static final Location RED_SPAWN_LOC = new Location(151536, 46722, -3416);
-	private static final ZoneType BLUE_PEACE_ZONE = ZoneManager.getInstance().getZoneByName("colosseum_peace1");
-	private static final ZoneType RED_PEACE_ZONE = ZoneManager.getInstance().getZoneByName("colosseum_peace2");
-	
+
+	// ---------------------------------------------------------------------------
+	// Clase interna: datos de una zona de combate
+	// ---------------------------------------------------------------------------
+	static class ArenaZone
+	{
+		final String name;
+		final int instanceId;
+		final int blueDoorId;
+		final int redDoorId;
+		final ZoneType bluePeaceZone;
+		final ZoneType redPeaceZone;
+		final Location blueSpawnLoc;
+		final Location redSpawnLoc;
+		final Location blueBufferLoc;
+		final Location redBufferLoc;
+
+		ArenaZone(String name, int instanceId, int blueDoorId, int redDoorId,
+			String bluePeaceName, String redPeaceName,
+			Location blueSpawn, Location redSpawn,
+			Location blueBuffer, Location redBuffer)
+		{
+			this.name = name;
+			this.instanceId = instanceId;
+			this.blueDoorId = blueDoorId;
+			this.redDoorId = redDoorId;
+			this.bluePeaceZone = ZoneManager.getInstance().getZoneByName(bluePeaceName);
+			this.redPeaceZone = ZoneManager.getInstance().getZoneByName(redPeaceName);
+			this.blueSpawnLoc = blueSpawn;
+			this.redSpawnLoc = redSpawn;
+			this.blueBufferLoc = blueBuffer;
+			this.redBufferLoc = redBuffer;
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Rotacion de zonas: lista cargada desde config.xml
+	// ---------------------------------------------------------------------------
+
+	/** Lista de zonas disponibles para rotacion. */
+	private static final List<ArenaZone> ARENA_ZONES = new ArrayList<>();
+
+	/** Indice de la zona actualmente en uso (se incrementa al finalizar cada evento). */
+	private static final AtomicInteger ZONE_INDEX = new AtomicInteger(0);
+
+	/** Zona activa en el evento actual. Se asigna al iniciar cada evento. */
+	private static final AtomicReference<ArenaZone> CURRENT_ZONE = new AtomicReference<>(null);
+
 	// Settings
 	private static final int REGISTRATION_TIME = 10; // Minutes
 	private static final int WAIT_TIME = 1; // Minutes
-	private static final int FIGHT_TIME = 20; // Minutes
+	private static int FIGHT_TIME = 15; // Minutes — configurable via config.xml
 	private static final int INACTIVITY_TIME = 2; // Minutes
 	private static final int MINIMUM_PARTICIPANT_LEVEL = 76;
 	private static final int MAXIMUM_PARTICIPANT_LEVEL = 200;
@@ -163,10 +202,26 @@ public class TvT extends Event
 		addTalkId(MANAGER);
 		addStartNpc(MANAGER);
 		addFirstTalkId(MANAGER);
-		addExitZoneId(BLUE_PEACE_ZONE.getId(), RED_PEACE_ZONE.getId());
-		addEnterZoneId(BLUE_PEACE_ZONE.getId(), RED_PEACE_ZONE.getId());
-		
+
+		// Las zonas de paz se registran dinamicamente en loadConfig().
+		// El constructor registra los listeners de zona para todas las zonas cargadas
+		// despues de llamar a loadConfig().
 		loadConfig();
+
+		// Registrar listeners de enter/exit para todas las zonas configuradas
+		for (ArenaZone arena : ARENA_ZONES)
+		{
+			if (arena.bluePeaceZone != null)
+			{
+				addExitZoneId(arena.bluePeaceZone.getId());
+				addEnterZoneId(arena.bluePeaceZone.getId());
+			}
+			if (arena.redPeaceZone != null)
+			{
+				addExitZoneId(arena.redPeaceZone.getId());
+				addEnterZoneId(arena.redPeaceZone.getId());
+			}
+		}
 	}
 	
 	private void loadConfig()
@@ -178,7 +233,7 @@ public class TvT extends Event
 			{
 				parseDatapackFile(HTML_PATH + "config.xml");
 			}
-			
+
 			@Override
 			public void parseDocument(Document document, File file)
 			{
@@ -191,6 +246,7 @@ public class TvT extends Event
 					{
 						switch (node.getNodeName())
 						{
+							// ---- Schedule: inicio automatico ----
 							case "schedule":
 							{
 								final StatSet attributes = new StatSet(parseAttributes(node));
@@ -200,8 +256,55 @@ public class TvT extends Event
 								params.set("Name", name);
 								params.set("SchedulingPattern", pattern);
 								final long delay = schedulingPattern.getDelayToNextFromNow();
-								getTimers().addTimer("Schedule" + count.incrementAndGet(), params, delay + 5000, null, null); // Added 5 seconds to prevent overlapping.
-								LOGGER.info("Event " + name + " scheduled at " + TimeUtil.getDateTimeString(System.currentTimeMillis() + delay));
+								getTimers().addTimer("Schedule" + count.incrementAndGet(), params, delay + 5000, null, null);
+								LOGGER.info("TvT Event: " + name + " scheduled at " + TimeUtil.getDateTimeString(System.currentTimeMillis() + delay));
+								break;
+							}
+							// ---- Duracion del combate ----
+							case "fightTime":
+							{
+								final StatSet attributes = new StatSet(parseAttributes(node));
+								FIGHT_TIME = attributes.getInt("minutes", 15);
+								LOGGER.info("TvT Event: Fight duration set to " + FIGHT_TIME + " minute(s).");
+								break;
+							}
+							// ---- Zonas de rotacion ----
+							case "zones":
+							{
+								ARENA_ZONES.clear();
+								for (Node zoneNode = node.getFirstChild(); zoneNode != null; zoneNode = zoneNode.getNextSibling())
+								{
+									if (!"zone".equals(zoneNode.getNodeName()))
+									{
+										continue;
+									}
+									final StatSet z = new StatSet(parseAttributes(zoneNode));
+									final ArenaZone arena = new ArenaZone(
+										z.getString("name", "Unknown"),
+										z.getInt("instanceId", 3049),
+										z.getInt("blueDoor", 0),
+										z.getInt("redDoor", 0),
+										z.getString("bluePeace", ""),
+										z.getString("redPeace", ""),
+										new Location(z.getInt("blueSpawnX", 0), z.getInt("blueSpawnY", 0), z.getInt("blueSpawnZ", 0), z.getInt("blueSpawnH", 0)),
+										new Location(z.getInt("redSpawnX", 0), z.getInt("redSpawnY", 0), z.getInt("redSpawnZ", 0), z.getInt("redSpawnH", 0)),
+										new Location(z.getInt("blueBufferX", 0), z.getInt("blueBufferY", 0), z.getInt("blueBufferZ", 0), z.getInt("blueBufferH", 0)),
+										new Location(z.getInt("redBufferX", 0), z.getInt("redBufferY", 0), z.getInt("redBufferZ", 0), z.getInt("redBufferH", 0)));
+									ARENA_ZONES.add(arena);
+									LOGGER.info("TvT Event: Zona registrada [" + ARENA_ZONES.size() + "] " + arena.name);
+								}
+								if (ARENA_ZONES.isEmpty())
+								{
+									LOGGER.warning("TvT Event: No se configuraron zonas en config.xml. Usando Colosseum por defecto.");
+									ARENA_ZONES.add(new ArenaZone(
+										"Colosseum (default)", 3049,
+										24190002, 24190003,
+										"colosseum_peace1", "colosseum_peace2",
+										new Location(147447, 46722, -3416, 0),
+										new Location(151536, 46722, -3416, 0),
+										new Location(147450, 46913, -3400, 49000),
+										new Location(151545, 46528, -3400, 16000)));
+								}
 								break;
 							}
 						}
@@ -209,6 +312,23 @@ public class TvT extends Event
 				});
 			}
 		}.load();
+
+		// Si no se cargaron zonas por ninguna razon, usar el Colosseum como fallback
+		if (ARENA_ZONES.isEmpty())
+		{
+			ARENA_ZONES.add(new ArenaZone(
+				"Colosseum (fallback)", 3049,
+				24190002, 24190003,
+				"colosseum_peace1", "colosseum_peace2",
+				new Location(147447, 46722, -3416, 0),
+				new Location(151536, 46722, -3416, 0),
+				new Location(147450, 46913, -3400, 49000),
+				new Location(151545, 46528, -3400, 16000)));
+		}
+
+		// Inicializar la primera zona activa
+		CURRENT_ZONE.set(ARENA_ZONES.get(ZONE_INDEX.get() % ARENA_ZONES.size()));
+		LOGGER.info("TvT Event: Zona inicial -> " + CURRENT_ZONE.get().name + " | Total zonas: " + ARENA_ZONES.size());
 	}
 	
 	@Override
@@ -320,9 +440,12 @@ public class TvT extends Event
 			{
 				// Set state to STARTING
 				setState(EventState.STARTING);
-				
+
 				TEAM_FORFEIT = false;
-				
+
+				// Obtener la zona activa para este evento
+				final ArenaZone zone = CURRENT_ZONE.get();
+
 				// Remove offline players.
 				for (Player participant : PLAYER_LIST)
 				{
@@ -332,7 +455,7 @@ public class TvT extends Event
 						PLAYER_SCORES.remove(participant);
 					}
 				}
-				
+
 				// Check if there are enough players to start the event.
 				if (PLAYER_LIST.size() < MINIMUM_PARTICIPANT_COUNT)
 				{
@@ -342,21 +465,21 @@ public class TvT extends Event
 						removeListeners(participant);
 						participant.setRegisteredOnEvent(false);
 					}
-					
+
 					// Set state INACTIVE
 					setState(EventState.INACTIVE);
 					return null;
 				}
-				
+
 				// Create the instance.
 				final InstanceWorld world = new InstanceWorld();
-				world.setInstance(InstanceManager.getInstance().createDynamicInstance(INSTANCE_ID));
+				world.setInstance(InstanceManager.getInstance().createDynamicInstance(zone.instanceId));
 				InstanceManager.getInstance().addWorld(world);
 				PVP_WORLD = world;
-				
+
 				// Make sure doors are closed.
 				PVP_WORLD.getDoors().forEach(Door::closeMe);
-				
+
 				// Randomize player list and separate teams.
 				final List<Player> playerList = new ArrayList<>(PLAYER_LIST.size());
 				playerList.addAll(PLAYER_LIST);
@@ -373,7 +496,7 @@ public class TvT extends Event
 						BLUE_TEAM.add(participant);
 						PVP_WORLD.addAllowed(participant);
 						participant.leaveParty();
-						participant.teleToLocation(BLUE_SPAWN_LOC, PVP_WORLD.getInstanceId(), 50);
+						participant.teleToLocation(zone.blueSpawnLoc, PVP_WORLD.getInstanceId(), 50);
 						participant.setTeam(Team.BLUE);
 						team = false;
 					}
@@ -382,11 +505,11 @@ public class TvT extends Event
 						RED_TEAM.add(participant);
 						PVP_WORLD.addAllowed(participant);
 						participant.leaveParty();
-						participant.teleToLocation(RED_SPAWN_LOC, PVP_WORLD.getInstanceId(), 50);
+						participant.teleToLocation(zone.redSpawnLoc, PVP_WORLD.getInstanceId(), 50);
 						participant.setTeam(Team.RED);
 						team = true;
 					}
-					
+
 					addDeathListener(participant);
 				}
 				
@@ -464,9 +587,9 @@ public class TvT extends Event
 					}
 				}
 				
-				// Spawn managers.
-				addSpawn(MANAGER, BLUE_BUFFER_SPAWN_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
-				addSpawn(MANAGER, RED_BUFFER_SPAWN_LOC, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+				// Spawn managers (buffers) en las posiciones de la zona activa.
+				addSpawn(MANAGER, zone.blueBufferLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
+				addSpawn(MANAGER, zone.redBufferLoc, false, (WAIT_TIME + FIGHT_TIME) * 60000, false, PVP_WORLD.getInstanceId());
 				
 				// Initialize scores.
 				BLUE_SCORE = 0;
@@ -488,10 +611,11 @@ public class TvT extends Event
 			{
 				// Set state STARTED
 				setState(EventState.STARTED);
-				
-				// Open doors.
-				PVP_WORLD.openDoor(BLUE_DOOR_ID);
-				PVP_WORLD.openDoor(RED_DOOR_ID);
+
+				// Open doors usando la zona activa.
+				final ArenaZone zoneSF = CURRENT_ZONE.get();
+				PVP_WORLD.openDoor(zoneSF.blueDoorId);
+				PVP_WORLD.openDoor(zoneSF.redDoorId);
 				
 				// add event FIGHT_TIME
 				for (Player participant : PLAYER_LIST)
@@ -518,9 +642,10 @@ public class TvT extends Event
 			}
 			case "EndFight":
 			{
-				// Close doors.
-				PVP_WORLD.closeDoor(BLUE_DOOR_ID);
-				PVP_WORLD.closeDoor(RED_DOOR_ID);
+				// Close doors usando la zona activa.
+				final ArenaZone zoneEF = CURRENT_ZONE.get();
+				PVP_WORLD.closeDoor(zoneEF.blueDoorId);
+				PVP_WORLD.closeDoor(zoneEF.redDoorId);
 				
 				// Disable players.
 				for (Player participant : PLAYER_LIST)
@@ -621,7 +746,7 @@ public class TvT extends Event
 			case "TeleportOut":
 			{
 				TEAM_FORFEIT = false;
-				
+
 				// Remove event listeners.
 				for (Player participant : PLAYER_LIST)
 				{
@@ -630,14 +755,14 @@ public class TvT extends Event
 					participant.setOnEvent(false);
 					participant.leaveParty();
 				}
-				
+
 				// Destroy world.
 				if (PVP_WORLD != null)
 				{
 					PVP_WORLD.destroy();
 					PVP_WORLD = null;
 				}
-				
+
 				// Enable players.
 				for (Player participant : PLAYER_LIST)
 				{
@@ -652,7 +777,17 @@ public class TvT extends Event
 						summon.enableAllSkills();
 					}
 				}
-				
+
+				// --- Rotar a la siguiente zona para el proximo evento ---
+				if (ARENA_ZONES.size() > 1)
+				{
+					final int nextIndex = ZONE_INDEX.incrementAndGet() % ARENA_ZONES.size();
+					ZONE_INDEX.set(nextIndex);
+					CURRENT_ZONE.set(ARENA_ZONES.get(nextIndex));
+					LOGGER.info("TvT Event: Rotacion de zona -> [" + (nextIndex + 1) + "/" + ARENA_ZONES.size() + "] " + CURRENT_ZONE.get().name);
+					Broadcast.toAllOnlinePlayers("TvT Event: Next arena -> " + CURRENT_ZONE.get().name);
+				}
+
 				// Set state INACTIVE
 				setState(EventState.INACTIVE);
 				break;
@@ -661,25 +796,26 @@ public class TvT extends Event
 			{
 				if (player.isDead() && player.isOnEvent())
 				{
+					final ArenaZone zoneRP = CURRENT_ZONE.get();
 					if (BLUE_TEAM.contains(player))
 					{
 						player.setIsPendingRevive(true);
-						player.teleToLocation(BLUE_SPAWN_LOC, PVP_WORLD.getInstanceId(), 50);
-						
+						player.teleToLocation(zoneRP.blueSpawnLoc, PVP_WORLD.getInstanceId(), 50);
+
 						// Make player invulnerable for 30 seconds.
 						GHOST_WALKING.getSkill().applyEffects(player, player);
-						
+
 						// Reset existing activity timers.
 						resetActivityTimers(player); // In case player died in peace zone.
 					}
 					else if (RED_TEAM.contains(player))
 					{
 						player.setIsPendingRevive(true);
-						player.teleToLocation(RED_SPAWN_LOC, PVP_WORLD.getInstanceId(), 50);
-						
+						player.teleToLocation(zoneRP.redSpawnLoc, PVP_WORLD.getInstanceId(), 50);
+
 						// Make player invulnerable for 30 seconds.
 						GHOST_WALKING.getSkill().applyEffects(player, player);
-						
+
 						// Reset existing activity timers.
 						resetActivityTimers(player); // In case player died in peace zone.
 					}
@@ -799,23 +935,29 @@ public class TvT extends Event
 			final Player player = creature.asPlayer();
 			if (player.isOnEvent())
 			{
+				final ArenaZone activeZone = CURRENT_ZONE.get();
+				if (activeZone == null)
+				{
+					return;
+				}
+
 				// Kick enemy players.
-				if ((zone == BLUE_PEACE_ZONE) && (creature.getTeam() == Team.RED))
+				if ((zone == activeZone.bluePeaceZone) && (creature.getTeam() == Team.RED))
 				{
-					creature.teleToLocation(RED_SPAWN_LOC, PVP_WORLD.getInstanceId(), 50);
+					creature.teleToLocation(activeZone.redSpawnLoc, PVP_WORLD.getInstanceId(), 50);
 					sendScreenMessage(player, "Entering the enemy headquarters is prohibited!", 10);
 				}
-				
-				if ((zone == RED_PEACE_ZONE) && (creature.getTeam() == Team.BLUE))
+
+				if ((zone == activeZone.redPeaceZone) && (creature.getTeam() == Team.BLUE))
 				{
-					creature.teleToLocation(BLUE_SPAWN_LOC, PVP_WORLD.getInstanceId(), 50);
+					creature.teleToLocation(activeZone.blueSpawnLoc, PVP_WORLD.getInstanceId(), 50);
 					sendScreenMessage(player, "Entering the enemy headquarters is prohibited!", 10);
 				}
-				
+
 				// Start inactivity check.
 				if (creature.isPlayer() && //
-					(((zone == BLUE_PEACE_ZONE) && (creature.getTeam() == Team.BLUE)) || //
-						((zone == RED_PEACE_ZONE) && (creature.getTeam() == Team.RED))))
+					(((zone == activeZone.bluePeaceZone) && (creature.getTeam() == Team.BLUE)) || //
+						((zone == activeZone.redPeaceZone) && (creature.getTeam() == Team.RED))))
 				{
 					resetActivityTimers(player);
 				}
@@ -1105,6 +1247,7 @@ public class TvT extends Event
 		// Send message to players.
 		Broadcast.toAllOnlinePlayers("TvT Event: Registration opened for " + REGISTRATION_TIME + " minutes.");
 		Broadcast.toAllOnlinePlayers("TvT Event: You can register at Giran TvT Event Manager.");
+		Broadcast.toAllOnlinePlayers("TvT Event: Arena -> " + CURRENT_ZONE.get().name + " | Fight time: " + FIGHT_TIME + " min.");
 		
 		// @formatter:off
 		final int[] warnings = {10, 5, 4, 3, 2, 1};

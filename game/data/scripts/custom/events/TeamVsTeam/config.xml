@@ -1,15 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <event name="Team Vs Team" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../xsd/event.xsd">
-	<!-- 
-		The pattern attribute specifies the schedule time of the event.
-		- Minutes (0-59)
-		- Hours (0-23)
-		- Day of the month (1-31)
-		- Month (1-12)
-		- Day of the week (0-7)
-		You can use * as a wildcard value.
-		You can use multiple schedule elements.
+	<!--
+		SCHEDULE: El evento inicia automaticamente cada 2 horas.
+		Formato cron: Minutos Horas DiaMes Mes DiaSemana
+		0 */2 * * *  =  cada 2 horas exactas (00:00, 02:00, 04:00, ...)
 	-->
-	<!-- Run at 20:00 (8:00 PM) every day. -->
-	<!-- <schedule pattern="0 20 * * *" /> -->
+	<schedule pattern="0 */2 * * *" />
+
+	<!--
+		FIGHT_TIME: Duracion del combate en minutos.
+		Default: 15
+	-->
+	<fightTime minutes="15" />
+
+	<!--
+		ZONE ROTATION: Lista de zonas que se van rotando en orden al terminar cada evento.
+		Cada zona define:
+		  - name        : Nombre descriptivo (solo informativo)
+		  - instanceId  : ID de la instancia a cargar (INSTANCE_ID en el codigo)
+		  - blueDoor    : ID de la puerta del equipo azul
+		  - redDoor     : ID de la puerta del equipo rojo
+		  - bluePeace   : Nombre de la ZoneType de paz del equipo azul (registrada en zones/)
+		  - redPeace    : Nombre de la ZoneType de paz del equipo rojo
+		  - blueSpawnX/Y/Z/H  : Spawn del equipo azul
+		  - redSpawnX/Y/Z/H   : Spawn del equipo rojo
+		  - blueBufferX/Y/Z/H : Spawn del buffer del equipo azul
+		  - redBufferX/Y/Z/H  : Spawn del buffer del equipo rojo
+	-->
+	<zones>
+		<zone name="Colosseum"
+			instanceId="3049"
+			blueDoor="24190002"
+			redDoor="24190003"
+			bluePeace="colosseum_peace1"
+			redPeace="colosseum_peace2"
+			blueSpawnX="147447" blueSpawnY="46722" blueSpawnZ="-3416" blueSpawnH="0"
+			redSpawnX="151536"  redSpawnY="46722"  redSpawnZ="-3416"  redSpawnH="0"
+			blueBufferX="147450" blueBufferY="46913" blueBufferZ="-3400" blueBufferH="49000"
+			redBufferX="151545"  redBufferY="46528"  redBufferZ="-3400"  redBufferH="16000"
+		/>
+		<!-- Ejemplo de segunda zona: descomenta y configura las coordenadas correctas
+		<zone name="Aden Battlefield"
+			instanceId="3049"
+			blueDoor="24190002"
+			redDoor="24190003"
+			bluePeace="colosseum_peace1"
+			redPeace="colosseum_peace2"
+			blueSpawnX="147447" blueSpawnY="46722" blueSpawnZ="-3416" blueSpawnH="0"
+			redSpawnX="151536"  redSpawnY="46722"  redSpawnZ="-3416"  redSpawnH="0"
+			blueBufferX="147450" blueBufferY="46913" blueBufferZ="-3400" blueBufferH="49000"
+			redBufferX="151545"  redBufferY="46528"  redBufferZ="-3400"  redBufferH="16000"
+		/>
+		-->
+	</zones>
 </event>
