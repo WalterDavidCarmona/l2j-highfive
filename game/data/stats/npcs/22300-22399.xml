@@ -1978,7 +1978,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="22324" level="81" type="Monster" name="Blind Huntsman">
+	<npc id="22324" level="85" type="Monster" name="Blind Huntsman">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="110" />
@@ -1999,7 +1999,7 @@
 		<sex>MALE</sex>
 		<acquire exp="28644" sp="2983" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="3461.77253215841" hpRegen="8.5" mp="1708.8" mpRegen="3" />
+			<vitals hp="53461.77253215841" hpRegen="8.5" mp="1708.8" mpRegen="3" />
 			<attack physical="1112.35801218417" magical="768.532752324125" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="358.024515764706" magical="261.986808235294" />
 			<attribute>
@@ -2036,34 +2036,9 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="9599" min="1" max="1" chance="28.49" /> <!-- Ancient Tome of the Demon -->
-				<group chance="70">
-					<item id="57" min="3249" max="6517" chance="100" /> <!-- Adena -->
-				</group>
-				<group chance="1.7975000143051147">
-					<item id="5312" min="1" max="1" chance="0.2496" /> <!-- Sealed Helm of Nightmare -->
-					<item id="5527" min="1" max="1" chance="30.3187" /> <!-- Sealed Helm of Nightmare Design -->
-					<item id="5315" min="1" max="1" chance="0.3567" /> <!-- Sealed Shield of Nightmare -->
-					<item id="5495" min="1" max="1" chance="38.5067" /> <!-- Sealed Shield of Nightmare Fragment -->
-					<item id="5317" min="1" max="1" chance="0.2496" /> <!-- Sealed Majestic Circlet -->
-					<item id="5528" min="1" max="1" chance="30.3187" /> <!-- Sealed Majestic Circlet Design -->
-				</group>
-				<group chance="38.11029815673828">
-					<item id="1864" min="4" max="12" chance="22.4266" /> <!-- Stem -->
-					<item id="1865" min="2" max="6" chance="17.9413" /> <!-- Varnish -->
-					<item id="1866" min="3" max="9" chance="9.9674" /> <!-- Suede -->
-					<item id="1873" min="4" max="12" chance="4.4853" /> <!-- Silver Nugget -->
-					<item id="1868" min="10" max="30" chance="8.5435" /> <!-- Thread -->
-					<item id="960" min="1" max="1" chance="0.0359" /> <!-- Scroll: Enchant Armor (S-Grade) -->
-					<item id="9674" min="1" max="1" chance="35.8825" /> <!-- Darion's Badge -->
-					<item id="9551" min="1" max="1" chance="0.7175" /> <!-- Holy Stone -->
-				</group>
+				<item id="10639" min="1" max="1" chance="70.00" />
+				<item id="57" min="100000" max="200000" chance="70.00" /> <!-- Adena -->
 			</drop>
-			<spoil>
-				<item id="6901" min="1" max="1" chance="0.5552" /> <!-- Recipe: Shining Arrow (100%) -->
-				<item id="6702" min="1" max="1" chance="3.8051" /> <!-- Sealed Imperial Crusader Gaiters Pattern -->
-				<item id="6901" min="1" max="1" chance="0.5552" /> <!-- Recipe: Shining Arrow (100%) -->
-			</spoil>
 		</dropLists>
 		<collision>
 			<radius normal="34" />
