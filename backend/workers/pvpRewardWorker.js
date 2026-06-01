@@ -300,6 +300,12 @@ function start() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   `).catch(err => console.warn('[PvpReward] reward_history:', err.message));
 
+  // Migración: agregar zone_name si la tabla existía sin esa columna
+  db.execute(`
+    ALTER TABLE pvp_zone_reward_history
+      ADD COLUMN IF NOT EXISTS zone_name VARCHAR(100) DEFAULT 'Zona PvP' AFTER account_name
+  `).catch(() => {/* MySQL <8 no soporta IF NOT EXISTS en ALTER — ignorar */});
+
   db.execute(`
     CREATE TABLE IF NOT EXISTS pvp_zone_session_snapshot (
       zone_name       VARCHAR(100) NOT NULL,
