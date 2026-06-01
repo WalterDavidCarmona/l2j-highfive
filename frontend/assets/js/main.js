@@ -250,17 +250,54 @@ class InactivityManager {
 
   showWarning() {
     openModal('inactivity-warning');
+
+    // Notificación de navegador (funciona aunque la pestaña esté en segundo plano)
+    this._sendBrowserNotification();
+
     let remainingSeconds = Math.ceil((this.timeoutMs - this.warningMs) / 1000);
 
     // Actualizar countdown cada segundo
     this.countdownId = setInterval(() => {
       remainingSeconds--;
       document.getElementById('inactivity-countdown').textContent = remainingSeconds;
-
-      if (remainingSeconds <= 0) {
-        clearInterval(this.countdownId);
-      }
+      if (remainingSeconds <= 0) clearInterval(this.countdownId);
     }, 1000);
+  }
+
+  _sendBrowserNotification() {
+    if (!('Notification' in window)) return;
+
+    const fire = () => {
+      const n = new Notification('⚔️ ¡Guerrero, estás siendo llamado!', {
+        body: 'Llevas un tiempo sin actividad. Tu sesión está por expirar. ¡Vuelve al campo de batalla!',
+        icon: '/assets/images/pvpzone_knight.png',
+        badge: '/assets/images/pvpzone_knight.png',
+        tag: 'l2h5-inactivity',   // reemplaza la anterior si ya existe
+        requireInteraction: true  // no se cierra sola hasta que el usuario la atienda
+      });
+      // Al hacer clic en la notificación → enfocar la pestaña y cerrar notif
+      n.onclick = () => {
+        window.focus();
+        n.close();
+        closeAllModals();
+        if (window.inactivityManager) window.inactivityManager.resetTimer();
+      };
+    };
+
+    if (Notification.permission === 'granted') {
+      fire();
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(perm => {
+        if (perm === 'granted') fire();
+      });
+    }
+  }
+
+  // Solicitar permiso de notificaciones al arrancar (antes de que se necesite)
+  static requestPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
   }
 
   logout() {
@@ -437,6 +474,8 @@ async function fetchCurrentUser() {
       window.inactivityManager = new InactivityManager(10, 8); // 10 min timeout, 8 min warning
     }
     window.inactivityManager.start();
+    // Solicitar permiso de notificaciones ahora (con gesto del usuario activo)
+    InactivityManager.requestPermission();
   } catch (err) {
     // Token expirado o inválido
     api.logout();
