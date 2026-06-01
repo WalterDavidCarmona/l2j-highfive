@@ -901,8 +901,8 @@
             <label class="form-label" style="font-size:.8rem">Personaje</label>
             <input type="text" id="sh-filter-char" class="form-input" placeholder="Buscar por personaje..." style="height:36px">
           </div>
-          <button class="btn btn-primary btn-sm" onclick="loadShopHistory(1)">🔍 Buscar</button>
-          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('sh-filter-account').value='';document.getElementById('sh-filter-char').value='';loadShopHistory(1)">✕ Limpiar</button>
+          <button class="btn btn-primary btn-sm"   id="sh-btn-search">🔍 Buscar</button>
+          <button class="btn btn-secondary btn-sm" id="sh-btn-clear">✕ Limpiar</button>
           <span id="sh-total-label" class="text-muted" style="font-size:.82rem;display:flex;align-items:center;margin-left:auto"></span>
         </div>
 
@@ -929,9 +929,9 @@
 
         <!-- Paginación -->
         <div style="display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:1rem">
-          <button class="btn btn-secondary btn-sm" id="sh-btn-prev" onclick="loadShopHistory(window._shPage-1)" disabled>← Anterior</button>
+          <button class="btn btn-secondary btn-sm" id="sh-btn-prev" disabled>← Anterior</button>
           <span id="sh-page-label" class="text-muted" style="font-size:.88rem">Página 1</span>
-          <button class="btn btn-secondary btn-sm" id="sh-btn-next" onclick="loadShopHistory(window._shPage+1)">Siguiente →</button>
+          <button class="btn btn-secondary btn-sm" id="sh-btn-next">Siguiente →</button>
         </div>
       </div>
 

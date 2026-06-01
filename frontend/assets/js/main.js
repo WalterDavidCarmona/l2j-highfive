@@ -2727,13 +2727,15 @@ window._shPage = 1;
 
 async function loadShopHistory(page = 1) {
   window._shPage = page;
-  const tbody    = document.getElementById('sh-tbody');
-  const account  = document.getElementById('sh-filter-account')?.value.trim() || '';
-  const char     = document.getElementById('sh-filter-char')?.value.trim()    || '';
+  const tbody   = document.getElementById('sh-tbody');
+  const account = document.getElementById('sh-filter-account')?.value.trim() || '';
+  const char    = document.getElementById('sh-filter-char')?.value.trim()    || '';
 
-  tbody.innerHTML = `<tr><td colspan="8" class="text-center"><div class="spinner" style="margin:1.5rem auto"></div></td></tr>`;
+  if (!tbody) return;
 
   try {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center"><div class="spinner" style="margin:1.5rem auto"></div></td></tr>`;
+
     const data = await api.adminGetShopHistory(page, 50, account, char);
     const { total, pages, rows } = data;
 
@@ -2776,6 +2778,16 @@ async function loadShopHistory(page = 1) {
   }
 }
 window.loadShopHistory = loadShopHistory;
+
+// Listeners del historial de tienda (todos en JS para sobrevivir ofuscación)
+document.getElementById('sh-btn-search')?.addEventListener('click',  () => loadShopHistory(1));
+document.getElementById('sh-btn-clear')?.addEventListener('click',   () => {
+  document.getElementById('sh-filter-account').value = '';
+  document.getElementById('sh-filter-char').value    = '';
+  loadShopHistory(1);
+});
+document.getElementById('sh-btn-prev')?.addEventListener('click', () => loadShopHistory(window._shPage - 1));
+document.getElementById('sh-btn-next')?.addEventListener('click', () => loadShopHistory(window._shPage + 1));
 document.getElementById('sh-filter-account')?.addEventListener('keydown', e => { if (e.key === 'Enter') loadShopHistory(1); });
 document.getElementById('sh-filter-char')?.addEventListener('keydown',    e => { if (e.key === 'Enter') loadShopHistory(1); });
 
