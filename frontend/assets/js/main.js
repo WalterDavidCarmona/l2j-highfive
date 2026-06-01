@@ -383,6 +383,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeAllModals();
 });
 
+// ── Botones del modal de inactividad ─────────────────────────
+document.getElementById('btn-inactivity-extend')?.addEventListener('click', () => {
+  closeAllModals();
+  if (window.inactivityManager) window.inactivityManager.resetTimer();
+});
+document.getElementById('btn-inactivity-logout')?.addEventListener('click', () => {
+  closeAllModals();
+  if (window.inactivityManager) window.inactivityManager.stop();
+  api.logout();
+  currentUser = null;
+  updateAuthUI();
+  navigate('home');
+  showToast('Sesión cerrada correctamente', 'info');
+});
+
 /* ====================================================================
    AUTH STATE
    ==================================================================== */

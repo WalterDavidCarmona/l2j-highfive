@@ -219,6 +219,38 @@
       </div>
     </div>
 
+    <!-- ── DAILY REWARD WIDGET ── -->
+    <div class="container" style="padding:0 2rem 4rem">
+      <div class="daily-reward-widget" id="daily-reward-widget">
+        <div class="daily-reward-header">
+          <div class="daily-reward-title">
+            <span class="daily-reward-icon">🎁</span>
+            <div>
+              <h2>Recompensa Diaria</h2>
+              <p class="daily-reward-subtitle">Iniciá sesión y conectate cada día para acumular tu racha de 28 días</p>
+            </div>
+          </div>
+          <div class="daily-char-selector" id="daily-char-selector" style="display:none">
+            <label>Personaje:</label>
+            <select id="daily-char-select"></select>
+          </div>
+        </div>
+
+        <!-- Estado: no logueado -->
+        <div class="daily-login-prompt" id="daily-login-prompt">
+          <span>🔒</span>
+          <p>Iniciá sesión para ver y reclamar tu recompensa diaria</p>
+          <button class="btn btn-primary btn-sm" onclick="openModal('login')">Iniciar Sesión</button>
+        </div>
+
+        <!-- Estado: logueado, grilla de días -->
+        <div id="daily-grid-wrap" style="display:none">
+          <div class="daily-grid" id="daily-grid"></div>
+          <div class="daily-claim-area" id="daily-claim-area"></div>
+        </div>
+      </div>
+    </div>
+
     <footer class="footer">
       <div class="footer-brand">⚔️ L2 H5 SERVER</div>
       <p>Servidor privado de Lineage 2 High Five — L2JMobius</p>
@@ -249,12 +281,12 @@
             <h3 class="download-card__title">Cliente Lineage 2 H5</h3>
             <p class="download-card__desc">Cliente completo del juego. Necesario si no tenés instalado Lineage 2 Interlude / High Five.</p>
             <div class="download-card__meta">
-              <span class="dl-badge">~4.5 GB</span>
+              <span class="dl-badge">~5.5 GB</span>
               <span class="dl-badge dl-badge--type">Cliente completo</span>
             </div>
           </div>
           <div class="download-card__actions">
-            <a href="#" class="btn btn-gold btn-lg" id="dl-btn-client">
+            <a href="https://topservers200.com/es/lineage2/download/client-lineage-2-high-five" class="btn btn-gold btn-lg" id="dl-btn-client">
               <span>⬇</span> Descargar Cliente
             </a>
           </div>
@@ -267,12 +299,12 @@
             <h3 class="download-card__title">System (Parche)</h3>
             <p class="download-card__desc">Carpeta System actualizada del servidor. Reemplazá la carpeta System dentro de tu instalación de L2.</p>
             <div class="download-card__meta">
-              <span class="dl-badge">~120 MB</span>
+              <span class="dl-badge">~19 MB</span>
               <span class="dl-badge dl-badge--type">Parche</span>
             </div>
           </div>
           <div class="download-card__actions">
-            <a href="#" class="btn btn-primary btn-lg" id="dl-btn-system">
+            <a href="https://drive.google.com/file/d/1R9EPZcuw7rtqm8qoHBNNqMn3HYMkQcTq/view?usp=drive_link" class="btn btn-primary btn-lg" id="dl-btn-system">
               <span>⬇</span> Descargar System
             </a>
           </div>
@@ -1036,8 +1068,8 @@
       </p>
     </div>
     <div style="display:flex; gap:1rem;">
-      <button class="btn btn-secondary btn-full" onclick="closeModal('inactivity-warning'); logout()">Salir</button>
-      <button class="btn btn-primary btn-full" onclick="closeModal('inactivity-warning'); window.inactivityManager?.resetTimer()">Extender sesión</button>
+      <button class="btn btn-secondary btn-full" id="btn-inactivity-logout">Salir</button>
+      <button class="btn btn-primary btn-full"   id="btn-inactivity-extend">Extender sesión</button>
     </div>
   </div>
 </div>
