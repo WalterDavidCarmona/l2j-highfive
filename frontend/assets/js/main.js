@@ -2450,11 +2450,15 @@ document.querySelectorAll('[data-admin-tab]').forEach(btn => {
     btn.classList.add('active');
     document.getElementById('admin-tab-users')?.classList.toggle('hidden', tab !== 'users');
     document.getElementById('admin-tab-payments')?.classList.toggle('hidden', tab !== 'payments');
+    document.getElementById('admin-tab-shop-history')?.classList.toggle('hidden', tab !== 'shop-history');
     document.getElementById('admin-tab-shop')?.classList.toggle('hidden', tab !== 'shop');
     document.getElementById('admin-tab-pvpreward')?.classList.toggle('hidden', tab !== 'pvpreward');
     if (tab === 'payments') {
       adminCurrentPage = 0;
       loadAdminPayments(adminCurrentStatus);
+    }
+    if (tab === 'shop-history') {
+      loadShopHistory(1);
     }
     if (tab === 'shop') {
       loadAdminShop();
@@ -2717,6 +2721,63 @@ function toggleStockUnlimited(cb) {
   else { input.focus(); }
 }
 window.toggleStockUnlimited = toggleStockUnlimited;
+
+/* ── Historial de compras de tienda (admin) ─────────────────────── */
+window._shPage = 1;
+
+async function loadShopHistory(page = 1) {
+  window._shPage = page;
+  const tbody    = document.getElementById('sh-tbody');
+  const account  = document.getElementById('sh-filter-account')?.value.trim() || '';
+  const char     = document.getElementById('sh-filter-char')?.value.trim()    || '';
+
+  tbody.innerHTML = `<tr><td colspan="8" class="text-center"><div class="spinner" style="margin:1.5rem auto"></div></td></tr>`;
+
+  try {
+    const data = await api.adminGetShopHistory(page, 50, account, char);
+    const { total, pages, rows } = data;
+
+    // Etiqueta total
+    const lbl = document.getElementById('sh-total-label');
+    if (lbl) lbl.textContent = `${total.toLocaleString()} compra${total !== 1 ? 's' : ''} encontrada${total !== 1 ? 's' : ''}`;
+
+    // Paginación
+    document.getElementById('sh-page-label').textContent = `Página ${page} de ${pages || 1}`;
+    document.getElementById('sh-btn-prev').disabled = page <= 1;
+    document.getElementById('sh-btn-next').disabled = page >= (pages || 1);
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted" style="padding:2rem">Sin compras registradas</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = rows.map(r => {
+      const date = new Date(r.created_at).toLocaleString('es-AR', { dateStyle:'short', timeStyle:'short' });
+      return `<tr>
+        <td class="text-muted" style="font-size:.8rem">#${r.id}</td>
+        <td>
+          <strong>${escHtml(r.account_name)}</strong>
+          <div style="font-size:.75rem;color:var(--cyan)">🪙 ${(r.current_coins||0).toLocaleString()} coins actuales</div>
+        </td>
+        <td><span style="color:var(--gold)">⚔ ${escHtml(r.char_name)}</span></td>
+        <td>
+          <strong>${escHtml(r.item_name || '—')}</strong>
+          <div style="font-size:.75rem;color:var(--text-muted)">ID tienda: ${r.item_shop_id || '—'}</div>
+        </td>
+        <td style="text-align:center">${r.item_count}</td>
+        <td style="text-align:center"><span class="kills-badge kills-pvp">🪙 ${(r.price_coins||0).toLocaleString()}</span></td>
+        <td style="text-align:center;font-size:.82rem;color:var(--text-muted)">${(r.current_coins||0).toLocaleString()}</td>
+        <td style="font-size:.8rem;color:var(--text-muted);white-space:nowrap">${date}</td>
+      </tr>`;
+    }).join('');
+
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center text-red" style="padding:2rem">Error: ${escHtml(err.message)}</td></tr>`;
+  }
+}
+window.loadShopHistory = loadShopHistory;
+document.getElementById('sh-filter-account')?.addEventListener('keydown', e => { if (e.key === 'Enter') loadShopHistory(1); });
+document.getElementById('sh-filter-char')?.addEventListener('keydown',    e => { if (e.key === 'Enter') loadShopHistory(1); });
 
 /** Carga la tabla de items de la tienda en el panel admin */
 async function loadAdminShop() {

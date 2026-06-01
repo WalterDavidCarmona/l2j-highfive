@@ -485,4 +485,54 @@ router.delete('/pvpzone-reward/log', auth, adminOnly, async (req, res) => {
   }
 });
 
+/* ─── GET /api/admin/shop-history ────────────────────────────────────
+   Historial de compras de la tienda web (WebCoins).
+   Filtros opcionales: ?account=xxx  ?char=xxx  ?page=1  ?limit=50       */
+router.get('/shop-history', auth, adminOnly, async (req, res) => {
+  try {
+    const page    = Math.max(1, parseInt(req.query.page)  || 1);
+    const limit   = Math.min(100, parseInt(req.query.limit) || 50);
+    const offset  = (page - 1) * limit;
+    const account = req.query.account ? `%${req.query.account}%` : null;
+    const char    = req.query.char    ? `%${req.query.char}%`    : null;
+
+    // Construir cláusula WHERE dinámica
+    const conditions = [];
+    const params     = [];
+    if (account) { conditions.push('h.account_name LIKE ?'); params.push(account); }
+    if (char)    { conditions.push('h.char_name    LIKE ?'); params.push(char);    }
+    const where = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
+
+    // Total para paginación
+    const [[{ total }]] = await db.execute(
+      `SELECT COUNT(*) AS total FROM web_shop_history h ${where}`, params
+    );
+
+    // Filas paginadas con coins actuales del jugador
+    const [rows] = await db.execute(
+      `SELECT h.id,
+              h.account_name,
+              h.char_name,
+              h.item_shop_id,
+              h.item_name,
+              h.item_count,
+              h.price_coins,
+              h.created_at,
+              CAST(COALESCE(ad.value,'0') AS UNSIGNED) AS current_coins
+       FROM web_shop_history h
+       LEFT JOIN account_data ad
+         ON ad.account_name = h.account_name AND ad.var = 'web_coins'
+       ${where}
+       ORDER BY h.created_at DESC
+       LIMIT ? OFFSET ?`,
+      [...params, limit, offset]
+    );
+
+    res.json({ total, page, limit, pages: Math.ceil(total / limit), rows });
+  } catch (err) {
+    console.error('[Admin/shop-history]', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

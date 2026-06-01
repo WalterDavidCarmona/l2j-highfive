@@ -122,6 +122,16 @@ class L2Api {
   adminCreateShopItem(data)        { return this._fetch('/admin/shop-items',     { method:'POST',   body: JSON.stringify(data) }); }
   adminUpdateShopItem(id, data)    { return this._fetch(`/admin/shop-items/${id}`, { method:'PUT',  body: JSON.stringify(data) }); }
   adminDeleteShopItem(id)          { return this._fetch(`/admin/shop-items/${id}`, { method:'DELETE' }); }
+  adminGetShopHistory(page=1, limit=50, account='', char='') {
+    const q = new URLSearchParams({ page, limit });
+    if (account) q.set('account', account);
+    if (char)    q.set('char',    char);
+    return this._fetch(`/admin/shop-history?${q}`);
+  }
+
+  // ── Daily Reward ──────────────────────────────────────────────────
+  getDailyStatus()          { return this._fetch('/daily/status'); }
+  claimDaily(charId)        { return this._fetch('/daily/claim', { method: 'POST', body: JSON.stringify({ charId }) }); }
 
   // ── Admin PvP Reward ──────────────────────────────────────────────
   adminGetPvpReward()              { return this._fetch('/admin/pvpzone-reward'); }

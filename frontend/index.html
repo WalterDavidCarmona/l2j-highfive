@@ -805,7 +805,8 @@
       <!-- Tabs -->
       <div class="tabs" style="margin-bottom:1.5rem">
         <button class="tab-btn active" data-admin-tab="users">👥 Usuarios</button>
-        <button class="tab-btn"        data-admin-tab="payments">💳 Compras</button>
+        <button class="tab-btn"        data-admin-tab="payments">💳 Recargas</button>
+        <button class="tab-btn"        data-admin-tab="shop-history">🧾 Historial Tienda</button>
         <button class="tab-btn"        data-admin-tab="shop">🛒 Tienda</button>
         <button class="tab-btn"        data-admin-tab="pvpreward">⚔️ Recompensa PvP</button>
       </div>
@@ -884,6 +885,53 @@
           <button class="btn btn-secondary btn-sm" id="btn-admin-payments-prev" onclick="adminPaymentsPage(-1)" disabled>← Anterior</button>
           <span id="admin-payments-page" class="text-muted" style="display:flex;align-items:center">Página 1</span>
           <button class="btn btn-secondary btn-sm" id="btn-admin-payments-next" onclick="adminPaymentsPage(1)">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- ── TAB: HISTORIAL TIENDA ── -->
+      <div id="admin-tab-shop-history" class="hidden">
+
+        <!-- Filtros de búsqueda -->
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.25rem">
+          <div style="flex:1;min-width:180px">
+            <label class="form-label" style="font-size:.8rem">Cuenta</label>
+            <input type="text" id="sh-filter-account" class="form-input" placeholder="Buscar por cuenta..." style="height:36px">
+          </div>
+          <div style="flex:1;min-width:180px">
+            <label class="form-label" style="font-size:.8rem">Personaje</label>
+            <input type="text" id="sh-filter-char" class="form-input" placeholder="Buscar por personaje..." style="height:36px">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="loadShopHistory(1)">🔍 Buscar</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('sh-filter-account').value='';document.getElementById('sh-filter-char').value='';loadShopHistory(1)">✕ Limpiar</button>
+          <span id="sh-total-label" class="text-muted" style="font-size:.82rem;display:flex;align-items:center;margin-left:auto"></span>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cuenta</th>
+                <th>Personaje</th>
+                <th>Ítem comprado</th>
+                <th style="text-align:center">Cantidad</th>
+                <th style="text-align:center">🪙 Precio</th>
+                <th style="text-align:center">Saldo actual</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="sh-tbody">
+              <tr><td colspan="8" class="text-center text-muted" style="padding:2rem">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div style="display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:1rem">
+          <button class="btn btn-secondary btn-sm" id="sh-btn-prev" onclick="loadShopHistory(window._shPage-1)" disabled>← Anterior</button>
+          <span id="sh-page-label" class="text-muted" style="font-size:.88rem">Página 1</span>
+          <button class="btn btn-secondary btn-sm" id="sh-btn-next" onclick="loadShopHistory(window._shPage+1)">Siguiente →</button>
         </div>
       </div>
 
