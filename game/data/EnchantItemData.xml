@@ -63,14 +63,14 @@
 	<enchant id="22017" targetGrade="A" maxEnchant="20" bonusRate="10" />
 	<enchant id="20520" targetGrade="S" maxEnchant="20" bonusRate="10" />
 
-	<!-- Divine Weapon Enchant Crystal -->
-	<enchant id="22018" targetGrade="B" maxEnchant="20" bonusRate="100" />
-	<enchant id="22019" targetGrade="A" maxEnchant="20" bonusRate="100" />
-	<enchant id="20521" targetGrade="S" maxEnchant="20" bonusRate="100" />
-	<!-- Divine Armor Enchant Crystal -->
-	<enchant id="22020" targetGrade="B" maxEnchant="20" bonusRate="100" />
-	<enchant id="22021" targetGrade="A" maxEnchant="20" bonusRate="100" />
-	<enchant id="20522" targetGrade="S" maxEnchant="20" bonusRate="100" />
+	<!-- Divine Weapon Enchant Crystal (100% via scrollGroupId 2 = DIVINE_GROUP) -->
+	<enchant id="22018" targetGrade="B" maxEnchant="20" scrollGroupId="2" />
+	<enchant id="22019" targetGrade="A" maxEnchant="20" scrollGroupId="2" />
+	<enchant id="20521" targetGrade="S" maxEnchant="20" scrollGroupId="2" />
+	<!-- Divine Armor Enchant Crystal (100% via scrollGroupId 2 = DIVINE_GROUP) -->
+	<enchant id="22020" targetGrade="B" maxEnchant="20" scrollGroupId="2" />
+	<enchant id="22021" targetGrade="A" maxEnchant="20" scrollGroupId="2" />
+	<enchant id="20522" targetGrade="S" maxEnchant="20" scrollGroupId="2" />
 
 	<!-- Scroll: Enchant Weapon of Destruction -->
 	<enchant id="22221" targetGrade="S" maxEnchant="15" />

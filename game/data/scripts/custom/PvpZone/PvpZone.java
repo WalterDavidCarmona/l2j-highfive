@@ -774,22 +774,51 @@ public class PvpZone extends Script
 			return;
 		}
 
-		// Teleport externo (SOE, /unstuck, Gate Chant, GM, etc.)
+		// Teleport externo (SOE, /unstuck, Gate Chant, GM, etc.) — permitido, sacar al jugador de la zona
 		if (PARTICIPANTS.contains(player))
 		{
-			// Bloquear: devolver al jugador a la zona en lugar de sacarlo
-			INTERNAL_TELEPORT.add(player.getObjectId());
-			final PvpZoneData zone = ZONES.get(_currentZoneIndex);
-			final Location spawn = zone.getRandomSpawn();
-			player.teleToLocation(spawn.getX() + Rnd.get(-50, 50), spawn.getY() + Rnd.get(-50, 50), spawn.getZ(), 0);
-			player.sendMessage("[ZonaPvP] No puedes ser transportado fuera de la zona mientras participas.");
-			player.sendPacket(new ExShowScreenMessage("No puedes salir de la Zona PvP por summon o scroll.", 5000));
+			removeFromZone(player, true);
 		}
 	}
 
 	// ---------------------------------------------------------------------------
 	// Kill handling
 	// ---------------------------------------------------------------------------
+	/**
+	 * Retorna true si killer y killed comparten la misma IP o el mismo HWID (MAC del cliente).
+	 * Cualquiera de las dos condiciones es suficiente para considerar dualbox.
+	 */
+	private static boolean isDualbox(Player killer, Player killed)
+	{
+		// Comparar por HWID (fingerprint de hardware del cliente L2)
+		try
+		{
+			if ((killer.getClient() != null) && (killer.getClient().getHardwareInfo() != null)
+				&& (killed.getClient() != null) && (killed.getClient().getHardwareInfo() != null))
+			{
+				final String hwidKiller = killer.getClient().getHardwareInfo().getMacAddress();
+				final String hwidKilled = killed.getClient().getHardwareInfo().getMacAddress();
+				if ((hwidKiller != null) && !hwidKiller.isEmpty()
+					&& !hwidKiller.equals("Unknown")
+					&& hwidKiller.equals(hwidKilled))
+				{
+					return true;
+				}
+			}
+		}
+		catch (Exception ignored) {}
+
+		// Fallback: comparar por IP
+		final String ipKiller = killer.getIPAddress();
+		final String ipKilled = killed.getIPAddress();
+		if ((ipKiller != null) && (ipKilled != null) && ipKiller.equals(ipKilled))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	private void onPlayerDeath(OnCreatureDeath event)
 	{
 		if (!(event.getTarget() instanceof Player))
@@ -824,6 +853,14 @@ public class PvpZone extends Script
 			final Player killer = (Player) event.getAttacker();
 			if (PARTICIPANTS.contains(killer) && (killer.getObjectId() != killed.getObjectId()))
 			{
+				// ---- Verificacion anti-dualbox ----
+				// Si killer y killed comparten IP o HWID se considera feed y se ignora el kill.
+				if (isDualbox(killer, killed))
+				{
+					killer.sendMessage("[PvP Zone] Kill ignorado: no se permite feed desde el mismo equipo o IP.");
+					return;
+				}
+
 				// ---- Kill valido: procesar recompensa ----
 				// Anti-feed de racha: el mismo killer no puede sumar streak contra el mismo killed
 				// en menos de ANTIFEED_STREAK_COOLDOWN_SECONDS segundos.
@@ -853,25 +890,25 @@ public class PvpZone extends Script
 					KILL_STREAKS.put(killer.getObjectId(), streak);
 				}
 
-				// Track total kills in this zone with real name
-				final int totalKills = ZONE_KILLS.containsKey(killer.getObjectId()) ? ZONE_KILLS.get(killer.getObjectId()) + 1 : 1;
-				ZONE_KILLS.put(killer.getObjectId(), totalKills);
-				final String killerRealName = ORIGINAL_NAMES.get(killer.getObjectId());
-				if (killerRealName != null)
-				{
-					ZONE_KILL_NAMES.put(killer.getObjectId(), killerRealName);
-				}
-				if (!ZONE_KILL_CLASSES.containsKey(killer.getObjectId()))
-				{
-					ZONE_KILL_CLASSES.put(killer.getObjectId(), ClassListData.getInstance().getClass(killer.getActiveClass()).getClassName());
-				}
-				// Persist kill to DB for web panel ranking
-				final String realName = killerRealName != null ? killerRealName : killer.getName();
-				final String currentZoneName = ZONES.get(_currentZoneIndex).name;
-				persistZoneKill(realName, currentZoneName, totalKills);
-
 				if (streakCounts)
 				{
+					// Track total kills in this zone with real name (solo si no es anti-feed)
+					final int totalKills = ZONE_KILLS.containsKey(killer.getObjectId()) ? ZONE_KILLS.get(killer.getObjectId()) + 1 : 1;
+					ZONE_KILLS.put(killer.getObjectId(), totalKills);
+					final String killerRealName = ORIGINAL_NAMES.get(killer.getObjectId());
+					if (killerRealName != null)
+					{
+						ZONE_KILL_NAMES.put(killer.getObjectId(), killerRealName);
+					}
+					if (!ZONE_KILL_CLASSES.containsKey(killer.getObjectId()))
+					{
+						ZONE_KILL_CLASSES.put(killer.getObjectId(), ClassListData.getInstance().getClass(killer.getActiveClass()).getClassName());
+					}
+					// Persist kill to DB for web panel ranking
+					final String realName = killerRealName != null ? killerRealName : killer.getName();
+					final String currentZoneName = ZONES.get(_currentZoneIndex).name;
+					persistZoneKill(realName, currentZoneName, totalKills);
+
 					int rewardCount = REWARD_BASE_COUNT;
 					for (int[] streakData : STREAKS)
 					{
@@ -882,14 +919,17 @@ public class PvpZone extends Script
 					}
 
 					killer.addItem(ItemProcessType.REWARD, REWARD_ITEM_ID, rewardCount, killer, true);
-				}
 
-				// Update scoreboard for all participants
-				SCOREBOARD.put(killer, totalKills);
-				final Map<String, Integer> updatedScores = buildRealNameScoreboard();
-				for (Player participant : PARTICIPANTS)
-				{
-					participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
+					// Achievement: PvP kill
+					try { custom.Achievements.Achievements.onPvpKill(killer); } catch (Exception ignored) {}
+
+					// Update scoreboard for all participants
+					SCOREBOARD.put(killer, totalKills);
+					final Map<String, Integer> updatedScores = buildRealNameScoreboard();
+					for (Player participant : PARTICIPANTS)
+					{
+						participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
+					}
 				}
 
 				// Refresh PvP flag for killer

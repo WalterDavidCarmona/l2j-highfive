@@ -50,6 +50,7 @@ import org.l2jmobius.gameserver.model.actor.Creature;
 import org.l2jmobius.gameserver.model.actor.Npc;
 import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.events.EventType;
+import org.l2jmobius.gameserver.model.events.holders.actor.creature.OnCreatureDeath;
 import org.l2jmobius.gameserver.model.events.holders.actor.creature.OnCreatureTeleported;
 import org.l2jmobius.gameserver.model.events.holders.actor.player.OnPlayerLogout;
 import org.l2jmobius.gameserver.model.events.listeners.AbstractEventListener;
@@ -85,6 +86,19 @@ public class GlobalGatekeeper extends Script
 
 	/** Tiempo en ms que un miembro tiene para aceptar la invitacion al Party PvP. */
 	private static long PARTY_PVP_INVITE_EXPIRE_MS = 30_000L;
+
+	// ---------------------------------------------------------------------------
+	// Party PvP Zone — RaidBoss y limite de parties
+	// ---------------------------------------------------------------------------
+	private static int    PPVP_MAX_PARTIES      = 4;
+	private static int    PPVP_RAID_BOSS_ID     = 25286;
+	private static int    PPVP_RAID_BOSS_X      = 21942;
+	private static int    PPVP_RAID_BOSS_Y      = 252100;
+	private static int    PPVP_RAID_BOSS_Z      = -2016;
+	private static int    PPVP_RAID_BOSS_HDG    = 0;
+	private static int    PPVP_RAID_REWARD_ID   = 10639;
+	private static long   PPVP_RAID_REWARD_QTY  = 100L;
+	private static int    PPVP_RAID_CURSE_SKILL = 4215;
 
 	// ---------------------------------------------------------------------------
 	// Teleport Lists
@@ -148,6 +162,36 @@ public class GlobalGatekeeper extends Script
 	/** Tarea periodica que verifica si algun miembro abandono el party por la UI estandar. */
 	private static volatile ScheduledFuture<?> _ppvpPartyCheckTask = null;
 
+	/** Fases del evento Party PvP. */
+	private enum PpvpPhase { IDLE, PVP, RAID }
+
+	/** Fase actual del evento. */
+	private static volatile PpvpPhase _ppvpPhase = PpvpPhase.IDLE;
+
+	/**
+	 * Jugadores VIVOS en la fase PvP por leader de party.
+	 * leaderId -> Set<playerId> de los miembros aun en zona sin morir.
+	 */
+	private static final Map<Integer, Set<Integer>> _ppvpAlive = new ConcurrentHashMap<>();
+
+	/** Party ganadora (leaderId) que avanza al RaidBoss. -1 si no hay. */
+	private static volatile int _ppvpWinnerLeader = -1;
+
+	/** Jugadores del party ganador que estan en la fase Raid. */
+	private static final Set<Integer> _ppvpRaidParty = ConcurrentHashMap.newKeySet();
+
+	/** RaidBoss activo en la Zona Party PvP. null si no hay ninguno. */
+	private static volatile Npc _ppvpRaidBoss = null;
+
+	/** Proteccion contra doble ejecucion al morir el boss. */
+	private static final java.util.concurrent.atomic.AtomicBoolean _ppvpBossHandled = new java.util.concurrent.atomic.AtomicBoolean(false);
+
+	/** Tarea periodica que remueve el Raid Curse de los participantes. */
+	private static volatile ScheduledFuture<?> _ppvpRaidCurseTask = null;
+
+	/** Instance de GlobalGatekeeper para llamadas estaticas internas. */
+	private static GlobalGatekeeper _self = null;
+
 	// ---------------------------------------------------------------------------
 	// Default Teleport Lists (fallback si no se encuentra el config)
 	// ---------------------------------------------------------------------------
@@ -184,6 +228,7 @@ public class GlobalGatekeeper extends Script
 	// ---------------------------------------------------------------------------
 	private GlobalGatekeeper()
 	{
+		_self = this;
 		loadConfig();
 		if (ENABLED)
 		{
@@ -242,6 +287,16 @@ public class GlobalGatekeeper extends Script
 		CLAN_PVP_ZONE_NAME = props.getProperty("ClanPvpZoneName", "Zona Clan PvP").trim();
 		PARTY_PVP_ZONE_NAME = props.getProperty("PartyPvpZoneName", "Zona Party PvP").trim();
 		PARTY_PVP_INVITE_EXPIRE_MS = Long.parseLong(props.getProperty("PartyPvpInviteExpireSeconds", "30").trim()) * 1000L;
+
+		// Party PvP — Limite de parties y RaidBoss
+		PPVP_MAX_PARTIES     = Integer.parseInt(props.getProperty("PartyPvpMaxParties",      "4").trim());
+		PPVP_RAID_BOSS_ID    = Integer.parseInt(props.getProperty("PartyPvpRaidBossId",      "25286").trim());
+		PPVP_RAID_BOSS_X     = Integer.parseInt(props.getProperty("PartyPvpRaidBossX",       "21942").trim());
+		PPVP_RAID_BOSS_Y     = Integer.parseInt(props.getProperty("PartyPvpRaidBossY",       "252100").trim());
+		PPVP_RAID_BOSS_Z     = Integer.parseInt(props.getProperty("PartyPvpRaidBossZ",       "-2016").trim());
+		PPVP_RAID_BOSS_HDG   = Integer.parseInt(props.getProperty("PartyPvpRaidBossHeading", "0").trim());
+		PPVP_RAID_REWARD_ID  = Integer.parseInt(props.getProperty("PartyPvpRaidRewardId",    "10639").trim());
+		PPVP_RAID_REWARD_QTY = Long.parseLong(props.getProperty("PartyPvpRaidRewardQty",     "100").trim());
 
 		// Listas de teleport
 		TOWN_TELEPORTS.clear();
@@ -498,6 +553,19 @@ public class GlobalGatekeeper extends Script
 		if (PARTY_PVP_SPAWNS.isEmpty())
 		{
 			return buildErrorPage("La Zona Party PvP no tiene puntos de spawn configurados.", "main");
+		}
+
+		// Bloquear entrada si el evento ya esta en fase PVP o RAID
+		if (_ppvpPhase != PpvpPhase.IDLE)
+		{
+			return buildErrorPage("La Zona Party PvP tiene un combate en curso. Espera a que termine para registrarte.", "partypvp");
+		}
+
+		// Verificar limite de parties en la zona
+		final int currentParties = countPartiesInZone();
+		if (currentParties >= PPVP_MAX_PARTIES)
+		{
+			return buildErrorPage("La Zona Party PvP esta llena (" + currentParties + "/" + PPVP_MAX_PARTIES + " parties). Espera a que salga un grupo.", "partypvp");
 		}
 
 		// Elegir un spawn unico para todo el grupo (lider + miembros llegan al mismo punto)
@@ -1190,15 +1258,38 @@ public class GlobalGatekeeper extends Script
 		PPVP_LEADER.put(player.getObjectId(), leaderObjectId);
 		CustomPvpZoneRegistry.register(player.getObjectId());
 
+		// Registrar en el mapa de vivos por party
+		_ppvpAlive.computeIfAbsent(leaderObjectId, k -> ConcurrentHashMap.newKeySet()).add(player.getObjectId());
+
 		// Flag PvP activo dentro de la zona
 		player.setPvpFlagLasts(System.currentTimeMillis() + 86400000L);
 		player.startPvPFlag();
 
-		// Listeners por jugador
+		// Listeners por jugador (incluye muerte)
 		addPpvpListeners(player);
 
 		// Iniciar verificacion de party si no corre ya
 		startPartyCheckIfNeeded();
+
+		// Si la fase es IDLE y ya hay 2+ parties, pasar a PVP
+		if (_ppvpPhase == PpvpPhase.IDLE)
+		{
+			final int parties = countPartiesInZone();
+			if (parties >= 2)
+			{
+				_ppvpPhase = PpvpPhase.PVP;
+				for (Integer pid : PPVP_PARTICIPANTS)
+				{
+					final Player p = World.getInstance().getPlayer(pid);
+					if ((p != null) && p.isOnline())
+					{
+						p.sendPacket(new ExShowScreenMessage("ZONA PARTY PVP - Eliminacion entre parties activa!", 8000));
+						p.sendMessage("[Party PvP] Eliminacion entre parties activa! El ultimo party en pie avanzara al RaidBoss!");
+					}
+				}
+				LOGGER.info("GlobalGatekeeper: Party PvP fase PVP iniciada con " + parties + " parties.");
+			}
+		}
 
 		player.sendMessage("[Party PvP] Estas en la Zona Party PvP. Usa .leaveparty para salir del grupo con confirmacion.");
 		player.sendPacket(new ExShowScreenMessage("ZONA PARTY PVP - PvP activo!", 5000));
@@ -1213,13 +1304,29 @@ public class GlobalGatekeeper extends Script
 	 */
 	private void removeFromPartyPvpZone(Player player, boolean teleportToGiran)
 	{
-		if (!PPVP_PARTICIPANTS.remove(player.getObjectId()))
+		final int playerId = player.getObjectId();
+		if (!PPVP_PARTICIPANTS.remove(playerId))
 		{
 			return; // Ya fue removido
 		}
 
-		PPVP_LEADER.remove(player.getObjectId());
-		CustomPvpZoneRegistry.unregister(player.getObjectId());
+		final Integer leaderId = PPVP_LEADER.remove(playerId);
+		_ppvpRaidParty.remove(playerId);
+		CustomPvpZoneRegistry.unregister(playerId);
+
+		// Quitar del mapa de vivos
+		if (leaderId != null)
+		{
+			final Set<Integer> alive = _ppvpAlive.get(leaderId);
+			if (alive != null)
+			{
+				alive.remove(playerId);
+				if (alive.isEmpty())
+				{
+					_ppvpAlive.remove(leaderId);
+				}
+			}
+		}
 
 		// Quitar flag PvP de forma instantanea
 		player.setPvpFlagLasts(0);
@@ -1228,15 +1335,29 @@ public class GlobalGatekeeper extends Script
 		// Quitar listeners
 		removePpvpListeners(player);
 
-		// Detener tarea de verificacion si ya no hay participantes
+		// Verificar si una party fue eliminada -> check transicion a Raid
+		if ((_ppvpPhase == PpvpPhase.PVP) && (_self != null))
+		{
+			ThreadPool.schedule(() -> _self.ppvpCheckPartyElimination(), 1000);
+		}
+
+		// Detener todo si ya no hay participantes
 		if (PPVP_PARTICIPANTS.isEmpty())
 		{
 			stopPartyCheck();
+			_ppvpPhase = PpvpPhase.IDLE;
+			_ppvpAlive.clear();
+			_ppvpRaidParty.clear();
+			_ppvpWinnerLeader = -1;
+			if (_self != null)
+			{
+				_self.ppvpDespawnRaidBoss();
+			}
 		}
 
 		if (teleportToGiran && player.isOnline())
 		{
-			PPVP_INTERNAL_TP.add(player.getObjectId());
+			PPVP_INTERNAL_TP.add(playerId);
 			player.teleToLocation(PARTY_PVP_RETURN_X, PARTY_PVP_RETURN_Y, PARTY_PVP_RETURN_Z, 0);
 			player.sendMessage("[Party PvP] Has salido de la Zona Party PvP. Bienvenido a Giran.");
 		}
@@ -1259,22 +1380,24 @@ public class GlobalGatekeeper extends Script
 			EventType.ON_CREATURE_TELEPORTED,
 			(OnCreatureTeleported event) -> onPpvpTeleported(event),
 			this));
+
+		player.addListener(new ConsumerEventListener(
+			player,
+			EventType.ON_CREATURE_DEATH,
+			(OnCreatureDeath event) -> onPpvpDeath(event),
+			this));
 	}
 
 	private void removePpvpListeners(Player player)
 	{
-		for (AbstractEventListener listener : player.getListeners(EventType.ON_PLAYER_LOGOUT))
+		for (EventType type : new EventType[]{ EventType.ON_PLAYER_LOGOUT, EventType.ON_CREATURE_TELEPORTED, EventType.ON_CREATURE_DEATH })
 		{
-			if (listener.getOwner() == this)
+			for (AbstractEventListener listener : player.getListeners(type))
 			{
-				listener.unregisterMe();
-			}
-		}
-		for (AbstractEventListener listener : player.getListeners(EventType.ON_CREATURE_TELEPORTED))
-		{
-			if (listener.getOwner() == this)
-			{
-				listener.unregisterMe();
+				if (listener.getOwner() == this)
+				{
+					listener.unregisterMe();
+				}
 			}
 		}
 	}
@@ -1319,6 +1442,156 @@ public class GlobalGatekeeper extends Script
 
 		// Teleport externo (SOE, /unstuck, To Village, etc.): sacar de zona y enviar a Giran
 		removeFromPartyPvpZone(player, true);
+	}
+
+	/**
+	 * Detecta muerte de un participante en la Zona Party PvP.
+	 * En fase PVP: el jugador muerto es eliminado de la zona y teleportado a Giran.
+	 * En fase RAID: el jugador muere pero sigue en la zona (puede ser resucitado).
+	 */
+	private void onPpvpDeath(OnCreatureDeath event)
+	{
+		if (!(event.getTarget() instanceof Player))
+		{
+			return;
+		}
+		final Player killed = (Player) event.getTarget();
+		if (!PPVP_PARTICIPANTS.contains(killed.getObjectId()))
+		{
+			return;
+		}
+
+		// En fase RAID no se elimina al morir (puede ser resucitado por el party)
+		if (_ppvpPhase == PpvpPhase.RAID)
+		{
+			return;
+		}
+
+		// Fase PVP: jugador eliminado -> teleportar a Giran despues de 5 segundos
+		killed.sendPacket(new ExShowScreenMessage("Has sido eliminado! Seras enviado a Giran en 5 segundos.", 5000));
+		killed.sendMessage("[Party PvP] Has sido eliminado de la Zona Party PvP.");
+
+		ThreadPool.schedule(() ->
+		{
+			if (killed.isOnline())
+			{
+				if (killed.isDead())
+				{
+					killed.doRevive();
+				}
+				removeFromPartyPvpZone(killed, true);
+			}
+		}, 5000);
+	}
+
+	/**
+	 * Verifica si queda un solo party vivo en la zona PvP.
+	 * Si es asi, transiciona a fase RAID: teleporta al party ganador
+	 * a la zona del RaidBoss y lo spawnea.
+	 */
+	private void ppvpCheckPartyElimination()
+	{
+		if (_ppvpPhase != PpvpPhase.PVP)
+		{
+			return;
+		}
+
+		// Contar parties que aun tienen miembros vivos
+		final Set<Integer> aliveLeaders = new java.util.HashSet<>(_ppvpAlive.keySet());
+		// Quitar las que ya no tienen vivos
+		aliveLeaders.removeIf(leaderId ->
+		{
+			final Set<Integer> members = _ppvpAlive.get(leaderId);
+			return (members == null) || members.isEmpty();
+		});
+
+		if (aliveLeaders.size() > 1)
+		{
+			return; // Aun hay mas de 1 party, seguir peleando
+		}
+
+		if (aliveLeaders.isEmpty())
+		{
+			// Todos fueron eliminados (empate/timeout)
+			org.l2jmobius.gameserver.util.Broadcast.toAllOnlinePlayers(
+				"[Party PvP Zone] Todos los grupos fueron eliminados! No hay ganador.", false);
+			ppvpResetEvent();
+			return;
+		}
+
+		// --- UN SOLO PARTY SOBREVIVE: TRANSICION A FASE RAID ---
+		_ppvpWinnerLeader = aliveLeaders.iterator().next();
+		_ppvpPhase = PpvpPhase.RAID;
+
+		// Identificar al party ganador
+		final Set<Integer> winnerMembers = _ppvpAlive.get(_ppvpWinnerLeader);
+		if ((winnerMembers == null) || winnerMembers.isEmpty())
+		{
+			ppvpResetEvent();
+			return;
+		}
+
+		// Copiar al set de raid
+		_ppvpRaidParty.clear();
+		_ppvpRaidParty.addAll(winnerMembers);
+
+		// Obtener nombre del lider para los mensajes
+		final Player leaderPlayer = World.getInstance().getPlayer(_ppvpWinnerLeader);
+		final String leaderName = (leaderPlayer != null) ? leaderPlayer.getName() : "Desconocido";
+
+		// Anunciar transicion
+		org.l2jmobius.gameserver.util.Broadcast.toAllOnlinePlayers(
+			"[Party PvP Zone] El grupo de " + leaderName + " ha eliminado a todas las demas parties! Avanzan al RaidBoss!", false);
+
+		// Teleportar a los ganadores a la zona del RaidBoss y notificar
+		for (Integer pid : _ppvpRaidParty)
+		{
+			final Player p = World.getInstance().getPlayer(pid);
+			if ((p != null) && p.isOnline())
+			{
+				if (p.isDead())
+				{
+					p.doRevive();
+				}
+				// Curar al party ganador
+				p.setCurrentHpMp(p.getMaxHp(), p.getMaxMp());
+				p.setCurrentCp(p.getMaxCp());
+
+				PPVP_INTERNAL_TP.add(pid);
+				p.teleToLocation(PPVP_RAID_BOSS_X, PPVP_RAID_BOSS_Y, PPVP_RAID_BOSS_Z, 0);
+				p.sendPacket(new ExShowScreenMessage("TU PARTY GANO! El RaidBoss aparecera en 5 segundos!", 8000));
+				p.sendMessage("[Party PvP] Tu grupo ha ganado la eliminacion! Preparense para el RaidBoss!");
+			}
+		}
+
+		// Spawnear el boss 5 segundos despues
+		ThreadPool.schedule(this::ppvpSpawnRaidBoss, 5000);
+
+		LOGGER.info("GlobalGatekeeper: Party PvP fase RAID iniciada. Party ganadora: " + leaderName
+			+ " con " + _ppvpRaidParty.size() + " miembros.");
+	}
+
+	/** Resetea el evento Party PvP al estado IDLE. */
+	private void ppvpResetEvent()
+	{
+		_ppvpPhase = PpvpPhase.IDLE;
+		_ppvpWinnerLeader = -1;
+		_ppvpAlive.clear();
+		_ppvpRaidParty.clear();
+		ppvpDespawnRaidBoss();
+
+		// Sacar a cualquier participante restante
+		for (Integer pid : new java.util.ArrayList<>(PPVP_PARTICIPANTS))
+		{
+			final Player p = World.getInstance().getPlayer(pid);
+			if (p != null)
+			{
+				removeFromPartyPvpZone(p, true);
+			}
+		}
+		PPVP_PARTICIPANTS.clear();
+		PPVP_LEADER.clear();
+		stopPartyCheck();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -1450,6 +1723,175 @@ public class GlobalGatekeeper extends Script
 		sb.append("</table>");
 		sb.append("</body></html>");
 		return sb.toString();
+	}
+
+	// ---------------------------------------------------------------------------
+	// Party PvP Zone — Limite de parties
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Cuenta cuantas parties distintas hay actualmente en la zona.
+	 * Una party se identifica por el objectId de su lider.
+	 */
+	private static int countPartiesInZone()
+	{
+		final Set<Integer> leaders = ConcurrentHashMap.newKeySet();
+		for (Integer playerId : PPVP_PARTICIPANTS)
+		{
+			final Integer leaderId = PPVP_LEADER.get(playerId);
+			if (leaderId != null)
+			{
+				leaders.add(leaderId);
+			}
+		}
+		return leaders.size();
+	}
+
+	// ---------------------------------------------------------------------------
+	// Party PvP Zone — RaidBoss
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Spawnea el RaidBoss en la zona Party PvP si no hay ninguno activo.
+	 * Llamado cuando la primera party entra a la zona.
+	 */
+	private void ppvpSpawnRaidBoss()
+	{
+		if (_ppvpRaidBoss != null)
+		{
+			return; // Ya hay un boss activo
+		}
+		_ppvpBossHandled.set(false);
+
+		try
+		{
+			_ppvpRaidBoss = addSpawn(PPVP_RAID_BOSS_ID, PPVP_RAID_BOSS_X, PPVP_RAID_BOSS_Y, PPVP_RAID_BOSS_Z, PPVP_RAID_BOSS_HDG, false, 0, false);
+			if (_ppvpRaidBoss == null)
+			{
+				LOGGER.warning("GlobalGatekeeper: addSpawn retorno null para RaidBoss Party PvP ID=" + PPVP_RAID_BOSS_ID);
+				return;
+			}
+
+			// Listener de muerte del boss
+			_ppvpRaidBoss.addListener(new ConsumerEventListener(
+				_ppvpRaidBoss,
+				EventType.ON_CREATURE_DEATH,
+				(OnCreatureDeath event) ->
+				{
+					if (event.getTarget() == _ppvpRaidBoss)
+					{
+						ppvpOnRaidBossDeath();
+					}
+				},
+				this));
+
+			// Iniciar remocion de Raid Curse
+			ppvpStartRaidCurseRemoval();
+
+			// Anunciar al party ganador
+			for (Integer pid : _ppvpRaidParty)
+			{
+				final Player p = World.getInstance().getPlayer(pid);
+				if ((p != null) && p.isOnline())
+				{
+					p.sendPacket(new ExShowScreenMessage("EL RAIDBOSS HA APARECIDO! Eliminalo para ganar la recompensa!", 8000));
+					p.sendMessage("[Party PvP] El RaidBoss ha aparecido! Eliminalo con tu grupo!");
+				}
+			}
+
+			LOGGER.info("GlobalGatekeeper: RaidBoss Party PvP spawneado ID=" + PPVP_RAID_BOSS_ID
+				+ " en (" + PPVP_RAID_BOSS_X + "," + PPVP_RAID_BOSS_Y + "," + PPVP_RAID_BOSS_Z + ")");
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("GlobalGatekeeper: Error spawneando RaidBoss Party PvP: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Despawnea el RaidBoss si sigue vivo (ej. todos los jugadores salieron).
+	 */
+	private void ppvpDespawnRaidBoss()
+	{
+		ppvpStopRaidCurseRemoval();
+		final Npc boss = _ppvpRaidBoss;
+		_ppvpRaidBoss = null;
+		if (boss != null)
+		{
+			boss.deleteMe();
+			LOGGER.info("GlobalGatekeeper: RaidBoss Party PvP despawneado (zona vaciada).");
+		}
+	}
+
+	/** Llamado cuando muere el RaidBoss de la zona Party PvP. */
+	private void ppvpOnRaidBossDeath()
+	{
+		if (!_ppvpBossHandled.compareAndSet(false, true))
+		{
+			return;
+		}
+		ppvpStopRaidCurseRemoval();
+		_ppvpRaidBoss = null;
+
+		// Obtener nombre del lider ganador
+		final Player leaderPlayer = World.getInstance().getPlayer(_ppvpWinnerLeader);
+		final String leaderName = (leaderPlayer != null) ? leaderPlayer.getName() : "Desconocido";
+
+		// Entregar recompensa SOLO al party ganador
+		int rewarded = 0;
+		for (Integer pid : _ppvpRaidParty)
+		{
+			final Player p = World.getInstance().getPlayer(pid);
+			if ((p != null) && p.isOnline())
+			{
+				p.addItem(ItemProcessType.REWARD, PPVP_RAID_REWARD_ID, PPVP_RAID_REWARD_QTY, p, true);
+				p.sendPacket(new ExShowScreenMessage("RAIDBOSS DERROTADO! Recibiste tu recompensa! Teleport a Giran en 15s.", 10000));
+				p.sendMessage("[Party PvP] Victoria! El RaidBoss fue eliminado! Recibiste " + PPVP_RAID_REWARD_QTY + "x de recompensa.");
+				rewarded++;
+			}
+		}
+
+		org.l2jmobius.gameserver.util.Broadcast.toAllOnlinePlayers(
+			"[Party PvP Zone] El grupo de " + leaderName + " derroto al RaidBoss! " + rewarded + " jugadores recibieron recompensa.", false);
+
+		LOGGER.info("GlobalGatekeeper: RaidBoss Party PvP derrotado por party de " + leaderName
+			+ ". Recompensas entregadas a " + rewarded + " jugadores.");
+
+		// Teleportar a todos a Giran y resetear evento despues de 15 segundos
+		ThreadPool.schedule(this::ppvpResetEvent, 15000);
+	}
+
+	/** Tarea periodica que remueve el Raid Curse a los participantes. */
+	private void ppvpStartRaidCurseRemoval()
+	{
+		ppvpStopRaidCurseRemoval();
+		final org.l2jmobius.gameserver.model.skill.Skill curseSkill =
+			org.l2jmobius.gameserver.data.xml.SkillData.getInstance().getSkill(PPVP_RAID_CURSE_SKILL, 1);
+		if (curseSkill == null)
+		{
+			return;
+		}
+		_ppvpRaidCurseTask = ThreadPool.scheduleAtFixedRate(() ->
+		{
+			for (Integer pid : _ppvpRaidParty)
+			{
+				final Player p = World.getInstance().getPlayer(pid);
+				if ((p != null) && p.isOnline() && !p.isDead())
+				{
+					p.getEffectList().stopSkillEffects(
+						org.l2jmobius.gameserver.model.skill.enums.SkillFinishType.REMOVED, curseSkill);
+				}
+			}
+		}, 500, 1000);
+	}
+
+	private void ppvpStopRaidCurseRemoval()
+	{
+		if (_ppvpRaidCurseTask != null)
+		{
+			_ppvpRaidCurseTask.cancel(false);
+			_ppvpRaidCurseTask = null;
+		}
 	}
 
 	// ---------------------------------------------------------------------------

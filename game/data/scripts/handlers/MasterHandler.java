@@ -217,6 +217,7 @@ import handlers.chat.commands.voiced.AutoPlay;
 import handlers.chat.commands.voiced.AutoPotion;
 import handlers.chat.commands.voiced.Banking;
 import handlers.chat.commands.voiced.Noble;
+import handlers.chat.commands.voiced.Reward;
 import handlers.chat.commands.voiced.ChangePassword;
 import handlers.chat.commands.voiced.ChatAdmin;
 import handlers.chat.commands.voiced.ExperienceGain;
@@ -562,6 +563,7 @@ public class MasterHandler
 			PremiumSystemConfig.PREMIUM_SYSTEM_ENABLED ? Premium.class : null,
 			AutoPotionsConfig.AUTO_POTIONS_ENABLED ? AutoPotion.class : null,
 			Noble.class,
+			Reward.class,
 		},
 		{
 			// Target Handlers

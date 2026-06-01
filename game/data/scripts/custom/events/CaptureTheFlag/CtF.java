@@ -745,6 +745,7 @@ public class CtF extends Event
 							participant.broadcastPacket(new MagicSkillUse(participant, participant, skill.getId(), skill.getLevel(), skill.getHitTime(), skill.getReuseDelay()));
 							participant.broadcastSocialAction(3);
 							giveItems(participant, REWARD);
+								try { custom.Achievements.Achievements.onCtfWin(participant); } catch (Exception ignored) {}
 						}
 					}
 				}
@@ -760,6 +761,7 @@ public class CtF extends Event
 							participant.broadcastPacket(new MagicSkillUse(participant, participant, skill.getId(), skill.getLevel(), skill.getHitTime(), skill.getReuseDelay()));
 							participant.broadcastSocialAction(3);
 							giveItems(participant, REWARD);
+								try { custom.Achievements.Achievements.onCtfWin(participant); } catch (Exception ignored) {}
 						}
 					}
 				}
@@ -775,6 +777,7 @@ public class CtF extends Event
 							participant.broadcastPacket(new MagicSkillUse(participant, participant, skill.getId(), skill.getLevel(), skill.getHitTime(), skill.getReuseDelay()));
 							participant.broadcastSocialAction(3);
 							giveItems(participant, REWARD);
+								try { custom.Achievements.Achievements.onCtfWin(participant); } catch (Exception ignored) {}
 						}
 					}
 				}

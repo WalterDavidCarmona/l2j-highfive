@@ -201,11 +201,6 @@
 		<set name="is_sellable" val="false" />
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
-		<skills>
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20712" type="Armor" name="Super Strong Giant's Mask (Event) - Blessing of Skooldy : Protection of Darkness - 2 Hour Limited Period">
 		<!-- For events. Super Strong Giant's Mask. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -221,12 +216,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="120" />
-		<skills>
-			<skill id="21122" level="1" /> <!-- Blessing of Skooldie: Protection of Darkness -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20713" type="Armor" name="Mask of Silent Scream (Event) - Blessing of Skooldy : Protection of Darkness - 2 Hour Limited Period">
 		<!-- For events. Mask of Silent Scream. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -242,12 +231,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="120" />
-		<skills>
-			<skill id="21123" level="1" /> <!-- Blessing of Skooldie: Protection of Darkness -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20714" type="Armor" name="Spirit of Wrath Mask (Event) - Blessing of Skooldy : Protection of Darkness - 2 Hour Limited Period">
 		<!-- For events. Spirit of Wrath Mast. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -263,12 +246,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="120" />
-		<skills>
-			<skill id="21124" level="1" /> <!-- Blessing of Skooldie: Protection of Darkness -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20715" type="Armor" name="Undecaying Corpse Mask (Event) - Blessing of Skooldy : Protection of Darkness - 2 Hour Limited Period">
 		<!-- For events. Undecaying Corpse Mask. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -284,12 +261,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="120" />
-		<skills>
-			<skill id="21125" level="1" /> <!-- Blessing of Skooldie: Protection of Darkness -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20716" type="Armor" name="Planet X235 Alien Mask (Event) - Blessing of Skooldy : Protection of Darkness - 2 Hour Limited Period">
 		<!-- For events. Planet X235 Alien Mask. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -305,12 +276,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="120" />
-		<skills>
-			<skill id="21126" level="1" /> <!-- Blessing of Skooldie: Protection of Darkness -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20717" type="EtcItem" name="Shiny Halloween Toy Box (Event)">
 		<!-- For events. One of Shiny Halloween Mask can be obtained with chance. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
@@ -343,12 +308,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="240" />
-		<skills>
-			<skill id="21127" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20719" type="Armor" name="Shiny Mask of Silent Scream (Event) - Blessing of Halloween - 4-Hour Limited Period">
 		<!-- For events. Brightly shining Mask of Silent Scream. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 2 hour. -->
@@ -364,12 +323,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="240" />
-		<skills>
-			<skill id="21128" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20720" type="Armor" name="Shiny Spirit of Wrath Mask (Event) - Blessing of Halloween - 4-Hour Limited Period">
 		<!-- For events. Brightly shining Spirit of Wrath Mask. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 2 hour. -->
@@ -385,12 +338,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="240" />
-		<skills>
-			<skill id="21129" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20721" type="Armor" name="Shiny Undecaying Corpse Mask (Event) - Blessing of Halloween - 4-Hour Limited Period">
 		<!-- For events. Brightly shining Undecaying Corpse Mask. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 2 hour. -->
@@ -405,13 +352,6 @@
 		<set name="is_sellable" val="false" />
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
-		<set name="time" val="240" />
-		<skills>
-			<skill id="21130" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20722" type="Armor" name="Shiny Planet X235 Alien Mask (Event) - Blessing of Halloween - 4-Hour Limited Period">
 		<!-- For events. Brightly Shining Planet X235 Alien Mask. Equip to use card skill needed to play Jack Game. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 2 hour. -->
@@ -427,12 +367,6 @@
 		<set name="is_depositable" val="false" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="240" />
-		<skills>
-			<skill id="21131" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-			<skill id="21120" level="1" /> <!-- Jack O'Lantern Card -->
-			<skill id="21121" level="1" /> <!-- Rotten Jack O'Lantern Card -->
-		</skills>
 	</item>
 	<item id="20723" type="Armor" name="Golden Jack O'Lantern Mask.">
 		<!-- Jack O'Lantern Mask made with gold. It glows gorgeously. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
@@ -463,9 +397,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="21136" level="1" /> <!-- Golden Jack O'Lantern's Authority -->
-		</skills>
 	</item>
 	<item id="20725" type="Armor" name="Red Flame of Valakas">
 		<!-- Valakas's Helm of red color as if it is burning. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
@@ -498,12 +429,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="is_freightable" val="true" />
-		<skills>
-			<skill id="3267" level="1" /> <!-- Dismiss Agathion -->
-			<skill id="21133" level="1" /> <!-- Release Seal on Agathion - Frozen Corpse -->
-			<skill id="23117" level="1" /> <!-- Frozen Corpse Agathion Cute Trick -->
-			<skill id="3267" level="1" type="ON_UNEQUIP" /> <!-- Dismiss Agathion -->
-		</skills>
 	</item>
 	<item id="20727" type="Armor" name="Agathion Seal Bracelet - Zombie - Escape from Death - 7-day limited period">
 		<!-- Bracelet that summons the Zombie Agathion. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 12 hour. -->
@@ -520,13 +445,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="3267" level="1" /> <!-- Dismiss Agathion -->
-			<skill id="21133" level="1" /> <!-- Release Seal on Agathion - Frozen Corpse -->
-			<skill id="23117" level="1" /> <!-- Frozen Corpse Agathion Cute Trick -->
-			<skill id="23174" level="1" /> <!-- Narrow Escape -->
-			<skill id="3267" level="1" type="ON_UNEQUIP" /> <!-- Dismiss Agathion -->
-		</skills>
 	</item>
 	<item id="20728" type="EtcItem" name="Lucky Sky Lantern Summon Scroll">
 		<!-- Summons Sky Lantern to offer to sky with a wish. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
@@ -619,12 +537,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="is_freightable" val="true" />
-		<skills>
-			<skill id="3267" level="1" /> <!-- Dismiss Agathion -->
-			<skill id="21134" level="1" /> <!-- Release Seal on Agathion - Bluebird -->
-			<skill id="23119" level="1" /> <!-- Bluebird Agathion Cute Trick -->
-			<skill id="3267" level="1" type="ON_UNEQUIP" /> <!-- Dismiss Agathion -->
-		</skills>
 	</item>
 	<item id="20733" type="Armor" name="Agathion Seal Bracelet - Kwanwoo Hwamae">
 		<!-- Bracelet that summons the Kwanwoo Hwamae Agathion. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
@@ -641,12 +553,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="is_freightable" val="true" />
-		<skills>
-			<skill id="3267" level="1" /> <!-- Dismiss Agathion -->
-			<skill id="21135" level="1" /> <!-- Release Seal on Agathion - Hatbird -->
-			<skill id="23120" level="1" /> <!-- Hatbird Agathion Cute Trick -->
-			<skill id="3267" level="1" type="ON_UNEQUIP" /> <!-- Dismiss Agathion -->
-		</skills>
 	</item>
 	<item id="20734" type="EtcItem" name="Golden Jack O'Lantern Mask 7-Day Pack - Authority of Golden Jack O'Lantern Mask.">
 		<!-- Pack with wrapped Golden Jack O'Lantern Mask(7 Day). Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
@@ -828,10 +734,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="21137" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-		</skills>
 	</item>
 	<item id="20744" type="Armor" name="Shiny Mask of Silent Scream. - Blessing of Halloween - 7-day limited period">
 		<!-- Brightly shining Mask of Silent Scream. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -848,10 +750,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="21138" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-		</skills>
 	</item>
 	<item id="20745" type="Armor" name="Shiny Spirit of Wrath Mast. - Blessing of Halloween - 7-day limited period">
 		<!-- Brightly shining Spirit of Wrath Mask. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -868,10 +766,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="21139" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-		</skills>
 	</item>
 	<item id="20746" type="Armor" name="Shiny Undecaying Corpse Mask. - Blessing of Halloween - 7-day limited period">
 		<!-- Brightly shining Undecaying Corpse Mask. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -888,10 +782,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="21140" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-		</skills>
 	</item>
 	<item id="20747" type="Armor" name="Shiny Planet X235 Alien Mask. - Blessing of Halloween - 7-day limited period">
 		<!-- Brightly Shining Planet X235 Alien Mask. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. Special skill reuse delay is 1 hour. -->
@@ -908,10 +798,6 @@
 		<set name="is_premium" val="true" />
 		<set name="is_oly_restricted" val="true" />
 		<set name="time" val="10080" />
-		<skills>
-			<skill id="21141" level="1" /> <!-- Blessing of Halloween -->
-			<skill id="21132" level="1" /> <!-- Shadow Ability -->
-		</skills>
 	</item>
 	<item id="20748" type="EtcItem" name="Shiny Super Strong Giant's Mask 7-Day Pack - Blessing of Halloween">
 		<!-- Wrapped pack with Shiny Super Strong Giant's Mask. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->

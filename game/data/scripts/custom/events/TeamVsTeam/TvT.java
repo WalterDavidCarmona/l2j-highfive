@@ -697,6 +697,7 @@ public class TvT extends Event
 							participant.broadcastPacket(new MagicSkillUse(participant, participant, skill.getId(), skill.getLevel(), skill.getHitTime(), skill.getReuseDelay()));
 							participant.broadcastSocialAction(3);
 							giveItems(participant, REWARD);
+								try { custom.Achievements.Achievements.onTvtWin(participant); } catch (Exception ignored) {}
 						}
 					}
 				}
@@ -712,6 +713,7 @@ public class TvT extends Event
 							participant.broadcastPacket(new MagicSkillUse(participant, participant, skill.getId(), skill.getLevel(), skill.getHitTime(), skill.getReuseDelay()));
 							participant.broadcastSocialAction(3);
 							giveItems(participant, REWARD);
+								try { custom.Achievements.Achievements.onTvtWin(participant); } catch (Exception ignored) {}
 						}
 					}
 				}
@@ -727,6 +729,7 @@ public class TvT extends Event
 							participant.broadcastPacket(new MagicSkillUse(participant, participant, skill.getId(), skill.getLevel(), skill.getHitTime(), skill.getReuseDelay()));
 							participant.broadcastSocialAction(3);
 							giveItems(participant, REWARD);
+								try { custom.Achievements.Achievements.onTvtWin(participant); } catch (Exception ignored) {}
 						}
 					}
 				}
@@ -793,11 +796,11 @@ public class TvT extends Event
 				// --- Rotar a la siguiente zona para el proximo evento ---
 				if (ARENA_ZONES.size() > 1)
 				{
-					final int nextIndex = ZONE_INDEX.incrementAndGet() % ARENA_ZONES.size();
+					final int nextIndex = (ZONE_INDEX.get() + 1) % ARENA_ZONES.size();
 					ZONE_INDEX.set(nextIndex);
 					CURRENT_ZONE.set(ARENA_ZONES.get(nextIndex));
 					LOGGER.info("TvT Event: Rotacion de zona -> [" + (nextIndex + 1) + "/" + ARENA_ZONES.size() + "] " + CURRENT_ZONE.get().name);
-					Broadcast.toAllOnlinePlayers("TvT Event: Next arena -> " + CURRENT_ZONE.get().name);
+					Broadcast.toAllOnlinePlayers("TvT Event: Proxima arena -> " + CURRENT_ZONE.get().name);
 				}
 
 				// Set state INACTIVE

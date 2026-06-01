@@ -76,5 +76,6 @@
 		<npc id="30638" x="-23896" y="207797" z="-3176" heading="16384" respawnDelay="60" /> <!-- Basilla -->
 		<npc id="30653" x="-6774" y="202086" z="-3649" heading="0" respawnDelay="60" /> <!-- Sir Aron Tanford -->
 		<npc id="30730" x="-17305" y="209742" z="-3660" heading="61440" respawnDelay="60" /> <!-- Jax -->
+		<npc id="50009" x="-17149" y="209695" z="-3664" heading="34981" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
 	</spawn>
 </list>

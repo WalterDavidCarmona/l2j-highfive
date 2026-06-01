@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+import custom.DailyReward.DailyReward;
 import custom.VoteSystem.VoteSystem;
 import org.l2jmobius.commons.database.DatabaseFactory;
 import org.l2jmobius.commons.threads.ThreadPool;
@@ -73,6 +74,10 @@ public class HomeBoard implements IParseBoardHandler
 		"_bbshome",
 		"_bbstop",
 		"_bbsvote",
+		"_bbsdailyreward",
+		"_bbsdailyreward_premium",
+		"_bbsdailyreward_page",
+		"_bbsdailyreward_limit",
 	};
 	
 	private static final String[] CUSTOM_COMMANDS =
@@ -154,6 +159,36 @@ public class HomeBoard implements IParseBoardHandler
 				returnHtml = returnHtml.replace("%region_count%", Integer.toString(getRegionCount(player)));
 				returnHtml = returnHtml.replace("%clan_count%", Integer.toString(ClanTable.getInstance().getClanCount()));
 			}
+			// home.html ya no tiene daily reward section embebida
+		}
+		else if (command.equals("_bbsdailyreward") || command.equals("_bbsdailyreward_premium"))
+		{
+			final boolean isPremium = command.equals("_bbsdailyreward_premium");
+			final String result = isPremium ? DailyReward.claimPremiumReward(player) : DailyReward.claimUserReward(player);
+			if (result.startsWith("ok:"))
+			{
+				final String[] parts = result.split(":", 4);
+				final String tag = isPremium ? "[Premium] " : "";
+				player.sendMessage("[Recompensa Diaria] " + tag + "Dia " + parts[1] + " reclamado: " + parts[2] + " x" + parts[3] + "!");
+				DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+			}
+			else if (result.startsWith("Limite"))
+			{
+				DailyReward.sendHtml(player, DailyReward.buildLimitReachedHtml(isPremium, result));
+			}
+			else
+			{
+				player.sendMessage("[Recompensa Diaria] " + result);
+				DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+			}
+		}
+		else if (command.equals("_bbsdailyreward_page"))
+		{
+			DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+		}
+		else if (command.equals("_bbsdailyreward_limit"))
+		{
+			DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
 		}
 		else if (command.equals("_bbsvote"))
 		{

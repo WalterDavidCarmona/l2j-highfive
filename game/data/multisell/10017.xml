@@ -16,6 +16,7 @@
   <!-- Blessed Scroll: Enchant Armor (S) -->
   <item id="2">
     <production id="6578" count="1"/>
+	<ingredient id="6673" count="100"/>
   </item>
 
   <!-- Scroll: Enchant Weapon (S) -->
@@ -26,6 +27,7 @@
   <!-- Blessed Scroll: Enchant Weapon (S) -->
   <item id="4">
     <production id="6577" count="1"/>
+	<ingredient id="6673" count="100"/>
   </item>
 
   <!-- Scroll: Enchant Armor (A) -->
@@ -36,6 +38,7 @@
   <!-- Blessed Scroll: Enchant Armor (A) -->
   <item id="6">
     <production id="6570" count="1"/>
+	<ingredient id="6673" count="30"/>
   </item>
 
   <!-- Scroll: Enchant Weapon (A) -->
@@ -46,6 +49,7 @@
   <!-- Blessed Scroll: Enchant Weapon (A) -->
   <item id="8">
     <production id="6569" count="1"/>
+	<ingredient id="6673" count="30"/>
   </item>
 
   <!-- Scroll: Enchant Weapon (B) -->
@@ -56,6 +60,7 @@
    <!-- Blessed Scroll: Enchant Weapon (B) -->
   <item id="10">
     <production id="6571" count="1"/>
+	<ingredient id="6673" count="30"/>
   </item>
 
   <!-- Scroll: Enchant Armor (B) -->
@@ -66,6 +71,7 @@
   <!-- Blessed Scroll: Enchant Armor (B) -->
   <item id="12">
     <production id="6572" count="1"/>
+	<ingredient id="6673" count="15"/>
   </item>
 
   <!-- Scroll: Enchant Weapon (C) -->
@@ -76,6 +82,7 @@
    <!-- Blessed Scroll: Enchant Weapon (C) -->
   <item id="14">
     <production id="6573" count="1"/>
+	<ingredient id="6673" count="20"/>
   </item>
 
   <!-- Scroll: Enchant Armor (C) -->
@@ -86,16 +93,19 @@
   <!-- Blessed Scroll: Enchant Armor (C) -->
   <item id="16">
     <production id="6574" count="1"/>
+	<ingredient id="6673" count="10"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Armor (D) -->
   <item id="17">
     <production id="6576" count="1"/>
+	<ingredient id="6673" count="5"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Weapon (D) -->
   <item id="18">
     <production id="6575" count="1"/>
+	<ingredient id="6673" count="1"/>
   </item>
 
   <item id="29">
@@ -117,6 +127,10 @@
   
   <item id="26">
     <production id="20381" count="1"/>
+  </item>
+  
+    <item id="26">
+    <production id="8599" count="1"/>
   </item>
   
 </list>

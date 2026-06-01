@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list enabled="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/spawns.xsd">
+	<spawn name="19_26">
+		<npc id="50009" x="-19020" y="277004" z="-13376" heading="16942" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
+		<npc id="50009" x="-12661" y="274099" z="-15296" heading="23858" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
+	</spawn>
+</list>

@@ -988,6 +988,7 @@ public class Tournament1v1 extends Event
 			final String className = ClassListData.getInstance().getClass(champion.getActiveClass()).getClassName();
 			final String date      = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
 			saveChampionToRanking(champion.getName(), className, date);
+			try { custom.Achievements.Achievements.onTournamentWin(champion); } catch (Exception ignored) {}
 		}
 
 		// Anuncio global con nombre y recompensas

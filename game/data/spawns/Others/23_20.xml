@@ -231,5 +231,7 @@
 		<npc id="32864" x="117168" y="76834" z="-2688" heading="35672" respawnDelay="60" /> <!-- Separated Soul -->
 		<npc id="32887" x="117410" y="75082" z="-2648" heading="15377" respawnDelay="60" /> <!-- Metar -->
 		<npc id="35277" x="116780" y="75504" z="-2727" heading="20000" respawnDelay="60" /> <!-- Manor Manager -->
+		<npc id="50009" x="117189" y="76777" z="-2688" heading="42404" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
+		<npc id="50009" x="116008" y="75775" z="-2712" heading="6239" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
 	</spawn>
 </list>

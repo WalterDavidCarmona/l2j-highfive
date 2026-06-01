@@ -60,6 +60,7 @@
 		<buff id="349" level="1" price="0" desc="Decreases re-use time." /> <!-- Song of Renewal -->
 		<buff id="363" level="1" price="0" desc="Increases MP regeneration rate." /> <!-- Song of Meditation -->
 		<buff id="364" level="1" price="0" desc="Decreases re-use time of physical skills." /> <!-- Song of Champion -->
+		<buff id="529" level="1" price="0" desc="Increase Element Resistance." /> <!-- Song of Elemental -->
 	</category>
 	<category type="Chants">
 		<buff id="1002" level="3" price="0" desc="Increases Casting Spd." /> <!-- Flame Chant -->
@@ -96,6 +97,8 @@
 		<buff id="1416" level="1" price="0" desc="Paagrio Fist." /> <!-- Paagrio Fist -->
 		<buff id="1501" level="1" price="0" desc="Max HP and Max MP." /> <!-- Improved Condition -->
 		<buff id="1499" level="1" price="0" desc="Patk and Mdef." /> <!-- Improved Combat -->
+		<buff id="1504" level="1" price="0" desc="Improved Movement." /> <!-- Improved Movement -->
+		<buff id="1323" level="1" price="0" desc="Noblesse Blessing." /> <!-- Noblesse Blessing -->
 	</category>
 	<category type="Resist">
 		<buff id="1259" level="4" price="0" desc="Increases resistance to stun attack." /> <!-- Resist Shock -->

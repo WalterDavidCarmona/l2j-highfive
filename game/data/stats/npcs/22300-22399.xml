@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
 	<npc id="22300" level="82" type="Monster" name="Dolph's Minion">
 		<!-- Confirmed CT2.5 -->
@@ -1984,7 +1984,7 @@
 			<param name="MoveAroundSocial" value="110" />
 			<param name="MoveAroundSocial1" value="110" />
 			<param name="MoveAroundSocial2" value="110" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="5" />
 			<param name="Skill02_Type" value="2" />
 			<param name="FieldCycle" value="1" />
@@ -2051,7 +2051,7 @@
 			<param name="MoveAroundSocial" value="110" />
 			<param name="MoveAroundSocial1" value="110" />
 			<param name="MoveAroundSocial2" value="110" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="5" />
 			<param name="AttackRange" value="2" />
 			<param name="Skill01_Check_Dist" value="1" />
@@ -5804,13 +5804,13 @@
 			<height normal="28" grown="34.5" />
 		</collision>
 	</npc>
-	<npc id="22373" level="90" type="Monster" name="Cosmic Scout">
+	<npc id="22373" level="87" type="Monster" name="Cosmic Scout">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
 			<param name="MoveAroundSocial1" value="0" />
 			<param name="MoveAroundSocial2" value="0" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="7" />
 			<param name="Skill01_Probablity" value="500" />
 			<param name="Skill02_Probablity" value="1000" />
@@ -5827,7 +5827,7 @@
 		<sex>MALE</sex>
 		<acquire exp="91939" sp="9694" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="118734.280667127" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
+			<vitals hp="88734.280667127" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
 			<attack physical="10447.7711554943" magical="7217.43231271078" random="10" critical="4" accuracy="5" attackSpeed="253" type="FIST" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -5852,7 +5852,6 @@
 			<skill id="4415" level="7" /> <!-- Daggers -->
 			<skill id="4416" level="1" /> <!-- Undead -->
 			<skill id="5360" level="3" /> <!-- NPC(party) - Physical Range Close Range Attack - Dark -->
-			<skill id="5365" level="3" /> <!-- Paralysis -->
 			<skill id="5467" level="1" /> <!-- Dark Attacks -->
 		</skillList>
 		<exCrtEffect>false</exCrtEffect>
@@ -5863,7 +5862,7 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="10639" min="5" max="10" chance="70.00" />
+				<item id="10639" min="10" max="20" chance="70.00" />
 				<item id="57" min="500000" max="1000000" chance="70.00" /> <!-- Adena -->
 			</drop>
 		</dropLists>
@@ -5981,13 +5980,13 @@
 			<height normal="22.3" />
 		</collision>
 	</npc>
-	<npc id="22375" level="90" type="Monster" name="Cosmic Priest">
+	<npc id="22375" level="87" type="Monster" name="Cosmic Priest">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="95" />
 			<param name="MoveAroundSocial1" value="95" />
 			<param name="MoveAroundSocial2" value="95" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="7" />
 			<param name="AttackRange" value="2" />
 			<param name="Skill01_Check_Dist" value="1" />
@@ -6011,7 +6010,7 @@
 		<equipment rhand="99" /> <!-- rhand: Apprentice's Spellbook -->
 		<acquire exp="533949" sp="56299" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="1112316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="812316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="9203.55601890295" magical="6357.91515855911" random="50" critical="1" accuracy="9" attackSpeed="253" type="BLUNT" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -6048,7 +6047,7 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="10639" min="5" max="10" chance="70.00" />
+				<item id="10639" min="10" max="20" chance="70.00" />
 				<item id="57" min="500000" max="1000000" chance="70.00" /> <!-- Adena -->
 			</drop>
 		</dropLists>
@@ -6057,13 +6056,13 @@
 			<height normal="28" grown="34.5" />
 		</collision>
 	</npc>
-	<npc id="22376" level="90" type="Monster" name="Cosmic Lord">
+	<npc id="22376" level="87" type="Monster" name="Cosmic Lord">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="160" />
 			<param name="MoveAroundSocial1" value="160" />
 			<param name="MoveAroundSocial2" value="160" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="7" />
 			<param name="Skill01_Probablity" value="1000" />
 			<param name="Skill01_Target" value="3" />
@@ -6082,7 +6081,7 @@
 		<sex>MALE</sex>
 		<acquire exp="1086079" sp="114515" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="1336949.124088359" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="1036949.124088359" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="7996.03660225228" magical="5523.74780111493" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -6119,7 +6118,7 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="10639" min="5" max="10" chance="70.00" />
+				<item id="10639" min="10" max="20" chance="70.00" />
 				<item id="57" min="500000" max="1000000" chance="70.00" /> <!-- Adena -->
 			</drop>
 		</dropLists>
@@ -6687,13 +6686,13 @@
 			<height normal="40" />
 		</collision>
 	</npc>
-	<npc id="22383" level="95" type="Monster" name="Tully's Toy">
+	<npc id="22383" level="90" type="Monster" name="Tully's Toy">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="80" />
 			<param name="MoveAroundSocial1" value="80" />
 			<param name="MoveAroundSocial2" value="121" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="7" />
 			<param name="Skill01_Probablity" value="1000" />
 			<param name="Skill01_Target" value="3" />
@@ -6706,7 +6705,7 @@
 		<sex>MALE</sex>
 		<acquire exp="967470" sp="6768" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="56202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
+			<vitals hp="146202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
 			<attack physical="9516.11506242799" magical="6611.6149441907" random="50" critical="1" accuracy="9" attackSpeed="253" type="BLUNT" range="40" distance="80" width="120" />
 			<defence physical="1595.195674418605" magical="1653.307558139535" />
 			<attribute>
@@ -6742,7 +6741,7 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="10639" min="10" max="20" chance="70.00" />
+				<item id="10639" min="50" max="100" chance="70.00" />
 				<item id="57" min="1000000" max="2000000" chance="70.00" /> <!-- Adena -->
 			</drop>
 		</dropLists>
@@ -6838,13 +6837,13 @@
 			<height normal="43.5" />
 		</collision>
 	</npc>
-	<npc id="22385" level="95" type="Monster" name="Tully's Golem Guard">
+	<npc id="22385" level="90" type="Monster" name="Tully's Golem Guard">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="80" />
 			<param name="MoveAroundSocial1" value="80" />
 			<param name="MoveAroundSocial2" value="95" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="7" />
 			<param name="Skill01_Probablity" value="1000" />
 			<param name="Skill02_Probablity" value="1000" />
@@ -6855,7 +6854,7 @@
 		<sex>MALE</sex>
 		<acquire exp="476710" sp="49686" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="9112316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="1512316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="9273.2997736354" magical="6442.91152041669" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="1595.195674418605" magical="1653.307558139535" />
 			<attribute>
@@ -6892,7 +6891,7 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="10639" min="10" max="20" chance="70.00" />
+				<item id="10639" min="50" max="100" chance="70.00" />
 				<item id="57" min="1000000" max="2000000" chance="70.00" /> <!-- Adena -->
 			</drop>
 		</dropLists>
@@ -6995,13 +6994,13 @@
 			<height normal="42" />
 		</collision>
 	</npc>
-	<npc id="22387" level="95" type="Monster" name="Foundry Mystic">
+	<npc id="22387" level="90" type="Monster" name="Foundry Mystic">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
 			<param name="MoveAroundSocial1" value="0" />
 			<param name="MoveAroundSocial2" value="0" />
-			<param name="IsAggressive" value="1" />
+			<param name="IsAggressive" value="0" />
 			<param name="Aggressive_Time" value="7" />
 			<param name="AttackRange" value="2" />
 			<param name="Party_Type" value="2" />
@@ -7021,7 +7020,7 @@
 		<sex>MALE</sex>
 		<acquire exp="291223" sp="30353" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="956202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
+			<vitals hp="1256202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
 			<attack physical="9516.11506242799" magical="6611.6149441907" random="10" critical="4" accuracy="5" attackSpeed="253" type="FIST" range="40" distance="80" width="120" />
 			<defence physical="1595.195674418605" magical="1653.307558139535" />
 			<attribute>
@@ -7058,7 +7057,7 @@
 		</ai>
 		<dropLists>
 			<drop>
-				<item id="10639" min="10" max="20" chance="70.00" />
+				<item id="10639" min="50" max="100" chance="70.00" />
 				<item id="57" min="1000000" max="2000000" chance="70.00" /> <!-- Adena -->
 			</drop>
 		</dropLists>

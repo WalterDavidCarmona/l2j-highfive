@@ -450,6 +450,7 @@ public class Deathmatch extends Event
 				
 				Player winner = Collections.max(PLAYER_SCORES.entrySet(), Map.Entry.comparingByValue()).getKey();
 				winner.addItem(ItemProcessType.REWARD, REWARD, player, true);
+				try { custom.Achievements.Achievements.onDeathmatchWin(winner); } catch (Exception ignored) {}
 				
 				startQuestTimer("ScoreBoard", 3500, null, null);
 				startQuestTimer("TeleportOut", 7000, null, null);

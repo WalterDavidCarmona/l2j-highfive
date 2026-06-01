@@ -11,59 +11,71 @@
 
   <item id="1">
     <production id="1419" count="1"/>
+	<ingredient id="10639" count="10"/>
   </item>
   
    
   <item id="2">
     <production id="3870" count="1"/>
+  <ingredient id="10639" count="10"/>
   </item>
 
   
   <item id="3">
     <production id="3874" count="1"/>
+  <ingredient id="10639" count="10"/>
   </item>
   
   <item id="1">
     <production id="9910" count="1"/>
+  <ingredient id="10639" count="10"/>
   </item>
   
    <item id="1">
     <production id="9911" count="1"/>
+  <ingredient id="10639" count="50"/>
   </item>
   
   <!-- Earth Egg -->
   <item id="4">
     <production id="9816" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
   <!-- Nonliving Nucleus -->
   <item id="5">
     <production id="9817" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
   <!-- Angelic Essence -->
   <item id="6">
     <production id="9818" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
   <!-- Dragon Heart -->
   <item id="7">
     <production id="9815" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
   <!-- Memento Mori -->
   <item id="8">
     <production id="9814" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
   <!-- Destruction Tombstone -->
   <item id="9">
     <production id="8176" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
   <!-- Cradle of Creation -->
   <item id="10">
     <production id="8175" count="10"/>
+  <ingredient id="10639" count="100"/>
   </item>
 
 

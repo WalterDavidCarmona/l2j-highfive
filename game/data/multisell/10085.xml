@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Divine Scrolls Premium Shop - NPC 30085 (Stanford) -->
+<!-- Requiere Premium. Item de pago: 10639 (Mouse Coin) x100 por cada Divine Scroll -->
+<list maintainEnchantment="true" enchantmentLevel="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
+	<!-- Divine Weapon Enchant Crystal (B-Grade) -->
+	<item>
+		<production id="22018" count="1" />
+		<ingredient id="10639" count="100" />
+	</item>
+
+	<!-- Divine Weapon Enchant Crystal (A-Grade) -->
+	<item>
+		<production id="22019" count="1" />
+		<ingredient id="10639" count="100" />
+	</item>
+
+	<!-- Divine Weapon Enchant Crystal (S-Grade) -->
+	<item>
+		<production id="20521" count="1" />
+		<ingredient id="10639" count="100" />
+	</item>
+
+	<!-- Divine Armor Enchant Crystal (B-Grade) -->
+	<item>
+		<production id="22020" count="1" />
+		<ingredient id="10639" count="100" />
+	</item>
+
+	<!-- Divine Armor Enchant Crystal (A-Grade) -->
+	<item>
+		<production id="22021" count="1" />
+		<ingredient id="10639" count="100" />
+	</item>
+
+	<!-- Divine Armor Enchant Crystal (S-Grade) -->
+	<item>
+		<production id="20522" count="1" />
+		<ingredient id="10639" count="100" />
+	</item>
+
+</list>

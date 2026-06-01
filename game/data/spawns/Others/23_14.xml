@@ -295,9 +295,5 @@
 		<npc id="32077" x="117808" y="-126768" z="-2584" heading="24576" respawnDelay="60" /> <!-- Ice Sculpture -->
 		<npc id="32078" x="117760" y="-126656" z="-2584" heading="32768" respawnDelay="60" /> <!-- Ice Sculpture -->
 		<npc id="32079" x="117840" y="-126528" z="-2584" heading="0" respawnDelay="60" /> <!-- Ice Sculpture -->
-		<npc id="32761" x="102512" y="-124416" z="-2768" heading="-11100" respawnDelay="60" /> <!-- Kegor -->
-		<npc id="32777" x="102306" y="-124361" z="-2748" heading="-11564" respawnDelay="60" /> <!-- Battalion Leader -->
-		<npc id="32778" x="102462" y="-124237" z="-2752" heading="-10828" respawnDelay="60" /> <!-- Legionnaire -->
-		<npc id="32781" x="102402" y="-124491" z="-2768" heading="-12072" respawnDelay="60" /> <!-- Jinia -->
 	</spawn>
 </list>

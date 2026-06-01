@@ -136,6 +136,7 @@ public class ClanPvpZone extends Script
 	private volatile int _raidWinnerClanId = -1;
 	private final Set<Player> _raidParticipants = ConcurrentHashMap.newKeySet();
 	private ScheduledFuture<?> _raidCurseTask = null;
+	private ScheduledFuture<?> _raidWipeCheckTask = null;
 	private final AtomicBoolean _raidBossDeathHandled = new AtomicBoolean(false);
 
 	// Timers
@@ -802,11 +803,11 @@ public class ClanPvpZone extends Script
 			}
 		}
 
-		// En fase Raid: notificar que el RaidBoss elimino a un participante
+		// En fase Raid: NO eliminar — el jugador puede ser resucitado por su clan
 		if (_state == EventState.RAID)
 		{
-			Broadcast.toAllOnlinePlayers(
-				"[Clan PvP Zone] " + killed.getName() + " fue eliminado por el RaidBoss!", false);
+			killed.sendMessage("[Clan PvP Zone] Has muerto! Tus companeros de clan pueden resucitarte.");
+			return;
 		}
 
 		// Eliminar al jugador muerto del evento tras breve retardo (permite animacion de muerte)
@@ -878,6 +879,7 @@ public class ClanPvpZone extends Script
 		}
 
 		stopRaidCurseRemoval();
+		stopRaidWipeCheck();
 
 		final String clanName = _registeredClans.getOrDefault(_raidWinnerClanId, "Desconocido");
 
@@ -988,6 +990,9 @@ public class ClanPvpZone extends Script
 		// Spawnear el boss 5 segundos despues (tiempo para que los jugadores carguen la zona)
 		ThreadPool.schedule(this::spawnRaidBoss, 5000);
 
+		// Iniciar tarea periodica que detecta si todos los raidParticipants estan muertos (wipe)
+		startRaidWipeCheck();
+
 		LOGGER.info("ClanPvpZone: Fase Raid iniciada para clan " + clanName + " con " + _raidParticipants.size() + " supervivientes.");
 	}
 
@@ -1077,6 +1082,52 @@ public class ClanPvpZone extends Script
 		}
 	}
 
+	/**
+	 * Tarea periodica (cada 5s) que verifica si todos los raidParticipants estan muertos.
+	 * Como en fase RAID morir no elimina, necesitamos detectar el wipe total
+	 * (todos muertos y nadie vivo para resucitar) y finalizar el evento.
+	 */
+	private void startRaidWipeCheck()
+	{
+		stopRaidWipeCheck();
+		_raidWipeCheckTask = ThreadPool.scheduleAtFixedRate(() ->
+		{
+			if (_state != EventState.RAID)
+			{
+				stopRaidWipeCheck();
+				return;
+			}
+			if (_raidParticipants.isEmpty())
+			{
+				return; // Se resuelve por otro camino (logout de todos)
+			}
+			boolean anyAlive = false;
+			for (Player p : _raidParticipants)
+			{
+				if ((p != null) && p.isOnline() && !p.isDead())
+				{
+					anyAlive = true;
+					break;
+				}
+			}
+			if (!anyAlive)
+			{
+				// Todos muertos -> wipe
+				ThreadPool.schedule(this::onClanWipedByRaidBoss, 2000);
+				stopRaidWipeCheck();
+			}
+		}, 5000, 5000);
+	}
+
+	private void stopRaidWipeCheck()
+	{
+		if (_raidWipeCheckTask != null)
+		{
+			_raidWipeCheckTask.cancel(false);
+			_raidWipeCheckTask = null;
+		}
+	}
+
 	private void onRaidBossDeath()
 	{
 		// Proteccion contra doble ejecucion (listeners pueden disparar mas de una vez)
@@ -1086,6 +1137,7 @@ public class ClanPvpZone extends Script
 		}
 
 		stopRaidCurseRemoval();
+		stopRaidWipeCheck();
 
 		final String clanName = _registeredClans.getOrDefault(_raidWinnerClanId, "Desconocido");
 

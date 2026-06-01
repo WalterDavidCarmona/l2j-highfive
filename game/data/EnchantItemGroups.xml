@@ -105,6 +105,32 @@
 	</enchantScrollGroup>
 
 	<!-- Blessed Scrolls enchanting route (scrollGroupId="1"). -->
+	<!-- Divine Crystal: 100% success all enchant levels -->
+	<enchantRateGroup name="DIVINE_GROUP">
+		<current enchant="0-65535" chance="100" />
+	</enchantRateGroup>
+
+	<enchantScrollGroup id="2">
+		<enchantRate group="DIVINE_GROUP">
+			<item slot="lhand" />
+			<item slot="head" />
+			<item slot="chest" />
+			<item slot="legs" />
+			<item slot="feet" />
+			<item slot="gloves" />
+			<item slot="neck" />
+			<item slot="rear;lear" />
+			<item slot="rfinger;lfinger" />
+			<item slot="belt" />
+			<item slot="shirt" />
+			<item slot="fullarmor" />
+			<item slot="rhand" magicWeapon="false" />
+			<item slot="lrhand" magicWeapon="false" />
+			<item slot="rhand" magicWeapon="true" />
+			<item slot="lrhand" magicWeapon="true" />
+		</enchantRate>
+	</enchantScrollGroup>
+
 	<enchantScrollGroup id="1">
 		<enchantRate group="BLESSED_ARMOR_GROUP">
 			<item slot="lhand" />
