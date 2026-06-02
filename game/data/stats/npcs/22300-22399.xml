@@ -6081,7 +6081,7 @@
 		<sex>MALE</sex>
 		<acquire exp="1086079" sp="114515" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="836949.124088359" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="636949.124088359" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="7996.03660225228" magical="5523.74780111493" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="585.591966139535" magical="642.766181023256" />
 			<attribute>
@@ -6705,7 +6705,7 @@
 		<sex>MALE</sex>
 		<acquire exp="967470" sp="6768" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="146202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
+			<vitals hp="446202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
 			<attack physical="9516.11506242799" magical="6611.6149441907" random="50" critical="1" accuracy="9" attackSpeed="253" type="BLUNT" range="40" distance="80" width="120" />
 			<defence physical="1595.195674418605" magical="1653.307558139535" />
 			<attribute>
@@ -6854,7 +6854,7 @@
 		<sex>MALE</sex>
 		<acquire exp="476710" sp="49686" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="1312316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
+			<vitals hp="512316.37469612" hpRegen="190.745373183435" mp="1777.4" mpRegen="3" />
 			<attack physical="9273.2997736354" magical="6442.91152041669" random="30" critical="4" accuracy="5" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
 			<defence physical="1595.195674418605" magical="1653.307558139535" />
 			<attribute>
@@ -7020,7 +7020,7 @@
 		<sex>MALE</sex>
 		<acquire exp="291223" sp="30353" />
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
-			<vitals hp="1056202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
+			<vitals hp="556202.8420013809" hpRegen="190.897045965523" mp="1777.4" mpRegen="3" />
 			<attack physical="9516.11506242799" magical="6611.6149441907" random="10" critical="4" accuracy="5" attackSpeed="253" type="FIST" range="40" distance="80" width="120" />
 			<defence physical="1595.195674418605" magical="1653.307558139535" />
 			<attribute>

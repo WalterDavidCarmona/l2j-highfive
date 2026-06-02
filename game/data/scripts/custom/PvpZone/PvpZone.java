@@ -519,6 +519,9 @@ public class PvpZone extends Script
 		// Bloquear summon de aliados hacia/desde esta zona
 		player.setInsideZone(ZoneId.NO_SUMMON_FRIEND, true);
 
+		// Marcar como zona PvP para desactivar PvpRewardItem.ini (DisableRewardsInPvpZones)
+		player.setInsideZone(ZoneId.PVP, true);
+
 		// Add event listeners
 		addDeathListener(player);
 		addLogoutListener(player);
@@ -666,6 +669,9 @@ public class PvpZone extends Script
 	// ---------------------------------------------------------------------------
 	private void removeFromZone(Player player, boolean restoreName)
 	{
+		// Clear duel HP bar for anyone targeting this player before removing
+		clearDuelBarsFor(player);
+
 		if (!PARTICIPANTS.remove(player))
 		{
 			return; // Already removed
@@ -736,6 +742,9 @@ public class PvpZone extends Script
 
 		// Restaurar permiso de summon de aliados
 		player.setInsideZone(ZoneId.NO_SUMMON_FRIEND, false);
+
+		// Quitar marca de zona PvP para reactivar PvpRewardItem.ini
+		player.setInsideZone(ZoneId.PVP, false);
 
 		// Remove PvP flag immediately
 		player.setPvpFlagLasts(0);
@@ -850,6 +859,9 @@ public class PvpZone extends Script
 		{
 			return;
 		}
+
+		// Clear duel HP bar for anyone targeting the killed player
+		clearDuelBarsFor(killed);
 
 		// Reset killed player's streak
 		KILL_STREAKS.put(killed.getObjectId(), 0);
@@ -1298,6 +1310,37 @@ public class PvpZone extends Script
 
 			// Send HP bar update for the opponent (name will show the class name since player.getName() is the class)
 			participant.sendPacket(new ExDuelUpdateUserInfo(opponent));
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Clear duel HP bar for everyone targeting a specific player
+	// ---------------------------------------------------------------------------
+	private void clearDuelBarsFor(Player target)
+	{
+		if (target == null)
+		{
+			return;
+		}
+		final int targetId = target.getObjectId();
+		for (Map.Entry<Integer, Player> entry : DUEL_TARGETS.entrySet())
+		{
+			if ((entry.getValue() != null) && (entry.getValue().getObjectId() == targetId))
+			{
+				final int viewerId = entry.getKey();
+				DUEL_TARGETS.remove(viewerId);
+				// Find the viewer player and reset their duel bar UI
+				for (Player participant : PARTICIPANTS)
+				{
+					if (participant.getObjectId() == viewerId)
+					{
+						participant.sendPacket(ExDuelEnd.PLAYER_DUEL);
+						participant.sendPacket(ExDuelReady.PLAYER_DUEL);
+						participant.sendPacket(ExDuelStart.PLAYER_DUEL);
+						break;
+					}
+				}
+			}
 		}
 	}
 

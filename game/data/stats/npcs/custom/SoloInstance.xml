@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/npcs.xsd">
-	<npc id="50027" displayId="25286" name="Anakim" usingServerSideName="true" title="Instancia Solo" usingServerSideTitle="true" type="Folk">
+	<npc id="50027" displayId="25286" name="Instancia Solo" usingServerSideName="true" title="Lineage Zona Zero" usingServerSideTitle="true" type="Folk">
 		<parameters />
 		<race>HUMANOID</race>
 		<sex>FEMALE</sex>

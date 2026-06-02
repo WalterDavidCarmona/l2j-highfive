@@ -9,7 +9,7 @@
 		Para spawnear: //spawn 50009
 		Para moverse : //move_to X Y Z
 	-->
-	<npc id="50009" displayId="30006" level="80" type="Folk" name="Fiorella" usingServerSideName="true" title="Global Gatekeeper" usingServerSideTitle="true">
+	<npc id="50009" displayId="29022" level="80" type="Folk" name="Global Gatekeeper" usingServerSideName="true" title="Lineage Zona Zero" usingServerSideTitle="true">
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
 			<param name="MoveAroundSocial1" value="130" />
@@ -27,8 +27,8 @@
 		</stats>
 		<status attackable="false" />
 		<collision>
-			<radius normal="8" />
-			<height normal="23" />
+			<radius normal="16" />
+			<height normal="32" />
 		</collision>
 	</npc>
 </list>

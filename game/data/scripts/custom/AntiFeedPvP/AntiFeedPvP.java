@@ -22,11 +22,13 @@ public class AntiFeedPvP extends Script
 	private AntiFeedPvP()
 	{
 		// Registrar listener global en todos los Players
+		// Se pasa TerminateReturn.class como returnBackClass para evitar NullPointerException
 		Containers.Players().addListener(new FunctionEventListener(
 			Containers.Players(),
 			EventType.ON_PLAYER_PVP_KILL,
 			(OnPlayerPvPKill event) -> onPvPKill(event),
-			this));
+			this,
+			TerminateReturn.class));
 
 		LOGGER.info("AntiFeedPvP: Sistema anti-feed global cargado.");
 	}

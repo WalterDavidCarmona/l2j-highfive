@@ -2714,7 +2714,7 @@
 			<height normal="24" />
 		</collision>
 	</npc>
-	<npc id="30085" level="70" type="Merchant" name="Stanford" title="Wizard-use Weapon Merchant">
+	<npc id="30085" displayId="25315" level="70" type="Merchant" name="GM Shop" usingServerSideName="true" title="Lineage Zona Zero" usingServerSideTitle="true">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="0" />
@@ -2750,8 +2750,8 @@
 		<exCrtEffect>true</exCrtEffect>
 		<ai aggroRange="1000" clanHelpRange="300" isAggressive="false" />
 		<collision>
-			<radius normal="10" />
-			<height normal="24" />
+			<radius normal="22" />
+			<height normal="51" />
 		</collision>
 	</npc>
 	<npc id="30086" level="70" type="Warehouse" name="Taurin" title="Warehouse Keeper">

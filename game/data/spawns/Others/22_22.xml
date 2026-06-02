@@ -113,14 +113,15 @@
 		<npc id="50008" x="82259" y="148620" z="-3464" heading="62728" respawnDelay="60" /> <!-- Thiago - Scheme Buffer -->
 		<npc id="32323" x="82885" y="149378" z="-3464" heading="50786" respawnDelay="60" /> <!-- Avant-Garde - Transformation Wizard -->
 		<npc id="1004000" x="83686" y="147993" z="-3400" heading="27657" respawnDelay="60" /> <!-- Viserion - Augment Master -->
-		<npc id="30085" x="81936" y="148305" z="-3464" heading="46596" respawnDelay="60" /> <!-- Stanford - Wizard-use Weapon Merchant -->
 		<npc id="30471" x="81914" y="148923" z="-3464" heading="13962" respawnDelay="60" /> <!-- Rupio - Blacksmith -->
 		<npc id="50009" x="83464" y="147918" z="-3400" heading="16797" respawnDelay="60" /> <!-- Fiorella - Global Gatekeeper -->
-		<npc id="31049" x="83074" y="148395" z="-3464" heading="34685" respawnDelay="60" /> <!-- Pepper - Symbol Maker -->
 		<npc id="30120" x="83064" y="149317" z="-3464" heading="39326" respawnDelay="60" /> <!-- Maximilian - High Priest -->
 		<npc id="50020" x="83674" y="148869" z="-3400" heading="30402" respawnDelay="60" /> <!-- Maestro de Reputacion - Clan Reputation -->
 		<npc id="50025" x="83674" y="148389" z="-3400" heading="29602" respawnDelay="60" /> <!-- Maestro de Logros - Achievements -->
 		<npc id="50026" x="83689" y="149260" z="-3400" heading="36736" respawnDelay="60" /> <!-- Agente Premium - Premium Shop -->
-		<npc id="50027" x="83710" y="149380" z="-3400" heading="36736" respawnDelay="60" /> <!-- Anakim - Instancia Solo -->
+		<npc id="31049" x="81921" y="148306" z="-3464" heading="53514" respawnDelay="60" /> <!-- Pepper - Symbol Maker -->
+		<npc id="30085" x="83063" y="148391" z="-3464" heading="30603" respawnDelay="60" /> <!-- GM Shop - Lineage Zona Zero -->
+		<npc id="50027" x="83061" y="147915" z="-3464" heading="32767" respawnDelay="60" /> <!-- Instancia Solo - Lineage Zona Zero -->
+		<npc id="50028" x="83689" y="148620" z="-3400" heading="30402" respawnDelay="60" /> <!-- Buffer Premium - Solo Premium -->
 	</spawn>
 </list>
