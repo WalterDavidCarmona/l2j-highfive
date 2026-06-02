@@ -27,7 +27,7 @@ TEX_NAME     = "BannerZonaZero"
 
 # Encriptacion del cliente L2 After Crows
 L2_HEADER    = "Lineage2Ver121".encode("utf-16-le")   # 28 bytes
-L2_XOR       = 0x38                                    # clave XOR de Icon.utx
+L2_XOR       = sum(ord(c) for c in UTX_NAME.lower()) % 256  # clave XOR derivada del nombre
 
 # Formato de textura: copiamos DXT1 (format=3) de Crest.utx
 # pero usamos RGBA8 (format=5) para simplificar la generacion de pixel data
@@ -355,7 +355,7 @@ def main():
     print("[*] Ensamblando UTX ...")
     raw_utx = build_utx(tex_obj, skip_pos, TEX_NAME)
 
-    print("[*] Encriptando (Lineage2Ver121 + XOR 0x38) ...")
+    print(f"[*] Encriptando (Lineage2Ver121 + XOR 0x{L2_XOR:02X}) ...")
     enc = encrypt_utx(raw_utx)
 
     os.makedirs(CLIENT_DIR, exist_ok=True)
