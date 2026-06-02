@@ -191,10 +191,13 @@ def build_texture_obj(W, H, px_bgra, names_map):
     prop_size = len(obj)
     print(f"    Properties: {prop_size} bytes")
 
-    # ── 2. UTexture base class serialization (1083 bytes zeros) ───────────────
-    # Serializacion de UBitmapMaterial/URenderedMaterial/UMaterial:
-    # FShaderProperty, FMaterialStageProperty, etc. - todos vacios
-    obj += bytes(UTEXTURE_BASE_ZEROS)
+    # ── 2. UTexture base class serialization ─────────────────────────────────
+    # Verificado en ColorSelection.utx (After Crows, lic=37):
+    #   byte 0: Palette reference (compact int 0 = null)
+    #   byte 1: StaticPermutations/MaterialInfo array count (CI 0 = empty)
+    #   byte 2: ShaderProperties array count (CI 0 = empty)
+    # Para textura sin shader = 3 bytes: [00 00 00]
+    obj += bytes([0x00, 0x00, 0x00])
 
     # ── 3. Mipmap section ─────────────────────────────────────────────────────
     mip_section_start = len(obj)
@@ -220,7 +223,7 @@ def build_texture_obj(W, H, px_bgra, names_map):
     obj += struct.pack("<B", ubits)
     obj += struct.pack("<B", vbits)
 
-    print(f"    UTexture base zeros: {UTEXTURE_BASE_ZEROS} bytes")
+    print(f"    UTexture base: 3 bytes (palette=null, 2x empty array)")
     print(f"    Mipmap pixel data: {pixel_count} bytes")
     print(f"    Total object: {len(obj)} bytes")
 
