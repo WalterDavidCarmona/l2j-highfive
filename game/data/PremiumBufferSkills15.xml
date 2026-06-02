@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	PremiumBufferSkills15.xml
+	Buffs encantados al nivel +15 (baseLevel + 15).
+	Skills con enchantGroup1="1" (max +30): nivel = base + 15.
+	Skills con enchantGroup1="5" (max +15): nivel = base + 15 (su maximo).
+	Skills sin enchantGroup (no encantables): se mantienen en nivel base.
+-->
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xsd/SchemeBufferSkills.xsd">
+	<category type="Buffs">
+		<buff id="1035" level="19" price="0" desc="Mental Shield +15" />
+		<buff id="1036" level="17" price="0" desc="Magic Barrier +15" />
+		<buff id="1040" level="18" price="0" desc="Shield +15" />
+		<buff id="1044" level="18" price="0" desc="Regeneration +15" />
+		<buff id="1045" level="21" price="0" desc="Blessed Body +15" />
+		<buff id="1048" level="21" price="0" desc="Blessed Soul +15" />
+		<buff id="1059" level="18" price="0" desc="Empower +15" />
+		<buff id="1062" level="17" price="0" desc="Berserker Spirit +15" />
+		<buff id="1068" level="18" price="0" desc="Might +15" />
+		<buff id="1077" level="18" price="0" desc="Focus +15" />
+		<buff id="1078" level="21" price="0" desc="Concentration +15" />
+		<buff id="1085" level="18" price="0" desc="Acumen +15" />
+		<buff id="1086" level="17" price="0" desc="Haste +15" />
+		<buff id="1087" level="18" price="0" desc="Agility +15" />
+		<buff id="1204" level="17" price="0" desc="Wind Walk +15" />
+		<buff id="1240" level="18" price="0" desc="Guidance +15" />
+		<buff id="1242" level="18" price="0" desc="Death Whisper +15" />
+		<buff id="1243" level="21" price="0" desc="Bless Shield +15" />
+		<buff id="1268" level="19" price="0" desc="Vampiric Rage +15" />
+		<buff id="1303" level="17" price="0" desc="Wild Magic +15" />
+		<buff id="1304" level="18" price="0" desc="Advanced Block +15" />
+		<buff id="1388" level="18" price="0" desc="Greater Might +15" />
+		<buff id="1389" level="18" price="0" desc="Greater Shield +15" />
+		<buff id="1390" level="18" price="0" desc="War Chant +15" />
+		<buff id="1391" level="18" price="0" desc="Earth Chant +15" />
+		<buff id="1397" level="18" price="0" desc="Clarity +15" />
+		<buff id="1043" level="16" price="0" desc="Holy Weapon +15" />
+		<buff id="1542" level="1"  price="0" desc="Counter Critical (no encantable)" />
+	</category>
+	<category type="Dances">
+		<buff id="271" level="1" price="0" desc="Dance of the Warrior" />
+		<buff id="272" level="1" price="0" desc="Dance of Inspiration" />
+		<buff id="273" level="1" price="0" desc="Dance of the Mystic" />
+		<buff id="274" level="1" price="0" desc="Dance of Fire" />
+		<buff id="275" level="1" price="0" desc="Dance of Fury" />
+		<buff id="276" level="1" price="0" desc="Dance of Concentration" />
+		<buff id="277" level="1" price="0" desc="Dance of Light" />
+		<buff id="307" level="1" price="0" desc="Dance of Aqua Guard" />
+		<buff id="309" level="1" price="0" desc="Dance of Earth Guard" />
+		<buff id="310" level="1" price="0" desc="Dance of the Vampire" />
+		<buff id="311" level="1" price="0" desc="Dance of Protection" />
+		<buff id="365" level="1" price="0" desc="Siren's Dance" />
+		<buff id="915" level="1" price="0" desc="Dance of Berserker" />
+	</category>
+	<category type="Songs">
+		<buff id="264" level="1" price="0" desc="Song of Earth" />
+		<buff id="265" level="1" price="0" desc="Song of Life" />
+		<buff id="266" level="1" price="0" desc="Song of Water" />
+		<buff id="267" level="1" price="0" desc="Song of Warding" />
+		<buff id="268" level="1" price="0" desc="Song of Wind" />
+		<buff id="269" level="1" price="0" desc="Song of Hunter" />
+		<buff id="270" level="1" price="0" desc="Song of Invocation" />
+		<buff id="304" level="1" price="0" desc="Song of Vitality" />
+		<buff id="305" level="1" price="0" desc="Song of Vengeance" />
+		<buff id="306" level="1" price="0" desc="Song of Flame Guard" />
+		<buff id="308" level="1" price="0" desc="Song of Storm Guard" />
+		<buff id="349" level="1" price="0" desc="Song of Renewal" />
+		<buff id="363" level="1" price="0" desc="Song of Meditation" />
+		<buff id="364" level="1" price="0" desc="Song of Champion" />
+		<buff id="529" level="1" price="0" desc="Song of Elemental" />
+	</category>
+	<category type="Chants">
+		<buff id="1002" level="18" price="0" desc="Flame Chant +15" />
+		<buff id="1251" level="17" price="0" desc="Chant of Fury +15" />
+		<buff id="1252" level="18" price="0" desc="Chant of Evasion +15" />
+		<buff id="1253" level="18" price="0" desc="Chant of Rage +15" />
+		<buff id="1284" level="18" price="0" desc="Chant of Revenge +15" />
+		<buff id="1006" level="18" price="0" desc="Chant of Fire +15" />
+		<buff id="1007" level="18" price="0" desc="Chant of Battle +15" />
+		<buff id="1009" level="18" price="0" desc="Chant of Shielding +15" />
+		<buff id="1362" level="16" price="0" desc="Chant of Spirit +15 (max grupo 5)" />
+		<buff id="1364" level="16" price="0" desc="Eye of Pa'agrio +15 (max grupo 5)" />
+		<buff id="1310" level="19" price="0" desc="Chant of Vampire +15" />
+		<buff id="1309" level="18" price="0" desc="Chant of Eagle +15" />
+		<buff id="1308" level="18" price="0" desc="Chant of Predator +15" />
+		<buff id="1461" level="1"  price="0" desc="Chant of Protection (no encantable)" />
+		<buff id="1517" level="1"  price="0" desc="Chant of Combat (no encantable)" />
+		<buff id="1518" level="1"  price="0" desc="Chant of Critical Attack (no encantable)" />
+		<buff id="1519" level="1"  price="0" desc="Chant of Blood Awakening (no encantable)" />
+		<buff id="1535" level="1"  price="0" desc="Chant of Movement (no encantable)" />
+		<buff id="1549" level="1"  price="0" desc="Chant of Elements (no encantable)" />
+	</category>
+	<category type="Resist">
+		<buff id="1259" level="19" price="0" desc="Resist Shock +15" />
+		<buff id="1393" level="18" price="0" desc="Resist Dark +15" />
+		<buff id="1392" level="18" price="0" desc="Resist Holy +15" />
+		<buff id="1033" level="18" price="0" desc="Resist Poison +15" />
+		<buff id="1182" level="18" price="0" desc="Resist Aqua +15" />
+		<buff id="1189" level="18" price="0" desc="Resist Wind +15" />
+		<buff id="1191" level="18" price="0" desc="Resist Fire +15" />
+		<buff id="1548" level="18" price="0" desc="Resist Earth +15" />
+		<buff id="1352" level="16" price="0" desc="Elemental Protection +15 (max grupo 5)" />
+		<buff id="1353" level="16" price="0" desc="Divine Protection +15 (max grupo 5)" />
+		<buff id="1354" level="16" price="0" desc="Arcane Protection +15 (max grupo 5)" />
+		<buff id="1032" level="18" price="0" desc="Invigor +15" />
+	</category>
+	<category type="Special">
+		<buff id="1355" level="1" price="0" desc="Prophecy of Water" />
+		<buff id="1356" level="1" price="0" desc="Prophecy of Fire" />
+		<buff id="1357" level="1" price="0" desc="Prophecy of Wind" />
+		<buff id="1363" level="1" price="0" desc="Chant of Victory" />
+		<buff id="1413" level="1" price="0" desc="Magnus' Chant" />
+		<buff id="4702" level="13" price="0" desc="Blessing of Seraphim" />
+		<buff id="4703" level="13" price="0" desc="Gift of Seraphim" />
+		<buff id="4700" level="13" price="0" desc="Gift of Queen" />
+		<buff id="4699" level="13" price="0" desc="Blessing of Queen" />
+		<buff id="1414" level="1" price="0" desc="Victory of Paagrio" />
+		<buff id="1501" level="1" price="0" desc="Improved Condition" />
+		<buff id="1499" level="1" price="0" desc="Improved Combat" />
+		<buff id="1504" level="1" price="0" desc="Improved Movement" />
+		<buff id="1323" level="1" price="0" desc="Noblesse Blessing" />
+	</category>
+</list>
