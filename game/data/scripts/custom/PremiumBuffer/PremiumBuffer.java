@@ -43,6 +43,7 @@ public class PremiumBuffer extends Script
 
 	// ── Config ─────────────────────────────────────────────────────────────────
 	private static int NPC_ID          = 50028;
+	private static final int SCHEME_BUFFER_NPC = 50008; // NPC donde aparece el boton de acceso
 	private static int MAX_SCHEMES     = 4;
 	private static int ENCHANT_LOW     = 15;
 	private static int ENCHANT_HIGH    = 30;
@@ -196,9 +197,14 @@ public class PremiumBuffer extends Script
 		loadConfig();
 		loadSchemes();
 
+		// NPC propio del PremiumBuffer
 		addStartNpc(NPC_ID);
 		addTalkId(NPC_ID);
 		addFirstTalkId(NPC_ID);
+
+		// Registrar tambien en el SchemeBuffer (50008) para que el bypass funcione
+		// El boton en 50008.htm usa "bypass -h Script PremiumBuffer enchant_15"
+		addTalkId(SCHEME_BUFFER_NPC);
 
 		LOGGER.info("PremiumBuffer: NPC=" + NPC_ID
 			+ " | MaxEsquemas=" + MAX_SCHEMES
@@ -282,6 +288,16 @@ public class PremiumBuffer extends Script
 				{
 					healPlayer(player);
 					sendHtml(npc, player, buildMainPage(npc, player));
+				}
+				break;
+
+			case "clear":
+				// clear_{schemeIdx}
+				if (p.length >= 2 && checkPremium(npc, player))
+				{
+					final int idx = safeInt(p[1], 1);
+					clearScheme(player, idx);
+					sendHtml(npc, player, buildEditorPage(npc, player, idx));
 				}
 				break;
 		}
@@ -477,10 +493,10 @@ public class PremiumBuffer extends Script
 		sb.append("<br><table border=0 width=270 cellspacing=3><tr>");
 		sb.append("<td><button value=\"&#10003; Listo\"")
 			.append(" action=\"bypass -h Script PremiumBuffer enchant_").append(ENCHANT_LOW).append("\"")
-			.append(" width=124 height=28 back=\"L2UI_CT1.OlympiadWnd_DF_HeroConfirm_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_HeroConfirm\"></td>");
+			.append(" width=180 height=28 back=\"L2UI_CT1.OlympiadWnd_DF_HeroConfirm_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_HeroConfirm\"></td>");
 		sb.append("<td><button value=\"Limpiar\"")
-			.append(" action=\"bypass -h Script PremiumBuffer cleareditor_").append(schemeIdx).append("\"")
-			.append(" width=124 height=28 back=\"L2UI_CT1.OlympiadWnd_DF_Back_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Back\"></td>");
+			.append(" action=\"bypass -h Script PremiumBuffer clear_").append(schemeIdx).append("\"")
+			.append(" width=78 height=28 back=\"L2UI_CT1.OlympiadWnd_DF_Back_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Back\"></td>");
 		sb.append("</tr></table>");
 
 		appendFooter(sb);
