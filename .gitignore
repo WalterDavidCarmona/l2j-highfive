@@ -1,6 +1,12 @@
 # Claude Code internal files
 .claude/
 
+# Eclipse - carpeta de output (binarios compilados por Eclipse)
+bin/
+
+# Eclipse - configuraciones personales del IDE (NO compartir)
+.settings/org.eclipse.jdt.ui.prefs
+
 # Discord bot secrets
 discord_bot/.env
 

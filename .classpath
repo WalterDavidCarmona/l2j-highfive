@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<!-- Carpeta fuente: todos los scripts Java del servidor -->
+	<classpathentry kind="src" path="game/data/scripts" output="game/data/scripts"/>
+
+	<!-- JRE del sistema -->
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+
+	<!-- Libreria principal del servidor L2J -->
+	<classpathentry kind="lib" path="libs/GameServer.jar" sourcepath="libs/GameServer.jar"/>
+	<classpathentry kind="lib" path="libs/LoginServer.jar"/>
+
+	<!-- Dependencias externas -->
+	<classpathentry kind="lib" path="libs/HikariCP-7.0.2.jar"/>
+	<classpathentry kind="lib" path="libs/mysql-connector-j-9.5.0.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-2.0.17.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-simple-2.0.17.jar"/>
+
+	<!-- Carpeta de salida por defecto (no usada, cada src tiene su propio output) -->
+	<classpathentry kind="output" path="bin"/>
+</classpath>
