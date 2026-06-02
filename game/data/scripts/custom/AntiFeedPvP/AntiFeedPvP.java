@@ -1,7 +1,10 @@
 /*
- * Anti-Feed PvP global: cancela el conteo de PvP Kill cuando killer y killed
+ * Anti-Feed PvP global: revierte el conteo de PvP Kill cuando killer y killed
  * comparten el mismo HWID (mismo equipo) o la misma IP.
  * Los kills VALIDOS (diferente HWID e IP) cuentan normalmente.
+ *
+ * NOTA: OnPlayerPvPKill en esta version de L2JMobius no soporta TerminateReturn.
+ * Se usa ConsumerEventListener (sin retorno) y se revierte el contador manualmente.
  */
 package custom.AntiFeedPvP;
 
@@ -11,8 +14,7 @@ import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.events.Containers;
 import org.l2jmobius.gameserver.model.events.EventType;
 import org.l2jmobius.gameserver.model.events.holders.actor.player.OnPlayerPvPKill;
-import org.l2jmobius.gameserver.model.events.listeners.FunctionEventListener;
-import org.l2jmobius.gameserver.model.events.returns.TerminateReturn;
+import org.l2jmobius.gameserver.model.events.listeners.ConsumerEventListener;
 import org.l2jmobius.gameserver.model.script.Script;
 
 public class AntiFeedPvP extends Script
@@ -21,38 +23,39 @@ public class AntiFeedPvP extends Script
 
 	private AntiFeedPvP()
 	{
-		// Registrar listener global en todos los Players
-		// Se pasa TerminateReturn.class como returnBackClass para evitar NullPointerException
-		Containers.Players().addListener(new FunctionEventListener(
+		// ConsumerEventListener no retorna valor, evita el NullPointerException
+		// en FunctionEventListener.executeEvent() causado por returnBackClass=null
+		Containers.Players().addListener(new ConsumerEventListener(
 			Containers.Players(),
 			EventType.ON_PLAYER_PVP_KILL,
 			(OnPlayerPvPKill event) -> onPvPKill(event),
-			this,
-			TerminateReturn.class));
+			this));
 
 		LOGGER.info("AntiFeedPvP: Sistema anti-feed global cargado.");
 	}
 
-	private TerminateReturn onPvPKill(OnPlayerPvPKill event)
+	private static void onPvPKill(OnPlayerPvPKill event)
 	{
 		final Player killer = event.getPlayer();
 		final Player killed = event.getTarget();
 
 		if ((killer == null) || (killed == null))
 		{
-			return null;
+			return;
 		}
 
-		// Si comparten HWID o IP -> cancelar el PvP kill (feed detectado)
+		// Si comparten HWID o IP -> revertir el PvP kill ya contabilizado
 		if (isDualbox(killer, killed))
 		{
+			// El kill ya fue contado por el engine; lo deshacemos manualmente
+			if (killer.getPvpKills() > 0)
+			{
+				killer.setPvpKills(killer.getPvpKills() - 1);
+			}
+			killer.broadcastUserInfo();
 			killer.sendMessage("[Anti-Feed] PvP kill ignorado: no se permite feed desde el mismo equipo o IP.");
-			// TerminateReturn(terminate=true, override=true, abort=true)
-			return new TerminateReturn(true, true, true);
+			LOGGER.info("AntiFeedPvP: Feed detectado - " + killer.getName() + " vs " + killed.getName());
 		}
-
-		// Kill legitimo -> no interferir, retornar null = dejar pasar normalmente
-		return null;
 	}
 
 	/**
