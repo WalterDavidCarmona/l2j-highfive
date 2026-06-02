@@ -121,11 +121,16 @@ def make_rgba8(logo_path, W=256, H=256):
 
 
 # ── Construir objeto textura RGBA8 ────────────────────────────────────────────
+# Estructura verificada de Crest.utx (L2 Liberty Client, v123):
+#   [47 bytes propiedades] [1083 zeros UTexture base] [1 NumMips] [4 SkipOff]
+#   [CI DataCount] [pixels] [4 USize] [4 VSize] [1 UBits] [1 VBits]
+#
+# Los 1083 zeros son la serializacion de UTexture->UBitmapMaterial->UMaterial
+# (FShaderProperty, FMaterialStageProperty, etc.) cuando estan vacios.
+UTEXTURE_BASE_ZEROS = 1083
+
 def build_texture_obj(W, H, px_bgra, names_map):
-    """
-    Construye el objeto textura con el formato correcto de L2 H5.
-    Usa la estructura de propiedades verificada en Crest.utx.
-    """
+    """Construye el objeto textura con formato verificado de L2 H5."""
     import math
     ubits = int(math.log2(W))
     vbits = int(math.log2(H))
@@ -133,22 +138,22 @@ def build_texture_obj(W, H, px_bgra, names_map):
 
     obj = bytearray()
 
-    # ── Propiedades tagged ────────────────────────────────────────────────────
-    # InternalTime[0] - INT, 4 bytes (tag byte 0x22)
+    # ── 1. Propiedades tagged (47 bytes, igual que Crest.utx) ─────────────────
+    # InternalTime[0] - INT
     obj += wci(n["InternalTime"])
     obj += bytes([0x22])
-    obj += struct.pack("<I", 0x00000000)   # timestamp = 0
-
-    # InternalTime[1] - INT, 4 bytes, array element (tag 0xA2 + index)
-    obj += wci(n["InternalTime"])
-    obj += bytes([0xA2])                   # 0x22 | 0x80 = array element flag
-    obj += bytes([0x01])                   # array index = 1
     obj += struct.pack("<I", 0x00000000)
 
-    # Format - BYTE (tag 0x01)
+    # InternalTime[1] - INT, array element
+    obj += wci(n["InternalTime"])
+    obj += bytes([0xA2])                   # 0x22 | 0x80 = array flag
+    obj += bytes([0x01])                   # index = 1
+    obj += struct.pack("<I", 0x00000000)
+
+    # Format - BYTE
     obj += wci(n["Format"])
     obj += bytes([0x01])
-    obj += struct.pack("<B", TEXF_RGBA8)   # = 5
+    obj += struct.pack("<B", TEXF_RGBA8)
 
     # UBits - BYTE
     obj += wci(n["UBits"])
@@ -183,26 +188,41 @@ def build_texture_obj(W, H, px_bgra, names_map):
     # None - fin de propiedades
     obj += wci(n["None"])
 
-    # ── Seccion de mipmaps ────────────────────────────────────────────────────
-    # NumClientMips (INT32 = 0, no inline mip hints)
-    obj += struct.pack("<I", 0)
+    prop_size = len(obj)
+    print(f"    Properties: {prop_size} bytes")
 
-    # Mips array: 1 mip
-    obj += struct.pack("<I", 1)            # NumServerMips = 1
+    # ── 2. UTexture base class serialization (1083 bytes zeros) ───────────────
+    # Serializacion de UBitmapMaterial/URenderedMaterial/UMaterial:
+    # FShaderProperty, FMaterialStageProperty, etc. - todos vacios
+    obj += bytes(UTEXTURE_BASE_ZEROS)
 
-    # TLazyArray<BYTE> for Mip0:
-    # SkipOffset (INT32): posicion absoluta en archivo DESPUES de pixel data
-    # Lo escribimos como placeholder, luego lo patcheamos
-    skip_pos = len(obj)                    # posicion del campo SkipOffset dentro del obj
+    # ── 3. Mipmap section ─────────────────────────────────────────────────────
+    mip_section_start = len(obj)
+
+    # NumMips (compact int = 1)
+    obj += wci(1)
+
+    # SkipOffset placeholder (INT32) - parchear despues
+    skip_pos = len(obj)
     obj += struct.pack("<I", 0)            # placeholder
 
-    # pixel count (INT32)
-    obj += struct.pack("<I", len(px_bgra))
-    obj += px_bgra                         # pixel data BGRA
+    # DataCount (compact int)
+    pixel_count = len(px_bgra)
+    count_ci = wci(pixel_count)
+    obj += count_ci
+
+    # Pixel data
+    obj += px_bgra
 
     # USize, VSize, UBits, VBits del mip
-    obj += struct.pack("<II", W, H)
-    obj += struct.pack("<BB", ubits, vbits)
+    obj += struct.pack("<I", W)
+    obj += struct.pack("<I", H)
+    obj += struct.pack("<B", ubits)
+    obj += struct.pack("<B", vbits)
+
+    print(f"    UTexture base zeros: {UTEXTURE_BASE_ZEROS} bytes")
+    print(f"    Mipmap pixel data: {pixel_count} bytes")
+    print(f"    Total object: {len(obj)} bytes")
 
     return bytes(obj), skip_pos
 
@@ -288,14 +308,13 @@ def build_utx(tex_obj, tex_obj_skip_pos, tex_name):
     tex_obj_start = name_offset + len(name_table)
 
     # Parchear SkipOffset dentro del objeto textura
-    # SkipOffset = posicion absoluta en archivo DESPUES del pixel data
-    # = tex_obj_start + skip_pos + 4 (el INT32 mismo) + 4 (count) + pixel_count
-    # pero es mas facil: end_of_pixel_data = tex_obj_start + len(tex_obj) - 10 (dim fields)
+    # SkipOffset = posicion absoluta en el archivo justo despues del pixel data
+    # Verificado en Crest.utx: obj_start + prop + zeros + 1(nummips) + 4(skip) + CI(count) + pixels
+    # = tex_obj_start + len(tex_obj) - 10 (4+4+1+1 = USize+VSize+UBits+VBits)
     tex_obj = bytearray(tex_obj)
-    # El SkipOffset debe apuntar al USize que sigue a los pixels
-    # = tex_obj_start + (posicion de USize dentro del obj) = tex_obj_start + len(tex_obj) - 10
     abs_skip = tex_obj_start + len(tex_obj) - 10
     struct.pack_into("<I", tex_obj, tex_obj_skip_pos, abs_skip)
+    print(f"  SkipOffset patched: {abs_skip}")
     tex_obj = bytes(tex_obj)
 
     import_offset = tex_obj_start + len(tex_obj)
