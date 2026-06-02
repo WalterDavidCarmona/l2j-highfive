@@ -267,6 +267,12 @@ public class Tournament1v1 extends Event
 			return;
 		}
 
+		// Si el evento fue cancelado/detenido, ignorar todos los timers restantes
+		if (!EVENT_ACTIVE)
+		{
+			return;
+		}
+
 		// Advertencias de registro (tiempo de inscripcion abierta)
 		if (event.startsWith("RegistrationWarn"))
 		{

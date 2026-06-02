@@ -121,5 +121,6 @@
 		<npc id="50020" x="83674" y="148869" z="-3400" heading="30402" respawnDelay="60" /> <!-- Maestro de Reputacion - Clan Reputation -->
 		<npc id="50025" x="83674" y="148389" z="-3400" heading="29602" respawnDelay="60" /> <!-- Maestro de Logros - Achievements -->
 		<npc id="50026" x="83689" y="149260" z="-3400" heading="36736" respawnDelay="60" /> <!-- Agente Premium - Premium Shop -->
+		<npc id="50027" x="83710" y="149380" z="-3400" heading="36736" respawnDelay="60" /> <!-- Anakim - Instancia Solo -->
 	</spawn>
 </list>

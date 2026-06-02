@@ -17,3 +17,13 @@ backup/
 # Windows OS files
 Thumbs.db
 Desktop.ini
+
+# Compiled Java bytecode
+*.class
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Base64 encoded assets (generated)
+game/data/html/CommunityBoard/Custom/banner_b64.txt

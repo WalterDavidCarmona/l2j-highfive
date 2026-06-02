@@ -55,6 +55,10 @@ import org.l2jmobius.gameserver.model.punishment.PunishmentType;
 import org.l2jmobius.gameserver.model.script.Script;
 import org.l2jmobius.gameserver.network.NpcStringId;
 import org.l2jmobius.gameserver.network.serverpackets.ExSendUIEvent;
+import org.l2jmobius.gameserver.network.serverpackets.ExDuelEnd;
+import org.l2jmobius.gameserver.network.serverpackets.ExDuelReady;
+import org.l2jmobius.gameserver.network.serverpackets.ExDuelStart;
+import org.l2jmobius.gameserver.network.serverpackets.ExDuelUpdateUserInfo;
 import org.l2jmobius.gameserver.network.serverpackets.ExShowScreenMessage;
 import org.l2jmobius.gameserver.network.serverpackets.ExPVPMatchCCRecord;
 import org.l2jmobius.gameserver.network.serverpackets.ExPVPMatchCCRetire;
@@ -121,6 +125,10 @@ public class PvpZone extends Script
 	private static final Map<Integer, String> ORIGINAL_TITLES = new ConcurrentHashMap<Integer, String>();
 	/** Anti-feed de racha: "killerId:killedId" -> timestamp del ultimo kill valido para streak. */
 	private static final Map<String, Long> STREAK_ANTI_FEED = new ConcurrentHashMap<String, Long>();
+	/** Current duel-bar opponent per participant (objectId -> opponent Player). */
+	private static final Map<Integer, Player> DUEL_TARGETS = new ConcurrentHashMap<Integer, Player>();
+	/** Scheduled task that updates duel HP bars every second. */
+	private static ScheduledFuture<?> _duelBarTask = null;
 
 	private static final int NPC_ID = 30999;
 	private static final int NOBLESSE_BLESSING_ID = 1323;
@@ -226,6 +234,9 @@ public class PvpZone extends Script
 		final long rotationMs = ROTATION_MINUTES * 60000L;
 		ThreadPool.scheduleAtFixedRate(this::rotateZone, rotationMs, rotationMs);
 		scheduleCountdown();
+
+		// Start duel HP bar updater (every 1 second)
+		_duelBarTask = ThreadPool.scheduleAtFixedRate(this::updateDuelBars, 1000L, 1000L);
 
 		// JVM shutdown hook: restore real names for any participants still inside the zone
 		// when the server is restarted or shut down, BEFORE players are saved to DB.
@@ -535,6 +546,10 @@ public class PvpZone extends Script
 		SCOREBOARD.put(player, 0);
 		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.INITIALIZE, buildRealNameScoreboard(), true));
 
+		// Activate duel HP bar UI (will be updated by the periodic task once a target is found)
+		player.sendPacket(ExDuelReady.PLAYER_DUEL);
+		player.sendPacket(ExDuelStart.PLAYER_DUEL);
+
 		// Big screen announcement
 		player.sendPacket(new ExShowScreenMessage("ZONA PVP: " + zone.name, 7000));
 		player.sendMessage("Has ingresado a la Zona PvP: " + zone.name);
@@ -734,6 +749,10 @@ public class PvpZone extends Script
 
 		// Unblock chat
 		unblockChat(player);
+
+		// Close duel HP bar UI
+		DUEL_TARGETS.remove(player.getObjectId());
+		player.sendPacket(ExDuelEnd.PLAYER_DUEL);
 
 		// Close scoreboard for this player and remove from tracking
 		SCOREBOARD.remove(player);
@@ -1066,9 +1085,10 @@ public class PvpZone extends Script
 		_currentZoneIndex = (_currentZoneIndex + 1) % ZONES.size();
 		_rotationStartTime = System.currentTimeMillis();
 
-		// Reset zone kills, anti-feed y scoreboard para la nueva zona
+		// Reset zone kills, anti-feed, duel targets y scoreboard para la nueva zona
 		ZONE_KILLS.clear();
 		STREAK_ANTI_FEED.clear();
+		DUEL_TARGETS.clear();
 		ZONE_KILL_NAMES.clear();
 		ZONE_KILL_CLASSES.clear();
 		SCOREBOARD.clear();
@@ -1111,6 +1131,10 @@ public class PvpZone extends Script
 
 			// Reset scoreboard entry for this participant
 			SCOREBOARD.put(participant, 0);
+
+			// Re-activate duel HP bar UI for the new zone
+			participant.sendPacket(ExDuelReady.PLAYER_DUEL);
+			participant.sendPacket(ExDuelStart.PLAYER_DUEL);
 
 			// Show new zone name + timer
 			participant.sendPacket(new ExShowScreenMessage("Nueva zona PvP: " + newZone.name, 5000));
@@ -1232,6 +1256,48 @@ public class PvpZone extends Script
 		{
 			participant.sendPacket(new ExSendUIEvent(participant, false, false, remainingSec, 0, NpcStringId.TIME_REMAINING));
 			participant.sendPacket(new ExShowScreenMessage("La zona PvP cambiara en " + (remainingSec / 60) + " minutos!", 5000));
+		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// Duel HP bar update (runs every 1 second)
+	// ---------------------------------------------------------------------------
+	private void updateDuelBars()
+	{
+		for (Player participant : PARTICIPANTS)
+		{
+			if ((participant == null) || (participant.isOnlineInt() != 1) || participant.isDead())
+			{
+				continue;
+			}
+
+			// Determine current opponent: the participant's target if it's another participant
+			Player opponent = null;
+			if ((participant.getTarget() != null) && (participant.getTarget() instanceof Player))
+			{
+				final Player targetPlayer = (Player) participant.getTarget();
+				if ((targetPlayer != participant) && PARTICIPANTS.contains(targetPlayer) && (targetPlayer.isOnlineInt() == 1))
+				{
+					opponent = targetPlayer;
+				}
+			}
+
+			if (opponent == null)
+			{
+				// No valid target — if we had a previous opponent, clear it but keep the UI active
+				final Player prev = DUEL_TARGETS.remove(participant.getObjectId());
+				if (prev != null)
+				{
+					// Send a "blank" update — the client will show the last known opponent with current HP
+				}
+				continue;
+			}
+
+			// Track the current opponent
+			final Player prevTarget = DUEL_TARGETS.put(participant.getObjectId(), opponent);
+
+			// Send HP bar update for the opponent (name will show the class name since player.getName() is the class)
+			participant.sendPacket(new ExDuelUpdateUserInfo(opponent));
 		}
 	}
 

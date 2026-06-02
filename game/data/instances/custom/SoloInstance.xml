@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance id="9001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/instance.xsd">
+	<activityTime val="35" />
+	<allowSummon val="true" />
+	<emptyDestroyTime val="1" />
+</instance>
