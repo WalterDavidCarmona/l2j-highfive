@@ -1,243 +1,203 @@
 """
-generate_banner.py
-Genera el banner animado GIF de L2 Zona Zero para los HTMLs del Community Board.
-Requiere: pip install pillow
+generate_banner.py  v2
+Banner L2 Zona Zero - version alto contraste para cliente L2J
 Uso: python generate_banner.py
 """
 
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import math
-import os
+from PIL import Image, ImageDraw, ImageFont
+import math, os
 
-# ── Configuracion ──────────────────────────────────────────────────────────────
-OUTPUT_DIR   = os.path.dirname(os.path.abspath(__file__))
-GIF_OUT      = os.path.join(OUTPUT_DIR, "banner_zonazero.gif")
-PNG_OUT      = os.path.join(OUTPUT_DIR, "banner_zonazero.png")
+OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
+GIF_OUT    = os.path.join(OUTPUT_DIR, "banner_zonazero.gif")
+PNG_OUT    = os.path.join(OUTPUT_DIR, "banner_zonazero.png")
 
-W, H         = 560, 110          # ancho x alto (ajustado al CB de L2J ~560px)
-FRAMES       = 24                # cantidad de frames del GIF
-FRAME_DELAY  = 60                # ms por frame  (24 frames × 60ms ≈ loop 1.4s)
+W, H       = 555, 100
+FRAMES     = 20
+DELAY      = 80   # ms por frame
 
-# Paleta de colores del logo L2 Zona Zero
-COL_BG_TOP   = (5,   8,  30)     # azul oscuro casi negro
-COL_BG_BOT   = (10, 12,  50)     # azul medianoche
-COL_GOLD     = (220, 160,  40)   # dorado del "L2"
-COL_BLUE     = ( 40, 140, 255)   # azul brillante "ZONA"
-COL_RED      = (220,  50,  30)   # rojo/naranja "ZERO"
-COL_GLOW_B   = ( 60, 180, 255)   # halo azul
-COL_GLOW_P   = (150,  60, 255)   # halo purpura
-COL_SPARK    = (255, 255, 255)   # destellos blancos
-# ──────────────────────────────────────────────────────────────────────────────
-
-
-def lerp_color(a, b, t):
-    return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
+# ── Colores brillantes, alto contraste ──────────────────────────────────────
+BG1        = ( 15,  25,  70)   # azul medio (no tan oscuro)
+BG2        = ( 25,  10,  60)   # purpura medio
+GOLD       = (255, 210,  50)   # dorado brillante
+GOLD2      = (255, 240, 120)   # dorado claro para pulse
+BLUE       = ( 80, 180, 255)   # azul cielo brillante
+BLUE2      = (140, 220, 255)   # azul claro
+RED        = (255,  80,  40)   # naranja-rojo vivo
+RED2       = (255, 160,  60)   # naranja claro
+WHITE      = (255, 255, 255)
+BORDER_C   = (100, 200, 255)   # borde azul claro
+ACCENT     = (200, 100, 255)   # purpura acento
+# ────────────────────────────────────────────────────────────────────────────
 
 
-def add_colors(a, b, alpha=1.0):
-    return tuple(min(255, int(a[i] + b[i] * alpha)) for i in range(3))
+def lerp(a, b, t):
+    return tuple(int(a[i] + (b[i]-a[i]) * t) for i in range(3))
 
 
-def gradient_bg(draw, w, h, c_top, c_bot):
+def clamp(v):
+    return max(0, min(255, int(v)))
+
+
+def gradient_bg(draw, w, h, c1, c2):
     for y in range(h):
-        t = y / h
-        c = lerp_color(c_top, c_bot, t)
+        t = y / (h - 1)
+        c = lerp(c1, c2, t)
         draw.line([(0, y), (w, y)], fill=c)
 
 
-def glow_rect(img, x, y, w, h, color, radius=8, alpha=0.5):
-    """Dibuja un rectangulo con halo difuso."""
+def draw_glow_text(img, text, pos, font, text_color, glow_color, glow_r=6):
+    """Dibuja texto con halo visible."""
     layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    draw  = ImageDraw.Draw(layer)
-    for r in range(radius, 0, -1):
-        a = int(255 * alpha * (1 - r / radius) ** 2)
-        c = color + (a,)
-        draw.rectangle([x - r, y - r, x + w + r, y + h + r], outline=c)
-    img.alpha_composite(layer)
-
-
-def draw_text_glow(draw, img, text, xy, color, glow_color, font, glow_r=4):
-    """Texto con halo difuso."""
-    layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    ld    = ImageDraw.Draw(layer)
+    d     = ImageDraw.Draw(layer)
+    # Capas de glow de afuera hacia adentro
     for r in range(glow_r, 0, -1):
-        a = int(200 * (1 - r / glow_r) ** 1.5)
-        for dx in range(-r, r + 1):
-            for dy in range(-r, r + 1):
-                if abs(dx) == r or abs(dy) == r:
-                    ld.text((xy[0] + dx, xy[1] + dy), text,
-                             font=font, fill=glow_color + (a,))
-    ld.text(xy, text, font=font, fill=color + (255,))
+        alpha = int(255 * (1 - (r / glow_r)) ** 1.2)
+        col   = glow_color + (alpha,)
+        for dx in (-r, 0, r):
+            for dy in (-r, 0, r):
+                if dx == 0 and dy == 0:
+                    continue
+                d.text((pos[0]+dx, pos[1]+dy), text, font=font, fill=col)
+    # Texto solido encima
+    d.text(pos, text, font=font, fill=text_color+(255,))
     img.alpha_composite(layer)
 
 
-def spark_positions(frame, n=12):
-    """Genera posiciones de destellos que se mueven con el tiempo."""
-    sparks = []
-    for i in range(n):
-        phase = (frame / FRAMES + i / n) % 1.0
-        x = int(W * 0.15 + (W * 0.70) * ((i * 0.618 + phase * 0.3) % 1.0))
-        y = int(H * 0.1  + H * 0.80 * abs(math.sin(math.pi * (phase + i * 0.17))))
-        brightness = abs(math.sin(math.pi * (phase * 3 + i * 0.4)))
-        sparks.append((x, y, brightness))
-    return sparks
+def make_frame(i):
+    t   = i / FRAMES
+    phi = 2 * math.pi * t
 
+    pulse  = (math.sin(phi) + 1) / 2          # 0..1  lento
+    pulse2 = (math.sin(phi * 2 + 0.8) + 1)/2  # doble frecuencia
 
-def make_frame(frame_idx):
-    t   = frame_idx / FRAMES                           # 0.0 → 1.0
-    phi = 2 * math.pi * t                              # fase angular
-
-    # Pulso: varía entre 0 y 1 suavemente
-    pulse  = (math.sin(phi) + 1) / 2                  # 0..1
-    pulse2 = (math.sin(phi * 2 + 1) + 1) / 2          # frecuencia doble
-
-    img  = Image.new("RGBA", (W, H), (0, 0, 0, 255))
+    img  = Image.new("RGBA", (W, H))
     draw = ImageDraw.Draw(img)
 
-    # ── Fondo gradiente ────────────────────────────────────────────────────────
-    gradient_bg(draw, W, H, COL_BG_TOP, COL_BG_BOT)
+    # ── Fondo: gradiente azul-purpura, NO negro puro ─────────────────────────
+    bg_top = lerp(BG1, lerp(BG1, (30, 15, 80), pulse), 0.4)
+    bg_bot = lerp(BG2, lerp(BG2, (10, 30, 90), pulse2), 0.4)
+    gradient_bg(draw, W, H, bg_top, bg_bot)
 
-    # ── Lineas de escaneo horizontales (efecto tech) ───────────────────────────
-    for y in range(0, H, 4):
-        a = int(15 + 8 * math.sin(phi + y * 0.05))
-        draw.line([(0, y), (W, y)], fill=(80, 120, 255, a))
+    # ── Franja central mas clara (efecto vitral) ─────────────────────────────
+    mid_bright = int(18 + 12 * pulse)
+    for y in range(H):
+        dist = abs(y - H//2) / (H//2)
+        extra = int(mid_bright * (1 - dist))
+        x_off = int((W * 0.15) + (W * 0.70) * ((t * 0.5 + y * 0.003) % 1.0))
+        draw.line([(x_off, y), (min(x_off+80, W), y)],
+                  fill=(clamp(bg_top[0]+extra), clamp(bg_top[1]+extra), clamp(bg_top[2]+extra)))
 
-    # ── Borde exterior con glow pulsante ──────────────────────────────────────
-    border_a = int(120 + 100 * pulse)
-    glow_rect(img, 2, 2, W - 4, H - 4,
-              lerp_color(COL_GLOW_B, COL_GLOW_P, pulse),
-              radius=6, alpha=0.6 + 0.3 * pulse)
+    # ── Borde doble ──────────────────────────────────────────────────────────
+    border_pulse = lerp(BORDER_C, GOLD, pulse)
+    draw.rectangle([0, 0, W-1, H-1], outline=border_pulse + (255,), width=2)
+    draw.rectangle([3, 3, W-4, H-4], outline=ACCENT + (int(120 + 80*pulse2),), width=1)
 
-    # Borde fino solido
-    draw = ImageDraw.Draw(img)
-    border_col = lerp_color(COL_BLUE, COL_GOLD, pulse)
-    draw.rectangle([2, 2, W - 3, H - 3], outline=border_col + (border_a,))
-    draw.rectangle([4, 4, W - 5, H - 5], outline=border_col + (60,))
+    # ── Lineas decorativas sup/inf ───────────────────────────────────────────
+    line_a = int(180 + 70 * pulse)
+    draw.line([(15, 10), (W-15, 10)], fill=GOLD + (line_a,), width=1)
+    draw.line([(15, H-11), (W-15, H-11)], fill=GOLD + (line_a,), width=1)
 
-    # ── Linea decorativa superior e inferior ──────────────────────────────────
-    line_a = int(160 + 80 * pulse2)
-    draw.line([(20, 8),  (W - 20, 8)],  fill=COL_GOLD + (line_a,), width=1)
-    draw.line([(20, H - 9), (W - 20, H - 9)], fill=COL_GOLD + (line_a,), width=1)
+    # ── Rombos en extremos ───────────────────────────────────────────────────
+    dia_col = lerp(GOLD, GOLD2, pulse)
+    for cx in (12, W-12):
+        cy = H // 2
+        s  = int(5 + 2 * pulse)
+        draw.polygon([(cx, cy-s),(cx+s,cy),(cx,cy+s),(cx-s,cy)],
+                     fill=dia_col+(220,))
 
-    # ── Rombos decorativos en esquinas ────────────────────────────────────────
-    diamond_a = int(180 + 60 * pulse)
-    diamond_c = lerp_color(COL_BLUE, COL_GOLD, pulse2)
-    for cx, cy in [(20, H // 2), (W - 20, H // 2)]:
-        s = 5
-        draw.polygon([(cx, cy - s), (cx + s, cy),
-                       (cx, cy + s), (cx - s, cy)],
-                      fill=diamond_c + (diamond_a,))
+    # ── Particulas flotantes ─────────────────────────────────────────────────
+    for k in range(14):
+        px = int(W * 0.1 + W * 0.80 * ((k * 0.137 + t * 0.25) % 1.0))
+        py = int(H * 0.15 + H * 0.70 *
+                 abs(math.sin(math.pi*(t*1.5 + k*0.22))))
+        br = abs(math.sin(math.pi*(t*2 + k*0.31)))
+        pa = int(200 * br)
+        pr = int(1 + 2 * br)
+        if pa > 30:
+            draw.ellipse([px-pr, py-pr, px+pr, py+pr], fill=WHITE+(pa,))
 
-    # ── Destellos de particulas ────────────────────────────────────────────────
-    for sx, sy, br in spark_positions(frame_idx):
-        sa = int(220 * br)
-        sr = int(1 + 2 * br)
-        draw.ellipse([sx - sr, sy - sr, sx + sr, sy + sr],
-                      fill=COL_SPARK + (sa,))
-
-    # ── Intentar cargar fuentes del sistema ───────────────────────────────────
-    font_big  = None
-    font_med  = None
-    font_sm   = None
+    # ── Fuentes ──────────────────────────────────────────────────────────────
     font_paths = [
+        "C:/Windows/Fonts/impact.ttf",
+        "C:/Windows/Fonts/ariblk.ttf",
         "C:/Windows/Fonts/arialbd.ttf",
         "C:/Windows/Fonts/arial.ttf",
-        "C:/Windows/Fonts/impact.ttf",
-        "C:/Windows/Fonts/trebucbd.ttf",
     ]
+    f_big = f_med = f_sm = None
     for fp in font_paths:
         if os.path.exists(fp):
-            try:
-                font_big = ImageFont.truetype(fp, 36)
-                font_med = ImageFont.truetype(fp, 18)
-                font_sm  = ImageFont.truetype(fp, 11)
-                break
-            except Exception:
-                pass
-    if font_big is None:
-        font_big = font_med = font_sm = ImageFont.load_default()
+            from PIL import ImageFont as IF
+            f_big = IF.truetype(fp, 40)
+            f_med = IF.truetype(fp, 16)
+            f_sm  = IF.truetype(fp, 10)
+            break
+    if f_big is None:
+        from PIL import ImageFont as IF
+        f_big = f_med = f_sm = IF.load_default()
 
-    # ── Texto "L2" pequeño ────────────────────────────────────────────────────
-    l2_col   = lerp_color(COL_GOLD, (255, 220, 100), pulse)
-    l2_glow  = lerp_color(COL_GOLD, (255, 180,  40), pulse2)
+    # ── "L2" arriba centrado ─────────────────────────────────────────────────
+    l2_col  = lerp(GOLD, GOLD2, pulse)
+    l2_glow = lerp(GOLD, (255, 140, 0), pulse2)
+    bbox    = draw.textbbox((0,0), "L2", font=f_med)
+    tw      = bbox[2]-bbox[0]
+    draw_glow_text(img, "L2", ((W-tw)//2, 12), f_med, l2_col, l2_glow, glow_r=5)
 
-    # Bounding box del texto principal para centrar
-    txt_main = "ZONA ZERO"
-    bbox_main = draw.textbbox((0, 0), txt_main, font=font_big)
-    tw_main   = bbox_main[2] - bbox_main[0]
-    th_main   = bbox_main[3] - bbox_main[1]
-    cx_main   = (W - tw_main) // 2
-    cy_main   = (H - th_main) // 2 + 4
+    # ── "ZONA" + "ZERO" centrado ─────────────────────────────────────────────
+    zona_col  = lerp(BLUE,  BLUE2, pulse)
+    zona_glow = lerp(BLUE, (0, 100, 255), pulse2)
+    zero_col  = lerp(RED,   RED2,  pulse2)
+    zero_glow = lerp(RED, (255, 60, 0), pulse)
 
-    # "L2" encima del texto principal
-    txt_l2   = "L2"
-    bbox_l2  = draw.textbbox((0, 0), txt_l2, font=font_med)
-    tw_l2    = bbox_l2[2] - bbox_l2[0]
-    cx_l2    = (W - tw_l2) // 2
-    cy_l2    = cy_main - th_main + 2
+    bz  = draw.textbbox((0,0), "ZONA ", font=f_big)
+    tw_zona = bz[2]-bz[0]
+    bze = draw.textbbox((0,0), "ZERO",  font=f_big)
+    tw_zero = bze[2]-bze[0]
+    total_w = tw_zona + tw_zero
+    bh      = bz[3]-bz[1]
+    cx      = (W - total_w) // 2
+    cy      = (H - bh) // 2 + 6
 
-    draw_text_glow(draw, img, txt_l2,
-                   (cx_l2, cy_l2),
-                   l2_col, l2_glow, font_med, glow_r=5)
+    draw_glow_text(img, "ZONA ", (cx, cy),          f_big, zona_col, zona_glow, glow_r=8)
+    draw_glow_text(img, "ZERO",  (cx+tw_zona, cy),  f_big, zero_col, zero_glow, glow_r=8)
 
-    # ── Texto principal "ZONA ZERO" ──────────────────────────────────────────
-    # "ZONA" en azul, "ZERO" en rojo-naranja
-    txt_zona = "ZONA "
-    bbox_z   = draw.textbbox((0, 0), txt_zona, font=font_big)
-    tw_zona  = bbox_z[2] - bbox_z[0]
+    # ── Subtitulo ────────────────────────────────────────────────────────────
+    sub     = "HIGH FIVE  *  SEASON I  *  PVP SERVER"
+    sub_col = lerp((180, 180, 200), (220, 200, 120), pulse)
+    bs      = draw.textbbox((0,0), sub, font=f_sm)
+    tw_s    = bs[2]-bs[0]
+    draw_glow_text(img, sub, ((W-tw_s)//2, H-18), f_sm,
+                   sub_col, (150, 150, 200), glow_r=2)
 
-    zona_col  = lerp_color(COL_BLUE,  (100, 200, 255), pulse)
-    zona_glow = lerp_color(COL_GLOW_B, COL_BLUE,       pulse2)
-    zero_col  = lerp_color(COL_RED,   (255, 120,  50), pulse2)
-    zero_glow = lerp_color((180, 30, 10), COL_RED,     pulse)
-
-    draw_text_glow(draw, img, txt_zona,
-                   (cx_main, cy_main),
-                   zona_col, zona_glow, font_big, glow_r=7)
-
-    draw_text_glow(draw, img, "ZERO",
-                   (cx_main + tw_zona, cy_main),
-                   zero_col, zero_glow, font_big, glow_r=7)
-
-    # ── Subtitulo ─────────────────────────────────────────────────────────────
-    txt_sub  = "HIGH FIVE  ·  SEASON I  ·  PVP SERVER"
-    bbox_sub = draw.textbbox((0, 0), txt_sub, font=font_sm)
-    tw_sub   = bbox_sub[2] - bbox_sub[0]
-    sub_col  = lerp_color((120, 120, 140), (180, 160, 100), pulse)
-    draw.text(((W - tw_sub) // 2, H - 20), txt_sub,
-               font=font_sm, fill=sub_col + (200,))
-
-    return img.convert("RGBA")
+    return img
 
 
 def main():
-    print(f"[*] Generando {FRAMES} frames ({W}x{H}px)...")
+    print(f"Generando {FRAMES} frames {W}x{H}px ...")
     frames = []
     for i in range(FRAMES):
         f = make_frame(i)
-        frames.append(f.convert("P", palette=Image.ADAPTIVE, colors=128))
-        print(f"    frame {i+1:02d}/{FRAMES}", end="\r")
+        # Convertir a paleta de 200 colores para GIF
+        frames.append(f.convert("P", palette=Image.ADAPTIVE, colors=200))
+        print(f"  frame {i+1:02d}/{FRAMES}", end="\r")
 
-    print(f"\n[*] Guardando GIF animado -> {GIF_OUT}")
+    print(f"\nGuardando GIF -> {GIF_OUT}")
     frames[0].save(
         GIF_OUT,
         save_all=True,
         append_images=frames[1:],
-        optimize=True,
-        loop=0,                   # loop infinito
-        duration=FRAME_DELAY,
+        optimize=False,
+        loop=0,
+        duration=DELAY,
         disposal=2,
     )
 
-    print(f"[*] Guardando PNG estatico  -> {PNG_OUT}")
-    best = make_frame(0)          # frame 0 = estado "tranquilo"
-    best.convert("RGB").save(PNG_OUT, "PNG", optimize=True)
+    print(f"Guardando PNG -> {PNG_OUT}")
+    # Frame del "pico" de brillo para el PNG estatico
+    best = make_frame(FRAMES // 4)
+    best.convert("RGB").save(PNG_OUT, "PNG")
 
-    gif_size = os.path.getsize(GIF_OUT) / 1024
-    png_size = os.path.getsize(PNG_OUT) / 1024
-    print(f"\n[OK] GIF: {gif_size:.1f} KB   PNG: {png_size:.1f} KB")
-    print("[OK] Listo. Coloca banner_zonazero.gif/png en:")
-    print("     game/data/html/CommunityBoard/Custom/")
+    print(f"\n[OK] GIF: {os.path.getsize(GIF_OUT)//1024} KB")
+    print(f"[OK] PNG: {os.path.getsize(PNG_OUT)//1024} KB")
 
 
 if __name__ == "__main__":
