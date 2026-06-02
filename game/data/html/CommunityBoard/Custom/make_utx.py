@@ -301,6 +301,17 @@ def build_utx(img, pkg_name, tex_name):
     return utx
 
 # ── Main ──────────────────────────────────────────────────────────────────────
+def encrypt_utx(raw_utx):
+    """
+    Encripta el UTX con el formato del cliente L2 After Crows High Five:
+    - Header 'Lineage2Ver121' en UTF-16-LE (28 bytes)
+    - Resto del archivo XOR con 0x38
+    """
+    HEADER  = "Lineage2Ver121".encode("utf-16-le")   # 28 bytes
+    XOR_KEY = 0x38
+    return HEADER + bytes(b ^ XOR_KEY for b in raw_utx)
+
+
 def main():
     print("[*] Cargando logo ...")
     img = load_and_resize_logo(LOGO_IN)
@@ -308,15 +319,19 @@ def main():
     print("[*] Generando UTX ...")
     utx_data = build_utx(img, PKG_NAME, TEX_NAME)
 
-    # Guardar en cliente
+    # Encriptar con formato del cliente
+    enc_data = encrypt_utx(utx_data)
+    print(f"[*] Encriptando (Lineage2Ver121 + XOR 0x38) ...")
+
+    # Guardar en cliente (encriptado)
     os.makedirs(CLIENT_DIR, exist_ok=True)
     with open(UTX_OUT, 'wb') as f:
-        f.write(utx_data)
-    print(f"[OK] {UTX_OUT}  ({len(utx_data)//1024} KB)")
+        f.write(enc_data)
+    print(f"[OK] {UTX_OUT}  ({len(enc_data)//1024} KB)")
 
-    # Guardar copia local para distribuir
+    # Guardar copia local (encriptada, para distribuir en patch)
     with open(UTX_BACKUP, 'wb') as f:
-        f.write(utx_data)
+        f.write(enc_data)
     print(f"[OK] Copia: {UTX_BACKUP}")
 
     print(f"\nReferencia en HTML:")
