@@ -17,7 +17,7 @@ from PIL import Image
 # ── Rutas ─────────────────────────────────────────────────────────────────────
 SCRIPT_DIR  = os.path.dirname(os.path.abspath(__file__))
 LOGO_IN     = os.path.join(SCRIPT_DIR, "logo_l2zonazero.png")
-CLIENT_DIR  = "C:/L2 Liberty Client + Parch - copia/systextures"
+CLIENT_DIR  = "C:/Users/david/Downloads/Lineage 2 H5/Lineage 2 H5/L2   (HighFive) Cliente limpio/L2 After Crows  (HighFive)/SysTextures"
 UTX_NAME    = "CustomUI.utx"
 UTX_OUT     = os.path.join(CLIENT_DIR, UTX_NAME)
 UTX_BACKUP  = os.path.join(SCRIPT_DIR,  UTX_NAME)   # copia local
@@ -282,7 +282,7 @@ def build_utx(img, pkg_name, tex_name):
     header = bytearray()
     header += struct.pack('<I', 0x9E2A83C1)   # signature
     header += struct.pack('<H', 123)           # version (igual a Crest.utx)
-    header += struct.pack('<H', 30)            # licensee
+    header += struct.pack('<H', 37)            # licensee (L2 After Crows H5)
     header += struct.pack('<I', 0x00000001)    # package flags
     header += struct.pack('<I', len(names))    # name_count
     header += struct.pack('<I', name_offset)   # name_offset
