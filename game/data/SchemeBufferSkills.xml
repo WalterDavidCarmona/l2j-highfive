@@ -88,6 +88,7 @@
 		<buff id="1356" level="1" price="0" desc="Increases all fighter abilities." /> <!-- Prophecy of Fire -->
 		<buff id="1357" level="1" price="0" desc="Increases all dagger abilities." /> <!-- Prophecy of Wind -->
 		<buff id="1363" level="1" price="0" desc="Increases combat abilities." /> <!-- Chant of Victory -->
+		<buff id="1363" level="115" price="0" desc="Increases combat abilities." />
 		<buff id="1413" level="1" price="0" desc="Increases mage abilities." /> <!-- Magnus' Chant -->
 		<buff id="4702" level="13" price="0" desc="Increases MP regeneration rate" /> <!-- Blessing of Seraphim -->
 		<buff id="4703" level="13" price="0" desc="Decreases re-use time of magic skills" /> <!-- Gift of Seraphim -->

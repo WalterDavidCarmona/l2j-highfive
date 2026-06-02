@@ -122,6 +122,5 @@
 		<npc id="31049" x="81921" y="148306" z="-3464" heading="53514" respawnDelay="60" /> <!-- Pepper - Symbol Maker -->
 		<npc id="30085" x="83063" y="148391" z="-3464" heading="30603" respawnDelay="60" /> <!-- GM Shop - Lineage Zona Zero -->
 		<npc id="50027" x="83061" y="147915" z="-3464" heading="32767" respawnDelay="60" /> <!-- Instancia Solo - Lineage Zona Zero -->
-		<npc id="50028" x="83689" y="148620" z="-3400" heading="30402" respawnDelay="60" /> <!-- Buffer Premium - Solo Premium -->
 	</spawn>
 </list>
