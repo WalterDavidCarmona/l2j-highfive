@@ -3,8 +3,8 @@
 	<!-- Carpeta fuente: todos los scripts Java del servidor -->
 	<classpathentry kind="src" path="game/data/scripts" output="game/data/scripts"/>
 
-	<!-- JRE del sistema -->
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<!-- JRE del sistema (Java 21 LTS) -->
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-21"/>
 
 	<!-- Libreria principal del servidor L2J -->
 	<classpathentry kind="lib" path="libs/GameServer.jar" sourcepath="libs/GameServer.jar"/>
