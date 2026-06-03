@@ -825,6 +825,12 @@ public class SchemeBuffer extends Npc
 
 	private String getGroupSkillList(Player player, String groupType, String schemeName, int pageValue)
 	{
+		// Premium: usa _premiumBuffsList para mostrar duplicados de skill ID
+		if (PREMIUM_CATEGORY.equalsIgnoreCase(groupType))
+		{
+			return getGroupSkillListPremium(player, schemeName, pageValue);
+		}
+
 		SchemeBufferTable schemeBufferTable = SchemeBufferTable.getInstance();
 		SkillData skillData = SkillData.getInstance();
 		List<Integer> skillIds = schemeBufferTable.getSkillsIdsByType(groupType);
@@ -877,36 +883,112 @@ public class SchemeBuffer extends Npc
 			row++;
 		}
 
-		// Paginacion
-		htmlBuilder.append("<br1><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>")
+		appendPaginacion(htmlBuilder, groupType, schemeName, page, maxPage);
+		return htmlBuilder.toString();
+	}
+
+	/**
+	 * Variante de getGroupSkillList para la categoria Premium.
+	 * Itera _premiumBuffsList directamente para mostrar todos los entries
+	 * incluyendo duplicados de skill ID con distinto level (ej: guerrero/mago).
+	 */
+	private String getGroupSkillListPremium(Player player, String schemeName, int pageValue)
+	{
+		final SchemeBufferTable schemeBufferTable = SchemeBufferTable.getInstance();
+		final SkillData skillData = SkillData.getInstance();
+		final List<BuffSkillHolder> allEntries = schemeBufferTable.getPremiumBuffsList();
+
+		if (allEntries.isEmpty())
+		{
+			return "La categoria Premium no tiene skills configurados.";
+		}
+
+		final int maxPage = HtmlUtil.countPageNumber(allEntries.size(), 6);
+		final int page    = Math.max(1, Math.min(pageValue, maxPage));
+		final List<BuffSkillHolder> pageEntries = allEntries.subList((page - 1) * 6, Math.min(page * 6, allEntries.size()));
+		final List<Integer> schemeSkills = schemeBufferTable.getScheme(player.getObjectId(), schemeName);
+		final StringBuilder html = new StringBuilder(pageEntries.size() * 150);
+		int row = 0;
+
+		for (BuffSkillHolder holder : pageEntries)
+		{
+			// Obtener skill para display; fallback a nivel 1 si el nivel premium no existe
+			Skill skill = skillData.getSkill(holder.getId(), holder.getLevel());
+			if (skill == null)
+			{
+				skill = skillData.getSkill(holder.getId(), 1);
+			}
+			if (skill == null)
+			{
+				continue;
+			}
+
+			html.append(row % 2 == 0 ? "<table width=\"256\" bgcolor=\"000000\"><tr>" : "<table width=\"256\"><tr>");
+			html.append("<td height=40 width=").append(ICON_COL_WIDTH)
+				.append(" align=center><img src=\"").append(skill.getIcon()).append("\" width=32 height=32></td>");
+			html.append("<td width=").append(NAME_COL_WIDTH).append(">")
+				.append(skill.getName()).append("<br1>")
+				.append("<font color=\"B09878\">").append(holder.getDescription()).append("</font></td>");
+
+			// El skillselect/unselect usa el skillId; agregar/quitar del esquema funciona por ID
+			if (schemeSkills.contains(holder.getId()))
+			{
+				html.append("<td width=").append(BTN_COL_WIDTH)
+					.append(" align=center><button action=\"bypass -h npc_%objectId%_skillunselect;")
+					.append(PREMIUM_CATEGORY).append(";").append(schemeName)
+					.append(";").append(holder.getId()).append(";").append(page)
+					.append("\" width=32 height=32 back=\"L2UI_CH3.mapbutton_zoomout2\" fore=\"L2UI_CH3.mapbutton_zoomout1\"></td>");
+			}
+			else
+			{
+				html.append("<td width=").append(BTN_COL_WIDTH)
+					.append(" align=center><button action=\"bypass -h npc_%objectId%_skillselect;")
+					.append(PREMIUM_CATEGORY).append(";").append(schemeName)
+					.append(";").append(holder.getId()).append(";").append(page)
+					.append("\" width=32 height=32 back=\"L2UI_CH3.mapbutton_zoomin2\" fore=\"L2UI_CH3.mapbutton_zoomin1\"></td>");
+			}
+
+			html.append("</tr></table><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>");
+			row++;
+		}
+
+		appendPaginacion(html, PREMIUM_CATEGORY, schemeName, page, maxPage);
+		return html.toString();
+	}
+
+	/** Helper: agrega la barra de paginacion al HTML. */
+	private void appendPaginacion(StringBuilder html, String groupType, String schemeName, int page, int maxPage)
+	{
+		html.append("<br1><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>")
 			.append("<table width=\"").append(UI_WIDTH).append("\" bgcolor=000000><tr>");
 
 		if (page > 1)
 		{
-			htmlBuilder.append("<td align=left width=").append(FOOTER_SIDE_WIDTH).append("><a action=\"bypass -h npc_")
-				.append(getObjectId()).append("_editschemes;").append(groupType).append(";").append(schemeName).append(";").append(page - 1)
+			html.append("<td align=left width=").append(FOOTER_SIDE_WIDTH)
+				.append("><a action=\"bypass -h npc_").append(getObjectId())
+				.append("_editschemes;").append(groupType).append(";").append(schemeName).append(";").append(page - 1)
 				.append("\">Previous</a></td>");
 		}
 		else
 		{
-			htmlBuilder.append("<td align=left width=").append(FOOTER_SIDE_WIDTH).append(">Previous</td>");
+			html.append("<td align=left width=").append(FOOTER_SIDE_WIDTH).append(">Previous</td>");
 		}
 
-		htmlBuilder.append("<td align=center width=").append(PAGE_CENTER_WIDTH).append(">Page ").append(page).append("</td>");
+		html.append("<td align=center width=").append(PAGE_CENTER_WIDTH).append(">Page ").append(page).append("</td>");
 
 		if (page < maxPage)
 		{
-			htmlBuilder.append("<td align=right width=").append(FOOTER_SIDE_WIDTH).append("><a action=\"bypass -h npc_")
-				.append(getObjectId()).append("_editschemes;").append(groupType).append(";").append(schemeName).append(";").append(page + 1)
+			html.append("<td align=right width=").append(FOOTER_SIDE_WIDTH)
+				.append("><a action=\"bypass -h npc_").append(getObjectId())
+				.append("_editschemes;").append(groupType).append(";").append(schemeName).append(";").append(page + 1)
 				.append("\">Next</a></td>");
 		}
 		else
 		{
-			htmlBuilder.append("<td align=right width=").append(FOOTER_SIDE_WIDTH).append(">Next</td>");
+			html.append("<td align=right width=").append(FOOTER_SIDE_WIDTH).append(">Next</td>");
 		}
 
-		htmlBuilder.append("</tr></table><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>");
-		return htmlBuilder.toString();
+		html.append("</tr></table><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>");
 	}
 
 	/**
