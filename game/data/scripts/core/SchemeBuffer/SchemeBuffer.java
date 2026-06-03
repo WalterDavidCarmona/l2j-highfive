@@ -396,12 +396,26 @@ public class SchemeBuffer extends Npc
 			// Para Premium: el bypass incluye el level especifico como 6to token
 			// para distinguir entre multiples entries del mismo skill ID (ej: guerrero vs mago).
 			Skill skill = null;
+			int targetLevel = -1;
 			if (PREMIUM_CATEGORY.equalsIgnoreCase(category) && tokenizer.hasMoreTokens())
 			{
 				Integer specificLevel = parseUnsignedInt(tokenizer.nextToken());
 				if (specificLevel != null)
 				{
+					targetLevel = specificLevel;
 					skill = skillData.getSkill(skillId, specificLevel);
+					// Si el nivel premium no existe en SkillData, buscar el nivel mas alto disponible
+					if (skill == null)
+					{
+						for (int lvl = specificLevel - 1; lvl >= 1; lvl--)
+						{
+							skill = skillData.getSkill(skillId, lvl);
+							if (skill != null)
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 
@@ -412,6 +426,10 @@ public class SchemeBuffer extends Npc
 				if (holder != null)
 				{
 					skill = skillData.getSkill(skillId, holder.getLevel());
+					if (skill == null)
+					{
+						skill = skillData.getSkill(skillId, 1);
+					}
 				}
 			}
 
@@ -677,8 +695,15 @@ public class SchemeBuffer extends Npc
 		int row = 0;
 		for (BuffSkillHolder holder : pageEntries)
 		{
-			// Usar siempre el level real del holder para el icono y el bypass
-			final Skill skill = skillData.getSkill(holder.getId(), holder.getLevel());
+			// Intentar obtener el skill al nivel premium configurado.
+			// Si ese nivel no existe en SkillData (ej: level 130 custom), usar nivel 1
+			// unicamente para obtener icono y nombre para mostrar en pantalla.
+			// El bypass siempre usa holder.getLevel() para aplicar el nivel correcto.
+			Skill skill = skillData.getSkill(holder.getId(), holder.getLevel());
+			if (skill == null)
+			{
+				skill = skillData.getSkill(holder.getId(), 1);
+			}
 			if (skill == null)
 			{
 				continue;
