@@ -393,18 +393,35 @@ public class SchemeBuffer extends Npc
 				return;
 			}
 
-			BuffSkillHolder holder = schemeBufferTable.getAvailableBuff(category, skillId);
-			if (holder != null)
+			// Para Premium: el bypass incluye el level especifico como 6to token
+			// para distinguir entre multiples entries del mismo skill ID (ej: guerrero vs mago).
+			Skill skill = null;
+			if (PREMIUM_CATEGORY.equalsIgnoreCase(category) && tokenizer.hasMoreTokens())
 			{
-				Skill skill = skillData.getSkill(skillId, holder.getLevel());
-				if (skill != null)
+				Integer specificLevel = parseUnsignedInt(tokenizer.nextToken());
+				if (specificLevel != null)
 				{
-					// Proteccion anti-pisado: no sobreescribir enchant superior
-					BuffInfo existing = target.getEffectList().getBuffInfoBySkillId(skillId);
-					if (existing == null || existing.getSkill().getLevel() < skill.getLevel())
-					{
-						skill.applyEffects(this, target);
-					}
+					skill = skillData.getSkill(skillId, specificLevel);
+				}
+			}
+
+			if (skill == null)
+			{
+				// Fallback al holder normal para categorias no-Premium o si no hay nivel especifico
+				BuffSkillHolder holder = schemeBufferTable.getAvailableBuff(category, skillId);
+				if (holder != null)
+				{
+					skill = skillData.getSkill(skillId, holder.getLevel());
+				}
+			}
+
+			if (skill != null)
+			{
+				// Proteccion anti-pisado: no sobreescribir enchant superior
+				BuffInfo existing = target.getEffectList().getBuffInfoBySkillId(skillId);
+				if (existing == null || existing.getSkill().getLevel() < skill.getLevel())
+				{
+					skill.applyEffects(this, target);
 				}
 			}
 
@@ -506,6 +523,14 @@ public class SchemeBuffer extends Npc
 	{
 		SchemeBufferTable schemeBufferTable = SchemeBufferTable.getInstance();
 		SkillData skillData = SkillData.getInstance();
+
+		// Premium: usa la lista completa que permite duplicados de skill ID
+		if (PREMIUM_CATEGORY.equalsIgnoreCase(category))
+		{
+			showPremiumManualWindow(player, pageValue, targetType);
+			return;
+		}
+
 		List<Integer> skillIds = schemeBufferTable.getSkillsIdsByType(category);
 
 		if (skillIds.isEmpty())
@@ -603,6 +628,119 @@ public class SchemeBuffer extends Npc
 		html.replace("%skills%", htmlBuilder.toString());
 		html.replace("%objectId%", getObjectId());
 		player.sendPacket(html);
+	}
+
+	// ── Ventana manual Premium (permite duplicados de skill ID) ──────────────
+
+	private void showPremiumManualWindow(Player player, int pageValue, String targetType)
+	{
+		final SchemeBufferTable schemeBufferTable = SchemeBufferTable.getInstance();
+		final SkillData skillData = SkillData.getInstance();
+		final List<BuffSkillHolder> allEntries = schemeBufferTable.getPremiumBuffsList();
+
+		if (allEntries.isEmpty())
+		{
+			player.sendMessage("La categoria Premium no tiene skills configurados.");
+			return;
+		}
+
+		final int maxPage = HtmlUtil.countPageNumber(allEntries.size(), PAGE_LIMIT);
+		final int page    = Math.max(1, Math.min(pageValue, maxPage));
+		final List<BuffSkillHolder> pageEntries = allEntries.subList((page - 1) * PAGE_LIMIT, Math.min(page * PAGE_LIMIT, allEntries.size()));
+
+		final StringBuilder html = new StringBuilder(pageEntries.size() * 200);
+
+		// Selector Me / Pet
+		html.append("<table width=\"").append(UI_WIDTH).append("\"><tr>");
+		html.append("<td width=\"").append(UI_HALF_WIDTH).append("\" align=\"center\">");
+		if ("me".equalsIgnoreCase(targetType))
+		{
+			html.append("<font color=\"LEVEL\">Me</font>");
+		}
+		else
+		{
+			html.append("<a action=\"bypass -h npc_").append(getObjectId()).append("_manual;").append(PREMIUM_CATEGORY).append(";").append(page).append(";me\">Me</a>");
+		}
+		html.append("</td>");
+		html.append("<td width=\"").append(UI_HALF_WIDTH).append("\" align=\"center\">");
+		if ("pet".equalsIgnoreCase(targetType))
+		{
+			html.append("<font color=\"LEVEL\">Pet</font>");
+		}
+		else
+		{
+			html.append("<a action=\"bypass -h npc_").append(getObjectId()).append("_manual;").append(PREMIUM_CATEGORY).append(";").append(page).append(";pet\">Pet</a>");
+		}
+		html.append("</td>");
+		html.append("</tr></table><br1>");
+
+		int row = 0;
+		for (BuffSkillHolder holder : pageEntries)
+		{
+			// Usar siempre el level real del holder para el icono y el bypass
+			final Skill skill = skillData.getSkill(holder.getId(), holder.getLevel());
+			if (skill == null)
+			{
+				continue;
+			}
+
+			html.append(row % 2 == 0 ? "<table width=\"256\" bgcolor=\"000000\"><tr>" : "<table width=\"256\"><tr>");
+			html.append("<td height=40 width=").append(ICON_COL_WIDTH).append(" align=center>")
+				.append("<img src=\"").append(skill.getIcon()).append("\" width=32 height=32></td>");
+			html.append("<td width=").append(NAME_COL_WIDTH).append(">").append(skill.getName()).append("<br1>")
+				.append("<font color=\"B09878\">").append(holder.getDescription()).append("</font></td>");
+			// Bypass incluye level especifico como 6to parametro (novedad para Premium)
+			html.append("<td width=").append(BTN_COL_WIDTH).append(" align=center>")
+				.append("<button action=\"bypass -h npc_").append(getObjectId())
+				.append("_castbuff;").append(holder.getId())
+				.append(";").append(PREMIUM_CATEGORY)
+				.append(";").append(page)
+				.append(";").append(targetType)
+				.append(";").append(holder.getLevel())   // <-- level especifico
+				.append("\" width=32 height=32 back=\"L2UI_CH3.mapbutton_zoomin2\" fore=\"L2UI_CH3.mapbutton_zoomin1\"></td>");
+			html.append("</tr></table>");
+			html.append("<img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>");
+			row++;
+		}
+
+		// Paginacion
+		html.append("<br1><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>")
+			.append("<table width=\"").append(UI_WIDTH).append("\" bgcolor=000000><tr>");
+		if (page > 1)
+		{
+			html.append("<td align=left width=").append(FOOTER_SIDE_WIDTH)
+				.append("><a action=\"bypass -h npc_").append(getObjectId())
+				.append("_manual;").append(PREMIUM_CATEGORY).append(";").append(page - 1).append(";").append(targetType)
+				.append("\">Previous</a></td>");
+		}
+		else
+		{
+			html.append("<td align=left width=").append(FOOTER_SIDE_WIDTH).append(">Previous</td>");
+		}
+
+		html.append("<td align=center width=").append(PAGE_CENTER_WIDTH).append(">Page ").append(page).append("</td>");
+
+		if (page < maxPage)
+		{
+			html.append("<td align=right width=").append(FOOTER_SIDE_WIDTH)
+				.append("><a action=\"bypass -h npc_").append(getObjectId())
+				.append("_manual;").append(PREMIUM_CATEGORY).append(";").append(page + 1).append(";").append(targetType)
+				.append("\">Next</a></td>");
+		}
+		else
+		{
+			html.append("<td align=right width=").append(FOOTER_SIDE_WIDTH).append(">Next</td>");
+		}
+
+		html.append("</tr></table><img src=\"L2UI.SquareGray\" width=").append(UI_WIDTH).append(" height=1>");
+		html.append("<br1><center><a action=\"bypass -h npc_").append(getObjectId()).append("_menu\">Back</a></center>");
+
+		final NpcHtmlMessage msg = new NpcHtmlMessage(getObjectId());
+		msg.setFile(player, getHtmlPath(getId(), 3));
+		msg.replace("%category%", PREMIUM_CATEGORY);
+		msg.replace("%skills%", html.toString());
+		msg.replace("%objectId%", getObjectId());
+		player.sendPacket(msg);
 	}
 
 	// ── Auto buff ─────────────────────────────────────────────────────────────

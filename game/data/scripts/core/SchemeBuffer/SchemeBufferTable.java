@@ -34,11 +34,16 @@ public class SchemeBufferTable
 	private static final String DB_COLUMN_SCHEME_NAME = "scheme_name";
 	private static final String DB_COLUMN_SKILLS = "skills";
 	private static final String SKILL_SEPARATOR = ",";
+	/** Nombre de la categoria premium en SchemeBufferSkills.xml */
+	private static final String PREMIUM_CATEGORY = "Premium";
+
 	private final Map<Integer, Map<String, List<Integer>>> _schemesTable = new ConcurrentHashMap<>();
 	private final Map<Integer, BuffSkillHolder> _availableBuffs = new LinkedHashMap<>();
 	private final Map<String, List<Integer>> _skillIdsByType;
 	private final Map<String, Map<Integer, BuffSkillHolder>> _availableBuffsByType;
 	private final List<String> _skillTypesOrder;
+	/** Lista ordenada de entries Premium, permite duplicados de skill ID con distinto level. */
+	private final List<BuffSkillHolder> _premiumBuffsList = new java.util.ArrayList<>();
 
 	public SchemeBufferTable()
 	{
@@ -60,8 +65,15 @@ public class SchemeBufferTable
 		_availableBuffsByType.clear();
 		_skillIdsByType.clear();
 		_skillTypesOrder.clear();
+		_premiumBuffsList.clear();
 		loadAvailableBuffs();
 		LOGGER.info("SchemeBufferTable: Skills recargados desde " + SKILLS_XML_PATH);
+	}
+
+	/** Lista ordenada de entries Premium (permite duplicados de skill ID). */
+	public List<BuffSkillHolder> getPremiumBuffsList()
+	{
+		return java.util.Collections.unmodifiableList(_premiumBuffsList);
 	}
 
 	public void saveSchemes()
@@ -356,7 +368,21 @@ public class SchemeBufferTable
 											}
 
 											BuffSkillHolder holder = new BuffSkillHolder(skillId, level, price, category, description);
-											_availableBuffsByType.get(category).put(skillId, holder);
+
+											if (PREMIUM_CATEGORY.equalsIgnoreCase(category))
+											{
+												_premiumBuffsList.add(holder);
+												BuffSkillHolder existingInType = _availableBuffsByType.get(category).get(skillId);
+												if (existingInType == null || holder.getLevel() > existingInType.getLevel())
+												{
+													_availableBuffsByType.get(category).put(skillId, holder);
+												}
+											}
+											else
+											{
+												_availableBuffsByType.get(category).put(skillId, holder);
+											}
+
 											BuffSkillHolder existing = _availableBuffs.get(skillId);
 											if (existing == null || holder.getLevel() > existing.getLevel())
 											{
