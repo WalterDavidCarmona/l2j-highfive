@@ -253,6 +253,48 @@ public class DressMeManager
 		}
 	}
 
+	/**
+	 * Nuclear cleanup: Remove transmogs from ALL armor slots.
+	 * Called during complete reset to ensure no visual artifacts remain.
+	 */
+	public void cleanAllArmorTransmogs(Player player)
+	{
+		if (player == null) return;
+
+		boolean changed = false;
+
+		for (int slot : ALL_SLOTS)
+		{
+			final Item item = player.getInventory().getPaperdollItem(slot);
+			if (item == null) continue;
+
+			final int transmogId = item.getTransmogId();
+			if (transmogId > 0)
+			{
+				// Unequip
+				final BodyPart bp = item.getTemplate().getBodyPart();
+				if (bp == null || bp == BodyPart.NONE) continue;
+
+				final Item unequipped = player.getInventory().unEquipItemInBodySlot(bp);
+				if (unequipped == null) continue;
+
+				// Remove transmog completely
+				unequipped.removeTransmog();
+
+				// Re-equip
+				player.getInventory().equipItem(unequipped);
+				changed = true;
+
+				LOGGER.info("DressMe: Cleaned transmog from slot " + slot + " for " + player.getName());
+			}
+		}
+
+		if (changed)
+		{
+			player.broadcastInfo();
+		}
+	}
+
 	// ─────────────────────────────────────────────────────────────
 	// Singleton
 	// ─────────────────────────────────────────────────────────────

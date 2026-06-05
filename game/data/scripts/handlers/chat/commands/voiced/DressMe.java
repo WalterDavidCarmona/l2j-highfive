@@ -65,10 +65,17 @@ public class DressMe implements IVoicedCommandHandler
 				break;
 
 			case "dressmereset":
-				if (data.isEnabled()) mgr.removeVisuals(player);
+				// Nuclear reset: clear everything and clean all armor transmogs
+				if (data.isEnabled())
+					mgr.removeVisuals(player);
+
 				data.clearAll();
 				mgr.deleteAll(player.getObjectId());
-				player.sendMessage("[DressMe] Apariencias eliminadas.");
+
+				// Extra safety: remove transmogs from all armor items
+				mgr.cleanAllArmorTransmogs(player);
+
+				player.sendMessage("[DressMe] Todas las apariencias y datos residuales eliminados.");
 				showPanel(player, data);
 				break;
 		}
