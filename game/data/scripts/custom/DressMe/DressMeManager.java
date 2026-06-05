@@ -133,6 +133,7 @@ public class DressMeManager
 
 	/**
 	 * Deactivates DressMe: unequips each item, restores original transmogId, re-equips.
+	 * Clears ALL armor slots to ensure no visual artifacts remain.
 	 */
 	public void removeVisuals(Player player)
 	{
@@ -141,22 +142,36 @@ public class DressMeManager
 
 		boolean changed = false;
 
+		// Clean ALL armor slots to remove any visual artifacts
 		for (int slot : ALL_SLOTS)
 		{
-			final int visualId = d.getVisualId(slot);
-			if (visualId <= 0) continue; // only touch slots that had a DressMe visual
-
-			final Item item = unEquipSlot(player, slot);
+			final Item item = player.getInventory().getPaperdollItem(slot);
 			if (item == null) continue;
 
+			// Check if this slot has a saved transmog from DressMe activation
 			final int originalTransmog = d.getSavedTransmog(slot);
-			if (originalTransmog > 0)
-				item.setTransmogId(originalTransmog);
-			else
-				item.removeTransmog();
+			final int currentTransmog = item.getTransmogId();
 
-			player.getInventory().equipItem(item);
-			changed = true;
+			// Only modify if the item actually has a transmog set
+			if (currentTransmog > 0)
+			{
+				// Unequip the item
+				final BodyPart bp = item.getTemplate().getBodyPart();
+				if (bp == null || bp == BodyPart.NONE) continue;
+
+				final Item unequipped = player.getInventory().unEquipItemInBodySlot(bp);
+				if (unequipped == null) continue;
+
+				// Restore original transmog or clear it
+				if (originalTransmog > 0)
+					unequipped.setTransmogId(originalTransmog);
+				else
+					unequipped.removeTransmog();
+
+				// Re-equip
+				player.getInventory().equipItem(unequipped);
+				changed = true;
+			}
 		}
 
 		d.clearSavedTransmogs();
@@ -165,6 +180,10 @@ public class DressMeManager
 		{
 			player.broadcastInfo();
 			player.sendMessage("[DressMe] Apariencia desactivada. Equipo real restaurado.");
+		}
+		else
+		{
+			player.sendMessage("[DressMe] DressMe desactivado.");
 		}
 	}
 
