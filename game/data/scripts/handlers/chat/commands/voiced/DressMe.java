@@ -274,23 +274,50 @@ public class DressMe implements IVoicedCommandHandler
 		}
 		else
 		{
-			// Detect FULL_ARMOR: if the item covers both chest and legs, also set legs visual
 			final ItemTemplate tpl = ItemData.getInstance().getTemplate(itemId);
-			final boolean isFullArmor = (tpl != null && tpl.getBodyPart() == BodyPart.FULL_ARMOR);
-
-			data.setVisualId(slot, itemId);
-			mgr.saveSlot(player.getObjectId(), slot, itemId);
-
-			if (slot == DressMeManager.SLOT_CHEST && isFullArmor)
+			if (tpl == null)
 			{
-				// Full armor covers legs too — save same ID for legs slot
+				player.sendMessage("[DressMe] Item no encontrado.");
+				showPanel(player, data);
+				return;
+			}
+
+			final BodyPart bp = tpl.getBodyPart();
+			final boolean isFullArmor = (bp == BodyPart.FULL_ARMOR);
+			final boolean isFormalWear = (itemId == 6408); // Formal Wear
+			final boolean isFullBodyItem = isFormalWear;
+
+			if (isFullBodyItem)
+			{
+				// Formal Wear and similar items: save to ALL armor slots
+				data.getAllVisuals().clear();
+				mgr.deleteAll(player.getObjectId());
+
+				for (int s : DressMeManager.ALL_SLOTS)
+				{
+					data.setVisualId(s, itemId);
+					mgr.saveSlot(player.getObjectId(), s, itemId);
+				}
+
+				player.sendMessage("[DressMe] " + tpl.getName() + " COPIADO - cubrira tu apariencia completa.");
+			}
+			else if (slot == DressMeManager.SLOT_CHEST && isFullArmor)
+			{
+				// FULL_ARMOR: covers chest + legs
+				data.setVisualId(slot, itemId);
+				mgr.saveSlot(player.getObjectId(), slot, itemId);
+
 				data.setVisualId(DressMeManager.SLOT_LEGS, itemId);
 				mgr.saveSlot(player.getObjectId(), DressMeManager.SLOT_LEGS, itemId);
+
 				player.sendMessage("[DressMe] Full Armor detectado: visual guardado para Pecho y Piernas.");
 			}
 			else
 			{
-				player.sendMessage("[DressMe] Visual '" + parts[0] + "' -> " + getItemName(itemId) + " guardado.");
+				// Normal item
+				data.setVisualId(slot, itemId);
+				mgr.saveSlot(player.getObjectId(), slot, itemId);
+				player.sendMessage("[DressMe] Visual '" + parts[0] + "' -> " + tpl.getName() + " guardado.");
 			}
 		}
 
