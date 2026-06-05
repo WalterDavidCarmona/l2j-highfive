@@ -6,8 +6,10 @@ import org.l2jmobius.gameserver.data.xml.ItemData;
 import org.l2jmobius.gameserver.handler.IVoicedCommandHandler;
 import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.item.ItemTemplate;
+import org.l2jmobius.gameserver.model.item.Weapon;
 import org.l2jmobius.gameserver.model.item.enums.BodyPart;
 import org.l2jmobius.gameserver.model.item.instance.Item;
+import org.l2jmobius.gameserver.model.item.type.WeaponType;
 import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 
 /**
@@ -485,8 +487,10 @@ public class DressMe implements IVoicedCommandHandler
 				final ItemTemplate playerTpl = ItemData.getInstance().getTemplate(playerItem.getId());
 				if (playerTpl != null && !areWeaponTypesCompatible(playerTpl, copyTpl))
 				{
+					final String myType  = (playerTpl instanceof Weapon) ? ((Weapon) playerTpl).getItemType().toString() : "?";
+					final String tgtType = (copyTpl   instanceof Weapon) ? ((Weapon) copyTpl).getItemType().toString()   : "?";
 					player.sendMessage("[DressMe] No puedes copiar ese arma. Tipo incompatible.");
-					player.sendMessage("[DressMe] Tu arma: " + playerTpl.getName() + " / Target: " + copyTpl.getName());
+					player.sendMessage("[DressMe] Tu tipo: " + myType + "  /  Target tipo: " + tgtType);
 					return;
 				}
 			}
@@ -525,29 +529,20 @@ public class DressMe implements IVoicedCommandHandler
 	}
 
 	/**
-	 * Check if two weapon templates are compatible (same type/category)
+	 * Check if two weapon templates are compatible (same WeaponType).
+	 * Uses WeaponType enum for precise matching: DUAL==DUAL, BOW==BOW, DAGGER==DAGGER, etc.
 	 */
 	private boolean areWeaponTypesCompatible(ItemTemplate playerWeapon, ItemTemplate targetWeapon)
 	{
-		// Get the body parts to determine weapon type
-		final BodyPart playerBp = playerWeapon.getBodyPart();
-		final BodyPart targetBp = targetWeapon.getBodyPart();
-
-		// Same body part = compatible
-		if (playerBp == targetBp)
+		// Must be Weapon instances to compare types
+		if (!(playerWeapon instanceof Weapon) || !(targetWeapon instanceof Weapon))
 			return true;
 
-		// Both are hand weapons, check if they're the same category
-		// LR_HAND is dual wielding, can accept both RHAND and LHAND weapons
-		if (playerBp == BodyPart.LR_HAND || targetBp == BodyPart.LR_HAND)
-		{
-			// Dual hand weapon (like Dual Sword) can be paired with single swords
-			return (playerBp == BodyPart.RHAND || playerBp == BodyPart.LHAND || playerBp == BodyPart.LR_HAND)
-				&& (targetBp == BodyPart.RHAND || targetBp == BodyPart.LHAND || targetBp == BodyPart.LR_HAND);
-		}
+		final WeaponType playerType = ((Weapon) playerWeapon).getItemType();
+		final WeaponType targetType = ((Weapon) targetWeapon).getItemType();
 
-		// Otherwise incompatible
-		return false;
+		// Exact match required: DUAL=DUAL, BOW=BOW, DAGGER=DAGGER, SWORD=SWORD, etc.
+		return playerType == targetType;
 	}
 
 	// ─────────────────────────────────────────────────────────────
