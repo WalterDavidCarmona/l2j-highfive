@@ -82,69 +82,27 @@ public class DressMe implements IVoicedCommandHandler
 				break;
 
 			case "dressmetarget":
-				// Simple implementation: just show help
+				// Show target panel or handle copy action
 				if (params == null || params.trim().isEmpty())
 				{
-					player.sendMessage("[DressMe] Uso: .dressmetarget [slot]");
-					player.sendMessage("[DressMe] Slots: rhand, lhand, chest, legs, gloves, feet, cloak, belt");
-					return true;
+					// Show target panel without params
+					showTargetPanel(player, mgr, data, null);
 				}
-
-				// Get target - use native method
-				Object targetObj = player.getTarget();
-				if (targetObj == null || !(targetObj instanceof Player))
+				else if (params.startsWith("copy"))
 				{
-					player.sendMessage("[DressMe] Debes hacer target en otro jugador.");
-					showPanel(player, data);
-					return true;
+					// Handle copy action: .dressmetarget copy [slot]
+					final String[] parts = params.split("\\s+");
+					if (parts.length >= 2)
+					{
+						handleTargetCopy(player, parts[1], mgr, data);
+					}
+					showTargetPanel(player, mgr, data, null);
 				}
-
-				final Player target = (Player) targetObj;
-				final int slot = parseSlot(params.trim());
-
-				if (slot < 0)
+				else
 				{
-					player.sendMessage("[DressMe] Slot invalido.");
-					return true;
+					// Show target panel (fallback)
+					showTargetPanel(player, mgr, data, null);
 				}
-
-				final Item targetItem = target.getInventory().getPaperdollItem(slot);
-				if (targetItem == null)
-				{
-					player.sendMessage("[DressMe] El target no tiene equipo en ese slot.");
-					return true;
-				}
-
-				final int copyItemId = targetItem.getId();
-				final ItemTemplate copyTpl = ItemData.getInstance().getTemplate(copyItemId);
-
-				if (copyTpl == null)
-				{
-					player.sendMessage("[DressMe] Item no encontrado.");
-					return true;
-				}
-
-				// Save the visual
-				data.setVisualId(slot, copyItemId);
-				mgr.saveSlot(player.getObjectId(), slot, copyItemId);
-
-				// If Full Armor, also save to legs
-				if (slot == DressMeManager.SLOT_CHEST && copyTpl.getBodyPart() == BodyPart.FULL_ARMOR)
-				{
-					data.setVisualId(DressMeManager.SLOT_LEGS, copyItemId);
-					mgr.saveSlot(player.getObjectId(), DressMeManager.SLOT_LEGS, copyItemId);
-				}
-
-				player.sendMessage("[DressMe] Copiado de " + target.getName() + ": " + copyTpl.getName());
-
-				// Re-apply if active
-				if (data.isEnabled())
-				{
-					mgr.removeVisuals(player);
-					mgr.applyVisuals(player);
-				}
-
-				showPanel(player, data);
 				break;
 		}
 		return true;
@@ -404,6 +362,142 @@ public class DressMe implements IVoicedCommandHandler
 		}
 
 		showPanel(player, data);
+	}
+
+	// ─────────────────────────────────────────────────────────────
+	// Target Panel - Show target equipment with copy buttons
+	// ─────────────────────────────────────────────────────────────
+
+	private void showTargetPanel(Player player, DressMeManager mgr, DressMeData data, String dummy)
+	{
+		// Check if player has a target
+		Object targetObj = player.getTarget();
+		if (targetObj == null || !(targetObj instanceof Player))
+		{
+			player.sendMessage("[DressMe] Debes hacer target en otro jugador.");
+			showPanel(player, data);
+			return;
+		}
+
+		final Player target = (Player) targetObj;
+
+		// Build target panel HTML
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+
+		// Header
+		sb.append("<center>");
+		sb.append("<img src=\"L2UI_CH3.herotower_deco\" width=256 height=32><br1>");
+		sb.append("<font color=\"LEVEL\">-- DressMe - Copiar de Jugador --</font><br>");
+		sb.append("Target: <font color=\"00CCFF\">").append(target.getName()).append("</font><br>");
+		sb.append("</center><br>");
+
+		// Equipment table
+		sb.append("<table width=270 bgcolor=111111>");
+
+		// Header row
+		sb.append("<tr>");
+		sb.append("<td width=80><font color=\"LEVEL\">Slot</font></td>");
+		sb.append("<td width=130><font color=\"LEVEL\">Equipo</font></td>");
+		sb.append("<td width=60></td>");
+		sb.append("</tr>");
+
+		// List target's equipment
+		for (int i = 0; i < SLOT_IDS.length; i++)
+		{
+			final int slot = SLOT_IDS[i];
+			final String slotKey = SLOT_KEYS[i];
+			final String slotName = SLOT_NAMES[i];
+
+			final Item equipped = target.getInventory().getPaperdollItem(slot);
+			if (equipped == null) continue;
+
+			final int equipId = equipped.getId();
+			final String equipName = getItemName(equipId);
+
+			sb.append("<tr>");
+			sb.append("<td><font color=\"B09878\">").append(slotName).append("</font></td>");
+			sb.append("<td><font color=\"C8C8A0\">").append(shortName(equipName)).append("</font></td>");
+			sb.append("<td>");
+			sb.append("<button value=\"Copiar\" "
+				+ "action=\"bypass -h voice .dressmetarget copy " + slotKey + "\" "
+				+ "width=55 height=18 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+			sb.append("</td>");
+			sb.append("</tr>");
+		}
+
+		sb.append("</table><br>");
+
+		// Back button
+		sb.append("<center>");
+		sb.append("<button value=\"Volver\" action=\"bypass -h voice .dressme\" "
+			+ "width=80 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+		sb.append("</center>");
+
+		sb.append("</body></html>");
+
+		final NpcHtmlMessage msg = new NpcHtmlMessage();
+		msg.setHtml(sb.toString());
+		player.sendPacket(msg);
+	}
+
+	private void handleTargetCopy(Player player, String slotName, DressMeManager mgr, DressMeData data)
+	{
+		// Get target
+		Object targetObj = player.getTarget();
+		if (targetObj == null || !(targetObj instanceof Player))
+		{
+			player.sendMessage("[DressMe] Debes hacer target en otro jugador.");
+			return;
+		}
+
+		final Player target = (Player) targetObj;
+		final int slot = parseSlot(slotName);
+
+		if (slot < 0)
+		{
+			player.sendMessage("[DressMe] Slot invalido.");
+			return;
+		}
+
+		final Item targetItem = target.getInventory().getPaperdollItem(slot);
+		if (targetItem == null)
+		{
+			player.sendMessage("[DressMe] El target no tiene equipo en ese slot.");
+			return;
+		}
+
+		final int copyItemId = targetItem.getId();
+		final ItemTemplate copyTpl = ItemData.getInstance().getTemplate(copyItemId);
+
+		if (copyTpl == null)
+		{
+			player.sendMessage("[DressMe] Item no encontrado.");
+			return;
+		}
+
+		// Save the visual
+		data.setVisualId(slot, copyItemId);
+		mgr.saveSlot(player.getObjectId(), slot, copyItemId);
+
+		// If Full Armor, also save to legs
+		if (slot == DressMeManager.SLOT_CHEST && copyTpl.getBodyPart() == BodyPart.FULL_ARMOR)
+		{
+			data.setVisualId(DressMeManager.SLOT_LEGS, copyItemId);
+			mgr.saveSlot(player.getObjectId(), DressMeManager.SLOT_LEGS, copyItemId);
+			player.sendMessage("[DressMe] Copiado de " + target.getName() + ": " + copyTpl.getName() + " (Full Armor)");
+		}
+		else
+		{
+			player.sendMessage("[DressMe] Copiado de " + target.getName() + ": " + copyTpl.getName());
+		}
+
+		// Re-apply if active
+		if (data.isEnabled())
+		{
+			mgr.removeVisuals(player);
+			mgr.applyVisuals(player);
+		}
 	}
 
 	// ─────────────────────────────────────────────────────────────
