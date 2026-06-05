@@ -6,6 +6,7 @@ import org.l2jmobius.gameserver.data.xml.ItemData;
 import org.l2jmobius.gameserver.handler.IVoicedCommandHandler;
 import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.item.ItemTemplate;
+import org.l2jmobius.gameserver.model.item.enums.BodyPart;
 import org.l2jmobius.gameserver.model.item.instance.Item;
 import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 
@@ -124,17 +125,49 @@ public class DressMe implements IVoicedCommandHandler
 		sb.append("<td width=80></td>");
 		sb.append("</tr>");
 
+		// Track if LEGS row should be skipped because it's covered by a FULL_ARMOR chest visual
+		boolean legsSkip = false;
+
 		for (int i = 0; i < SLOT_IDS.length; i++)
 		{
 			final int    slot     = SLOT_IDS[i];
 			final String slotKey  = SLOT_KEYS[i];
-			final String slotName = SLOT_NAMES[i];
+			String       slotName = SLOT_NAMES[i];
+
+			// Skip LEGS row if covered by a FULL_ARMOR visual on chest
+			if (slot == DressMeManager.SLOT_LEGS && legsSkip)
+			{
+				continue;
+			}
 
 			final Item   equipped  = player.getInventory().getPaperdollItem(slot);
 			final int    equipId   = equipped != null ? equipped.getId() : 0;
 			final String equipName = equipId > 0 ? getItemName(equipId) : "Sin equipo";
 			final int    visualId  = data.getVisualId(slot);
 			final String visualName = visualId > 0 ? getItemName(visualId) : "";
+
+			// Detect Full Armor: chest item that also covers legs
+			boolean isFullArmor = false;
+			if (equipId > 0 && slot == DressMeManager.SLOT_CHEST)
+			{
+				final ItemTemplate tpl = ItemData.getInstance().getTemplate(equipId);
+				isFullArmor = (tpl != null && tpl.getBodyPart() == BodyPart.FULL_ARMOR);
+				if (isFullArmor)
+				{
+					slotName = "Pecho+Piernas";
+					legsSkip = true;
+				}
+			}
+			// Also skip legs row if visual set is from a full armor
+			if (slot == DressMeManager.SLOT_CHEST && visualId > 0)
+			{
+				final ItemTemplate vtpl = ItemData.getInstance().getTemplate(visualId);
+				if (vtpl != null && vtpl.getBodyPart() == BodyPart.FULL_ARMOR)
+				{
+					slotName = "Pecho+Piernas";
+					legsSkip = true;
+				}
+			}
 
 			sb.append("<tr>");
 
@@ -153,11 +186,15 @@ public class DressMe implements IVoicedCommandHandler
 			}
 			else
 			{
-				sb.append("<font color=\"555555\">-</font>");
+				// No item in this slot — but there may be a visual from a previously saved full armor
+				if (visualId > 0)
+					sb.append("<font color=\"00AA33\">").append(shortName(visualName)).append("</font>");
+				else
+					sb.append("<font color=\"555555\">-</font>");
 			}
 			sb.append("</td>");
 
-			// Action button
+			// Action buttons
 			sb.append("<td>");
 			if (equipId > 0)
 			{
@@ -224,16 +261,37 @@ public class DressMe implements IVoicedCommandHandler
 
 		if (itemId == 0)
 		{
+			// Clear this slot
 			data.setVisualId(slot, 0);
 			mgr.deleteSlot(player.getObjectId(), slot);
+
+			// If clearing chest, also clear legs (in case they were linked via FULL_ARMOR)
+			if (slot == DressMeManager.SLOT_CHEST)
+			{
+				data.setVisualId(DressMeManager.SLOT_LEGS, 0);
+				mgr.deleteSlot(player.getObjectId(), DressMeManager.SLOT_LEGS);
+			}
 		}
 		else
 		{
+			// Detect FULL_ARMOR: if the item covers both chest and legs, also set legs visual
+			final ItemTemplate tpl = ItemData.getInstance().getTemplate(itemId);
+			final boolean isFullArmor = (tpl != null && tpl.getBodyPart() == BodyPart.FULL_ARMOR);
+
 			data.setVisualId(slot, itemId);
 			mgr.saveSlot(player.getObjectId(), slot, itemId);
 
-			final String itemName = getItemName(itemId);
-			player.sendMessage("[DressMe] Visual '" + parts[0] + "' -> " + itemName + " guardado.");
+			if (slot == DressMeManager.SLOT_CHEST && isFullArmor)
+			{
+				// Full armor covers legs too — save same ID for legs slot
+				data.setVisualId(DressMeManager.SLOT_LEGS, itemId);
+				mgr.saveSlot(player.getObjectId(), DressMeManager.SLOT_LEGS, itemId);
+				player.sendMessage("[DressMe] Full Armor detectado: visual guardado para Pecho y Piernas.");
+			}
+			else
+			{
+				player.sendMessage("[DressMe] Visual '" + parts[0] + "' -> " + getItemName(itemId) + " guardado.");
+			}
 		}
 
 		// Re-apply if already active

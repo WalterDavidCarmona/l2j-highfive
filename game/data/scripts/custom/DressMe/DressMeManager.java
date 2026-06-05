@@ -107,6 +107,8 @@ public class DressMeManager
 			if (visualId <= 0) continue;
 
 			// Unequip → set transmog → re-equip (same as Transmog NPC)
+			// unEquipSlot uses item.getTemplate().getBodyPart() so it handles
+			// FULL_ARMOR, LR_HAND (2H weapons), separate CHEST/LEGS, etc. automatically
 			final Item item = unEquipSlot(player, slot);
 			if (item == null) continue;
 
