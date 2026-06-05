@@ -97,7 +97,7 @@ public class DressMeManager
 				}
 			}
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			LOGGER.log(Level.WARNING, "DressMeManager: Failed to load data for charId=" + objectId, e);
 		}
@@ -131,7 +131,7 @@ public class DressMeManager
 			ps.setInt(3, visualId);
 			ps.executeUpdate();
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			LOGGER.log(Level.WARNING, "DressMeManager: Failed to save slot for charId=" + objectId, e);
 		}
@@ -147,7 +147,7 @@ public class DressMeManager
 			ps.setInt(2, slot);
 			ps.executeUpdate();
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			LOGGER.log(Level.WARNING, "DressMeManager: Failed to delete slot for charId=" + objectId, e);
 		}
@@ -162,7 +162,7 @@ public class DressMeManager
 			ps.setInt(1, objectId);
 			ps.executeUpdate();
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			LOGGER.log(Level.WARNING, "DressMeManager: Failed to delete all for charId=" + objectId, e);
 		}
@@ -179,7 +179,7 @@ public class DressMeManager
 		{
 			ps.executeUpdate();
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			LOGGER.log(Level.WARNING, "DressMeManager: Failed to create table.", e);
 		}

@@ -72,6 +72,8 @@ def check(out, err, code, label):
     print(f"[OK] {label}")
 
 # ── Files to upload ───────────────────────────────────────────────
+# NOTE: CharInfo.java and UserInfo.java are NOT patched (causes dark screen).
+# DressMe interception goes through Inventory.getPaperdollItemDisplayId via javassist.
 FILES = [
     (
         os.path.join(PATCH, "org/l2jmobius/gameserver/custom/dressme/DressMeData.java"),
@@ -80,14 +82,6 @@ FILES = [
     (
         os.path.join(PATCH, "org/l2jmobius/gameserver/custom/dressme/DressMeManager.java"),
         "/opt/dressme/src/org/l2jmobius/gameserver/custom/dressme/DressMeManager.java"
-    ),
-    (
-        os.path.join(PATCH, "org/l2jmobius/gameserver/network/serverpackets/CharInfo.java"),
-        "/opt/dressme/src/org/l2jmobius/gameserver/network/serverpackets/CharInfo.java"
-    ),
-    (
-        os.path.join(PATCH, "org/l2jmobius/gameserver/network/serverpackets/UserInfo.java"),
-        "/opt/dressme/src/org/l2jmobius/gameserver/network/serverpackets/UserInfo.java"
     ),
     (
         os.path.join(SCRIPTS, "handlers/chat/commands/voiced/DressMe.java"),
@@ -137,8 +131,6 @@ compile_cmd = (
     f"-d {OUT} "
     f"{SRC}/org/l2jmobius/gameserver/custom/dressme/DressMeData.java "
     f"{SRC}/org/l2jmobius/gameserver/custom/dressme/DressMeManager.java "
-    f"{SRC}/org/l2jmobius/gameserver/network/serverpackets/CharInfo.java "
-    f"{SRC}/org/l2jmobius/gameserver/network/serverpackets/UserInfo.java "
     f"2>&1"
 )
 o, e, c = run_cmd(compile_cmd, timeout=120)
@@ -168,9 +160,17 @@ patch_cmd = (
     f"{JAR} uf /opt/l2j/libs/GameServer.jar "
     f"org/l2jmobius/gameserver/custom/dressme/DressMeData.class "
     f"org/l2jmobius/gameserver/custom/dressme/DressMeManager.class "
-    f"org/l2jmobius/gameserver/network/serverpackets/CharInfo.class "
-    f"org/l2jmobius/gameserver/network/serverpackets/UserInfo.class "
-    f"&& echo 'JAR patch OK'"
+    f"&& echo 'JAR core patch OK' && "
+    # Javassist patch for Inventory.getPaperdollItemDisplayId
+    f"cd /opt/dressme/patcher && "
+    f"{JAVA_HOME}/bin/javac --release 21 -cp /opt/tools/javassist.jar PatchInventory.java -d . && "
+    f"rm -rf patched_classes && mkdir -p patched_classes && "
+    f"{JAVA_HOME}/bin/java -cp .:/opt/tools/javassist.jar:/opt/l2j/libs/GameServer.jar:{OUT} "
+    f"PatchInventory /opt/l2j/libs/GameServer.jar && "
+    f"cd patched_classes && "
+    f"{JAR} uf /opt/l2j/libs/GameServer.jar "
+    f"org/l2jmobius/gameserver/model/itemcontainer/Inventory.class "
+    f"&& echo 'Inventory javassist patch OK'"
 )
 o, e, c = run_cmd(patch_cmd, timeout=60)
 check(o, e, c, "jar patch")

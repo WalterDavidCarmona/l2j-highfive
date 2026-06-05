@@ -39,7 +39,8 @@ public class PatchInventory
         System.out.println(method.getMethodInfo().toString());
 
         // ── Build the new method body ─────────────────────────────
-        // We keep the transmog check and add DressMe check before getDisplayId()
+        // Keep transmog check, add DressMe check wrapped in try-catch(Throwable)
+        // so any DressMeManager init failure never causes a dark screen.
         String newBody =
             "{"
             + "  org.l2jmobius.gameserver.model.item.instance.Item item = this._paperdoll[$1];"
@@ -49,10 +50,13 @@ public class PatchInventory
             + "        && (transmogId = item.getTransmogId()) > 0) {"
             + "      return transmogId;"
             + "    }"
-            + "    int dressMeId = org.l2jmobius.gameserver.custom.dressme.DressMeManager"
-            + "                       .getInstance().getVisualId(getOwnerId(), $1);"
-            + "    if (dressMeId > 0) {"
-            + "      return dressMeId;"
+            + "    try {"
+            + "      int dressMeId = org.l2jmobius.gameserver.custom.dressme.DressMeManager"
+            + "                         .getInstance().getVisualId(getOwnerId(), $1);"
+            + "      if (dressMeId > 0) { return dressMeId; }"
+            + "    } catch (Throwable t) {"
+            + "      java.util.logging.Logger.getLogger(\"DressMe\").warning("
+            + "        \"DressMe visual lookup failed: \" + t.getMessage());"
             + "    }"
             + "    return item.getDisplayId();"
             + "  }"
