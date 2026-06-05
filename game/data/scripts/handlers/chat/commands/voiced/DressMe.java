@@ -476,6 +476,22 @@ public class DressMe implements IVoicedCommandHandler
 			return;
 		}
 
+		// Check weapon slot compatibility
+		if (isWeaponSlot(slot))
+		{
+			final Item playerItem = player.getInventory().getPaperdollItem(slot);
+			if (playerItem != null)
+			{
+				final ItemTemplate playerTpl = ItemData.getInstance().getTemplate(playerItem.getId());
+				if (playerTpl != null && !areWeaponTypesCompatible(playerTpl, copyTpl))
+				{
+					player.sendMessage("[DressMe] No puedes copiar ese arma. Tipo incompatible.");
+					player.sendMessage("[DressMe] Tu arma: " + playerTpl.getName() + " / Target: " + copyTpl.getName());
+					return;
+				}
+			}
+		}
+
 		// Save the visual
 		data.setVisualId(slot, copyItemId);
 		mgr.saveSlot(player.getObjectId(), slot, copyItemId);
@@ -498,6 +514,40 @@ public class DressMe implements IVoicedCommandHandler
 			mgr.removeVisuals(player);
 			mgr.applyVisuals(player);
 		}
+	}
+
+	/**
+	 * Check if a slot is a weapon slot (right hand or left hand)
+	 */
+	private boolean isWeaponSlot(int slot)
+	{
+		return slot == DressMeManager.SLOT_RHAND || slot == DressMeManager.SLOT_LHAND;
+	}
+
+	/**
+	 * Check if two weapon templates are compatible (same type/category)
+	 */
+	private boolean areWeaponTypesCompatible(ItemTemplate playerWeapon, ItemTemplate targetWeapon)
+	{
+		// Get the body parts to determine weapon type
+		final BodyPart playerBp = playerWeapon.getBodyPart();
+		final BodyPart targetBp = targetWeapon.getBodyPart();
+
+		// Same body part = compatible
+		if (playerBp == targetBp)
+			return true;
+
+		// Both are hand weapons, check if they're the same category
+		// LR_HAND is dual wielding, can accept both RHAND and LHAND weapons
+		if (playerBp == BodyPart.LR_HAND || targetBp == BodyPart.LR_HAND)
+		{
+			// Dual hand weapon (like Dual Sword) can be paired with single swords
+			return (playerBp == BodyPart.RHAND || playerBp == BodyPart.LHAND || playerBp == BodyPart.LR_HAND)
+				&& (targetBp == BodyPart.RHAND || targetBp == BodyPart.LHAND || targetBp == BodyPart.LR_HAND);
+		}
+
+		// Otherwise incompatible
+		return false;
 	}
 
 	// ─────────────────────────────────────────────────────────────
