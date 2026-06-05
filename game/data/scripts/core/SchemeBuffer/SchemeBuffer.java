@@ -152,9 +152,14 @@ public class SchemeBuffer extends Npc
 					// ── Verificacion categoria Premium ──────────────────────
 					// Si el skill pertenece a la categoria Premium,
 					// solo aplica si el jugador tiene premium activo.
+					// Si no tiene premium, busca la version normal del skill.
 					if (PREMIUM_CATEGORY.equalsIgnoreCase(holder.getType()) && !hasPremium(player))
 					{
-						continue;
+						holder = schemeBufferTable.getNonPremiumBuff(skillId);
+						if (holder == null)
+						{
+							continue;
+						}
 					}
 
 					Skill skill = skillData.getSkill(skillId, holder.getLevel());

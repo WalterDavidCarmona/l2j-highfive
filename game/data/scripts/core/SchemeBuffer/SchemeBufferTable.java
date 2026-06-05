@@ -305,6 +305,29 @@ public class SchemeBufferTable
 		return _availableBuffs.get(skillId);
 	}
 
+	/**
+	 * Busca la version no-premium de un skill.
+	 * Recorre todas las categorias excepto Premium y devuelve el holder
+	 * con el nivel mas alto encontrado, o null si no existe.
+	 */
+	public BuffSkillHolder getNonPremiumBuff(int skillId)
+	{
+		BuffSkillHolder best = null;
+		for (Map.Entry<String, Map<Integer, BuffSkillHolder>> entry : _availableBuffsByType.entrySet())
+		{
+			if (PREMIUM_CATEGORY.equalsIgnoreCase(entry.getKey()))
+			{
+				continue;
+			}
+			BuffSkillHolder h = entry.getValue().get(skillId);
+			if (h != null && (best == null || h.getLevel() > best.getLevel()))
+			{
+				best = h;
+			}
+		}
+		return best;
+	}
+
 	public BuffSkillHolder getAvailableBuff(String groupType, int skillId)
 	{
 		Map<Integer, BuffSkillHolder> holdersByType = _availableBuffsByType.get(groupType);

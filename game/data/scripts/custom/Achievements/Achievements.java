@@ -284,8 +284,8 @@ public class Achievements extends Script
 			}
 			else if (m.type == MissionType.CHAMPION_KILL)
 			{
-				// Cualquier champion de nivel 90+
-				if (mob.isChampion() && (mobLevel >= 90))
+				// Cualquier champion de nivel 85+
+				if (mob.isChampion() && (mobLevel >= 85))
 				{
 					incrementMission(killer, data, m);
 				}

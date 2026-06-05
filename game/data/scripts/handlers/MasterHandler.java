@@ -216,6 +216,7 @@ import handlers.chat.commands.user.Unstuck;
 import handlers.chat.commands.voiced.AutoPlay;
 import handlers.chat.commands.voiced.AutoPotion;
 import handlers.chat.commands.voiced.Banking;
+import handlers.chat.commands.voiced.DressMe;
 import handlers.chat.commands.voiced.Noble;
 import handlers.chat.commands.voiced.Reward;
 import handlers.chat.commands.voiced.ChangePassword;
@@ -562,6 +563,7 @@ public class MasterHandler
 			OnlineInfoConfig.ENABLE_ONLINE_COMMAND ? Online.class : null,
 			PremiumSystemConfig.PREMIUM_SYSTEM_ENABLED ? Premium.class : null,
 			AutoPotionsConfig.AUTO_POTIONS_ENABLED ? AutoPotion.class : null,
+			DressMe.class,
 			Noble.class,
 			Reward.class,
 		},

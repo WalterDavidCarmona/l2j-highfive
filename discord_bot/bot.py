@@ -8,6 +8,7 @@ import io
 import aiohttp
 from dotenv import load_dotenv
 from datetime import datetime, timezone
+import random
 
 load_dotenv()
 
@@ -53,6 +54,7 @@ CLASS_NAMES = {
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 db_pool: aiomysql.Pool | None = None
@@ -75,6 +77,14 @@ async def query(sql: str, args=None) -> list[dict]:
         async with conn.cursor(aiomysql.DictCursor) as cur:
             await cur.execute(sql, args)
             return await cur.fetchall()
+
+
+async def execute(sql: str, args=None):
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(sql, args)
+            return cur.lastrowid
 
 
 async def check_server_online() -> bool:
@@ -591,6 +601,377 @@ async def cmd_stickers(interaction: discord.Interaction):
     await interaction.followup.send(embed=embed, ephemeral=True)
 
 
+# ── Reglas de la comunidad ────────────────────────────────────────────────────
+
+@bot.tree.command(name="reglas", description="Publica las reglas de la comunidad (solo admins)")
+@app_commands.checks.has_permissions(administrator=True)
+async def cmd_reglas(interaction: discord.Interaction):
+    """Envía un embed con las reglas de la comunidad al canal actual."""
+    await interaction.response.defer(ephemeral=True)
+
+    # ── Embed principal ──
+    embed = discord.Embed(
+        title="📜  REGLAS DE LA COMUNIDAD  📜",
+        description=(
+            "Bienvenido a **L2 Zona Zero**. Para mantener un ambiente sano y "
+            "competitivo, todos los jugadores deben respetar las siguientes reglas. "
+            "El incumplimiento puede resultar en **mute, ban temporal o ban permanente** "
+            "según la gravedad de la falta."
+        ),
+        color=0x7c3aed,
+    )
+    embed.set_thumbnail(url="https://lineage2zonazero.com/assets/img/beta-bg.jpg")
+
+    # ── Sección 1: Respeto ──
+    embed.add_field(
+        name="⚔️  1. RESPETO ENTRE JUGADORES",
+        value=(
+            "• No se toleran **insultos, acoso, amenazas** ni humillaciones hacia otros jugadores.\n"
+            "• Está prohibido el **bullying, hostigamiento** o persecución sistemática.\n"
+            "• Resolvé tus conflictos de forma madura. El PvP es en el juego, no en el chat."
+        ),
+        inline=False,
+    )
+
+    # ── Sección 2: Discriminación ──
+    embed.add_field(
+        name="🚫  2. CERO DISCRIMINACIÓN",
+        value=(
+            "• Queda **estrictamente prohibido** todo tipo de **racismo, xenofobia, "
+            "homofobia, sexismo** o cualquier forma de discriminación.\n"
+            "• No se permiten **símbolos, nombres de personajes o clanes** con contenido "
+            "ofensivo, discriminatorio o de odio.\n"
+            "• Esto aplica al chat del juego, Discord, y cualquier medio de la comunidad."
+        ),
+        inline=False,
+    )
+
+    # ── Sección 3: Chat ──
+    embed.add_field(
+        name="💬  3. USO DEL CHAT",
+        value=(
+            "• No hacer **spam, flood** ni publicidad de otros servidores.\n"
+            "• No compartir **contenido NSFW, gore** o material inapropiado.\n"
+            "• El chat de **comercio** es solo para compra/venta. No abusar.\n"
+            "• Usar los canales de Discord correspondientes para cada tema."
+        ),
+        inline=False,
+    )
+
+    # ── Sección 4: Fair Play ──
+    embed.add_field(
+        name="🎮  4. JUEGO LIMPIO (FAIR PLAY)",
+        value=(
+            "• Queda prohibido el uso de **bots, hacks, exploits** o cualquier "
+            "programa externo que modifique el cliente del juego.\n"
+            "• No se permite el **abuso de bugs**. Si encontrás uno, reportalo al Staff.\n"
+            "• Está prohibido el **RMT** (Real Money Trading) — compra/venta de items "
+            "o cuentas por dinero real fuera de la web oficial.\n"
+            "• No se permite el **feed de PvP/PK** (matar cuentas propias para subir stats)."
+        ),
+        inline=False,
+    )
+
+    # ── Sección 5: Cuentas ──
+    embed.add_field(
+        name="🔑  5. CUENTAS Y SEGURIDAD",
+        value=(
+            "• Cada jugador es **responsable de su cuenta**. No compartir credenciales.\n"
+            "• Está prohibido **hackear, robar o acceder** a cuentas ajenas.\n"
+            "• El Staff **nunca** pedirá tu contraseña. No caigas en estafas.\n"
+            "• Las cuentas son **personales e intransferibles**."
+        ),
+        inline=False,
+    )
+
+    # ── Sección 6: Staff ──
+    embed.add_field(
+        name="👑  6. RESPETO AL STAFF",
+        value=(
+            "• Tratar al Staff con **respeto**. Son voluntarios que ayudan a la comunidad.\n"
+            "• No insistir ni acosar al Staff por items, beneficios o unbans.\n"
+            "• Las decisiones del Staff son **finales**. Podés apelar de forma respetuosa.\n"
+            "• Hacerse pasar por Staff es motivo de **ban permanente**."
+        ),
+        inline=False,
+    )
+
+    # ── Sección 7: Sanciones ──
+    embed.add_field(
+        name="⚖️  7. SANCIONES",
+        value=(
+            "```\n"
+            "🟡 Falta leve    → Advertencia / Mute 1-24hs\n"
+            "🟠 Falta media   → Mute 1-7 días / Ban temporal\n"
+            "🔴 Falta grave   → Ban permanente sin apelación\n"
+            "```\n"
+            "*El Staff se reserva el derecho de aplicar la sanción que considere "
+            "apropiada según el contexto.*"
+        ),
+        inline=False,
+    )
+
+    embed.set_footer(
+        text="L2 Zona Zero • Las reglas pueden actualizarse en cualquier momento • lineage2zonazero.com"
+    )
+    embed.timestamp = datetime.now(timezone.utc)
+
+    # Enviar al canal (visible para todos)
+    await interaction.channel.send(embed=embed)
+    await interaction.followup.send("✅ Reglas publicadas en el canal.", ephemeral=True)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# SISTEMA DE NIVELES
+# ══════════════════════════════════════════════════════════════════════════════
+
+WELCOME_CHANNEL = "la-zeroneta"
+
+# Niveles: (xp_requerido, nombre, emoji)
+LEVELS = [
+    (0,      "Novato",              "🌱"),
+    (100,    "Aprendiz",            "📘"),
+    (300,    "Guerrero",            "⚔️"),
+    (600,    "Veterano",            "🛡️"),
+    (1000,   "Elite",               "💎"),
+    (1800,   "Comandante",          "🎖️"),
+    (3000,   "Heroe",               "🏆"),
+    (5000,   "Legendario",          "👑"),
+    (8000,   "Mitico",              "🔱"),
+    (12000,  "Inmortal",            "⭐"),
+]
+
+# Cooldown para XP por mensaje (evita spam): {user_id: last_xp_time}
+_xp_cooldowns = {}
+XP_COOLDOWN_SECS = 30
+XP_PER_MESSAGE = (15, 25)  # rango aleatorio
+
+
+def get_level_info(xp: int):
+    """Retorna (nivel_idx, nombre, emoji, xp_actual_en_nivel, xp_para_siguiente)."""
+    for i in range(len(LEVELS) - 1, -1, -1):
+        if xp >= LEVELS[i][0]:
+            next_xp = LEVELS[i + 1][0] if i + 1 < len(LEVELS) else None
+            progress_in = xp - LEVELS[i][0]
+            needed = (next_xp - LEVELS[i][0]) if next_xp else 0
+            return i, LEVELS[i][1], LEVELS[i][2], progress_in, needed
+    return 0, LEVELS[0][1], LEVELS[0][2], 0, LEVELS[1][0]
+
+
+def make_progress_bar(current, total, length=16):
+    if total <= 0:
+        return "▓" * length + " MAX"
+    filled = int(length * current / total)
+    filled = min(filled, length)
+    return "▓" * filled + "░" * (length - filled)
+
+
+async def ensure_levels_table():
+    """Crea la tabla de niveles si no existe."""
+    await execute("""
+        CREATE TABLE IF NOT EXISTS discord_levels (
+            user_id BIGINT PRIMARY KEY,
+            username VARCHAR(100) NOT NULL DEFAULT '',
+            xp INT NOT NULL DEFAULT 0,
+            level INT NOT NULL DEFAULT 0,
+            messages INT NOT NULL DEFAULT 0,
+            last_xp DATETIME DEFAULT NULL
+        )
+    """)
+
+
+async def get_user_xp(user_id: int) -> dict:
+    rows = await query("SELECT * FROM discord_levels WHERE user_id = %s", (user_id,))
+    return rows[0] if rows else None
+
+
+async def add_xp(user_id: int, username: str, amount: int) -> tuple:
+    """Agrega XP. Retorna (new_xp, old_level, new_level)."""
+    row = await get_user_xp(user_id)
+    if row is None:
+        await execute(
+            "INSERT INTO discord_levels (user_id, username, xp, level, messages, last_xp) "
+            "VALUES (%s, %s, %s, 0, 1, NOW())",
+            (user_id, username, amount)
+        )
+        old_lvl = 0
+        new_xp = amount
+    else:
+        old_lvl = row["level"]
+        new_xp = row["xp"] + amount
+        await execute(
+            "UPDATE discord_levels SET xp = %s, username = %s, messages = messages + 1, "
+            "last_xp = NOW() WHERE user_id = %s",
+            (new_xp, username, user_id)
+        )
+
+    new_lvl_idx = get_level_info(new_xp)[0]
+    if new_lvl_idx != old_lvl:
+        await execute(
+            "UPDATE discord_levels SET level = %s WHERE user_id = %s",
+            (new_lvl_idx, user_id)
+        )
+
+    return new_xp, old_lvl, new_lvl_idx
+
+
+# ── Comando /nivel ──
+
+@bot.tree.command(name="nivel", description="Muestra tu nivel y XP en la comunidad")
+@app_commands.describe(usuario="Usuario a consultar (opcional)")
+async def cmd_nivel(interaction: discord.Interaction, usuario: discord.Member = None):
+    target = usuario or interaction.user
+    row = await get_user_xp(target.id)
+
+    if not row:
+        await interaction.response.send_message(
+            f"{target.display_name} aun no tiene actividad registrada.", ephemeral=True
+        )
+        return
+
+    lvl_idx, lvl_name, emoji, progress, needed = get_level_info(row["xp"])
+    bar = make_progress_bar(progress, needed)
+
+    embed = discord.Embed(
+        title=f"{emoji}  {target.display_name}",
+        color=0x7c3aed,
+    )
+    embed.set_thumbnail(url=target.display_avatar.url)
+    embed.add_field(name="Nivel", value=f"**{lvl_idx}** — {emoji} {lvl_name}", inline=True)
+    embed.add_field(name="XP Total", value=f"**{row['xp']:,}**", inline=True)
+    embed.add_field(name="Mensajes", value=f"**{row['messages']:,}**", inline=True)
+
+    if needed > 0:
+        next_emoji = LEVELS[lvl_idx + 1][2] if lvl_idx + 1 < len(LEVELS) else ""
+        next_name = LEVELS[lvl_idx + 1][1] if lvl_idx + 1 < len(LEVELS) else "MAX"
+        embed.add_field(
+            name=f"Progreso hacia {next_emoji} {next_name}",
+            value=f"`{bar}` {progress}/{needed} XP",
+            inline=False,
+        )
+    else:
+        embed.add_field(name="Rango", value="⭐ **NIVEL MAXIMO ALCANZADO** ⭐", inline=False)
+
+    embed.set_footer(text="Gana XP participando en la comunidad")
+    await interaction.response.send_message(embed=embed)
+
+
+# ── Comando /ranking (niveles) ──
+
+@bot.tree.command(name="topnivel", description="Top 10 usuarios por nivel en la comunidad")
+async def cmd_topnivel(interaction: discord.Interaction):
+    rows = await query(
+        "SELECT username, xp, level, messages FROM discord_levels ORDER BY xp DESC LIMIT 10"
+    )
+    if not rows:
+        await interaction.response.send_message("Aun no hay datos de niveles.", ephemeral=True)
+        return
+
+    embed = discord.Embed(
+        title="🏆  TOP 10 — Niveles de la Comunidad",
+        color=0xf59e0b,
+    )
+
+    medals = ["🥇", "🥈", "🥉"]
+    desc_lines = []
+    for i, r in enumerate(rows):
+        lvl_idx, lvl_name, emoji, _, _ = get_level_info(r["xp"])
+        medal = medals[i] if i < 3 else f"`{i+1}.`"
+        desc_lines.append(
+            f"{medal} **{r['username']}** — {emoji} {lvl_name} (Lvl {lvl_idx}) — "
+            f"`{r['xp']:,} XP` · {r['messages']:,} msgs"
+        )
+
+    embed.description = "\n".join(desc_lines)
+    embed.set_footer(text="Participa en la comunidad para subir de nivel")
+    await interaction.response.send_message(embed=embed)
+
+
+# ── Evento: XP por mensaje ──
+
+@bot.event
+async def on_message(message: discord.Message):
+    if message.author.bot:
+        return
+
+    # Procesar comandos prefix primero
+    await bot.process_commands(message)
+
+    # Cooldown check
+    now = datetime.now(timezone.utc).timestamp()
+    last = _xp_cooldowns.get(message.author.id, 0)
+    if now - last < XP_COOLDOWN_SECS:
+        return
+
+    _xp_cooldowns[message.author.id] = now
+
+    # Dar XP aleatorio
+    xp_amount = random.randint(*XP_PER_MESSAGE)
+    try:
+        new_xp, old_lvl, new_lvl = await add_xp(
+            message.author.id, message.author.display_name, xp_amount
+        )
+
+        # Si subio de nivel, anunciar
+        if new_lvl > old_lvl:
+            lvl_idx, lvl_name, emoji, _, _ = get_level_info(new_xp)
+            embed = discord.Embed(
+                title=f"🎉  SUBIO DE NIVEL",
+                description=(
+                    f"**{message.author.mention}** alcanzo el nivel **{lvl_idx}**!\n\n"
+                    f"Rango: {emoji} **{lvl_name}**"
+                ),
+                color=0x53FC18,
+            )
+            embed.set_thumbnail(url=message.author.display_avatar.url)
+            await message.channel.send(embed=embed)
+    except Exception as e:
+        print(f"[Levels] Error procesando XP: {e}")
+
+
+# ── Evento: Bienvenida a nuevos usuarios ──
+
+@bot.event
+async def on_member_join(member: discord.Member):
+    # Buscar canal la-zeroneta
+    channel = discord.utils.get(member.guild.text_channels, name=WELCOME_CHANNEL)
+    if not channel:
+        print(f"[Welcome] Canal '{WELCOME_CHANNEL}' no encontrado")
+        return
+
+    member_count = member.guild.member_count
+
+    embed = discord.Embed(
+        title="⚔️  NUEVO GUERRERO EN LA ZONA  ⚔️",
+        description=(
+            f"Bienvenido {member.mention} a **L2 Zona Zero**!\n\n"
+            f"Sos el miembro **#{member_count}** de la comunidad.\n\n"
+            "🗡️ Leé las reglas en el canal de reglas\n"
+            "🎮 Descarga el cliente desde la web\n"
+            "💬 Participa en la comunidad para subir de nivel\n\n"
+            "**Tu aventura comienza ahora!**"
+        ),
+        color=0x00d4ff,
+    )
+    embed.set_thumbnail(url=member.display_avatar.url)
+    embed.set_footer(text="lineage2zonazero.com")
+    embed.timestamp = datetime.now(timezone.utc)
+
+    await channel.send(embed=embed)
+
+    # Registrar en tabla de niveles
+    try:
+        row = await get_user_xp(member.id)
+        if not row:
+            await execute(
+                "INSERT INTO discord_levels (user_id, username, xp, level, messages) "
+                "VALUES (%s, %s, 0, 0, 0)",
+                (member.id, member.display_name)
+            )
+    except Exception as e:
+        print(f"[Welcome] Error registrando usuario: {e}")
+
+
 # ── Events ────────────────────────────────────────────────────────────────────
 
 @bot.event
@@ -601,6 +982,12 @@ async def on_ready():
         await bot.tree.sync(guild=guild)
     else:
         await bot.tree.sync()
+    # Crear tabla de niveles
+    try:
+        await ensure_levels_table()
+        print("Tabla discord_levels verificada/creada")
+    except Exception as e:
+        print(f"Error creando tabla discord_levels: {e}")
     print(f"Bot conectado como {bot.user} | Comandos sincronizados")
     status_task.start()
 

@@ -219,11 +219,11 @@
       <div class="panel-header">⚙ Información del Servidor</div>
       <div class="panel-body">
         <div class="info-row"><span class="info-key">Versión</span><span class="info-value">Lineage II High Five</span></div>
-        <div class="info-row"><span class="info-key">Protocolo</span><span class="info-value">267 / 268 / 271 / 273</span></div>
         <div class="info-row"><span class="info-key">Puerto Game</span><span class="info-value">7777</span></div>
         <div class="info-row"><span class="info-key">Puerto Login</span><span class="info-value">2106</span></div>
-        <div class="info-row"><span class="info-key">Exp / SP Rate</span><span class="info-value">Personalizado</span></div>
-        <div class="info-row"><span class="info-key">Máx. Jugadores</span><span class="info-value">2000</span></div>
+        <div class="info-row"><span class="info-key">Cuentas</span><span class="info-value" id="st-accounts">—</span></div>
+        <div class="info-row"><span class="info-key">Personajes</span><span class="info-value" id="st-chars">—</span></div>
+        <div class="info-row"><span class="info-key">Clanes</span><span class="info-value" id="st-clans">—</span></div>
       </div>
     </div>
     <div class="panel">
@@ -243,17 +243,39 @@
         </div>
         <div class="info-row">
           <span class="info-key">Web Panel</span>
-          <span class="info-value"><span class="dot dot-online"></span>Nginx</span>
+          <span class="info-value"><span class="dot dot-online"></span>Node.js + Nginx</span>
         </div>
         <div class="info-row">
           <span class="info-key">Sistema</span>
-          <span class="info-value">Ubuntu 22.04 LTS</span>
+          <span class="info-value">Ubuntu 24.04 LTS</span>
         </div>
         <div class="info-row">
           <span class="info-key">Java</span>
-          <span class="info-value">OpenJDK 21 + ZGC</span>
+          <span class="info-value">OpenJDK 25 + ZGC</span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ── Rankings ── -->
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-header">🏆 Top PvP</div>
+      <div class="panel-body" id="rank-pvp" style="font-size:.9rem">Cargando...</div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">💀 Top PK</div>
+      <div class="panel-body" id="rank-pk" style="font-size:.9rem">Cargando...</div>
+    </div>
+  </div>
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-header">🏰 Top Clanes</div>
+      <div class="panel-body" id="rank-clan" style="font-size:.9rem">Cargando...</div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">👥 Jugadores Online</div>
+      <div class="panel-body" id="rank-online" style="font-size:.9rem">Cargando...</div>
     </div>
   </div>
 
@@ -330,11 +352,7 @@
 </footer>
 
 <script>
-// ── Obtener IP del servidor actual ──────────────────────────────────────────
-const SERVER_IP = window.location.hostname !== 'localhost'
-  ? window.location.hostname
-  : 'TU_IP_VPS';
-
+const SERVER_IP = '217.216.91.50';
 document.getElementById('server-ip').textContent = SERVER_IP;
 
 function copyIP() {
@@ -346,69 +364,108 @@ function copyIP() {
   });
 }
 
-// ── Fetch status.json ────────────────────────────────────────────────────────
-function updateStatus() {
-  fetch('/status.json?t=' + Date.now())
-    .then(r => r.json())
-    .then(data => {
-      const gameOnline  = data.game  === 'online';
-      const loginOnline = data.login === 'online';
-      const serverOnline = gameOnline && loginOnline;
-
-      // Tarjetas
-      const gameEl = document.getElementById('stat-game');
-      gameEl.innerHTML = `<span class="dot ${gameOnline ? 'dot-online' : 'dot-offline'}"></span>${gameOnline ? 'Online' : 'Offline'}`;
-      gameEl.style.color = gameOnline ? 'var(--green)' : 'var(--red)';
-
-      document.getElementById('stat-game-sub').textContent = gameOnline ? 'GameServer activo' : 'GameServer detenido';
-      document.getElementById('stat-players').textContent = data.players ?? '—';
-      document.getElementById('stat-uptime').textContent  = data.uptime  ?? '—';
-
-      const d = new Date(data.updated);
-      document.getElementById('stat-updated').textContent = isNaN(d) ? data.updated : d.toLocaleTimeString('es-AR');
-
-      // Servicios
-      const dot = ok => `<span class="dot ${ok ? 'dot-online' : 'dot-offline'}"></span>`;
-      document.getElementById('svc-game').innerHTML  = dot(gameOnline)  + (gameOnline  ? 'Activo' : 'Detenido');
-      document.getElementById('svc-login').innerHTML = dot(loginOnline) + (loginOnline ? 'Activo' : 'Detenido');
-
-      // Badge principal
-      const badge = document.getElementById('main-badge');
-      if (serverOnline) {
-        badge.className = 'server-badge badge-online';
-        badge.textContent = '● EN LÍNEA';
-      } else {
-        badge.className = 'server-badge badge-offline';
-        badge.textContent = '○ OFFLINE';
-      }
-
-      document.getElementById('footer-status').textContent =
-        serverOnline ? `En línea · ${data.players ?? 0} jugadores` : 'Servidor offline';
-    })
-    .catch(() => {
-      document.getElementById('stat-game').innerHTML = '<span class="dot dot-offline"></span>Sin datos';
-      document.getElementById('footer-status').textContent = 'Sin conexión con el servidor';
-    });
+function dot(ok) {
+  return '<span class="dot ' + (ok ? 'dot-online' : 'dot-offline') + '"></span>';
 }
 
-// ── Auto-refresh cada 30 segundos ────────────────────────────────────────────
-updateStatus();
+function buildRankTable(data, nameKey, valKey, lvlKey, valLabel) {
+  if (!data || !data.length) return '<span style="color:var(--textdim)">Sin datos aun</span>';
+  var h = '<table style="width:100%;border-collapse:collapse">';
+  h += '<tr><th style="text-align:left;color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Nombre</th>';
+  h += '<th style="color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Lvl</th>';
+  h += '<th style="text-align:right;color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">' + valLabel + '</th></tr>';
+  data.forEach(function(r) {
+    h += '<tr><td style="padding:5px 0;border-bottom:1px solid #1a1e38">' + r[nameKey] + '</td>';
+    h += '<td style="padding:5px 0;border-bottom:1px solid #1a1e38;color:var(--textdim);text-align:center">' + r[lvlKey] + '</td>';
+    h += '<td style="padding:5px 0;border-bottom:1px solid #1a1e38;text-align:right;color:var(--gold2);font-weight:600">' + r[valKey] + '</td></tr>';
+  });
+  return h + '</table>';
+}
+
+function buildClanTable(data) {
+  if (!data || !data.length) return '<span style="color:var(--textdim)">Sin datos aun</span>';
+  var h = '<table style="width:100%;border-collapse:collapse">';
+  h += '<tr><th style="text-align:left;color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Clan</th>';
+  h += '<th style="color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Lvl</th>';
+  h += '<th style="text-align:right;color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Reputacion</th></tr>';
+  data.forEach(function(r) {
+    h += '<tr><td style="padding:5px 0;border-bottom:1px solid #1a1e38">' + r.clan_name + '</td>';
+    h += '<td style="padding:5px 0;border-bottom:1px solid #1a1e38;color:var(--textdim);text-align:center">' + r.clan_level + '</td>';
+    h += '<td style="padding:5px 0;border-bottom:1px solid #1a1e38;text-align:right;color:var(--gold2);font-weight:600">' + r.reputation_score + '</td></tr>';
+  });
+  return h + '</table>';
+}
+
+function buildOnlineList(data) {
+  if (!data || !data.length) return '<span style="color:var(--textdim)">Nadie conectado</span>';
+  var h = '<table style="width:100%;border-collapse:collapse">';
+  h += '<tr><th style="text-align:left;color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Nombre</th>';
+  h += '<th style="text-align:right;color:var(--gold);font-size:.75rem;padding:4px 0;border-bottom:1px solid var(--border)">Nivel</th></tr>';
+  data.forEach(function(r) {
+    h += '<tr><td style="padding:5px 0;border-bottom:1px solid #1a1e38">' + r.char_name + '</td>';
+    h += '<td style="padding:5px 0;border-bottom:1px solid #1a1e38;text-align:right;color:var(--gold2)">' + r.level + '</td></tr>';
+  });
+  return h + '</table>';
+}
+
+function updateAll() {
+  // Status del servidor
+  fetch('/api/status').then(function(r){return r.json()}).then(function(data) {
+    var gameOn  = data.game  === 'online';
+    var loginOn = data.login === 'online';
+    var on = gameOn && loginOn;
+
+    var el = document.getElementById('stat-game');
+    el.innerHTML = dot(gameOn) + (gameOn ? 'Online' : 'Offline');
+    el.style.color = gameOn ? 'var(--green)' : 'var(--red)';
+    document.getElementById('stat-game-sub').textContent = gameOn ? 'GameServer activo' : 'GameServer detenido';
+    document.getElementById('stat-players').textContent = data.players || 0;
+    document.getElementById('stat-uptime').textContent  = data.uptime  || '—';
+
+    var d = new Date(data.updated);
+    document.getElementById('stat-updated').textContent = isNaN(d.getTime()) ? data.updated : d.toLocaleTimeString('es-AR');
+
+    document.getElementById('svc-game').innerHTML  = dot(gameOn)  + (gameOn  ? 'Activo' : 'Detenido');
+    document.getElementById('svc-login').innerHTML = dot(loginOn) + (loginOn ? 'Activo' : 'Detenido');
+
+    var badge = document.getElementById('main-badge');
+    badge.className = 'server-badge ' + (on ? 'badge-online' : 'badge-offline');
+    badge.textContent = on ? '● EN LINEA' : '○ OFFLINE';
+    document.getElementById('footer-status').textContent = on ? 'En linea - ' + (data.players||0) + ' jugadores' : 'Servidor offline';
+  }).catch(function() {
+    document.getElementById('stat-game').innerHTML = dot(false) + 'Sin datos';
+    document.getElementById('footer-status').textContent = 'Sin conexion';
+  });
+
+  // Stats de la DB
+  fetch('/api/stats').then(function(r){return r.json()}).then(function(data) {
+    document.getElementById('st-accounts').textContent = data.accounts || 0;
+    document.getElementById('st-chars').textContent    = data.total    || 0;
+    document.getElementById('st-clans').textContent    = data.clans    || 0;
+    document.getElementById('rank-pvp').innerHTML  = buildRankTable(data.topPvp, 'char_name', 'pvpkills', 'level', 'PvP Kills');
+    document.getElementById('rank-pk').innerHTML   = buildRankTable(data.topPk,  'char_name', 'pkkills',  'level', 'PK Kills');
+    document.getElementById('rank-clan').innerHTML = buildClanTable(data.topClans);
+  }).catch(function(){});
+
+  // Jugadores online
+  fetch('/api/players').then(function(r){return r.json()}).then(function(data) {
+    document.getElementById('rank-online').innerHTML = buildOnlineList(data.players);
+  }).catch(function(){});
+}
 
 function startRefreshBar() {
-  const fill = document.getElementById('rfill');
+  var fill = document.getElementById('rfill');
   fill.style.transition = 'none';
   fill.style.width = '0%';
-  setTimeout(() => {
+  setTimeout(function() {
     fill.style.transition = 'width 30s linear';
     fill.style.width = '100%';
   }, 50);
 }
 
+updateAll();
 startRefreshBar();
-setInterval(() => {
-  updateStatus();
-  startRefreshBar();
-}, 30000);
+setInterval(function() { updateAll(); startRefreshBar(); }, 30000);
 </script>
 </body>
 </html>
