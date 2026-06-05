@@ -83,50 +83,45 @@ public class DressMe implements IVoicedCommandHandler
 		final StringBuilder sb = new StringBuilder();
 		sb.append("<html><body>");
 
-		// ── Header ──
+		// Header - sin Unicode, solo ASCII
 		sb.append("<center>");
-		sb.append("<img src=\"L2UI_CH3.herotower_deco\" width=292 height=32><br1>");
-		sb.append("<font color=\"LEVEL\" name=\"hs9\">✦ DressMe ✦</font><br1>");
-		sb.append("<font color=\"808080\">Apariencia Visual - L2 Zona Zero</font><br>");
-		sb.append("<img src=\"L2UI_CH3.herotower_deco\" width=292 height=32><br>");
+		sb.append("<img src=\"L2UI_CH3.herotower_deco\" width=256 height=32><br1>");
+		sb.append("<font color=\"LEVEL\">-- DressMe - Apariencia Visual --</font><br>");
 		sb.append("</center>");
 
-		// ── Status + main buttons ──
-		sb.append("<table width=292><tr>");
-		sb.append("<td width=146 align=center>");
+		// Status
+		sb.append("<center>");
+		if (data.isEnabled())
+			sb.append("<font color=\"00CC44\">Estado: ACTIVO</font><br>");
+		else
+			sb.append("<font color=\"999999\">Estado: INACTIVO</font><br>");
+		sb.append("</center><br>");
+
+		// Main action buttons
+		sb.append("<center>");
 		if (data.isEnabled())
 		{
-			sb.append("<font color=\"00CC44\">◆ ACTIVO</font>");
+			sb.append("<button value=\"Desactivar\" action=\"bypass -h voice .dressmeof\" "
+				+ "width=120 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 		}
 		else
 		{
-			sb.append("<font color=\"888888\">◇ INACTIVO</font>");
+			sb.append("<button value=\"Activar\" action=\"bypass -h voice .dressmeon\" "
+				+ "width=120 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 		}
-		sb.append("</td>");
-		sb.append("<td width=146 align=center>");
-		if (data.isEnabled())
-		{
-			sb.append("<button value=\"  Desactivar  \" action=\"bypass -h voice .dressmeof\" "
-				+ "width=130 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
-		}
-		else
-		{
-			sb.append("<button value=\"  Activar  \" action=\"bypass -h voice .dressmeon\" "
-				+ "width=130 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
-		}
-		sb.append("</td></tr></table>");
-		sb.append("<center><button value=\" Resetear Todo \" action=\"bypass -h voice .dressmereset\" "
-			+ "width=130 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"></center><br>");
+		sb.append("&nbsp;");
+		sb.append("<button value=\"Resetear Todo\" action=\"bypass -h voice .dressmereset\" "
+			+ "width=120 height=22 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+		sb.append("</center><br>");
 
-		// ── Equipment slots table ──
-		sb.append("<table width=292 bgcolor=0A0A0A border=0 cellpadding=2 cellspacing=0>");
+		// Equipment table - atributos simples, sin border/cellpadding/cellspacing
+		sb.append("<table width=270 bgcolor=111111>");
 
-		// Table header
-		sb.append("<tr bgcolor=1A1A2E>");
-		sb.append("<td width=90><font color=9090FF>Slot</font></td>");
-		sb.append("<td width=110><font color=9090FF>Tu Equipo</font></td>");
-		sb.append("<td width=60><font color=9090FF>Visual</font></td>");
-		sb.append("<td width=32></td>");
+		// Header row
+		sb.append("<tr>");
+		sb.append("<td width=80><font color=\"LEVEL\">Slot</font></td>");
+		sb.append("<td width=110><font color=\"LEVEL\">Tu Equipo</font></td>");
+		sb.append("<td width=80></td>");
 		sb.append("</tr>");
 
 		for (int i = 0; i < SLOT_IDS.length; i++)
@@ -137,83 +132,56 @@ public class DressMe implements IVoicedCommandHandler
 
 			final Item   equipped  = player.getInventory().getPaperdollItem(slot);
 			final int    equipId   = equipped != null ? equipped.getId() : 0;
-			final String equipName = equipId > 0 ? getItemName(equipId) : "-";
+			final String equipName = equipId > 0 ? getItemName(equipId) : "Sin equipo";
 			final int    visualId  = data.getVisualId(slot);
-			final String visualName = visualId > 0 ? getItemName(visualId) : "-";
+			final String visualName = visualId > 0 ? getItemName(visualId) : "";
 
-			// Alternate row colors
-			final String rowColor = (i % 2 == 0) ? "131320" : "0A0A18";
-			sb.append("<tr bgcolor=").append(rowColor).append(">");
+			sb.append("<tr>");
 
 			// Slot name
-			sb.append("<td><font color=B0A060>").append(slotName).append("</font></td>");
+			sb.append("<td><font color=\"B09878\">").append(slotName).append("</font></td>");
 
-			// Equipped item - with "Copiar" button if item is equipped
+			// Equipped + visual info
 			sb.append("<td>");
 			if (equipId > 0)
 			{
-				sb.append("<font color=C8C8A0>").append(shortName(equipName)).append("</font>");
+				sb.append("<font color=\"C8C8A0\">").append(shortName(equipName)).append("</font>");
+				if (visualId > 0)
+				{
+					sb.append("<br1><font color=\"00AA33\">&gt; ").append(shortName(visualName)).append("</font>");
+				}
 			}
 			else
 			{
-				sb.append("<font color=555555>Sin equipo</font>");
+				sb.append("<font color=\"555555\">-</font>");
 			}
 			sb.append("</td>");
 
-			// Current visual
-			sb.append("<td>");
-			if (visualId > 0)
-			{
-				sb.append("<font color=00DD44>").append(shortName(visualName)).append("</font>");
-			}
-			else
-			{
-				sb.append("<font color=444444>-</font>");
-			}
-			sb.append("</td>");
-
-			// Action buttons
+			// Action button
 			sb.append("<td>");
 			if (equipId > 0)
 			{
-				// "Copiar" → sets the equipped item as visual
 				sb.append("<button value=\"Copiar\" "
 					+ "action=\"bypass -h voice .dressme " + slotKey + " " + equipId + "\" "
 					+ "width=55 height=18 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 			}
-			else if (visualId > 0)
+			if (visualId > 0)
 			{
-				// "X" → remove visual
-				sb.append("<button value=\" X \" "
+				sb.append("<button value=\"Quitar\" "
 					+ "action=\"bypass -h voice .dressme " + slotKey + " 0\" "
-					+ "width=28 height=18 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+					+ "width=55 height=18 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 			}
 			sb.append("</td>");
 
 			sb.append("</tr>");
-
-			// If visual is set AND different from equipped → show extra row with remove button
-			if (visualId > 0 && equipId > 0)
-			{
-				sb.append("<tr bgcolor=").append(rowColor).append(">");
-				sb.append("<td></td>");
-				sb.append("<td colspan=2><font color=555555>Visual activo: </font><font color=00AA33>")
-					.append(shortName(visualName)).append("</font></td>");
-				sb.append("<td><button value=\" X \" "
-					+ "action=\"bypass -h voice .dressme " + slotKey + " 0\" "
-					+ "width=28 height=18 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">"
-					+ "</td>");
-				sb.append("</tr>");
-			}
 		}
-		sb.append("</table>");
 
-		// ── Instructions ──
-		sb.append("<br><center>");
-		sb.append("<font color=606060>Presiona </font><font color=FFFF00>Copiar</font>");
-		sb.append("<font color=606060> para usar la apariencia de tu equipo actual.<br>");
-		sb.append("Luego presiona </font><font color=00CC44>Activar</font>");
-		sb.append("<font color=606060> para aplicar los cambios.</font>");
+		sb.append("</table><br>");
+
+		// Instructions - solo ASCII
+		sb.append("<center>");
+		sb.append("<font color=\"808080\">Presiona Copiar para guardar la apariencia</font><br>");
+		sb.append("<font color=\"808080\">del item equipado, luego pulsa Activar.</font>");
 		sb.append("</center>");
 
 		sb.append("</body></html>");
