@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.l2jmobius.commons.database.DatabaseFactory;
 import org.l2jmobius.gameserver.model.actor.Player;
+import org.l2jmobius.gameserver.model.item.enums.BodyPart;
 import org.l2jmobius.gameserver.model.item.instance.Item;
 
 /**
@@ -85,67 +86,101 @@ public class DressMeManager
 	// ─────────────────────────────────────────────────────────────
 
 	/**
-	 * Activates DressMe: applies stored visual_id as transmogId on each slot's item.
-	 * Saves the item's original transmogId so it can be restored on deactivate.
+	 * Activates DressMe: unequips each item, sets transmogId, re-equips, then broadcasts.
+	 * This replicates exactly how the native Transmog (Zumzi NPC) applies skins.
 	 */
 	public void applyVisuals(Player player)
 	{
 		final DressMeData d = getData(player.getObjectId());
 		if (d.isEmpty())
 		{
-			player.sendMessage("[DressMe] No tienes apariencias configuradas. Usa .dressme [slot] [itemId]");
+			player.sendMessage("[DressMe] No tienes apariencias configuradas.");
 			return;
 		}
 
 		d.clearSavedTransmogs();
+		boolean changed = false;
 
 		for (int slot : ALL_SLOTS)
 		{
 			final int visualId = d.getVisualId(slot);
 			if (visualId <= 0) continue;
 
-			final Item item = player.getInventory().getPaperdollItem(slot);
+			// Unequip → set transmog → re-equip (same as Transmog NPC)
+			final Item item = unEquipSlot(player, slot);
 			if (item == null) continue;
 
-			// Save original transmog so we can restore it
 			d.setSavedTransmog(slot, item.getTransmogId());
-
-			// Apply visual
 			item.setTransmogId(visualId);
+			player.getInventory().equipItem(item);
+			changed = true;
 		}
 
 		d.setEnabled(true);
-		player.broadcastUserInfo();
-		player.sendMessage("[DressMe] Apariencia activada.");
+
+		if (changed)
+		{
+			player.broadcastInfo();
+			player.sendMessage("[DressMe] Apariencia activada.");
+		}
+		else
+		{
+			player.sendMessage("[DressMe] No habia items equipados en los slots configurados.");
+		}
 	}
 
 	/**
-	 * Deactivates DressMe: restores each slot's original transmogId.
+	 * Deactivates DressMe: unequips each item, restores original transmogId, re-equips.
 	 */
 	public void removeVisuals(Player player)
 	{
 		final DressMeData d = getData(player.getObjectId());
 		d.setEnabled(false);
 
+		boolean changed = false;
+
 		for (int slot : ALL_SLOTS)
 		{
-			final Item item = player.getInventory().getPaperdollItem(slot);
+			final int visualId = d.getVisualId(slot);
+			if (visualId <= 0) continue; // only touch slots that had a DressMe visual
+
+			final Item item = unEquipSlot(player, slot);
 			if (item == null) continue;
 
 			final int originalTransmog = d.getSavedTransmog(slot);
 			if (originalTransmog > 0)
-			{
 				item.setTransmogId(originalTransmog);
-			}
 			else
-			{
 				item.removeTransmog();
-			}
+
+			player.getInventory().equipItem(item);
+			changed = true;
 		}
 
 		d.clearSavedTransmogs();
-		player.broadcastUserInfo();
-		player.sendMessage("[DressMe] Apariencia desactivada. Equipo real restaurado.");
+
+		if (changed)
+		{
+			player.broadcastInfo();
+			player.sendMessage("[DressMe] Apariencia desactivada. Equipo real restaurado.");
+		}
+	}
+
+	/**
+	 * Unequips the item in a paperdoll slot using the item's ACTUAL BodyPart.
+	 * This handles Full Armor, 2H weapons, etc. correctly — same approach as Transmog NPC.
+	 */
+	private Item unEquipSlot(Player player, int paperdollSlot)
+	{
+		// Get the item currently in this paperdoll slot
+		final Item item = player.getInventory().getPaperdollItem(paperdollSlot);
+		if (item == null) return null;
+
+		// Use the item's own bodypart to unequip — works for LR_HAND, FULL_ARMOR, etc.
+		final BodyPart bp = item.getTemplate().getBodyPart();
+		if (bp == null || bp == BodyPart.NONE) return null;
+
+		return player.getInventory().unEquipItemInBodySlot(bp);
 	}
 
 	// ─────────────────────────────────────────────────────────────
