@@ -13,15 +13,17 @@ import org.l2jmobius.gameserver.network.serverpackets.NpcHtmlMessage;
 /**
  * .dressme voiced command - L2 Zona Zero
  *
- * Bypass format (VoiceCommand handler requires dot at position 6):
- *   bypass -h voice .dressme [slot] [itemId]
- *   bypass -h voice .dressmeon
- *   bypass -h voice .dressmeof
- *   bypass -h voice .dressmereset
+ * Commands:
+ *   .dressme              - Open panel
+ *   .dressme [slot] [id]  - Copy item
+ *   .dressmeon            - Activate
+ *   .dressmeof            - Deactivate
+ *   .dressmereset         - Reset all
+ *   .dressmetarget [slot] - Copy from target's slot
  */
 public class DressMe implements IVoicedCommandHandler
 {
-	private static final String[] VOICED_COMMANDS = { "dressme", "dressmeon", "dressmeof", "dressmereset" };
+	private static final String[] VOICED_COMMANDS = { "dressme", "dressmeon", "dressmeof", "dressmereset", "dressmetarget" };
 
 	// Slot display names
 	private static final String[] SLOT_NAMES  = { "Arma Derecha", "Escudo / Izq.", "Pecho", "Piernas", "Guantes", "Botas", "Capa", "Cinturon" };
@@ -76,6 +78,72 @@ public class DressMe implements IVoicedCommandHandler
 				mgr.cleanAllArmorTransmogs(player);
 
 				player.sendMessage("[DressMe] Todas las apariencias y datos residuales eliminados.");
+				showPanel(player, data);
+				break;
+
+			case "dressmetarget":
+				// Simple implementation: just show help
+				if (params == null || params.trim().isEmpty())
+				{
+					player.sendMessage("[DressMe] Uso: .dressmetarget [slot]");
+					player.sendMessage("[DressMe] Slots: rhand, lhand, chest, legs, gloves, feet, cloak, belt");
+					return true;
+				}
+
+				// Get target - use native method
+				Object targetObj = player.getTarget();
+				if (targetObj == null || !(targetObj instanceof Player))
+				{
+					player.sendMessage("[DressMe] Debes hacer target en otro jugador.");
+					showPanel(player, data);
+					return true;
+				}
+
+				final Player target = (Player) targetObj;
+				final int slot = parseSlot(params.trim());
+
+				if (slot < 0)
+				{
+					player.sendMessage("[DressMe] Slot invalido.");
+					return true;
+				}
+
+				final Item targetItem = target.getInventory().getPaperdollItem(slot);
+				if (targetItem == null)
+				{
+					player.sendMessage("[DressMe] El target no tiene equipo en ese slot.");
+					return true;
+				}
+
+				final int copyItemId = targetItem.getId();
+				final ItemTemplate copyTpl = ItemData.getInstance().getTemplate(copyItemId);
+
+				if (copyTpl == null)
+				{
+					player.sendMessage("[DressMe] Item no encontrado.");
+					return true;
+				}
+
+				// Save the visual
+				data.setVisualId(slot, copyItemId);
+				mgr.saveSlot(player.getObjectId(), slot, copyItemId);
+
+				// If Full Armor, also save to legs
+				if (slot == DressMeManager.SLOT_CHEST && copyTpl.getBodyPart() == BodyPart.FULL_ARMOR)
+				{
+					data.setVisualId(DressMeManager.SLOT_LEGS, copyItemId);
+					mgr.saveSlot(player.getObjectId(), DressMeManager.SLOT_LEGS, copyItemId);
+				}
+
+				player.sendMessage("[DressMe] Copiado de " + target.getName() + ": " + copyTpl.getName());
+
+				// Re-apply if active
+				if (data.isEnabled())
+				{
+					mgr.removeVisuals(player);
+					mgr.applyVisuals(player);
+				}
+
 				showPanel(player, data);
 				break;
 		}
