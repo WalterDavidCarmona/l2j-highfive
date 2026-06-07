@@ -5112,7 +5112,7 @@
 			<height normal="32" />
 		</collision>
 	</npc>
-	<npc id="21070" level="75" type="Monster" name="Seal Archangel">
+	<npc id="21070" level="90" type="Monster" name="Seal Archangel">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="50" />
@@ -5135,8 +5135,8 @@
 		<equipment rhand="148" /> <!-- rhand: Sword of Valhalla -->
 		<stats str="40" int="21" dex="30" wit="20" con="43" men="20">
 			<vitals hp="2676.65854" hpRegen="8.5" mp="1507.8" mpRegen="3" />
-			<attack physical="794.70901" magical="542.68324" random="50" critical="1" accuracy="9" attackSpeed="253" type="BLUNT" range="40" distance="80" width="120" />
-			<defence physical="319.24623" magical="212.557735094503" />
+			<attack physical="5794.70901" magical="3942.68324" random="50" critical="1" accuracy="9" attackSpeed="253" type="BLUNT" range="40" distance="80" width="120" />
+			<defence physical="582.24623" magical="639.557735094503" />
 			<attribute>
 				<defence fire="20" water="20" wind="-5" earth="20" holy="53" dark="-13" />
 			</attribute>

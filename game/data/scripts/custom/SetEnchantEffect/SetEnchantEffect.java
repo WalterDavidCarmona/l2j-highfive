@@ -6,8 +6,10 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.gameserver.data.holders.ArmorSet;
 import org.l2jmobius.gameserver.data.xml.ArmorSetData;
+import org.l2jmobius.gameserver.model.World;
 import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.events.EventType;
 import org.l2jmobius.gameserver.model.events.ListenerRegisterType;
@@ -49,6 +51,20 @@ public class SetEnchantEffect extends Script
 	{
 		loadConfig();
 		LOGGER.info("SetEnchantEffect: Loaded. Enabled=" + ENABLED + " MinEnchant=+" + ENCHANT_LEVEL + " Effect=" + EFFECT);
+
+		// Tarea periodica: verifica todos los jugadores online cada 3 segundos.
+		// Cubre: unequip, enchant cambiado, login tardio, cualquier cambio de estado.
+		ThreadPool.scheduleAtFixedRate(() ->
+		{
+			if (!ENABLED) return;
+			for (Player p : World.getInstance().getPlayers())
+			{
+				if (p != null && p.isOnline())
+				{
+					checkAndUpdate(p);
+				}
+			}
+		}, 3000, 3000);
 	}
 
 	// ─────────────────────────────────────────────────────────────
@@ -66,7 +82,9 @@ public class SetEnchantEffect extends Script
 	@RegisterType(ListenerRegisterType.GLOBAL_PLAYERS)
 	public void onItemUnequip(OnPlayerItemUnequip event)
 	{
-		checkAndUpdate(event.getPlayer());
+		// Delay: el evento se dispara ANTES de que el item salga del paperdoll
+		final Player player = event.getPlayer();
+		ThreadPool.schedule(() -> checkAndUpdate(player), 200);
 	}
 
 	@RegisterEvent(EventType.ON_PLAYER_LOGIN)
@@ -86,18 +104,18 @@ public class SetEnchantEffect extends Script
 
 		if (ENABLED && hasEnchantedFullSet(player))
 		{
-			// Aplicar efecto si no lo tiene aun
 			if (!player.hasAbnormalVisualEffect(EFFECT))
 			{
 				player.startAbnormalVisualEffect(true, EFFECT);
+				LOGGER.info("SetEnchantEffect: APPLIED " + EFFECT + " to " + player.getName());
 			}
 		}
 		else
 		{
-			// Quitar efecto si lo tiene activo
 			if (player.hasAbnormalVisualEffect(EFFECT))
 			{
 				player.stopAbnormalVisualEffect(true, EFFECT);
+				LOGGER.info("SetEnchantEffect: REMOVED " + EFFECT + " from " + player.getName());
 			}
 		}
 	}

@@ -125,9 +125,6 @@
 		<buff id="529" level="1" price="0" desc="Increases resistance to fire, water, wind and earth attacks" /> <!-- Song of Elemental -->
 		<buff id="1549" level="1" price="0" desc="Increases the elemental attribute" /> <!-- Chant of Elements -->
 	</category>
-	<category type="Premium">
-		<buff id="1363" level="315" price="0" desc="Para Premium." />
-	</category>
 	<category type="MAGE_GROUP">
 		<buff id="1259" level="4" price="0" desc="Increases resistance to stun attack." /> <!-- Resist Shock -->
 		<buff id="1035" level="4" price="0" desc="Increases resistance to mental attacks." /> <!-- Mental Shield -->
@@ -184,9 +181,22 @@
 	       bypass npc_OBJID_reloadskills  (solo GM)
 	     ═══════════════════════════════════════════════════════════════════ -->
 	<category type="Premium">
-		<!-- Agregar buffs premium aqui. Ejemplo:
-		<buff id="1068" level="33" price="0" desc="Might +30" />
-		<buff id="1077" level="33" price="0" desc="Focus +30" />
-		-->
+		<buff id="1397" level="130" price="0" desc="Decreases MP consumption Fighter" /> <!-- Clarity -->
+		<buff id="1397" level="230" price="0" desc="Decreases MP consumption Mage." /> <!-- Clarity -->
+		<buff id="1355" level="315" price="0" desc="Increases all mage abilities." /> <!-- Prophecy of Water -->
+		<buff id="1356" level="315" price="0" desc="Increases all fighter abilities." /> <!-- Prophecy of Fire -->
+		<buff id="1357" level="315" price="0" desc="Increases all dagger abilities." /> <!-- Prophecy of Wind -->
+		<buff id="1363" level="315" price="0" desc="Increases combat abilities." /> <!-- Chant of Victory -->
+		<buff id="1416" level="115" price="0" desc="Paagrio Fist." /> <!-- Paagrio Fist -->
+		<buff id="1259" level="330" price="0" desc="Increases resistance to stun attack." /> <!-- Resist Shock -->
+		<buff id="1393" level="130" price="0" desc="Increases resistance to dark attacks." /> <!-- Unholy Resistance -->
+		<buff id="1392" level="130" price="0" desc="Increases resistance to sacred attacks." /> <!-- Holy Resistance -->
+		<buff id="1033" level="330" price="0" desc="Increases resistance to poison" /> <!-- Resist Poison -->
+		<buff id="1182" level="330" price="0" desc="Increases tolerance to attack by water" /> <!-- Resist Aqua -->
+		<buff id="1189" level="330" price="0" desc="Increases resistance to attack by wind" /> <!-- Resist Wind -->
+		<buff id="1191" level="330" price="0" desc="Increases resistance to attacks by fire" /> <!-- Resist Fire -->
+		<buff id="1548" level="330" price="0" desc="Increases resistance to attacks by earth" /> <!-- Resist Earth -->
+		<buff id="1032" level="330" price="0" desc="Increases resistance to bleeding" /> <!-- Invigor -->
+		<buff id="1232" level="330" price="0" desc="Increase Defense" />
 	</category>
 </list>

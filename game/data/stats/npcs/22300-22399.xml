@@ -3844,7 +3844,7 @@
 			<height normal="36" />
 		</collision>
 	</npc>
-	<npc id="22350" level="81" type="Monster" name="Chimera of Darkness">
+	<npc id="22350" level="90" type="Monster" name="Chimera of Darkness">
 		<!-- Confirmed CT2.5 -->
 		<parameters>
 			<param name="MoveAroundSocial" value="140" />
@@ -3904,34 +3904,6 @@
 				<clan>TEST</clan>
 			</clanList>
 		</ai>
-		<dropLists>
-			<drop>
-				<item id="9599" min="2" max="6" chance="63.73" /> <!-- Ancient Tome of the Demon -->
-				<group chance="70">
-					<item id="57" min="29112" max="58280" chance="100" /> <!-- Adena -->
-				</group>
-				<group chance="5.528299808502197">
-					<item id="5320" min="1" max="1" chance="0.3352" /> <!-- Sealed Leather Armor of Nightmare -->
-					<item id="5480" min="1" max="1" chance="49.6648" /> <!-- Sealed Leather Armor of Nightmare Fabric -->
-					<item id="5323" min="1" max="1" chance="0.3352" /> <!-- Sealed Majestic Leather Armor -->
-					<item id="5481" min="1" max="1" chance="49.6648" /> <!-- Sealed Majestic Leather Armor Fabric -->
-				</group>
-				<group chance="48.09299850463867">
-					<item id="1879" min="3" max="9" chance="20.1924" /> <!-- Cokes -->
-					<item id="1885" min="1" max="1" chance="60.5773" /> <!-- High-Grade Suede -->
-					<item id="9628" min="1" max="1" chance="5.7014" /> <!-- Leonard -->
-					<item id="9630" min="1" max="1" chance="3.8259" /> <!-- Orichalcum -->
-					<item id="9629" min="1" max="1" chance="3.1606" /> <!-- Adamantine -->
-					<item id="6901" min="1" max="1" chance="0.7269" /> <!-- Recipe: Shining Arrow (100%) -->
-					<item id="9551" min="1" max="1" chance="5.8155" /> <!-- Holy Stone -->
-				</group>
-			</drop>
-			<spoil>
-				<item id="6691" min="1" max="1" chance="10.7379" /> <!-- Angel Slayer Blade -->
-				<item id="959" min="1" max="1" chance="0.1987" /> <!-- Scroll: Enchant Weapon (S-Grade) -->
-				<item id="13099" min="1" max="1" chance="69.2815" /> <!-- Sealed Arcana Sigil Piece -->
-			</spoil>
-		</dropLists>
 		<collision>
 			<radius normal="35" />
 			<height normal="36" />
