@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../xsd/npcs.xsd">
+
+	<!-- ============================================================ -->
+	<!-- 70020 - Faction Battleground Manager (Registro en Giran)     -->
+	<!-- Modelo: mismo que el manager de TvT (displayId 31226)        -->
+	<!-- No atacable, permanente en Giran                             -->
+	<!-- ============================================================ -->
+	<npc id="70020" displayId="31226" level="80" name="Faction Battleground" usingServerSideName="true" title="Event Manager" usingServerSideTitle="true" type="Folk">
+		<race>HUMAN</race>
+		<sex>MALE</sex>
+		<stats>
+			<vitals hp="2444.46819" hpRegen="7.5" mp="1345.8" mpRegen="2.7" />
+			<attack physical="688.86373" magical="470.40463" random="30" critical="4" accuracy="95" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
+			<defence physical="295.91597" magical="216.53847" />
+			<speed>
+				<walk ground="50" />
+				<run ground="120" />
+			</speed>
+		</stats>
+		<status attackable="false" />
+		<collision>
+			<radius normal="8" />
+			<height normal="23" />
+		</collision>
+	</npc>
+
+	<!-- ============================================================ -->
+	<!-- 70021 - Torre del Faction Battleground                       -->
+	<!-- Modelo: Triol's Revelation (displayId 32068, Pagan Temple)   -->
+	<!-- HP: 1.000.000 | Atacable, inmovil, pasivo                   -->
+	<!-- 3 torres por bando: Tier1 (frontal) → Tier2 → Tier3 (base) -->
+	<!-- Solo el tier activo es vulnerable (controlado desde script)  -->
+	<!-- ============================================================ -->
+	<npc id="70021" displayId="32068" level="80" name="Battleground Tower" usingServerSideName="true" title="" usingServerSideTitle="true" type="Monster">
+		<race>ETC</race>
+		<sex>ETC</sex>
+		<stats>
+			<vitals hp="1000000" hpRegen="0" mp="1000" mpRegen="0" />
+			<attack physical="500" magical="200" random="10" critical="1" accuracy="5" attackSpeed="253" type="FIST" range="40" distance="80" width="120" />
+			<defence physical="600" magical="350" />
+			<attribute>
+				<defence fire="100" water="100" wind="100" earth="100" holy="100" dark="100" default="100" />
+			</attribute>
+			<speed>
+				<walk ground="0" />
+				<run ground="0" />
+			</speed>
+		</stats>
+		<status attackable="true" canMove="false" isAggressive="false" undying="false" showName="true" targetable="true" />
+		<ai type="BALANCED" aggroRange="0" />
+		<skillList>
+			<skill id="4045" level="1" /> <!-- Resist Full Magic Attack -->
+		</skillList>
+		<collision>
+			<radius normal="20" />
+			<height normal="80" />
+		</collision>
+	</npc>
+
+	<!-- ============================================================ -->
+	<!-- 70022 - Bandera del Faction Battleground                     -->
+	<!-- Modelo: bandera CTF (displayId 35062)                        -->
+	<!-- HP: 4.000.000 (comparable a Valakas) | Atacable, inmovil   -->
+	<!-- Objetivo final: el equipo destruye las 3 torres enemigas    -->
+	<!-- y luego ataca esta bandera para ganar el evento             -->
+	<!-- ============================================================ -->
+	<npc id="70022" displayId="35062" level="85" name="Battleground Flag" usingServerSideName="true" title="" usingServerSideTitle="true" type="Monster">
+		<race>ETC</race>
+		<sex>ETC</sex>
+		<stats>
+			<vitals hp="4000000" hpRegen="0" mp="1000" mpRegen="0" />
+			<attack physical="500" magical="200" random="10" critical="1" accuracy="5" attackSpeed="253" type="FIST" range="40" distance="80" width="120" />
+			<defence physical="1000" magical="500" />
+			<attribute>
+				<defence fire="150" water="150" wind="150" earth="150" holy="150" dark="150" default="150" />
+			</attribute>
+			<speed>
+				<walk ground="0" />
+				<run ground="0" />
+			</speed>
+		</stats>
+		<status attackable="true" canMove="false" isAggressive="false" undying="false" showName="true" targetable="true" />
+		<ai type="BALANCED" aggroRange="0" />
+		<skillList>
+			<skill id="4045" level="1" /> <!-- Resist Full Magic Attack -->
+		</skillList>
+		<collision>
+			<radius normal="15" />
+			<height normal="55" />
+		</collision>
+	</npc>
+
+</list>

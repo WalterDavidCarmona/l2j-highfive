@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../xsd/skills.xsd">
+
+	<!-- ============================================================ -->
+	<!-- Faction Battleground - Petrificacion por fuego amigo         -->
+	<!-- Replica el efecto de Dance of Medusa (skill 367):            -->
+	<!--   abnormalType TURN_STONE + efecto Petrification             -->
+	<!--   => PARALYZED | INVUL: bloquea TODA accion (mover/atacar).  -->
+	<!-- Se aplica directamente via applyEffects() desde el script.   -->
+	<!-- ============================================================ -->
+
+	<!-- 10050 - Petrificacion 10 segundos (1ra infraccion fuego amigo) -->
+	<skill id="10050" levels="1" name="Battleground Petrify">
+		<operateType>A2</operateType>
+		<targetType>SELF</targetType>
+		<abnormalLevel>1</abnormalLevel>
+		<abnormalTime>10</abnormalTime>
+		<abnormalType>TURN_STONE</abnormalType>
+		<abnormalVisualEffect>FLESH_STONE</abnormalVisualEffect>
+		<canBeDispeled>false</canBeDispeled>
+		<isMagic>2</isMagic> <!-- Static Skill: bypasses magic failure -->
+		<isDebuff>true</isDebuff>
+		<magicLevel>85</magicLevel>
+		<effects>
+			<effect name="Petrification" />
+		</effects>
+	</skill>
+
+	<!-- 10051 - Petrificacion 60 segundos (2da infraccion fuego amigo) -->
+	<skill id="10051" levels="1" name="Battleground Petrify">
+		<operateType>A2</operateType>
+		<targetType>SELF</targetType>
+		<abnormalLevel>1</abnormalLevel>
+		<abnormalTime>60</abnormalTime>
+		<abnormalType>TURN_STONE</abnormalType>
+		<abnormalVisualEffect>FLESH_STONE</abnormalVisualEffect>
+		<canBeDispeled>false</canBeDispeled>
+		<isMagic>2</isMagic> <!-- Static Skill: bypasses magic failure -->
+		<isDebuff>true</isDebuff>
+		<magicLevel>85</magicLevel>
+		<effects>
+			<effect name="Petrification" />
+		</effects>
+	</skill>
+
+	<!-- 10052 - Petrificacion hasta el fin del evento (3ra infraccion fuego amigo) -->
+	<!-- Duracion 24h; el script la remueve explicitamente al terminar el evento. -->
+	<skill id="10052" levels="1" name="Battleground Petrify">
+		<operateType>A2</operateType>
+		<targetType>SELF</targetType>
+		<abnormalLevel>1</abnormalLevel>
+		<abnormalTime>86400</abnormalTime>
+		<abnormalType>TURN_STONE</abnormalType>
+		<abnormalVisualEffect>FLESH_STONE</abnormalVisualEffect>
+		<canBeDispeled>false</canBeDispeled>
+		<isMagic>2</isMagic> <!-- Static Skill: bypasses magic failure -->
+		<isDebuff>true</isDebuff>
+		<magicLevel>85</magicLevel>
+		<effects>
+			<effect name="Petrification" />
+		</effects>
+	</skill>
+
+</list>
