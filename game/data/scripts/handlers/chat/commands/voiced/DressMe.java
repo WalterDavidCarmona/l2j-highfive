@@ -319,22 +319,25 @@ public class DressMe implements IVoicedCommandHandler
 
 			final BodyPart bp = tpl.getBodyPart();
 			final boolean isFullArmor = (bp == BodyPart.FULL_ARMOR);
-			final boolean isFormalWear = (itemId == 6408); // Formal Wear
-			final boolean isFullBodyItem = isFormalWear;
+			// alldress cubre todo el cuerpo (Formal Wear, trajes de novia, etc.)
+			final boolean isFullBodyItem = (bp == BodyPart.ALLDRESS);
 
 			if (isFullBodyItem)
 			{
-				// Formal Wear and similar items: save to ALL armor slots
+				// ALLDRESS (Formal Wear, trajes completos): el item REAL es UN solo
+				// objeto en el slot de PECHO; piernas/guantes/BOTAS quedan VACIOS y por
+				// eso el cliente camina en SILENCIO (modo traje, sin sonido de botas).
+				// Si guardamos el visual tambien en botas/piernas/guantes, el cliente
+				// coloca un item no-botas en el slot de botas y suena un paso por
+				// defecto (el ruido reportado). Solucion: guardar SOLO en el pecho,
+				// replicando exactamente como se equipa el item real.
 				data.getAllVisuals().clear();
 				mgr.deleteAll(player.getObjectId());
 
-				for (int s : DressMeManager.ALL_SLOTS)
-				{
-					data.setVisualId(s, itemId);
-					mgr.saveSlot(player.getObjectId(), s, itemId);
-				}
+				data.setVisualId(DressMeManager.SLOT_CHEST, itemId);
+				mgr.saveSlot(player.getObjectId(), DressMeManager.SLOT_CHEST, itemId);
 
-				player.sendMessage("[DressMe] " + tpl.getName() + " COPIADO - cubrira tu apariencia completa.");
+				player.sendMessage("[DressMe] " + tpl.getName() + " COPIADO - cubrira tu apariencia completa (silencioso).");
 			}
 			else if (slot == DressMeManager.SLOT_CHEST && isFullArmor)
 			{

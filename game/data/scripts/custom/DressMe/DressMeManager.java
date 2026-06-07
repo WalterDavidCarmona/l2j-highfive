@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 
 import org.l2jmobius.commons.database.DatabaseFactory;
 import org.l2jmobius.gameserver.model.actor.Player;
+import org.l2jmobius.gameserver.data.xml.ItemData;
+import org.l2jmobius.gameserver.model.item.ItemTemplate;
 import org.l2jmobius.gameserver.model.item.enums.BodyPart;
 import org.l2jmobius.gameserver.model.item.instance.Item;
 
@@ -109,6 +111,19 @@ public class DressMeManager
 			// Unequip → set transmog → re-equip (same as Transmog NPC)
 			// unEquipSlot uses item.getTemplate().getBodyPart() so it handles
 			// FULL_ARMOR, LR_HAND (2H weapons), separate CHEST/LEGS, etc. automatically
+
+			// Guard ALLDRESS (Formal Wear y demas trajes de cuerpo completo):
+			// el item REAL es UN solo objeto en el slot de PECHO; los slots de
+			// piernas/guantes/BOTAS quedan VACIOS. Por eso el Formal Wear real entra
+			// en "modo traje" y camina en SILENCIO (sin sonido de botas).
+			// Si se fuerza el display alldress tambien en botas/piernas/guantes (o en
+			// arma/capa/cinturon), el cliente coloca un item no-botas en el slot de
+			// botas y reproduce un sonido de pasos por defecto: ese es el RUIDO
+			// reportado. Solucion: replicar el item real => el visual ALLDRESS SOLO se
+			// aplica en el slot de PECHO; el resto de slots se omiten (quedan vacios).
+			final ItemTemplate _vt = ItemData.getInstance().getTemplate(visualId);
+			if (_vt != null && _vt.getBodyPart() == BodyPart.ALLDRESS && slot != SLOT_CHEST) continue;
+
 			final Item item = unEquipSlot(player, slot);
 			if (item == null) continue;
 
