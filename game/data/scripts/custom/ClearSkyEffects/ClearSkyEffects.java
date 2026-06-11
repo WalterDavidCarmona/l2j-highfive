@@ -1,9 +1,11 @@
 /*
- * ClearSkyEffects - Elimina la niebla de Seven Signs (SSQ Dusk) para todos los jugadores.
+ * ClearSkyEffects - Elimina la niebla de Seven Signs (SSQ Dusk) y fuerza
+ *                   cielo de dia permanente para todos los jugadores.
  *
  * Mecanismo:
- *   - OnPlayerLogin : envia cielo limpio con retardo de 2s (despues del paquete del core)
- *   - Tarea periodica : cada 8 segundos neutraliza la niebla activa para todos
+ *   - OnPlayerLogin : envia cielo limpio + SunRise con retardo de 2s
+ *   - Tarea periodica : cada 8 segundos neutraliza niebla y fuerza dia
+ *   - OnDayNightChange : al transicionar a noche, envia SunRise inmediato
  *
  * Nota sobre ExRedSky (lluvia roja de asedios):
  *   ExRedSky solo acepta una duracion; no existe un paquete de cancelacion.
@@ -20,39 +22,41 @@ import org.l2jmobius.gameserver.model.events.EventType;
 import org.l2jmobius.gameserver.model.events.ListenerRegisterType;
 import org.l2jmobius.gameserver.model.events.annotations.RegisterEvent;
 import org.l2jmobius.gameserver.model.events.annotations.RegisterType;
+import org.l2jmobius.gameserver.model.events.holders.OnDayNightChange;
 import org.l2jmobius.gameserver.model.events.holders.actor.player.OnPlayerLogin;
 import org.l2jmobius.gameserver.model.script.Script;
 import org.l2jmobius.gameserver.network.serverpackets.SSQInfo;
+import org.l2jmobius.gameserver.network.serverpackets.SunRise;
+import org.l2jmobius.gameserver.taskmanagers.GameTimeTaskManager;
 
 /**
- * Neutraliza el efecto visual de niebla de Seven Signs (estado Dusk).
+ * Neutraliza el efecto visual de niebla de Seven Signs (estado Dusk)
+ * y fuerza cielo de dia permanente (sin ciclo dia/noche).
  * @author Custom - Aden Chronicles
  */
 public class ClearSkyEffects extends Script
 {
-	/** SSQInfo(2) = estado Dawn = cielo limpio, sin niebla. */
-	private static final SSQInfo CLEAR_FOG = new SSQInfo(2);
+	private static final SSQInfo CLEAR_FOG = new SSQInfo(0);
 
 	private ClearSkyEffects()
 	{
-		// Tarea periodica: neutraliza la niebla para todos los jugadores online.
-		// Se ejecuta cada 8 segundos para contrarrestar el reenvio del core durante SSQ Dusk.
 		ThreadPool.scheduleAtFixedRate(() ->
 		{
+			final boolean isNight = GameTimeTaskManager.getInstance().isNight();
 			for (Player player : World.getInstance().getPlayers())
 			{
 				if ((player != null) && player.isOnline())
 				{
 					player.sendPacket(CLEAR_FOG);
+					if (isNight)
+					{
+						player.sendPacket(SunRise.STATIC_PACKET);
+					}
 				}
 			}
 		}, 5000, 8000);
 	}
 
-	/**
-	 * Al iniciar sesion, envia cielo limpio con retardo de 2 segundos para que
-	 * llegue DESPUES de los paquetes de login del core (que incluyen el SSQInfo del estado actual).
-	 */
 	@RegisterEvent(EventType.ON_PLAYER_LOGIN)
 	@RegisterType(ListenerRegisterType.GLOBAL_PLAYERS)
 	public void onPlayerLogin(OnPlayerLogin event)
@@ -63,8 +67,28 @@ public class ClearSkyEffects extends Script
 			if ((player != null) && player.isOnline())
 			{
 				player.sendPacket(CLEAR_FOG);
+				if (GameTimeTaskManager.getInstance().isNight())
+				{
+					player.sendPacket(SunRise.STATIC_PACKET);
+				}
 			}
 		}, 2000);
+	}
+
+	@RegisterEvent(EventType.ON_DAY_NIGHT_CHANGE)
+	@RegisterType(ListenerRegisterType.GLOBAL)
+	public void onDayNightChange(OnDayNightChange event)
+	{
+		if (event.isNight())
+		{
+			for (Player player : World.getInstance().getPlayers())
+			{
+				if ((player != null) && player.isOnline())
+				{
+					player.sendPacket(SunRise.STATIC_PACKET);
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args)

@@ -293,23 +293,18 @@
 		</capsuled_items>
 	</item>
 	<item id="20515" type="EtcItem" name="Huge Fortuna Box">
-		<!-- A Divine Weapon Enchant Crystal and a high grade Ancient Weapon Enchant Crystal can be acquired at a constant rate. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->
+		<!-- Rewards managed entirely by BattleRoyale.ini (BattleRoyaleBoxRewards). -->
 		<set name="icon" val="BranchSys.icon.br_fortuna_box_s_i00" />
 		<set name="default_action" val="CAPSULE" />
-		<set name="immediate_effect" val="true" />
+		<set name="immediate_effect" val="false" />
 		<set name="material" val="STEEL" />
 		<set name="is_tradable" val="false" />
-		<set name="is_dropable" val="false" />
+		<set name="is_dropable" val="true" />
 		<set name="is_sellable" val="false" />
 		<set name="is_depositable" val="false" />
-		<set name="is_stackable" val="true" />
-		<set name="is_premium" val="true" />
+		<set name="is_stackable" val="false" />
 		<set name="is_oly_restricted" val="true" />
-		<set name="is_freightable" val="true" />
-		<set name="handler" val="ItemSkills" />
-		<skills>
-			<skill id="22071" level="1" /> <!-- Huge Fortuna Box -->
-		</skills>
+		<set name="handler" val="BattleRoyaleBox" />
 	</item>
 	<item id="20516" type="EtcItem" name="Huge Fortuna Cube">
 		<!-- A Divine Armor Enchant Crystal and a high grade Ancient Armor Enchant Crystal can be acquired at a constant rate. Cannot be exchanged, dropped, or sold. Can be stored in a private warehouse. -->

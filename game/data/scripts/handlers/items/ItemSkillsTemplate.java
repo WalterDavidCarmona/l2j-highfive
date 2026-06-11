@@ -41,7 +41,9 @@ public class ItemSkillsTemplate implements IItemHandler
 			return false;
 		}
 		
-		if (playable.isOnEvent())
+		// Durante un evento se bloquea el uso de items con skill, EXCEPTO pociones y elixires
+		// (HP/MP/CP) para permitir curarse dentro de eventos como Battle Royale.
+		if (playable.isOnEvent() && !item.isPotion() && !item.isElixir())
 		{
 			playable.sendPacket(ActionFailed.STATIC_PACKET);
 			return false;

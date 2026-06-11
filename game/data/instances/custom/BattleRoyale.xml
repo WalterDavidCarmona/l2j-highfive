@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance id="9002" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/instance.xsd">
+	<!-- Battle Royale Arena - instance zone de aislamiento -->
+	<!-- Los jugadores del evento no ven jugadores/NPCs/mobs del mundo exterior -->
+	<!-- IMPORTANTE: el orden debe seguir el XSD: allowSummon, emptyDestroyTime, PvPInstance, exitPoint -->
+	<!-- SIN activityTime: evita el mensaje "el dungeon expira en X minutos". La instancia se destruye
+	     automaticamente al quedar vacia (emptyDestroyTime) y manualmente al terminar el evento. -->
+	<allowSummon val="false" />
+	<emptyDestroyTime val="1" />
+	<PvPInstance val="true" />
+	<exitPoint x="83400" y="147943" z="-3400" />
+</instance>

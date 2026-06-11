@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<instance id="9002" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/instance.xsd">
+	<!-- Battle Royale Arena — instancia aislada para el evento -->
+	<!-- activityTime: 120 minutos de seguridad (el evento se destruye manualmente antes) -->
+	<activityTime val="120" />
+	<allowSummon val="false" />
+	<showTimer val="false" />
+	<!-- exitPoint: Giran — por si la instancia expira con jugadores adentro -->
+	<exitPoint x="83400" y="147943" z="-3400" />
+</instance>

@@ -8,128 +8,89 @@
 		<npc>-1</npc> <!-- CB -->
 	</npcs>
 
-  <!-- Scroll: Enchant Armor (S) -->
-  <item id="1">
-    <production id="960" count="1"/>
-  </item>
 
   <!-- Blessed Scroll: Enchant Armor (S) -->
-  <item id="2">
+  <item>
     <production id="6578" count="1"/>
-	<ingredient id="6673" count="100"/>
-  </item>
-
-  <!-- Scroll: Enchant Weapon (S) -->
-  <item id="3">
-    <production id="959" count="1"/>
+	<ingredient id="10639" count="10000"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Weapon (S) -->
-  <item id="4">
+  <item>
     <production id="6577" count="1"/>
-	<ingredient id="6673" count="100"/>
-  </item>
-
-  <!-- Scroll: Enchant Armor (A) -->
-  <item id="5">
-    <production id="730" count="1"/>
+	<ingredient id="10639" count="10000"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Armor (A) -->
-  <item id="6">
+  <item>
     <production id="6570" count="1"/>
-	<ingredient id="6673" count="30"/>
-  </item>
-
-  <!-- Scroll: Enchant Weapon (A) -->
-  <item id="7">
-    <production id="729" count="1"/>
+	<ingredient id="10639" count="3000"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Weapon (A) -->
-  <item id="8">
+  <item>
     <production id="6569" count="1"/>
-	<ingredient id="6673" count="30"/>
-  </item>
-
-  <!-- Scroll: Enchant Weapon (B) -->
-  <item id="9">
-    <production id="947" count="1"/>
+	<ingredient id="10639" count="3000"/>
   </item>
 
    <!-- Blessed Scroll: Enchant Weapon (B) -->
-  <item id="10">
+  <item>
     <production id="6571" count="1"/>
-	<ingredient id="6673" count="30"/>
-  </item>
-
-  <!-- Scroll: Enchant Armor (B) -->
-  <item id="11">
-    <production id="948" count="1"/>
+	<ingredient id="10639" count="3000"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Armor (B) -->
-  <item id="12">
+  <item>
     <production id="6572" count="1"/>
-	<ingredient id="6673" count="15"/>
-  </item>
-
-  <!-- Scroll: Enchant Weapon (C) -->
-  <item id="13">
-    <production id="951" count="1"/>
+	<ingredient id="10639" count="1500"/>
   </item>
 
    <!-- Blessed Scroll: Enchant Weapon (C) -->
-  <item id="14">
+  <item>
     <production id="6573" count="1"/>
-	<ingredient id="6673" count="20"/>
-  </item>
-
-  <!-- Scroll: Enchant Armor (C) -->
-  <item id="15">
-    <production id="952" count="1"/>
+	<ingredient id="10639" count="2000"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Armor (C) -->
-  <item id="16">
+  <item>
     <production id="6574" count="1"/>
-	<ingredient id="6673" count="10"/>
+	<ingredient id="10639" count="1000"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Armor (D) -->
-  <item id="17">
+  <item>
     <production id="6576" count="1"/>
-	<ingredient id="6673" count="5"/>
+	<ingredient id="10639" count="500"/>
   </item>
 
   <!-- Blessed Scroll: Enchant Weapon (D) -->
-  <item id="18">
+  <item>
     <production id="6575" count="1"/>
-	<ingredient id="6673" count="1"/>
+	<ingredient id="10639" count="100"/>
   </item>
 
-  <item id="29">
+  <item>
     <production id="737" count="1"/>
   </item>
   
   
-  <item id="23">
+  <item>
     <production id="736" count="1"/>
   </item>
   
-  <item id="24">
+  <item>
     <production id="1830" count="1"/>
   </item>
   
-  <item id="25">
+ <item>
     <production id="1829" count="1"/>
   </item>
   
-  <item id="26">
+  <item>
     <production id="20381" count="1"/>
   </item>
   
-    <item id="26">
+    <item>
     <production id="8599" count="1"/>
   </item>
   

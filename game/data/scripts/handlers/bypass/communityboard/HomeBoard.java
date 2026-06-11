@@ -170,25 +170,25 @@ public class HomeBoard implements IParseBoardHandler
 				final String[] parts = result.split(":", 4);
 				final String tag = isPremium ? "[Premium] " : "";
 				player.sendMessage("[Recompensa Diaria] " + tag + "Dia " + parts[1] + " reclamado: " + parts[2] + " x" + parts[3] + "!");
-				DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+				returnHtml = DailyReward.buildPageHtml(player);
 			}
 			else if (result.startsWith("Limite"))
 			{
-				DailyReward.sendHtml(player, DailyReward.buildLimitReachedHtml(isPremium, result));
+				returnHtml = DailyReward.buildLimitReachedHtml(isPremium, result);
 			}
 			else
 			{
 				player.sendMessage("[Recompensa Diaria] " + result);
-				DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+				returnHtml = DailyReward.buildPageHtml(player);
 			}
 		}
 		else if (command.equals("_bbsdailyreward_page"))
 		{
-			DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+			returnHtml = DailyReward.buildPageHtml(player);
 		}
 		else if (command.equals("_bbsdailyreward_limit"))
 		{
-			DailyReward.sendHtml(player, DailyReward.buildPageHtml(player));
+			returnHtml = DailyReward.buildPageHtml(player);
 		}
 		else if (command.equals("_bbsvote"))
 		{

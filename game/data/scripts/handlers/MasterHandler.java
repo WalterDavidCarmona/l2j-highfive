@@ -215,10 +215,12 @@ import handlers.chat.commands.user.Time;
 import handlers.chat.commands.user.Unstuck;
 import handlers.chat.commands.voiced.AutoPlay;
 import handlers.chat.commands.voiced.AutoPotion;
+import handlers.chat.commands.voiced.BattleRoyaleVoice;
 import handlers.chat.commands.voiced.Banking;
 import handlers.chat.commands.voiced.DressMe;
 import handlers.chat.commands.voiced.Noble;
 import handlers.chat.commands.voiced.Reward;
+import handlers.chat.commands.voiced.VoteReward;
 import handlers.chat.commands.voiced.ChangePassword;
 import handlers.chat.commands.voiced.ChatAdmin;
 import handlers.chat.commands.voiced.ExperienceGain;
@@ -228,6 +230,7 @@ import handlers.chat.commands.voiced.OfflinePlay;
 import handlers.chat.commands.voiced.Online;
 import handlers.chat.commands.voiced.Premium;
 import handlers.chat.commands.voiced.Wedding;
+import handlers.items.BattleRoyaleBox;
 import handlers.items.BeastSoulShot;
 import handlers.items.BeastSpiritShot;
 import handlers.items.BlessedSpiritShot;
@@ -492,6 +495,7 @@ public class MasterHandler
 		},
 		{
 			// Item Handlers
+			BattleRoyaleBox.class,
 			BeastSoulShot.class,
 			BeastSpiritShot.class,
 			BlessedSpiritShot.class,
@@ -566,6 +570,8 @@ public class MasterHandler
 			DressMe.class,
 			Noble.class,
 			Reward.class,
+			VoteReward.class,
+			BattleRoyaleVoice.class,
 		},
 		{
 			// Target Handlers

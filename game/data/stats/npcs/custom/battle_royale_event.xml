@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../xsd/npcs.xsd">
+	<!-- NPC de eventos (broker de registro en Giran) - template visual 32294 (Budenka) -->
+	<npc id="70023" displayId="32294" level="80" name="Battle Royale" usingServerSideName="true" title="Event Manager" usingServerSideTitle="true" type="Folk">
+		<race>HUMAN</race>
+		<sex>MALE</sex>
+		<stats>
+			<vitals hp="2444.46819" hpRegen="7.5" mp="1345.8" mpRegen="2.7" />
+			<attack physical="688.86373" magical="470.40463" random="30" critical="4" accuracy="95" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
+			<defence physical="295.91597" magical="216.53847" />
+			<speed>
+				<walk ground="40" />
+				<run ground="120" />
+			</speed>
+		</stats>
+		<status attackable="false" canMove="false" />
+		<!-- Colision del template 32294 -->
+		<collision>
+			<radius normal="33" />
+			<height normal="58.5" />
+		</collision>
+	</npc>
+	<!-- NPC de caja Battle Royale - template visual 18682 (Energy Seed, con brillo exCrtEffect).
+	     Al hablar con el, el jugador recibe la Huge Box y el NPC desaparece. -->
+	<npc id="70024" displayId="18682" level="80" name="Reclama tu caja" usingServerSideName="true" type="Folk">
+		<race>CONSTRUCT</race>
+		<sex>MALE</sex>
+		<stats>
+			<vitals hp="2444.46819" hpRegen="7.5" mp="1345.8" mpRegen="2.7" />
+			<attack physical="688.86373" magical="470.40463" random="30" critical="4" accuracy="95" attackSpeed="253" type="SWORD" range="40" distance="80" width="120" />
+			<defence physical="295.91597" magical="216.53847" />
+			<speed>
+				<walk ground="1" />
+				<run ground="1" />
+			</speed>
+		</stats>
+		<status attackable="false" canMove="false" />
+		<exCrtEffect>true</exCrtEffect>
+		<!-- Colision del template 18682 -->
+		<collision>
+			<radius normal="10" />
+			<height normal="10" />
+		</collision>
+	</npc>
+</list>

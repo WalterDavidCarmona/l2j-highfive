@@ -1,5 +1,5 @@
 /*
- * Custom Vote System
+ * Custom Vote System - Hopzone only
  */
 package custom.VoteSystem;
 
@@ -12,14 +12,13 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.l2jmobius.commons.database.DatabaseFactory;
 import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.gameserver.model.World;
 import org.l2jmobius.gameserver.model.actor.Player;
+import org.l2jmobius.gameserver.handler.CommunityBoardHandler;
 import org.l2jmobius.gameserver.model.item.enums.ItemProcessType;
 import org.l2jmobius.gameserver.model.script.Script;
 import org.l2jmobius.gameserver.util.Broadcast;
@@ -36,6 +35,19 @@ public class VoteSystem extends Script
 		return _instance;
 	}
 
+	// Indica si el comando de voz .getreward esta habilitado y operativo.
+	public static boolean isVoiceCommandEnabled()
+	{
+		return ENABLED && ENABLE_VOICE_COMMAND;
+	}
+
+	// ---------------------------------------------------------------------------
+	// Constants
+	// ---------------------------------------------------------------------------
+	// Ordinal usado en las tablas vote_system_global / vote_system_individual.
+	private static final int HOPZONE_ORDINAL = 0;
+	private static final String SITE_NAME = "Hopzone";
+
 	// ---------------------------------------------------------------------------
 	// Config
 	// ---------------------------------------------------------------------------
@@ -45,33 +57,20 @@ public class VoteSystem extends Script
 	private static int INDIVIDUAL_COOLDOWN_HOURS = 12;
 	private static boolean ENABLE_GLOBAL_REWARD = true;
 	private static boolean ENABLE_INDIVIDUAL_REWARD = true;
+	private static boolean ENABLE_VOICE_COMMAND = true;
+	private static boolean ANNOUNCE_PROGRESS = true;
 	private static int GLOBAL_REWARD_ITEM_ID = 57;
 	private static long GLOBAL_REWARD_COUNT = 1000000;
 	private static int INDIVIDUAL_REWARD_ITEM_ID = 6673;
 	private static long INDIVIDUAL_REWARD_COUNT = 1;
 
-	static final List<SiteConfig> SITES = new ArrayList<>();
+	// Hopzone endpoints
+	private static String GLOBAL_URL = "";
+	private static String INDIVIDUAL_URL = "";
+	private static String SITE_URL = "https://l2.hopzone.net";
 
-	// ---------------------------------------------------------------------------
-	// Site config holder
-	// ---------------------------------------------------------------------------
-	static class SiteConfig
-	{
-		final int ordinal;
-		final String name;
-		final String globalUrl;
-		final String individualUrl;
-		final String siteUrl;
-
-		SiteConfig(int ordinal, String name, String globalUrl, String individualUrl, String siteUrl)
-		{
-			this.ordinal = ordinal;
-			this.name = name;
-			this.globalUrl = globalUrl;
-			this.individualUrl = individualUrl;
-			this.siteUrl = siteUrl;
-		}
-	}
+	// Ultimo conteo de votos anunciado (para no repetir el aviso sin votos nuevos).
+	private static volatile int _lastAnnouncedVotes = -1;
 
 	// ---------------------------------------------------------------------------
 	// Constructor
@@ -87,16 +86,23 @@ public class VoteSystem extends Script
 			return;
 		}
 
-		if (ENABLE_GLOBAL_REWARD && !SITES.isEmpty())
+		if (GLOBAL_URL.isEmpty() && INDIVIDUAL_URL.isEmpty())
+		{
+			LOGGER.warning("VoteSystem: Hopzone no esta configurado (URLs vacias). Sistema inactivo.");
+			return;
+		}
+
+		if (ENABLE_GLOBAL_REWARD && !GLOBAL_URL.isEmpty())
 		{
 			final long intervalMs = CHECK_INTERVAL_MINUTES * 60000L;
 			ThreadPool.scheduleAtFixedRate(VoteSystem::checkGlobalVotes, intervalMs, intervalMs);
 		}
 
-		LOGGER.info("VoteSystem: Loaded " + SITES.size() + " site(s)."
+		LOGGER.info("VoteSystem: Loaded (Hopzone)."
 			+ " Interval=" + CHECK_INTERVAL_MINUTES + "min"
 			+ " GlobalThreshold=" + GLOBAL_THRESHOLD
-			+ " IndividualCooldown=" + INDIVIDUAL_COOLDOWN_HOURS + "h");
+			+ " IndividualCooldown=" + INDIVIDUAL_COOLDOWN_HOURS + "h"
+			+ " AnnounceProgress=" + ANNOUNCE_PROGRESS);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -121,33 +127,23 @@ public class VoteSystem extends Script
 		INDIVIDUAL_COOLDOWN_HOURS = Integer.parseInt(props.getProperty("IndividualCooldownHours", "12").trim());
 		ENABLE_GLOBAL_REWARD = Boolean.parseBoolean(props.getProperty("EnableGlobalReward", "True").trim());
 		ENABLE_INDIVIDUAL_REWARD = Boolean.parseBoolean(props.getProperty("EnableIndividualReward", "True").trim());
+		ENABLE_VOICE_COMMAND = Boolean.parseBoolean(props.getProperty("EnableVoteCommand", "True").trim());
+		ANNOUNCE_PROGRESS = Boolean.parseBoolean(props.getProperty("AnnounceProgress", "True").trim());
 		GLOBAL_REWARD_ITEM_ID = Integer.parseInt(props.getProperty("GlobalRewardItemId", "57").trim());
 		GLOBAL_REWARD_COUNT = Long.parseLong(props.getProperty("GlobalRewardCount", "1000000").trim());
 		INDIVIDUAL_REWARD_ITEM_ID = Integer.parseInt(props.getProperty("IndividualRewardItemId", "6673").trim());
 		INDIVIDUAL_REWARD_COUNT = Long.parseLong(props.getProperty("IndividualRewardCount", "1").trim());
 
-		SITES.clear();
-		final String[][] siteKeys =
+		if (!Boolean.parseBoolean(props.getProperty("HopzoneEnabled", "False").trim()))
 		{
-			{ "Hopzone", "0", "https://hopzone.eu" },
-			{ "L2TopZone", "1", "https://l2topzone.com" },
-			{ "ItopZ", "2", "https://itopz.com" },
-			{ "TopZone", "3", "https://l2.topgameserver.net" }
-		};
-		for (String[] sk : siteKeys)
-		{
-			final String key = sk[0];
-			final int ordinal = Integer.parseInt(sk[1]);
-			final String defaultSiteUrl = sk[2];
-			if (Boolean.parseBoolean(props.getProperty(key + "Enabled", "False").trim()))
-			{
-				final String token = props.getProperty(key + "Token", "").trim();
-				final String globalUrl = props.getProperty(key + "GlobalUrl", "").trim().replace("%TOKEN%", token);
-				final String individualUrl = props.getProperty(key + "IndividualUrl", "").trim().replace("%TOKEN%", token);
-				SITES.add(new SiteConfig(ordinal, key, globalUrl, individualUrl, defaultSiteUrl));
-				LOGGER.info("VoteSystem: Registered site " + key + " (ordinal=" + ordinal + ")");
-			}
+			ENABLED = false;
+			return;
 		}
+
+		final String token = props.getProperty("HopzoneToken", "").trim();
+		GLOBAL_URL = props.getProperty("HopzoneGlobalUrl", "").trim().replace("%TOKEN%", token);
+		INDIVIDUAL_URL = props.getProperty("HopzoneIndividualUrl", "").trim().replace("%TOKEN%", token);
+		SITE_URL = props.getProperty("HopzoneSiteUrl", "https://l2.hopzone.net").trim();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -155,38 +151,52 @@ public class VoteSystem extends Script
 	// ---------------------------------------------------------------------------
 	private static void checkGlobalVotes()
 	{
-		for (SiteConfig site : SITES)
+		if (GLOBAL_URL.isEmpty())
 		{
-			if (site.globalUrl.isEmpty())
+			return;
+		}
+		try
+		{
+			final String response = httpGet(GLOBAL_URL);
+			if (response == null)
 			{
-				continue;
+				return;
 			}
-			try
+			final int currentVotes = parseVoteCount(response);
+			if (currentVotes < 0)
 			{
-				final String response = httpGet(site.globalUrl);
-				if (response == null)
-				{
-					continue;
-				}
-				final int currentVotes = parseVoteCount(response);
-				if (currentVotes < 0)
-				{
-					LOGGER.warning("VoteSystem: Could not parse vote count from " + site.name + ": " + response);
-					continue;
-				}
-				final int lastVotes = loadLastRewardVotes(site.ordinal);
-				if ((currentVotes - lastVotes) >= GLOBAL_THRESHOLD)
-				{
-					rewardAllPlayers(site.name);
-					saveLastRewardVotes(site.ordinal, currentVotes);
-					LOGGER.info("VoteSystem: Global reward triggered by " + site.name
-						+ " (" + lastVotes + " -> " + currentVotes + " votes)");
-				}
+				LOGGER.warning("VoteSystem: Could not parse vote count from " + SITE_NAME + ": " + response);
+				return;
 			}
-			catch (Exception e)
+
+			final int lastVotes = loadLastRewardVotes(HOPZONE_ORDINAL);
+			final int progress = currentVotes - lastVotes;
+
+			if (progress >= GLOBAL_THRESHOLD)
 			{
-				LOGGER.warning("VoteSystem: Error polling " + site.name + ": " + e.getMessage());
+				rewardAllPlayers(SITE_NAME);
+				saveLastRewardVotes(HOPZONE_ORDINAL, currentVotes);
+				_lastAnnouncedVotes = currentVotes;
+				LOGGER.info("VoteSystem: Global reward triggered by " + SITE_NAME
+					+ " (" + lastVotes + " -> " + currentVotes + " votes)");
+				return;
 			}
+
+			// Anuncio de progreso: solo cuando hay votos nuevos desde el ultimo aviso.
+			if (ANNOUNCE_PROGRESS && (currentVotes != _lastAnnouncedVotes))
+			{
+				final int remaining = GLOBAL_THRESHOLD - progress;
+				if (remaining > 0)
+				{
+					Broadcast.toAllOnlinePlayers("[Votos] Faltan " + remaining + " voto(s) en " + SITE_NAME
+						+ " para la recompensa global. Vota en: " + SITE_URL, false);
+				}
+				_lastAnnouncedVotes = currentVotes;
+			}
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("VoteSystem: Error polling " + SITE_NAME + ": " + e.getMessage());
 		}
 	}
 
@@ -206,6 +216,37 @@ public class VoteSystem extends Script
 	}
 
 	// ---------------------------------------------------------------------------
+	// Vote info page — abierta con .getreward dentro del Community Board.
+	// El boton de reclamar usa el bypass _bbsvote.
+	// ---------------------------------------------------------------------------
+	public static void sendVotePage(Player player)
+	{
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<html><body>");
+		sb.append("<center>");
+		sb.append("<table width=300 bgcolor=000000><tr><td align=center>");
+		sb.append("<font color=\"C8A84B\">VOTA Y RECIBE RECOMPENSAS</font>");
+		sb.append("</td></tr></table><br>");
+		sb.append("<font color=\"7A7060\">Cada voto ayuda al servidor a crecer.</font><br>");
+		sb.append("<font color=\"7A7060\">Puedes votar cada 12 horas.</font><br><br>");
+		sb.append("<img src=\"L2UI.SquareGray\" width=300 height=1><br><br>");
+		sb.append("<font color=\"9A9280\">Sitio de votacion:</font><br>");
+		sb.append("<table width=260 bgcolor=0A0A1E><tr><td align=center>");
+		sb.append("<font color=\"C8A84B\">HOPZONE</font></td></tr>");
+		sb.append("<tr><td align=center><font color=\"7A7060\">" + SITE_URL + "</font></td></tr></table><br>");
+		sb.append("<img src=\"L2UI.SquareGray\" width=300 height=1><br><br>");
+		sb.append("<font color=\"9A9280\">Como reclamar:</font><br>");
+		sb.append("<font color=\"7A7060\">1. Vota en Hopzone desde tu navegador.</font><br>");
+		sb.append("<font color=\"7A7060\">2. Pulsa el boton de abajo.</font><br>");
+		sb.append("<font color=\"7A7060\">3. La recompensa llega a tu inventario.</font><br><br>");
+		sb.append("<button value=\"Reclamar Recompensa de Voto\" action=\"bypass _bbsvote\" width=220 height=30 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\"><br>");
+		sb.append("</center>");
+		sb.append("</body></html>");
+
+		CommunityBoardHandler.separateAndSend(sb.toString(), player);
+	}
+
+	// ---------------------------------------------------------------------------
 	// Individual vote claim — called from HomeBoard via claimReward()
 	// ---------------------------------------------------------------------------
 	public static void claimReward(Player player)
@@ -216,9 +257,9 @@ public class VoteSystem extends Script
 			return;
 		}
 
-		if (SITES.isEmpty())
+		if (INDIVIDUAL_URL.isEmpty())
 		{
-			player.sendMessage("[Votos] No hay sitios de votacion configurados.");
+			player.sendMessage("[Votos] No hay sitio de votacion configurado.");
 			return;
 		}
 
@@ -232,50 +273,42 @@ public class VoteSystem extends Script
 		final long cooldownMs = INDIVIDUAL_COOLDOWN_HOURS * 3600000L;
 		final long now = System.currentTimeMillis();
 
-		for (SiteConfig site : SITES)
+		final long lastRewardTime = loadIndividualRewardTime(ip, HOPZONE_ORDINAL);
+		if ((now - lastRewardTime) < cooldownMs)
 		{
-			if (site.individualUrl.isEmpty())
+			final long remainMs = cooldownMs - (now - lastRewardTime);
+			final long h = remainMs / 3600000L;
+			final long m = (remainMs % 3600000L) / 60000L;
+			player.sendMessage("[" + SITE_NAME + "] Ya reclamaste tu recompensa. Proxima en: " + h + "h " + m + "m.");
+			return;
+		}
+
+		try
+		{
+			final String checkUrl = INDIVIDUAL_URL.replace("%IP%", ip);
+			final String response = httpGet(checkUrl);
+			if (response == null)
 			{
-				continue;
+				player.sendMessage("[" + SITE_NAME + "] No se pudo verificar tu voto. Intenta mas tarde.");
+				return;
 			}
 
-			final long lastRewardTime = loadIndividualRewardTime(ip, site.ordinal);
-			if ((now - lastRewardTime) < cooldownMs)
+			if (hasVoted(response))
 			{
-				final long remainMs = cooldownMs - (now - lastRewardTime);
-				final long h = remainMs / 3600000L;
-				final long m = (remainMs % 3600000L) / 60000L;
-				player.sendMessage("[" + site.name + "] Ya reclamaste tu recompensa. Proxima en: " + h + "h " + m + "m.");
-				continue;
+				player.addItem(ItemProcessType.REWARD, INDIVIDUAL_REWARD_ITEM_ID, INDIVIDUAL_REWARD_COUNT, player, true);
+				saveIndividualRewardTime(ip, HOPZONE_ORDINAL, now);
+				player.sendMessage("[" + SITE_NAME + "] ¡Gracias por votar! Recompensa entregada.");
+				LOGGER.info("VoteSystem: Individual reward -> " + player.getName() + " (" + ip + ") [" + SITE_NAME + "]");
 			}
-
-			try
+			else
 			{
-				final String checkUrl = site.individualUrl.replace("%IP%", ip);
-				final String response = httpGet(checkUrl);
-				if (response == null)
-				{
-					player.sendMessage("[" + site.name + "] No se pudo verificar tu voto. Intenta mas tarde.");
-					continue;
-				}
-
-				if (hasVoted(response))
-				{
-					player.addItem(ItemProcessType.REWARD, INDIVIDUAL_REWARD_ITEM_ID, INDIVIDUAL_REWARD_COUNT, player, true);
-					saveIndividualRewardTime(ip, site.ordinal, now);
-					player.sendMessage("[" + site.name + "] ¡Gracias por votar! Recompensa entregada.");
-					LOGGER.info("VoteSystem: Individual reward -> " + player.getName() + " (" + ip + ") [" + site.name + "]");
-				}
-				else
-				{
-					player.sendMessage("[" + site.name + "] Voto no encontrado. Vota en: " + site.siteUrl);
-				}
+				player.sendMessage("[" + SITE_NAME + "] Voto no encontrado. Vota en: " + SITE_URL);
 			}
-			catch (Exception e)
-			{
-				LOGGER.warning("VoteSystem: Individual check error [" + site.name + "] player=" + player.getName() + ": " + e.getMessage());
-				player.sendMessage("[" + site.name + "] Error al verificar. Intenta mas tarde.");
-			}
+		}
+		catch (Exception e)
+		{
+			LOGGER.warning("VoteSystem: Individual check error [" + SITE_NAME + "] player=" + player.getName() + ": " + e.getMessage());
+			player.sendMessage("[" + SITE_NAME + "] Error al verificar. Intenta mas tarde.");
 		}
 	}
 
@@ -293,30 +326,11 @@ public class VoteSystem extends Script
 		{
 		}
 
-		int idx = response.indexOf("\"votes\"");
+		// Hopzone.net API: {"apiver":"0.1","totalvotes":8,"status_code":200}
+		final int idx = response.indexOf("\"totalvotes\"");
 		if (idx >= 0)
 		{
-			final int v = extractJsonInt(response, idx + 7);
-			if (v >= 0)
-			{
-				return v;
-			}
-		}
-
-		idx = response.indexOf("\"Server_Votes\"");
-		if (idx >= 0)
-		{
-			final int v = extractJsonInt(response, idx + 14);
-			if (v >= 0)
-			{
-				return v;
-			}
-		}
-
-		idx = response.indexOf("\"total\"");
-		if (idx >= 0)
-		{
-			final int v = extractJsonInt(response, idx + 7);
+			final int v = extractJsonInt(response, idx + 12);
 			if (v >= 0)
 			{
 				return v;
@@ -362,17 +376,8 @@ public class VoteSystem extends Script
 		{
 			return true;
 		}
-		if (r.contains("\"voted\":true") || r.contains("\"voted\": true")
-			|| r.contains("\"hasVoted\":true") || r.contains("\"hasVoted\": true"))
-		{
-			return true;
-		}
-		final int idx = r.indexOf("\"votes\"");
-		if (idx >= 0)
-		{
-			return extractJsonInt(r, idx + 7) > 0;
-		}
-		return false;
+		// Hopzone.net API: {"apiver":"0.1","voted":true,"voteTime":"...","status_code":200}
+		return r.contains("\"voted\":true") || r.contains("\"voted\": true");
 	}
 
 	// ---------------------------------------------------------------------------

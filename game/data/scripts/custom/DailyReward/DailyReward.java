@@ -379,40 +379,29 @@ public class DailyReward extends Script
 		final String title  = isPremium ? "Recompensa Premium" : "Recompensa Usuario";
 		final String color  = isPremium ? "CDB67F" : "9A9280";
 
-		return "<html><body>"
-			+ "<table border=0 cellpadding=0 cellspacing=0 width=292 background=L2UI_CH3.refinewnd_back_Pattern>"
-			+ "<tr><td valign=top align=center>"
-			+ "<table border=0 cellpadding=0 cellspacing=0>"
-			+ "<tr><td width=256 height=80 background=\"L2UI_CT1.OlympiadWnd_DF_GrandTexture\"></td></tr>"
-			+ "</table>"
-			+ "<table border=0 cellpadding=0 cellspacing=0>"
-			+ "<tr><td align=center fixwidth=292>"
-			+ "<font name=\"hs15\" color=\"" + color + "\">Recompensa Diaria</font><br1>"
-			+ "<img src=\"L2UI_CH3.herotower_deco\" width=256 height=32>"
-			+ "</td></tr></table><br>"
-			+ "<table width=250 border=0 cellpadding=4>"
-			+ "<tr><td align=center><font color=\"FF6060\">LIMITE ALCANZADO</font></td></tr>"
-			+ "<tr><td height=4></td></tr>"
-			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=220 height=1></center></td></tr>"
-			+ "<tr><td height=6></td></tr>"
-			+ "<tr><td align=center><font color=\"FFFFFF\">" + title + "</font></td></tr>"
-			+ "<tr><td height=6></td></tr>"
-			+ "<tr><td align=center><font color=\"B09878\">Esta recompensa ya fue reclamada</font></td></tr>"
-			+ "<tr><td align=center><font color=\"B09878\">por otro personaje de tu cuenta</font></td></tr>"
-			+ "<tr><td align=center><font color=\"B09878\">o desde el mismo equipo hoy.</font></td></tr>"
-			+ "<tr><td height=8></td></tr>"
-			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=220 height=1></center></td></tr>"
-			+ "<tr><td height=6></td></tr>"
-			+ "<tr><td align=center><font color=\"555566\">Vuelve manana para reclamar</font></td></tr>"
-			+ "<tr><td align=center><font color=\"555566\">el siguiente dia.</font></td></tr>"
+		return "<html noscrollbar><body>"
+			+ "<table width=700><tr><td height=10></td></tr></table>"
+			+ "<table border=0 cellpadding=0 cellspacing=0 width=700 background=\"L2UI_CT1.Windows_DF_TooltipBG\">"
+			+ "<tr><td height=14></td></tr>"
+			+ "<tr><td align=center><img src=\"L2UI_CH3.herotower_deco\" width=560 height=32></td></tr>"
+			+ "<tr><td align=center><font name=\"hs12\" color=\"" + color + "\">RECOMPENSA DIARIA</font></td></tr>"
 			+ "<tr><td height=10></td></tr>"
+			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=680 height=1></center></td></tr>"
+			+ "<tr><td height=12></td></tr>"
+			+ "<tr><td align=center><font color=\"FF6060\">LIMITE ALCANZADO</font></td></tr>"
+			+ "<tr><td height=8></td></tr>"
+			+ "<tr><td align=center><font color=\"FFFFFF\">" + title + "</font></td></tr>"
+			+ "<tr><td height=8></td></tr>"
+			+ "<tr><td align=center><font color=\"B09878\">Esta recompensa ya fue reclamada por otro personaje de tu cuenta o desde el mismo equipo hoy.</font></td></tr>"
+			+ "<tr><td height=8></td></tr>"
+			+ "<tr><td align=center><font color=\"555566\">Vuelve manana para reclamar el siguiente dia.</font></td></tr>"
+			+ "<tr><td height=14></td></tr>"
 			+ "<tr><td align=center>"
 			+ "<button value=\"Volver\" action=\"bypass _bbsdailyreward_page\""
 			+ " width=160 height=30 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info\">"
 			+ "</td></tr>"
-			+ "<tr><td height=8></td></tr>"
+			+ "<tr><td height=14></td></tr>"
 			+ "</table>"
-			+ "</td></tr></table>"
 			+ "</body></html>";
 	}
 
@@ -441,21 +430,21 @@ public class DailyReward extends Script
 		final StringBuilder premGrid = buildGrid(streakDay, premDone, total, COLS, true);
 
 		final String userBtn = userDone
-			? "<button value=\"Ya reclamado hoy\" action=\"bypass _bbsdailyreward_page\" width=200 height=30 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\">"
-			: "<button value=\"  Reclamar Dia " + streakDay + "  \" action=\"bypass _bbsdailyreward\" width=200 height=30 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info\">";
+			? "<button value=\"Ya reclamado hoy\" action=\"bypass _bbsdailyreward_page\" width=260 height=34 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\">"
+			: "<button value=\"  Reclamar Dia " + streakDay + "  \" action=\"bypass _bbsdailyreward\" width=260 height=34 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info\">";
 
 		final String premBtn;
 		if (!premium)
 		{
-			premBtn = "<button value=\"Solo para cuentas Premium\" action=\"bypass _bbsdailyreward_page\" width=200 height=30 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\">";
+			premBtn = "<button value=\"Solo para cuentas Premium\" action=\"bypass _bbsdailyreward_page\" width=260 height=34 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\">";
 		}
 		else if (premDone)
 		{
-			premBtn = "<button value=\"Premium ya reclamado hoy\" action=\"bypass _bbsdailyreward_page\" width=200 height=30 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\">";
+			premBtn = "<button value=\"Premium ya reclamado hoy\" action=\"bypass _bbsdailyreward_page\" width=260 height=34 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\">";
 		}
 		else
 		{
-			premBtn = "<button value=\"  Reclamar Premium Dia " + streakDay + "  \" action=\"bypass _bbsdailyreward_premium\" width=200 height=30 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info\">";
+			premBtn = "<button value=\"  Reclamar Premium Dia " + streakDay + "  \" action=\"bypass _bbsdailyreward_premium\" width=260 height=34 back=\"L2UI_CT1.OlympiadWnd_DF_Info_Down\" fore=\"L2UI_CT1.OlympiadWnd_DF_Info\">";
 		}
 
 		final String userStatus = userDone
@@ -465,38 +454,33 @@ public class DailyReward extends Script
 			? "<font color=\"7A7060\">Requiere cuenta Premium</font>"
 			: (premDone ? "<font color=\"555566\">Vuelve manana</font>" : "<font color=\"CDB67F\">Disponible!</font>");
 
-		return "<html><body>"
-			+ "<table border=0 cellpadding=0 cellspacing=0 width=292 background=L2UI_CH3.refinewnd_back_Pattern>"
-			+ "<tr><td valign=top align=center>"
-			+ "<table border=0 cellpadding=0 cellspacing=0>"
-			+ "<tr><td width=256 height=80 background=\"L2UI_CT1.OlympiadWnd_DF_GrandTexture\"></td></tr>"
-			+ "</table>"
-			+ "<table border=0 cellpadding=0 cellspacing=0>"
-			+ "<tr><td align=center fixwidth=292>"
-			+ "<font name=\"hs15\" color=\"CDB67F\">Recompensa Diaria</font><br1>"
-			+ "<img src=\"L2UI_CH3.herotower_deco\" width=256 height=32>"
-			+ "</td></tr></table>"
-			+ "<table width=270 border=0 cellpadding=2 cellspacing=0>"
+		return "<html noscrollbar><body>"
+			+ "<table width=700><tr><td height=10></td></tr></table>"
+			+ "<table border=0 cellpadding=0 cellspacing=0 width=700 background=\"L2UI_CT1.Windows_DF_TooltipBG\">"
+			+ "<tr><td height=14></td></tr>"
+			+ "<tr><td align=center><img src=\"L2UI_CH3.herotower_deco\" width=560 height=32></td></tr>"
+			+ "<tr><td align=center><font name=\"hs12\" color=\"CDB67F\">RECOMPENSA DIARIA</font></td></tr>"
 			+ "<tr><td align=center><font color=\"7A7060\">Dia " + streakDay + " / " + total + "  -  Hoy: <font color=\"FFFFFF\">" + itemName + "</font></font></td></tr>"
-			+ "<tr><td height=6></td></tr>"
-			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=250 height=1></center></td></tr>"
-			+ "<tr><td height=6></td></tr>"
+			+ "<tr><td height=10></td></tr>"
+			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=680 height=1></center></td></tr>"
+			+ "<tr><td height=10></td></tr>"
 			// Panel usuario
-			+ "<tr><td align=center><font color=\"9A9280\">Recompensa Usuario</font>  " + userStatus + "</td></tr>"
-			+ "<tr><td align=center><table border=0 cellspacing=1 cellpadding=0 width=260>" + userGrid + "</table></td></tr>"
-			+ "<tr><td height=4></td></tr>"
-			+ "<tr><td align=center>" + userBtn + "</td></tr>"
-			+ "<tr><td height=8></td></tr>"
-			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=250 height=1></center></td></tr>"
+			+ "<tr><td align=center><font color=\"9A9280\">Recompensa Usuario</font>   " + userStatus + "</td></tr>"
 			+ "<tr><td height=6></td></tr>"
-			// Panel premium
-			+ "<tr><td align=center><font color=\"CDB67F\">Recompensa Premium (x2)</font>  " + premStatus + "</td></tr>"
-			+ "<tr><td align=center><table border=0 cellspacing=1 cellpadding=0 width=260>" + premGrid + "</table></td></tr>"
-			+ "<tr><td height=4></td></tr>"
-			+ "<tr><td align=center>" + premBtn + "</td></tr>"
+			+ "<tr><td align=center><table border=0 cellspacing=2 cellpadding=0 width=690>" + userGrid + "</table></td></tr>"
 			+ "<tr><td height=8></td></tr>"
+			+ "<tr><td align=center>" + userBtn + "</td></tr>"
+			+ "<tr><td height=12></td></tr>"
+			+ "<tr><td><center><img src=\"L2UI.SquareGray\" width=680 height=1></center></td></tr>"
+			+ "<tr><td height=10></td></tr>"
+			// Panel premium
+			+ "<tr><td align=center><font color=\"CDB67F\">Recompensa Premium (x2)</font>   " + premStatus + "</td></tr>"
+			+ "<tr><td height=6></td></tr>"
+			+ "<tr><td align=center><table border=0 cellspacing=2 cellpadding=0 width=690>" + premGrid + "</table></td></tr>"
+			+ "<tr><td height=8></td></tr>"
+			+ "<tr><td align=center>" + premBtn + "</td></tr>"
+			+ "<tr><td height=14></td></tr>"
 			+ "</table>"
-			+ "</td></tr></table>"
 			+ "</body></html>";
 	}
 
@@ -506,12 +490,18 @@ public class DailyReward extends Script
 	private static StringBuilder buildGrid(int streakDay, boolean claimedToday, int total, int COLS, boolean isPremiumGrid)
 	{
 		final StringBuilder sb = new StringBuilder();
-		for (int row = 0; row < (total / COLS); row++)
+		final int rows = (total + COLS - 1) / COLS;
+		for (int row = 0; row < rows; row++)
 		{
 			sb.append("<tr>");
 			for (int col = 0; col < COLS; col++)
 			{
-				final int    d      = (row * COLS) + col + 1;
+				final int d = (row * COLS) + col + 1;
+				if (d > total)
+				{
+					sb.append("<td width=96></td>");
+					continue;
+				}
 				final int[]  r      = REWARDS.get(d - 1);
 				final String icon   = getItemIcon(r[0]);
 				final int    count  = isPremiumGrid ? r[1] * 2 : r[1];
@@ -521,13 +511,13 @@ public class DailyReward extends Script
 				final String  dayClr = isCur ? (isPremiumGrid ? "CDB67F" : "6699FF") : (isDone ? "333344" : "555566");
 				final String  valClr = isCur ? "FFFFFF" : (isDone ? "333344" : "7A7060");
 
-				sb.append("<td width=34 align=center bgcolor=\"").append(bg).append("\">")
-					.append("<font color=\"").append(dayClr).append("\">").append(d).append("</font><br1>")
-					.append("<img src=\"").append(icon).append("\" width=18 height=18><br1>")
+				sb.append("<td width=96 height=68 align=center bgcolor=\"").append(bg).append("\">")
+					.append("<font color=\"").append(dayClr).append("\">Dia ").append(d).append("</font><br1>")
+					.append("<img src=\"").append(icon).append("\" width=32 height=32><br1>")
 					.append("<font color=\"").append(valClr).append("\">x").append(count).append("</font>")
 					.append("</td>");
 			}
-			sb.append("</tr><tr><td colspan=7 height=2></td></tr>");
+			sb.append("</tr><tr><td colspan=").append(COLS).append(" height=4></td></tr>");
 		}
 		return sb;
 	}

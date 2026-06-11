@@ -26,6 +26,7 @@
 		<buff id="1389" level="3" price="0" desc="Increases P. Def." /> <!-- Greater Shield -->
 		<buff id="1390" level="3" price="0" desc="Increases P. Atk." /> <!-- War Chant -->
 		<buff id="1391" level="3" price="0" desc="Increases P. Def." /> <!-- Earth Chant -->
+		<buff id="1047" level="4" price="0" desc="Temporarily increases MP recovery rate." /> <!-- Mana Regeneration -->
 		<buff id="1397" level="3" price="0" desc="Decreases MP consumption rate." /> <!-- Clarity -->
 		<buff id="1043" level="1" price="0" desc="Temporary holy enhancement of physical attack." /> <!-- Holy Weapon -->
 		<buff id="1542" level="1" price="0" desc="Critical damage is greatly increased." /> <!-- Counter Critical -->
@@ -84,11 +85,16 @@
 		<buff id="1391" level="3" price="0" desc="Earth Chant." /> <!-- Earth Chant -->
 	</category>
 	<category type="Special">
+		<buff id="825" level="1" price="0" desc="Increases P. Atk. and Atk. Spd." /> <!-- Chant of Berserker -->
+		<buff id="826" level="1" price="0" desc="Reflects received damage back to the attacker." /> <!-- Chant of Revenge -->
+		<buff id="827" level="1" price="0" desc="Increases max HP and HP recovery." /> <!-- Chant of Life -->
+		<buff id="828" level="1" price="0" desc="Increases combat ability." /> <!-- Chant of Combat -->
+		<buff id="829" level="1" price="0" desc="Enhances fire-based melee skills." /> <!-- Chant of Fire -->
+		<buff id="830" level="1" price="0" desc="Increases P. Atk., Atk. Spd. and critical rate." /> <!-- Chant of Fury -->
 		<buff id="1355" level="1" price="0" desc="Increases all mage abilities." /> <!-- Prophecy of Water -->
 		<buff id="1356" level="1" price="0" desc="Increases all fighter abilities." /> <!-- Prophecy of Fire -->
 		<buff id="1357" level="1" price="0" desc="Increases all dagger abilities." /> <!-- Prophecy of Wind -->
 		<buff id="1363" level="1" price="0" desc="Increases combat abilities." /> <!-- Chant of Victory -->
-		<buff id="1363" level="315" price="0" desc="Para Premium." />
 		<buff id="1413" level="1" price="0" desc="Increases mage abilities." /> <!-- Magnus' Chant -->
 		<buff id="4702" level="13" price="0" desc="Increases MP regeneration rate" /> <!-- Blessing of Seraphim -->
 		<buff id="4703" level="13" price="0" desc="Decreases re-use time of magic skills" /> <!-- Gift of Seraphim -->
@@ -96,10 +102,13 @@
 		<buff id="4699" level="13" price="0" desc="Increases critical chance and power" /> <!-- Blessing of Queen -->
 		<buff id="1414" level="1" price="0" desc="Special." /> <!-- Victory of Paagrio -->
 		<buff id="1416" level="1" price="0" desc="Paagrio Fist." /> <!-- Paagrio Fist -->
-		<buff id="1501" level="1" price="0" desc="Max HP and Max MP." /> <!-- Improved Condition -->
 		<buff id="1499" level="1" price="0" desc="Patk and Mdef." /> <!-- Improved Combat -->
+		<buff id="1500" level="1" price="0" desc="Increases P. Def. and shield defense." /> <!-- Improved Shield Defense -->
+		<buff id="1501" level="1" price="0" desc="Max HP and Max MP." /> <!-- Improved Condition -->
+		<buff id="1503" level="1" price="0" desc="Increases M. Atk. and Casting Spd." /> <!-- Improved Magic -->
 		<buff id="1504" level="1" price="0" desc="Improved Movement." /> <!-- Improved Movement -->
 		<buff id="1323" level="1" price="0" desc="Noblesse Blessing." /> <!-- Noblesse Blessing -->
+		<buff id="6429" level="1" price="0" desc="Increases all attributes and combat abilities." /> <!-- Ability of Wind -->
 	</category>
 	<category type="Resist">
 		<buff id="1259" level="4" price="0" desc="Increases resistance to stun attack." /> <!-- Resist Shock -->
@@ -172,31 +181,5 @@
 		<buff id="304" level="1" price="0" desc="Increases maximum HP." /> <!-- Song of Vitality -->
 		<buff id="364" level="1" price="0" desc="Decreases re-use time of physical skills." /> <!-- Song of Champion -->
 		<buff id="349" level="1" price="0" desc="Decreases re-use time." /> <!-- Song of Renewal -->
-	</category>
-	<!-- ═══════════════════════════════════════════════════════════════════
-	     CATEGORIA PREMIUM - Solo accesible para jugadores con Premium activo.
-	     Agregar aqui los buffs encantados (+15/+30) segun corresponda.
-	     El servidor valida el acceso automaticamente en SchemeBuffer.java.
-	     Para recargar cambios en tiempo real usar el bypass:
-	       bypass npc_OBJID_reloadskills  (solo GM)
-	     ═══════════════════════════════════════════════════════════════════ -->
-	<category type="Premium">
-		<buff id="1397" level="130" price="0" desc="Decreases MP consumption Fighter" /> <!-- Clarity -->
-		<buff id="1397" level="230" price="0" desc="Decreases MP consumption Mage." /> <!-- Clarity -->
-		<buff id="1355" level="315" price="0" desc="Increases all mage abilities." /> <!-- Prophecy of Water -->
-		<buff id="1356" level="315" price="0" desc="Increases all fighter abilities." /> <!-- Prophecy of Fire -->
-		<buff id="1357" level="315" price="0" desc="Increases all dagger abilities." /> <!-- Prophecy of Wind -->
-		<buff id="1363" level="315" price="0" desc="Increases combat abilities." /> <!-- Chant of Victory -->
-		<buff id="1416" level="115" price="0" desc="Paagrio Fist." /> <!-- Paagrio Fist -->
-		<buff id="1259" level="330" price="0" desc="Increases resistance to stun attack." /> <!-- Resist Shock -->
-		<buff id="1393" level="130" price="0" desc="Increases resistance to dark attacks." /> <!-- Unholy Resistance -->
-		<buff id="1392" level="130" price="0" desc="Increases resistance to sacred attacks." /> <!-- Holy Resistance -->
-		<buff id="1033" level="330" price="0" desc="Increases resistance to poison" /> <!-- Resist Poison -->
-		<buff id="1182" level="330" price="0" desc="Increases tolerance to attack by water" /> <!-- Resist Aqua -->
-		<buff id="1189" level="330" price="0" desc="Increases resistance to attack by wind" /> <!-- Resist Wind -->
-		<buff id="1191" level="330" price="0" desc="Increases resistance to attacks by fire" /> <!-- Resist Fire -->
-		<buff id="1548" level="330" price="0" desc="Increases resistance to attacks by earth" /> <!-- Resist Earth -->
-		<buff id="1032" level="330" price="0" desc="Increases resistance to bleeding" /> <!-- Invigor -->
-		<buff id="1232" level="330" price="0" desc="Increase Defense" />
 	</category>
 </list>

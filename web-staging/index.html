@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Servidor privado de Lineage 2 H5 - Panel de cuentas, rankings, tienda y más">
+  <meta name="theme-color" content="#070710">
+  <title>Lineage 2 Zona Zero H5 - PvP</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/style.css?v=20260604h">
+  <meta name="l2jbrasil-verify" content="8094fc2b5a51b4999e0858d09bf7809e">
+  <img src="https://top.l2jbrasil.com/pixel.php?u=L2ZonaZeroPvP" alt="" width="1" height="1" border="0" style="position:absolute;visibility:hidden" />
+</head>
+<body>
+
+<!-- Beta Popup -->
+<div class="beta-overlay" id="beta-overlay">
+  <div class="beta-popup">
+    <div class="beta-glow"></div>
+    <div class="beta-badge">BETA</div>
+    <h1 class="beta-title">SERVIDOR MODO BETA</h1>
+    <div class="beta-status">ON</div>
+    <p class="beta-desc">Estamos en fase de pruebas. Ayudanos a mejorar el servidor reportando bugs y sugerencias.</p>
+    <div class="beta-countdown">
+      <div class="beta-count-item">
+        <span class="beta-count-val" id="beta-days">00</span>
+        <span class="beta-count-lbl">DIAS</span>
+      </div>
+      <div class="beta-count-sep">:</div>
+      <div class="beta-count-item">
+        <span class="beta-count-val" id="beta-hours">00</span>
+        <span class="beta-count-lbl">HORAS</span>
+      </div>
+      <div class="beta-count-sep">:</div>
+      <div class="beta-count-item">
+        <span class="beta-count-val" id="beta-mins">00</span>
+        <span class="beta-count-lbl">MIN</span>
+      </div>
+      <div class="beta-count-sep">:</div>
+      <div class="beta-count-item">
+        <span class="beta-count-val" id="beta-secs">00</span>
+        <span class="beta-count-lbl">SEG</span>
+      </div>
+    </div>
+    <p class="beta-launch">LANZAMIENTO OFICIAL</p>
+    <button class="beta-enter-btn" id="beta-enter-btn">ENTRAR AL SITIO</button>
+  </div>
+</div>
+
+<!-- Social Widget -->
+<div class="social-widget" id="social-widget">
+  <button class="social-toggle" id="social-toggle" aria-label="Redes sociales">
+    <svg class="social-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+  </button>
+  <div class="social-links" id="social-links">
+    <a href="#" target="_blank" rel="noopener" class="social-link social-facebook" title="Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    <a href="#" target="_blank" rel="noopener" class="social-link social-instagram" title="Instagram">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+    </a>
+    <a href="#" target="_blank" rel="noopener" class="social-link social-youtube" title="YouTube">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+    </a>
+    <a href="#" target="_blank" rel="noopener" class="social-link social-kick" title="Kick">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.2 0C.537 0 0 .537 0 1.2v21.6C0 23.463.537 24 1.2 24h21.6c.663 0 1.2-.537 1.2-1.2V1.2C24 .537 23.463 0 22.8 0H1.2zm6.6 5.4h2.4v4.2L13.8 5.4h3l-4.2 4.8L17.4 18.6h-3l-3.6-6-1.2 1.2v4.8H7.2V5.4h.6z"/></svg>
+    </a>
+    <a href="#" target="_blank" rel="noopener" class="social-link social-tiktok" title="TikTok">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+    </a>
+    <a href="#" target="_blank" rel="noopener" class="social-link social-whatsapp" title="WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- Particles Background -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ================================================================
+     NAVBAR
+     ================================================================ -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <span style="font-size:1.8rem">⚔️</span>
+    <div>
+      <span>L2 ZONA ZERO H5</span>
+      <span class="sub">PvP</span>
+    </div>
+  </div>
+
+  <ul class="navbar-links">
+    <li><a href="#" data-nav="home"     class="active"><span class="icon">🏠</span> Inicio</a></li>
+    <li><a href="#" data-nav="rankings"><span class="icon">🏆</span> Rankings</a></li>
+    <li><a href="#" data-nav="downloads"><span class="icon">📥</span> Descargas</a></li>
+    <li><a href="#" data-nav="news"    ><span class="icon">📰</span> Noticias</a></li>
+    <li><a href="#" data-nav="shop"    ><span class="icon">🛒</span> Tienda</a></li>
+    <li id="nav-bets-item"     class="hidden"><a href="#" data-nav="bets"    ><span class="icon">🏅</span> Apuestas Olimpiadas</a></li>
+    <li id="nav-recharge-item" class="hidden"><a href="#" data-nav="recharge"><span class="icon">💳</span> Recargar</a></li>
+    <li><a href="#" data-nav="panel"   ><span class="icon">👤</span> Mi Panel</a></li>
+    <li id="nav-admin-item" class="hidden"><a href="#" data-nav="admin"><span class="icon">⚙️</span> Admin</a></li>
+    <!-- Auth mobile: solo visible en hamburger (oculto en desktop via CSS) -->
+    <li class="nav-auth-mobile" data-auth-show="guest">
+      <div style="display:flex;gap:.5rem;padding:.5rem 0;border-top:1px solid var(--border);margin-top:.5rem">
+        <button class="btn btn-secondary btn-sm" style="flex:1" onclick="openModal('login');document.querySelector('.navbar-links').classList.remove('open')">Iniciar Sesión</button>
+        <button class="btn btn-primary btn-sm" style="flex:1" onclick="openModal('register');document.querySelector('.navbar-links').classList.remove('open')">Registrarse</button>
+      </div>
+    </li>
+    <li class="nav-auth-mobile" data-auth-show="logged">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-top:1px solid var(--border);margin-top:.5rem">
+        <span style="font-size:.85rem;color:var(--text-dim)">👤 <span id="nav-username-mobile"></span></span>
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('btn-logout').click();document.querySelector('.navbar-links').classList.remove('open')">Salir</button>
+      </div>
+    </li>
+  </ul>
+
+  <div class="navbar-actions">
+    <div class="online-badge" id="nav-online">
+      <span class="server-status-dot" id="nav-status-dot"></span>
+      <span id="nav-status-label">...</span>
+    </div>
+    <!-- Logged out -->
+    <div data-auth-show="guest">
+      <button class="btn btn-secondary btn-sm" onclick="openModal('login')">Iniciar Sesión</button>
+      <button class="btn btn-primary btn-sm"   onclick="openModal('register')">Registrarse</button>
+    </div>
+    <!-- Logged in -->
+    <div data-auth-show="logged" class="hidden" style="display:flex;align-items:center;gap:.5rem">
+      <span style="font-size:.85rem;color:var(--text-dim)">👤 <span id="nav-username"></span></span>
+      <button class="btn btn-secondary btn-sm" id="btn-logout">Salir</button>
+    </div>
+  </div>
+
+  <button class="hamburger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ================================================================
+     DISCORD POPUP
+     Editar el enlace de Discord aquí ↓
+     ================================================================ -->
+<div id="discord-popup" class="discord-popup" role="dialog" aria-modal="true" aria-label="Únete a nuestro Discord">
+  <button class="discord-popup__close" id="discord-popup-close" aria-label="Cerrar">✕</button>
+
+  <!-- Banda superior: sello rúnico + logo Discord -->
+  <div class="discord-popup__logo-wrap">
+    <div class="discord-popup__logo">
+      <!-- Logo oficial SVG de Discord -->
+      <svg viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#fff" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Divisor dorado arcano -->
+  <div class="discord-popup__divider"></div>
+
+  <!-- Cuerpo del popup -->
+  <div class="discord-popup__body">
+    <p class="discord-popup__tag">⬥ COMUNIDAD OFICIAL ⬥</p>
+    <h2 class="discord-popup__title">Únete a nuestro<br><span>Discord</span></h2>
+    <p class="discord-popup__desc">Anuncios · Eventos · Soporte</p>
+
+    <!-- ► CAMBIAR ESTE ENLACE cuando tengas el canal de Discord ◄ -->
+    <a href="https://discord.gg/DjE3wpBk"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="discord-popup__btn"
+       id="discord-popup-btn">
+      Unirse al Discord
+    </a>
+  </div>
+
+  <!-- Banda inferior arcana con ornamentos de esquina -->
+  <div class="discord-popup__footer">
+    <button class="discord-popup__skip" id="discord-popup-skip">No mostrar de nuevo</button>
+  </div>
+</div>
+<div id="discord-popup-overlay" class="discord-popup-overlay"></div>
+
+<!-- ================================================================
+     MAIN CONTENT
+     ================================================================ -->
+<main>
+
+  <!-- ──── HOME ──── -->
+  <section id="section-home" class="section active" style="padding:0">
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-content container">
+        <div class="hero-eyebrow">Servidor Privado de Lineage 2</div>
+        <h1 class="hero-title">
+          <span class="line1">L2 ZONA ZERO</span>
+          <span class="line2">PvP — HIGH FIVE</span>
+        </h1>
+        <p class="hero-subtitle">
+          El mejor servidor H5 con zonas PvP rotativas, eventos únicos y una comunidad activa.
+          Únete ahora y demuestra tu poder en las arenas de batalla.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" onclick="openModal('register')">
+            ⚔️ Crear Cuenta
+          </button>
+          <a id="hero-discord-btn" class="btn btn-discord btn-lg"
+             href="https://discord.gg/TU-ENLACE-AQUI"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+              <path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+            </svg>
+            Discord
+          </a>
+          <button class="btn btn-primary-reverse btn-lg" onclick="navigate('rankings')">
+            🏆 Ver Rankings
+          </button>
+        </div>
+
+        <!-- Zona PvP activa -->
+        <div class="pvpzone-widget pvpzone-widget--centered" style="margin-top:3rem;max-width:640px;margin-left:auto;margin-right:auto">
+          <!-- Ícono personaje L2 -->
+          <div class="pvpzone-char-icon">
+            <img src="assets/images/pvpzone_knight.png" alt="Guerrero L2" draggable="false">
+          </div>
+          <!-- Etiqueta + nombre zona -->
+          <div class="pvpzone-label">⚡ ZONA PvP ACTIVA AHORA</div>
+          <div class="pvpzone-name" id="home-pvpzone">Cargando...</div>
+          <!-- Contador 3D -->
+          <div class="pvpzone-countdown-wrap">
+            <div class="pvpzone-countdown-label">PRÓXIMA ROTACIÓN EN</div>
+            <div class="pvpzone-countdown" id="home-pvpzone-timer">--:--</div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="navigate('rankings');document.querySelector('[data-ranking-tab=pvpzone]').click()">
+            Ver Ranking
+          </button>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="hero-stats" style="max-width:640px;margin:0 auto">
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-online">...</div>
+            <div class="hero-stat-label">Online</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-accounts">...</div>
+            <div class="hero-stat-label">Cuentas</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-chars">...</div>
+            <div class="hero-stat-label">Personajes</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value" id="stat-server-status">
+              <span class="server-status-dot" id="hero-status-dot"></span>
+              <span id="hero-status-label">...</span>
+            </div>
+            <div class="hero-stat-label">Servidor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="container" style="padding:4rem 2rem">
+      <h2 class="section-title" style="text-align:center;margin-bottom:2.5rem">
+        ¿Por qué elegir nuestro servidor?
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem">
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">🗡️</div>
+          <h3 style="margin-bottom:.5rem;color:var(--cyan)">Zona PvP Rotativa</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">Dos zonas únicas que rotan cada hora. Coliseo de Giran y Catacumbas de los Sacrificados.</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">🏆</div>
+          <h3 style="margin-bottom:.5rem;color:var(--purple)">Rankings en Tiempo Real</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">Compite en PvP, PK, Olimpiadas y Zonas PvP. Tu nombre en la cima.</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">🛒</div>
+          <h3 style="margin-bottom:.5rem;color:var(--gold)">Tienda Web</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">Ítems exclusivos con monedas web. Entrega instantánea a tu personaje.</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div style="font-size:2.5rem;margin-bottom:1rem">⚡</div>
+          <h3 style="margin-bottom:.5rem;color:var(--green)">Alta Estabilidad</h3>
+          <p class="text-muted" style="font-size:.9rem;line-height:1.6">L2JMobius optimizado con protección anti-DDoS. Uptime garantizado.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DAILY REWARD WIDGET ── -->
+    <div class="container" style="padding:0 2rem 4rem">
+      <div class="daily-reward-widget" id="daily-reward-widget">
+        <div class="daily-reward-header">
+          <div class="daily-reward-title">
+            <span class="daily-reward-icon">🎁</span>
+            <div>
+              <h2>Recompensa Diaria</h2>
+              <p class="daily-reward-subtitle">Iniciá sesión y conectate cada día para acumular tu racha de 28 días</p>
+            </div>
+          </div>
+          <div class="daily-char-selector" id="daily-char-selector" style="display:none">
+            <label>Personaje:</label>
+            <select id="daily-char-select"></select>
+          </div>
+        </div>
+
+        <!-- Estado: no logueado -->
+        <div class="daily-login-prompt" id="daily-login-prompt">
+          <span>🔒</span>
+          <p>Iniciá sesión para ver y reclamar tu recompensa diaria</p>
+          <button class="btn btn-primary btn-sm" onclick="openModal('login')">Iniciar Sesión</button>
+        </div>
+
+        <!-- Estado: logueado, grilla de días -->
+        <div id="daily-grid-wrap" style="display:none">
+          <div class="daily-grid" id="daily-grid"></div>
+          <div class="daily-claim-area" id="daily-claim-area"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-brand">⚔️ L2 ZONA ZERO H5 PvP</div>
+      <p>Servidor privado de Lineage 2 High Five — L2JMobius</p>
+      <div class="footer-links">
+        <a href="#" onclick="navigate('news')">Noticias</a>
+        <a href="#" onclick="navigate('rankings')">Rankings</a>
+        <a href="#" onclick="navigate('shop')">Tienda</a>
+        <a href="#" onclick="openModal('register')">Registrarse</a>
+      </div>
+      <p style="margin-top:1rem;font-size:.72rem">© 2026 L2H5 Server. Fansite no oficial de Lineage 2.</p>
+    </footer>
+  </section>
+
+  <!-- ──── DESCARGAS ──── -->
+  <section id="section-downloads" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">📥</span> Descargas</h2>
+        <p class="section-subtitle">Todo lo que necesitás para conectarte al servidor</p>
+      </div>
+
+      <div class="downloads-grid">
+
+        <!-- Cliente completo -->
+        <div class="download-card">
+          <div class="download-card__icon">🎮</div>
+          <div class="download-card__body">
+            <h3 class="download-card__title">Cliente Lineage 2 H5</h3>
+            <p class="download-card__desc">Cliente completo del juego. Necesario si no tenés instalado Lineage 2 Interlude / High Five.</p>
+            <div class="download-card__meta">
+              <span class="dl-badge">~5.5 GB</span>
+              <span class="dl-badge dl-badge--type">Cliente completo</span>
+            </div>
+          </div>
+          <div class="download-card__actions">
+            <a href="https://topservers200.com/es/lineage2/download/client-lineage-2-high-five" class="btn btn-gold btn-lg" id="dl-btn-client">
+              <span>⬇</span> Descargar Cliente
+            </a>
+          </div>
+        </div>
+
+        <!-- System (parche/carpeta system) -->
+        <div class="download-card">
+          <div class="download-card__icon">⚙️</div>
+          <div class="download-card__body">
+            <h3 class="download-card__title">System (Parche)</h3>
+            <p class="download-card__desc">Carpeta System actualizada del servidor. Reemplazá la carpeta System dentro de tu instalación de L2.</p>
+            <div class="download-card__meta">
+              <span class="dl-badge">~19 MB</span>
+              <span class="dl-badge dl-badge--type">Parche</span>
+            </div>
+          </div>
+          <div class="download-card__actions">
+            <a href="https://www.mediafire.com/file/jjhwgzjy0rmbe8u/System_V1.rar/file" class="btn btn-primary btn-lg" id="dl-btn-system">
+              <span>⬇</span> Descargar System
+            </a>
+          </div>
+        </div>
+
+        <!-- Launcher -->
+        <div class="download-card">
+          <div class="download-card__icon">🚀</div>
+          <div class="download-card__body">
+            <h3 class="download-card__title">Launcher</h3>
+            <p class="download-card__desc">Launcher oficial del servidor. Se encarga de mantener el cliente actualizado automáticamente antes de iniciar el juego.</p>
+            <div class="download-card__meta">
+              <span class="dl-badge">~15 MB</span>
+              <span class="dl-badge dl-badge--type">Launcher</span>
+            </div>
+          </div>
+          <div class="download-card__actions">
+            <a href="#" class="btn btn-secondary btn-lg" id="dl-btn-launcher">
+              <span>⬇</span> Descargar Launcher
+            </a>
+          </div>
+        </div>
+
+      </div><!-- /downloads-grid -->
+
+      <!-- Instrucciones de instalación -->
+      <div class="install-guide" style="margin-top:3rem">
+        <h3 style="margin-bottom:1.5rem;color:var(--gold)">📋 Guía rápida de instalación</h3>
+        <div class="install-steps">
+          <div class="install-step">
+            <div class="install-step__num">1</div>
+            <div class="install-step__text">
+              <strong>Descargá el Cliente</strong> si no tenés L2 H5 instalado. Si ya lo tenés, podés saltear este paso.
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="install-step__num">2</div>
+            <div class="install-step__text">
+              <strong>Descargá e instalá el System</strong> (parche). Descomprimí y reemplazá la carpeta <code>system</code> dentro de tu directorio de Lineage 2.
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="install-step__num">3</div>
+            <div class="install-step__text">
+              <strong>Descargá el Launcher</strong> y ejecutalo. Se conectará automáticamente al servidor y mantendrá tu cliente al día.
+            </div>
+          </div>
+          <div class="install-step">
+            <div class="install-step__num">4</div>
+            <div class="install-step__text">
+              <strong>¡Creá tu cuenta</strong> desde este sitio y comenzá a jugar! 🗡️
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──── RANKINGS ──── -->
+  <section id="section-rankings" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🏆</span> Rankings</h2>
+      </div>
+
+      <!-- PvP Zone Widget -->
+      <div class="pvpzone-widget">
+        <div class="pvpzone-icon">🗡️</div>
+        <div class="pvpzone-info">
+          <div class="pvpzone-label">⚡ ZONA PvP ACTIVA</div>
+          <div class="pvpzone-name" id="ranking-pvpzone">Cargando...</div>
+          <div class="pvpzone-players" id="ranking-pvpzone-players">...</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <div class="tabs">
+          <button class="tab-btn active" data-ranking-tab="pvp">⚔️ Top PvP</button>
+          <button class="tab-btn"        data-ranking-tab="pk">💀 Top PK</button>
+          <button class="tab-btn"        data-ranking-tab="pvpzone">🏆 Zona PvP</button>
+          <button class="tab-btn"        data-ranking-tab="clans">🛡️ Clanes</button>
+          <button class="tab-btn"        data-ranking-tab="olympiad">🏅 Olimpiada</button>
+        </div>
+      </div>
+
+      <!-- Panel: jugadores actualmente en la zona PvP (solo visible en tab pvpzone) -->
+      <div id="pvpzone-in-zone-panel" style="display:none;margin-bottom:1.25rem">
+        <div class="in-zone-header">
+          <span class="in-zone-title">⚔️ EN LA ZONA AHORA</span>
+          <span class="in-zone-badge"><span id="pvpzone-in-zone-count">0</span> jugadores</span>
+        </div>
+        <div id="pvpzone-in-zone-list" class="in-zone-list">
+          <div class="in-zone-empty">Sin jugadores en la zona ahora mismo</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="ranking-table">
+          <thead id="ranking-thead">
+            <tr>
+              <th>#</th>
+              <th>Personaje / Clan</th>
+              <th>Nivel</th>
+              <th>Clase</th>
+              <th>Kills</th>
+              <th>PK / Extra</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-tbody">
+            <tr><td colspan="7" class="text-center text-muted" style="padding:3rem">Selecciona una categoría</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── NEWS ──── -->
+  <section id="section-news" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">📰</span> Noticias & Eventos</h2>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="newsFilter('')">Todos</button>
+          <button class="tab-btn" onclick="newsFilter('news')">Noticias</button>
+          <button class="tab-btn" onclick="newsFilter('event')">Eventos</button>
+          <button class="tab-btn" onclick="newsFilter('update')">Updates</button>
+        </div>
+      </div>
+
+      <div class="news-grid">
+        <div>
+          <div id="news-main" style="display:flex;flex-direction:column;gap:1.25rem"></div>
+          <div style="text-align:center;margin-top:1.5rem">
+            <button class="btn btn-secondary" id="news-load-more">Cargar más</button>
+          </div>
+        </div>
+        <div class="news-side">
+          <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px">
+            Recientes
+          </h3>
+          <div id="news-sidebar"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── SHOP ──── -->
+  <section id="section-shop" class="section">
+    <div class="container">
+      <!-- Header con balance + botón carrito -->
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🛒</span> Tienda Web</h2>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="coins-display">🪙 <span id="shop-coins">0</span> Monedas</div>
+          <button class="btn btn-gold btn-sm cart-fab" id="btn-open-cart" onclick="openCart()">
+            🛒 Carrito <span class="cart-badge" id="cart-badge">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtros + personaje -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem">
+        <div class="tabs">
+          <button class="tab-btn active" data-shop-cat="all">Todo</button>
+          <button class="tab-btn" data-shop-cat="scrolls">📜 Scrolls</button>
+          <button class="tab-btn" data-shop-cat="skills">✨ Skills</button>
+          <button class="tab-btn" data-shop-cat="adena">💰 Adena</button>
+          <button class="tab-btn" data-shop-cat="premium">⭐ Premium</button>
+          <button class="tab-btn" data-shop-cat="boxes">📦 Boxes</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <label class="form-label" style="margin:0;white-space:nowrap">Personaje:</label>
+          <select class="form-select" id="shop-char-select" style="width:auto">
+            <option>Inicia sesión</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Grid de ítems -->
+      <div id="shop-grid" class="shop-grid"></div>
+
+      <!-- Historial -->
+      <div style="margin-top:3rem">
+        <h3 style="margin-bottom:1rem;color:var(--text-dim)">📋 Historial de compras</h3>
+        <button class="btn btn-secondary btn-sm" onclick="loadUserShopHistory()">Ver historial</button>
+        <div id="shop-history"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── CART DRAWER ──── -->
+  <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <span>🛒 Carrito</span>
+      <button class="btn-icon" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cart-body">
+      <!-- ítems del carrito se renderizan aquí -->
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total:</span>
+        <span class="cart-total-coins">🪙 <strong id="cart-total">0</strong></span>
+      </div>
+      <div class="cart-total-row" style="font-size:.8rem;color:var(--text-muted)">
+        Saldo: 🪙 <span id="cart-balance">0</span>
+      </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:.75rem" id="btn-checkout" onclick="cartCheckout()">
+        ✅ Confirmar compra
+      </button>
+      <button class="btn btn-secondary btn-sm" style="width:100%;margin-top:.5rem" onclick="clearCart()">
+        🗑 Vaciar carrito
+      </button>
+    </div>
+  </div>
+
+  <!-- ──── OLIMPIADA BETS ──── -->
+  <section id="section-bets" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🏅</span> Apuestas Olimpiada</h2>
+        <div class="bets-live-badge" id="bets-live-badge">
+          <span class="bets-live-dot"></span> EN VIVO
+        </div>
+      </div>
+
+      <!-- Banner de temporada -->
+      <div class="bets-season-banner" id="bets-season-banner">
+        <div class="bsb-left">
+          <div class="bsb-label">⚔️ TEMPORADA ACTIVA</div>
+          <div class="bsb-name" id="bets-season-name">Cargando...</div>
+          <div class="bsb-status" id="bets-season-status"></div>
+        </div>
+        <div class="bsb-stats">
+          <div class="bsb-stat">
+            <div class="bsb-stat-val" id="bets-total-bets">—</div>
+            <div class="bsb-stat-lbl">Apuestas</div>
+          </div>
+          <div class="bsb-stat">
+            <div class="bsb-stat-val text-gold" id="bets-total-pool">—</div>
+            <div class="bsb-stat-lbl">🪙 En juego</div>
+          </div>
+          <div class="bsb-stat">
+            <div class="bsb-stat-val text-cyan" id="bets-my-pick">—</div>
+            <div class="bsb-stat-lbl">Tu apuesta</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cómo funciona -->
+      <div class="bets-rules">
+        <div class="bets-rule"><span>🪙</span><span>Apostá <strong>1 a 1000 monedas</strong> por el personaje que creés que será el próximo Héroe</span></div>
+        <div class="bets-rule"><span>🎯</span><span>Si acertás, ganás <strong>hasta 20 monedas</strong> según las odds — menos apostadores en tu pick = mayor recompensa</span></div>
+        <div class="bets-rule"><span>⚡</span><span>Las apuestas se actualizan <strong>en tiempo real</strong> — ves las odds cambiar mientras otros apuestan</span></div>
+      </div>
+
+      <!-- Mi apuesta (si ya apostó) -->
+      <div class="bets-my-bet-card hidden" id="bets-my-bet-card">
+        <div class="bmb-icon">🎯</div>
+        <div class="bmb-body">
+          <div class="bmb-label">TU APUESTA</div>
+          <div class="bmb-char" id="bmb-char-name">—</div>
+          <div class="bmb-detail" id="bmb-detail">—</div>
+        </div>
+        <div class="bmb-payout" id="bmb-payout-est">
+          <div class="bmb-pay-label">Payout estimado</div>
+          <div class="bmb-pay-val" id="bmb-pay-val">🪙 —</div>
+        </div>
+      </div>
+
+      <!-- Tabs: Candidatos / Mi Historial -->
+      <div class="tabs" style="margin-bottom:1.5rem">
+        <button class="tab-btn active" data-bets-tab="candidates">⚔️ Candidatos</button>
+        <button class="tab-btn"        data-bets-tab="my-bets"   >🎯 Mis Apuestas</button>
+        <button class="tab-btn"        data-bets-tab="history"   >📋 Historial</button>
+      </div>
+
+      <!-- TAB: Candidatos -->
+      <div id="bets-tab-candidates">
+        <div id="bets-candidates-grid" class="bets-grid">
+          <div class="flex-center" style="padding:3rem;grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: Mis apuestas -->
+      <div id="bets-tab-my-bets" class="hidden">
+        <div id="bets-my-list"></div>
+      </div>
+
+      <!-- TAB: Historial de temporadas -->
+      <div id="bets-tab-history" class="hidden">
+        <div id="bets-history-list"></div>
+      </div>
+
+      <!-- Panel Admin (solo visible para accessLevel>=100) -->
+      <div id="bets-admin-panel" class="hidden" style="margin-top:3rem">
+        <div class="card" style="border-color:var(--gold);border-width:1px">
+          <h3 style="color:var(--gold);margin-bottom:1.5rem">⚙️ Panel Admin — Olimpiada</h3>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <div style="flex:1;min-width:220px">
+              <label class="form-label">Nombre nueva temporada</label>
+              <input type="text" id="admin-season-name" class="form-input"
+                     placeholder="ej: Temporada 2 — Mes de Enero">
+              <button class="btn btn-primary btn-sm" style="margin-top:.5rem;width:100%"
+                      onclick="adminNewSeason()">✨ Abrir Nueva Temporada</button>
+            </div>
+            <div style="flex:1;min-width:220px">
+              <label class="form-label">Cerrar apuestas (sin resolver)</label>
+              <button class="btn btn-secondary btn-sm" style="width:100%"
+                      onclick="adminCloseSeason()">🔒 Cerrar Apuestas</button>
+            </div>
+            <div style="flex:1;min-width:220px">
+              <label class="form-label">Resolver temporada — Héroe ganador</label>
+              <input type="text" id="admin-winner-char" class="form-input"
+                     placeholder="Nombre exacto del personaje Héroe">
+              <button class="btn btn-gold btn-sm" style="margin-top:.5rem;width:100%"
+                      onclick="adminResolve()">🏆 Declarar Héroe y Pagar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ──── RECARGAR ──── -->
+  <section id="section-recharge" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">💳</span> Recargar Monedas</h2>
+        <div class="coins-display">🪙 <span id="recharge-coins">0</span> Monedas</div>
+      </div>
+
+      <!-- Aviso login -->
+      <div id="recharge-guest" class="hidden">
+        <div class="card" style="text-align:center;padding:3rem;max-width:480px;margin:0 auto">
+          <div style="font-size:3rem;margin-bottom:1rem">🔒</div>
+          <h3 style="margin-bottom:.75rem">Iniciá sesión para recargar</h3>
+          <p class="text-muted" style="margin-bottom:1.5rem">Necesitás una cuenta activa para comprar monedas.</p>
+          <button class="btn btn-primary" onclick="openModal('login')">Iniciar Sesión</button>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div id="recharge-content">
+
+        <!-- Cómo funciona -->
+        <div class="recharge-how" style="margin-bottom:2.5rem">
+          <div class="recharge-step">
+            <div class="recharge-step-icon">1️⃣</div>
+            <div><strong>Elegí un paquete</strong><br><span class="text-muted" style="font-size:.85rem">Seleccioná la cantidad de monedas que querés</span></div>
+          </div>
+          <div class="recharge-step-arrow">→</div>
+          <div class="recharge-step">
+            <div class="recharge-step-icon">2️⃣</div>
+            <div><strong>Elegí el método de pago</strong><br><span class="text-muted" style="font-size:.85rem">MercadoPago (ARS) o PayPal (USD)</span></div>
+          </div>
+          <div class="recharge-step-arrow">→</div>
+          <div class="recharge-step">
+            <div class="recharge-step-icon">3️⃣</div>
+            <div><strong>Monedas acreditadas</strong><br><span class="text-muted" style="font-size:.85rem">Se acreditan automáticamente al pagar</span></div>
+          </div>
+        </div>
+
+        <!-- Paquetes -->
+        <div id="packages-grid" class="packages-grid">
+          <div class="flex-center" style="padding:3rem;grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+
+        <!-- Historial de recargas -->
+        <div style="margin-top:3.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h3 style="color:var(--text-dim)">📋 Historial de recargas</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadPaymentHistory()">Cargar</button>
+          </div>
+          <div id="payment-history"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── PANEL ──── -->
+  <section id="section-panel" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">👤</span> Mi Panel</h2>
+      </div>
+
+      <div class="panel-grid">
+        <!-- Sidebar -->
+        <div class="panel-sidebar">
+          <div class="account-card">
+            <div class="account-avatar">👤</div>
+            <div class="account-login" id="panel-login">—</div>
+            <div class="account-level">⚔️ Jugador</div>
+            <div class="coins-display mt-1">🪙 <span id="panel-coins">0</span> monedas</div>
+          </div>
+
+          <div class="card" style="margin-top:0">
+            <ul class="sidebar-nav">
+              <li><a href="#" onclick="showPanelTab('chars')" class="active">⚔️ Mis Personajes</a></li>
+              <li><a href="#" onclick="showPanelTab('account')">🔒 Cuenta</a></li>
+              <li><a href="#" onclick="showPanelTab('history')">📋 Historial</a></li>
+              <li><a href="#" onclick="navigate('shop')">🛒 Ir a Tienda</a></li>
+            </ul>
+          </div>
+
+          <div class="card" style="margin-top:1rem;font-size:.82rem;color:var(--text-muted)">
+            <div class="mb-1">🌐 Última IP:<br><strong id="panel-lastip">—</strong></div>
+            <div>📅 Último acceso:<br><strong id="panel-lastactive">—</strong></div>
+          </div>
+        </div>
+
+        <!-- Main -->
+        <div class="panel-main">
+
+          <!-- Personajes -->
+          <div id="panel-tab-chars">
+            <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Mis Personajes</h3>
+            <div id="panel-chars" class="char-grid"></div>
+          </div>
+
+          <!-- Cuenta -->
+          <div id="panel-tab-account" class="hidden">
+            <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Seguridad de la Cuenta</h3>
+            <div class="card" style="max-width:520px">
+              <h4 style="margin-bottom:.4rem">🔒 Cambiar Contraseña</h4>
+              <p class="form-hint" style="margin-bottom:1.2rem">
+                Para cambiar tu contraseña debes verificar tu identidad completando <strong>todos</strong> los campos.
+              </p>
+              <form id="form-change-pass">
+
+                <div class="form-section-label">Verificación de identidad</div>
+
+                <div class="form-group">
+                  <label class="form-label">Correo electrónico registrado</label>
+                  <input type="email" id="cp-email" class="form-input" required
+                         placeholder="tu@correo.com" autocomplete="email">
+                  <div id="cp-email-error" class="form-error hidden"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Fecha de nacimiento registrada</label>
+                  <input type="date" id="cp-birthday" class="form-input" required autocomplete="bday">
+                  <div id="cp-birthday-error" class="form-error hidden"></div>
+                </div>
+
+                <div class="form-section-label" style="margin-top:1rem">Cambio de contraseña</div>
+
+                <div class="form-group">
+                  <label class="form-label">Contraseña actual</label>
+                  <input type="password" id="cp-current" class="form-input" required placeholder="••••••••">
+                  <div id="cp-current-error" class="form-error hidden"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nueva contraseña</label>
+                  <input type="password" id="cp-new" class="form-input" required placeholder="Mínimo 6 caracteres">
+                  <div id="cp-new-error" class="form-error hidden"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Confirmar nueva contraseña</label>
+                  <input type="password" id="cp-confirm" class="form-input" required placeholder="Repite la nueva contraseña">
+                  <div id="cp-confirm-error" class="form-error hidden"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Cambiar Contraseña</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Historial -->
+          <div id="panel-tab-history" class="hidden">
+            <h3 style="margin-bottom:1.25rem;color:var(--text-dim)">Historial de Compras</h3>
+            <button class="btn btn-secondary btn-sm mb-2" onclick="loadPanelHistory()">Cargar historial</button>
+            <div id="panel-history"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──── ADMIN PANEL ──── -->
+  <section id="section-admin" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">⚙️</span> Panel de Administración</h2>
+        <span class="admin-badge">🔒 Solo Admins</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs" style="margin-bottom:1.5rem">
+        <button class="tab-btn active" data-admin-tab="users">👥 Usuarios</button>
+        <button class="tab-btn"        data-admin-tab="payments">💳 Recargas</button>
+        <button class="tab-btn"        data-admin-tab="shop-history">🧾 Historial Tienda</button>
+        <button class="tab-btn"        data-admin-tab="shop">🛒 Tienda</button>
+        <button class="tab-btn"        data-admin-tab="pvpreward">⚔️ Recompensa PvP</button>
+        <button class="tab-btn"        data-admin-tab="news">📰 Noticias</button>
+        <button class="tab-btn"        data-admin-tab="serverconfig">🖥️ Servidor</button>
+      </div>
+
+      <!-- ── TAB: USUARIOS ── -->
+      <div id="admin-tab-users">
+        <!-- Buscador -->
+        <div class="admin-search-bar">
+          <input type="text" id="admin-search-input" class="form-input" placeholder="Buscar por nombre de cuenta...">
+          <button class="btn btn-primary" onclick="searchAdminUsers()">🔍 Buscar</button>
+        </div>
+
+        <!-- Tabla de resultados -->
+        <div class="table-wrap" style="margin-top:1rem">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Cuenta</th>
+                <th>Email</th>
+                <th>Access Level</th>
+                <th>🪙 WebCoins</th>
+                <th>Estado</th>
+                <th>Último Login</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <tr><td colspan="7" class="text-center text-muted" style="padding:2rem">
+                Escribe un nombre de cuenta para buscar
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: COMPRAS ── -->
+      <div id="admin-tab-payments" class="hidden">
+        <!-- Filtro por estado -->
+        <div class="admin-payments-filter">
+          <label class="form-label">Filtrar por estado:</label>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn btn-sm btn-primary   admin-status-btn active" data-status="all">Todos</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="approved">✅ Aprobados</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="pending">⏳ Pendientes</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="rejected">❌ Rechazados</button>
+            <button class="btn btn-sm btn-secondary admin-status-btn" data-status="cancelled">🚫 Cancelados</button>
+          </div>
+          <span id="admin-payments-total" class="text-muted" style="margin-left:auto;font-size:.85rem"></span>
+        </div>
+
+        <!-- Tabla de compras -->
+        <div class="table-wrap" style="margin-top:1rem">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cuenta</th>
+                <th>Paquete</th>
+                <th>🪙 Coins</th>
+                <th>Monto</th>
+                <th>Proveedor</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="admin-payments-tbody">
+              <tr><td colspan="8" class="text-center">
+                <div class="spinner" style="margin:2rem auto"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div style="display:flex;justify-content:center;gap:1rem;margin-top:1rem">
+          <button class="btn btn-secondary btn-sm" id="btn-admin-payments-prev" onclick="adminPaymentsPage(-1)" disabled>← Anterior</button>
+          <span id="admin-payments-page" class="text-muted" style="display:flex;align-items:center">Página 1</span>
+          <button class="btn btn-secondary btn-sm" id="btn-admin-payments-next" onclick="adminPaymentsPage(1)">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- ── TAB: HISTORIAL TIENDA ── -->
+      <div id="admin-tab-shop-history" class="hidden">
+
+        <!-- Filtros de búsqueda -->
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.25rem">
+          <div style="flex:1;min-width:180px">
+            <label class="form-label" style="font-size:.8rem">Cuenta</label>
+            <input type="text" id="sh-filter-account" class="form-input" placeholder="Buscar por cuenta..." style="height:36px">
+          </div>
+          <div style="flex:1;min-width:180px">
+            <label class="form-label" style="font-size:.8rem">Personaje</label>
+            <input type="text" id="sh-filter-char" class="form-input" placeholder="Buscar por personaje..." style="height:36px">
+          </div>
+          <button class="btn btn-primary btn-sm"   id="sh-btn-search">🔍 Buscar</button>
+          <button class="btn btn-secondary btn-sm" id="sh-btn-clear">✕ Limpiar</button>
+          <span id="sh-total-label" class="text-muted" style="font-size:.82rem;display:flex;align-items:center;margin-left:auto"></span>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cuenta</th>
+                <th>Personaje</th>
+                <th>Ítem comprado</th>
+                <th style="text-align:center">Cantidad</th>
+                <th style="text-align:center">🪙 Precio</th>
+                <th style="text-align:center">Saldo actual</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="sh-tbody">
+              <tr><td colspan="8" class="text-center text-muted" style="padding:2rem">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div style="display:flex;justify-content:center;align-items:center;gap:1rem;margin-top:1rem">
+          <button class="btn btn-secondary btn-sm" id="sh-btn-prev" disabled>← Anterior</button>
+          <span id="sh-page-label" class="text-muted" style="font-size:.88rem">Página 1</span>
+          <button class="btn btn-secondary btn-sm" id="sh-btn-next">Siguiente →</button>
+        </div>
+      </div>
+
+      <!-- ── TAB: TIENDA ── -->
+      <div id="admin-tab-shop" class="hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+          <span class="text-muted" style="font-size:.9rem">Items activos e inactivos de la tienda web</span>
+          <button class="btn btn-primary btn-sm" onclick="openAdminShopModal(null)">➕ Nuevo Item</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Item ID L2</th>
+                <th>Cant.</th>
+                <th>Precio 🪙</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="admin-shop-tbody">
+              <tr><td colspan="9" class="text-center">
+                <div class="spinner" style="margin:2rem auto"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: RECOMPENSA PVP ZONA ── -->
+      <div id="admin-tab-pvpreward" class="hidden">
+
+        <!-- Config card -->
+        <div class="pvpr-config-card">
+          <h3 class="pvpr-config-title">⚔️ Configuración de Recompensa</h3>
+          <p class="text-muted" style="font-size:.85rem;margin-bottom:1.2rem">
+            Al finalizar cada sesión de <strong>Zona PvP</strong> (rotación de zona), el jugador con
+            más kills durante esa sesión recibe automáticamente WebCoins en su cuenta web.
+            El worker detecta la rotación cada 15 segundos.
+          </p>
+
+          <div class="pvpr-config-row">
+            <!-- Toggle activar/desactivar -->
+            <div class="pvpr-toggle-wrap">
+              <label class="pvpr-toggle-label">Estado:</label>
+              <label class="toggle-switch" title="Activar/desactivar recompensas">
+                <input type="checkbox" id="pvpr-enabled-toggle">
+                <span class="toggle-slider"></span>
+              </label>
+              <span id="pvpr-status-text" class="pvpr-status-badge pvpr-status-off">DESACTIVADO</span>
+            </div>
+
+            <!-- Coins top killer -->
+            <div class="pvpr-coins-wrap">
+              <label class="pvpr-toggle-label" for="pvpr-coins-input">🪙 WebCoins top killer:</label>
+              <input type="number" id="pvpr-coins-input" class="form-input"
+                     min="0" max="10000" step="1" value="50"
+                     style="width:100px;text-align:center">
+            </div>
+
+            <button class="btn btn-primary btn-sm" id="pvpr-save-btn" onclick="savePvpRewardConfig()">
+              💾 Guardar
+            </button>
+          </div>
+          <div id="pvpr-save-msg" class="form-success hidden" style="margin-top:.6rem"></div>
+        </div>
+
+        <!-- Estadísticas top jugadores -->
+        <div style="margin:1.5rem 0 .75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+          <h4 style="margin:0;font-size:1rem">🏆 Top jugadores premiados</h4>
+          <button class="btn btn-danger btn-sm" onclick="confirmResetPvpLog()" title="Reiniciar contadores">
+            🗑 Reiniciar historial
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Personaje</th>
+                <th>Kills (sesión)</th>
+                <th>🪙 Coins entregados</th>
+                <th>Último premio</th>
+              </tr>
+            </thead>
+            <tbody id="pvpr-totals-tbody">
+              <tr><td colspan="5" class="text-center">
+                <div class="spinner" style="margin:2rem auto"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Últimas recompensas (historial de eventos) -->
+        <h4 style="margin:1.5rem 0 .75rem;font-size:1rem">📋 Historial de recompensas recientes</h4>
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>Top Killer</th>
+                <th>Cuenta</th>
+                <th>Kills sesión</th>
+                <th>🪙 Coins</th>
+                <th>Zona / Fecha</th>
+              </tr>
+            </thead>
+            <tbody id="pvpr-history-tbody">
+              <tr><td colspan="5" class="text-center text-muted">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: NOTICIAS ── -->
+      <div id="admin-tab-news" class="hidden">
+
+        <!-- Boton nueva noticia -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem">
+          <h3 style="margin:0;font-size:1.1rem;color:var(--gold)">📰 Gestión de Noticias</h3>
+          <button class="btn btn-primary btn-sm" onclick="openNewsEditor()">➕ Nueva Noticia</button>
+        </div>
+
+        <!-- Editor (se muestra/oculta) -->
+        <div id="news-editor-panel" class="hidden" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+          <input type="hidden" id="news-edit-id">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+            <div>
+              <label class="form-label">Título</label>
+              <input type="text" id="news-edit-title" class="form-input" placeholder="Titulo de la noticia">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem">
+              <div>
+                <label class="form-label">Tipo</label>
+                <select id="news-edit-type" class="form-input">
+                  <option value="news">Noticia</option>
+                  <option value="event">Evento</option>
+                  <option value="update">Update</option>
+                  <option value="maintenance">Mantenimiento</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Fijada</label>
+                <select id="news-edit-pinned" class="form-input">
+                  <option value="0">No</option>
+                  <option value="1">Si</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Activa</label>
+                <select id="news-edit-active" class="form-input">
+                  <option value="1">Si</option>
+                  <option value="0">No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Imagen -->
+          <div style="margin-bottom:1rem">
+            <label class="form-label">Imagen</label>
+            <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+              <input type="file" id="news-edit-image-file" accept="image/*" multiple class="form-input" style="flex:1;min-width:200px">
+              <button class="btn btn-secondary btn-sm" onclick="uploadNewsImg()">📤 Subir</button>
+              <span id="news-edit-image-status" style="font-size:.8rem;color:var(--text-dim)"></span>
+            </div>
+            <input type="text" id="news-edit-image-url" class="form-input" placeholder="URL de la imagen (se completa al subir)" style="margin-top:.5rem">
+            <div id="news-edit-image-preview" style="margin-top:.5rem"></div>
+          </div>
+
+          <!-- Contenido con toolbar -->
+          <div style="margin-bottom:1rem">
+            <label class="form-label">Contenido</label>
+            <div style="display:flex;gap:.3rem;margin-bottom:.4rem;flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertTag('b')" title="Negrita" style="padding:4px 10px"><b>B</b></button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertTag('i')" title="Italica" style="padding:4px 10px"><i>I</i></button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertTag('u')" title="Subrayado" style="padding:4px 10px"><u>U</u></button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertTag('h3')" title="Subtitulo" style="padding:4px 10px">H3</button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertBr()" title="Salto de linea" style="padding:4px 10px">BR</button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertTag('li')" title="Item de lista" style="padding:4px 10px">LI</button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertColor()" title="Color" style="padding:4px 10px">🎨</button>
+              <button class="btn btn-secondary btn-sm" onclick="newsInsertImg()" title="Imagen inline" style="padding:4px 10px">🖼</button>
+            </div>
+            <textarea id="news-edit-content" class="form-input" rows="12" placeholder="Contenido de la noticia (soporta HTML)" style="font-family:monospace;font-size:.85rem;line-height:1.5;resize:vertical"></textarea>
+          </div>
+
+          <!-- Preview -->
+          <details style="margin-bottom:1rem">
+            <summary style="cursor:pointer;font-size:.85rem;color:var(--gold);margin-bottom:.5rem">👁 Vista previa</summary>
+            <div id="news-edit-preview" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;max-height:300px;overflow-y:auto;font-size:.9rem;line-height:1.6"></div>
+          </details>
+
+          <div style="display:flex;gap:.75rem;justify-content:flex-end">
+            <button class="btn btn-secondary btn-sm" onclick="closeNewsEditor()">Cancelar</button>
+            <button class="btn btn-primary btn-sm" onclick="saveNews()">💾 Guardar</button>
+          </div>
+          <div id="news-editor-msg" class="hidden" style="margin-top:.6rem;font-size:.85rem"></div>
+        </div>
+
+        <!-- Lista de noticias -->
+        <div class="table-wrap">
+          <table class="ranking-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Titulo</th>
+                <th>Tipo</th>
+                <th>Autor</th>
+                <th>Imagen</th>
+                <th>📌</th>
+                <th>Activa</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="admin-news-tbody">
+              <tr><td colspan="9" class="text-center text-muted">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── TAB: CONFIGURACIÓN DEL SERVIDOR ── -->
+      <div id="admin-tab-serverconfig" class="hidden">
+        <div class="pvpr-config-card">
+          <h3 class="pvpr-config-title">🖥️ Configuración del Servidor</h3>
+          <p class="text-muted" style="font-size:.85rem;margin-bottom:1.5rem">
+            Ajusta parámetros generales del servidor. Los cambios se aplican de forma inmediata.
+          </p>
+
+          <div class="pvpr-config-row">
+            <div class="pvpr-coins-wrap">
+              <label class="pvpr-toggle-label" for="scfg-max-accounts">👥 Máximo de cuentas por IP:</label>
+              <input type="number" id="scfg-max-accounts" class="form-input"
+                     min="1" max="999" value="20" style="width:100px;text-align:center">
+            </div>
+          </div>
+
+          <div style="display:flex;gap:.75rem;align-items:center;margin-top:1.5rem">
+            <button class="btn btn-primary" id="scfg-save-btn" onclick="saveServerConfig()">💾 Guardar</button>
+            <span id="scfg-save-msg" class="text-muted" style="font-size:.85rem"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ================================================================
+     MODALS
+     ================================================================ -->
+
+<!-- Login -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">🗡️ Iniciar Sesión</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <form id="form-login">
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <input type="text" id="login-user" class="form-input" required
+               placeholder="Tu nombre de cuenta" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" id="login-pass" class="form-input" required
+               placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <!-- CAPTCHA Matemático -->
+      <div class="form-group captcha-container">
+        <label class="form-label">Verifica que no eres un bot</label>
+        <div class="captcha-question" id="captcha-question">¿Cuánto es 5 + 3?</div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="login-captcha" class="form-input" required
+                 placeholder="Tu respuesta" style="flex:1;">
+          <button type="button" class="btn-icon" id="btn-captcha-refresh" title="Refrescar pregunta">🔄</button>
+        </div>
+        <div id="captcha-error" class="form-error hidden"></div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg">INICIAR SESIÓN</button>
+    </form>
+    <div style="text-align:center;margin-top:.75rem">
+      <button type="button" class="btn-link" onclick="openModal('recover')">¿Olvidaste tu contraseña?</button>
+    </div>
+    <div class="modal-divider">¿No tienes cuenta?</div>
+    <button class="btn btn-secondary btn-full" onclick="openModal('register')">Crear cuenta gratis</button>
+  </div>
+</div>
+
+<!-- Inactivity Warning Modal -->
+<div class="modal-overlay" id="modal-inactivity-warning">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">⏰ Sesión por vencer</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <div style="padding:0.5rem 0; text-align:center;">
+      <p style="font-size:0.95rem; color:#ddd; margin-bottom:1rem;">
+        Tu sesión vence en <strong id="inactivity-countdown">120</strong> segundos por inactividad.
+      </p>
+      <p style="font-size:0.85rem; color:#999; margin-bottom:1.5rem;">
+        Haz clic en <strong>Extender sesión</strong> para continuar o <strong>Salir</strong> para cerrar sesión.
+      </p>
+    </div>
+    <div style="display:flex; gap:1rem;">
+      <button class="btn btn-secondary btn-full" id="btn-inactivity-logout">Salir</button>
+      <button class="btn btn-primary btn-full"   id="btn-inactivity-extend">Extender sesión</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal: Admin Edit User ── -->
+<div class="modal-overlay" id="modal-admin-edit">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3 class="modal-title">⚙️ Editar: <span id="admin-edit-login-title">—</span></h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Info rápida -->
+    <div class="admin-user-card" id="admin-edit-info-card">
+      <div class="auc-item"><span class="auc-label">Coins actuales</span><span id="auc-coins" class="auc-value">—</span></div>
+      <div class="auc-item"><span class="auc-label">Estado ban</span><span id="auc-ban" class="auc-value">—</span></div>
+      <div class="auc-item"><span class="auc-label">Access Level</span><span id="auc-level" class="auc-value">—</span></div>
+    </div>
+
+    <!-- ── Sección: WebCoins ── -->
+    <div class="admin-modal-section">
+      <h4 class="admin-section-title">🪙 WebCoins</h4>
+      <div class="admin-coins-actions">
+        <button class="btn btn-sm coin-action-btn active" data-action="add" onclick="selectCoinAction('add', this)">+ Sumar</button>
+        <button class="btn btn-sm coin-action-btn" data-action="subtract" onclick="selectCoinAction('subtract', this)">− Restar</button>
+        <button class="btn btn-sm coin-action-btn" data-action="set" onclick="selectCoinAction('set', this)">= Establecer</button>
+      </div>
+      <div style="display:flex;gap:.75rem;margin-top:.75rem;align-items:center">
+        <input type="number" id="admin-coins-amount" class="form-input" min="0" max="999999" value="100" style="flex:1">
+        <button class="btn btn-primary" onclick="adminSaveCoins()">Aplicar</button>
+      </div>
+      <div id="admin-coins-result" class="form-hint" style="margin-top:.5rem"></div>
+    </div>
+
+    <!-- ── Sección: Datos de cuenta ── -->
+    <div class="admin-modal-section">
+      <h4 class="admin-section-title">📋 Datos de cuenta</h4>
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label class="form-label">Nuevo Email</label>
+        <input type="email" id="admin-edit-email" class="form-input" placeholder="correo@ejemplo.com">
+      </div>
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label class="form-label">Nueva Contraseña</label>
+        <input type="password" id="admin-edit-password" class="form-input" placeholder="Dejar vacío para no cambiar">
+      </div>
+      <button class="btn btn-secondary btn-full" onclick="adminSaveAccount()">💾 Guardar Cambios</button>
+    </div>
+
+    <!-- ── Sección: Ban ── -->
+    <div class="admin-modal-section">
+      <h4 class="admin-section-title">🔨 Gestión de Ban</h4>
+      <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap">
+        <div class="form-group" style="flex:1;min-width:120px;margin-bottom:0">
+          <label class="form-label">Días de ban</label>
+          <input type="number" id="admin-ban-days" class="form-input" min="0" value="7" placeholder="0 = permanente">
+        </div>
+        <button class="btn btn-danger" onclick="adminBanUser()">🔨 Banear</button>
+        <button class="btn btn-secondary" onclick="adminUnbanUser()">✅ Desbanear</button>
+      </div>
+      <div class="form-hint" style="margin-top:.5rem">Días = 0 aplica ban permanente.</div>
+    </div>
+
+    <input type="hidden" id="admin-edit-login-value">
+  </div>
+</div>
+
+<!-- ── Modal: Admin Shop Item Editor ── -->
+<div class="modal-overlay" id="modal-admin-shop-item">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <h3 class="modal-title" id="admin-shop-modal-title">🛒 Nuevo Item</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <!-- Nombre (full width) -->
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
+        <label class="form-label">Nombre del item *</label>
+        <input type="text" id="asi-name" class="form-input" placeholder="Ej: Blessed Scroll of Enchant">
+      </div>
+      <!-- Item ID L2 -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Item ID en L2 *</label>
+        <input type="number" id="asi-item-id" class="form-input" min="1" placeholder="Ej: 729">
+        <div class="form-hint">ID del ítem en el servidor de juego</div>
+      </div>
+      <!-- Cantidad -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Cantidad a entregar</label>
+        <input type="number" id="asi-item-count" class="form-input" min="1" value="1">
+      </div>
+      <!-- Precio WebCoins -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">🪙 Precio (WebCoins)</label>
+        <input type="number" id="asi-price-coins" class="form-input" min="0" value="0">
+      </div>
+      <!-- Categoría -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Categoría</label>
+        <select id="asi-category" class="form-input form-select">
+          <option value="general">General</option>
+          <option value="premium">Premium</option>
+          <option value="boxes">Boxes</option>
+          <option value="scrolls">Scrolls</option>
+          <option value="equipment">Equipment</option>
+          <option value="skills">Skills</option>
+          <option value="adena">Adena</option>
+          <option value="other">Otro</option>
+        </select>
+      </div>
+      <!-- Stock -->
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Stock</label>
+        <div style="display:flex;align-items:center;gap:.6rem">
+          <input type="number" id="asi-stock" class="form-input" min="0" placeholder="Cantidad" style="flex:1">
+          <label style="display:flex;align-items:center;gap:.3rem;white-space:nowrap;cursor:pointer;font-size:.85rem;color:var(--text-muted)">
+            <input type="checkbox" id="asi-stock-unlimited" onchange="toggleStockUnlimited(this)"> ∞ Ilimitado
+          </label>
+        </div>
+      </div>
+      <!-- URL Imagen (full width) -->
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
+        <label class="form-label">URL de imagen</label>
+        <input type="text" id="asi-image-url" class="form-input" placeholder="https://...">
+      </div>
+      <!-- Descripción (full width) -->
+      <div class="form-group" style="grid-column:1/-1;margin-bottom:0">
+        <label class="form-label">Descripción</label>
+        <textarea id="asi-description" class="form-input" rows="2" placeholder="Descripción opcional del ítem" style="resize:vertical"></textarea>
+      </div>
+      <!-- Checkboxes -->
+      <div style="display:flex;gap:1.5rem;align-items:center;grid-column:1/-1;padding:.25rem 0">
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;color:var(--text-dim)">
+          <input type="checkbox" id="asi-featured"> <span>⭐ Destacado</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:.4rem;cursor:pointer;color:var(--text-dim)">
+          <input type="checkbox" id="asi-active" checked> <span>✅ Activo (visible en tienda)</span>
+        </label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.75rem;margin-top:1.25rem">
+      <button class="btn btn-secondary btn-full" onclick="closeAllModals()">Cancelar</button>
+      <button class="btn btn-primary btn-full" onclick="saveAdminShopItem()">💾 Guardar</button>
+    </div>
+
+    <input type="hidden" id="asi-editing-id" value="">
+  </div>
+</div>
+
+<!-- Register -->
+<div class="modal-overlay" id="modal-register">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">⚔️ Crear Cuenta</h3>
+      <button class="modal-close">✕</button>
+    </div>
+    <form id="form-register">
+
+      <!-- Usuario -->
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <input type="text" id="reg-login" class="form-input" required
+               placeholder="4-14 caracteres: letras, números, _"
+               autocomplete="username" maxlength="14" autocapitalize="none">
+        <div id="reg-login-hint" class="form-hint">
+          Solo letras <strong>a–z</strong>, números <strong>0–9</strong> y guión bajo <strong>_</strong> · mínimo 4 caracteres
+        </div>
+        <div id="reg-login-preview" class="form-hint hidden" style="color:var(--accent)"></div>
+        <div id="reg-login-error"   class="form-error hidden"></div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" id="reg-password" class="form-input" required
+               placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        <div id="reg-pass-error" class="form-error hidden"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar contraseña</label>
+        <input type="password" id="reg-confirm" class="form-input" required
+               placeholder="Repite la contraseña" autocomplete="new-password">
+        <div id="reg-confirm-error" class="form-error hidden"></div>
+      </div>
+
+      <!-- Identidad -->
+      <div class="form-section-label">🔒 Datos de identidad — para recuperar tu cuenta</div>
+
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" id="reg-email" class="form-input" required
+               placeholder="tu@correo.com" autocomplete="email">
+        <div class="form-hint">Se usa solo para recuperar la contraseña</div>
+        <div id="reg-email-error" class="form-error hidden"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar correo electrónico</label>
+        <input type="email" id="reg-email-confirm" class="form-input" required
+               placeholder="Repite tu correo" autocomplete="email">
+        <div id="reg-email-confirm-error" class="form-error hidden"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de nacimiento</label>
+        <input type="date" id="reg-birthday" class="form-input" required
+               autocomplete="bday">
+        <div class="form-hint">Usada para verificar tu identidad</div>
+        <div id="reg-birthday-error" class="form-error hidden"></div>
+      </div>
+
+      <!-- CAPTCHA Matemático -->
+      <div class="form-group captcha-container">
+        <label class="form-label">Verificación anti-bot</label>
+        <div class="captcha-question" id="reg-captcha-question">¿Cuánto es 5 + 3?</div>
+        <div style="display:flex; gap:0.5rem; align-items:center;">
+          <input type="text" id="reg-captcha" class="form-input" required
+                 placeholder="Tu respuesta" style="flex:1;" inputmode="numeric">
+          <button type="button" class="btn-icon" id="btn-reg-captcha-refresh" title="Nueva pregunta">🔄</button>
+        </div>
+        <div id="reg-captcha-error" class="form-error hidden"></div>
+      </div>
+
+      <div class="form-hint" style="margin-bottom:1rem">
+        ⚠️ Guarda tus datos en un lugar seguro. Al registrarte se descargará automáticamente un archivo con tus credenciales.
+      </div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg">CREAR CUENTA</button>
+    </form>
+    <div class="modal-divider">¿Ya tienes cuenta?</div>
+    <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- ── Modal: Recuperar Contraseña ── -->
+<div class="modal-overlay" id="modal-recover">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">🔑 Recuperar Contraseña</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Paso 1: Verificar identidad -->
+    <div id="recover-step1">
+      <p class="form-hint" style="margin-bottom:1.2rem">
+        Ingresa el correo y la fecha de nacimiento con los que te registraste. Si coinciden, podrás establecer una nueva contraseña.
+      </p>
+      <form id="form-recover-step1">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="rec-email" class="form-input" required
+                 placeholder="tu@correo.com" autocomplete="email">
+          <div id="rec-email-error" class="form-error hidden"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de nacimiento</label>
+          <input type="date" id="rec-birthday" class="form-input" required autocomplete="bday">
+          <div id="rec-birthday-error" class="form-error hidden"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Verificar identidad</button>
+      </form>
+    </div>
+
+    <!-- Paso 2: Nueva contraseña (oculto hasta pasar paso 1) -->
+    <div id="recover-step2" class="hidden">
+      <div class="recover-verified-badge">✅ Identidad verificada</div>
+      <form id="form-recover-step2">
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña</label>
+          <input type="password" id="rec-newpass" class="form-input" required
+                 placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          <div id="rec-newpass-error" class="form-error hidden"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar nueva contraseña</label>
+          <input type="password" id="rec-confirm" class="form-input" required
+                 placeholder="Repite la contraseña" autocomplete="new-password">
+          <div id="rec-confirm-error" class="form-error hidden"></div>
+        </div>
+
+        <!-- CAPTCHA recuperación -->
+        <div class="form-group captcha-container">
+          <label class="form-label">Verificación anti-bot</label>
+          <div class="captcha-question" id="rec-captcha-question">¿Cuánto es 5 + 3?</div>
+          <div style="display:flex; gap:0.5rem; align-items:center;">
+            <input type="text" id="rec-captcha" class="form-input" required
+                   placeholder="Tu respuesta" style="flex:1;" inputmode="numeric">
+            <button type="button" class="btn-icon" id="btn-rec-captcha-refresh" title="Nueva pregunta">🔄</button>
+          </div>
+          <div id="rec-captcha-error" class="form-error hidden"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Guardar nueva contraseña</button>
+        <button type="button" class="btn btn-secondary btn-full" style="margin-top:.5rem"
+                onclick="resetRecoverModal()">← Volver a verificar</button>
+      </form>
+    </div>
+
+    <div class="modal-divider">¿Recordaste tu contraseña?</div>
+    <button class="btn btn-secondary btn-full" onclick="openModal('login')">Iniciar sesión</button>
+  </div>
+</div>
+
+<!-- ── Modal: Apostar en Olimpiada ── -->
+<div class="modal-overlay" id="modal-bet">
+  <div class="modal modal-bet">
+    <div class="modal-header">
+      <h3 class="modal-title">🏅 Realizar Apuesta</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Candidato seleccionado -->
+    <div class="bet-candidate-summary" id="bet-candidate-summary">
+      <div class="bcs-avatar" id="bcs-class-icon">⚔️</div>
+      <div class="bcs-info">
+        <div class="bcs-name"  id="bcs-char-name">—</div>
+        <div class="bcs-class" id="bcs-class-name">—</div>
+        <div class="bcs-stats" id="bcs-stats">—</div>
+      </div>
+      <div class="bcs-odds">
+        <div class="bcs-odds-label">Odds actuales</div>
+        <div class="bcs-odds-val" id="bcs-odds">—</div>
+      </div>
+    </div>
+
+    <!-- Cuántas monedas apostar -->
+    <div style="margin:1.5rem 0">
+      <label class="form-label">¿Cuántas monedas apostás? <span style="color:var(--text-muted)">(1–1000)</span></label>
+      <div class="bet-coins-selector">
+        <button class="bet-coin-btn" data-coins="10">10 🪙</button>
+        <button class="bet-coin-btn active" data-coins="50">50 🪙</button>
+        <button class="bet-coin-btn" data-coins="100">100 🪙</button>
+        <button class="bet-coin-btn" data-coins="500">500 🪙</button>
+        <button class="bet-coin-btn" data-coins="1000">1000 🪙</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-top:.75rem">
+        <input type="number" id="bet-coins-custom" class="form-input"
+               min="1" max="1000" placeholder="O ingresá un monto (1-1000)"
+               style="flex:1;padding:.5rem .85rem">
+      </div>
+      <div class="form-hint" style="margin-top:.5rem">
+        Más monedas apostadas = mayor payout si ganás
+      </div>
+    </div>
+
+    <!-- Estimación de payout -->
+    <div class="bet-payout-estimate" id="bet-payout-estimate">
+      <div class="bpe-row">
+        <span>Apostás</span>
+        <strong class="text-gold" id="bpe-coins">2 🪙</strong>
+      </div>
+      <div class="bpe-row">
+        <span>Payout si ganás</span>
+        <strong class="text-green" id="bpe-payout">≈ — 🪙</strong>
+      </div>
+      <div class="bpe-row">
+        <span>Apostadores en este pick</span>
+        <strong id="bpe-bets-on">—</strong>
+      </div>
+      <div class="bpe-row">
+        <span>Total en la temporada</span>
+        <strong id="bpe-total-bets">—</strong>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" id="btn-confirm-bet" onclick="confirmBet()">
+      ⚔️ Confirmar Apuesta
+    </button>
+    <p style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:.75rem">
+      Solo podés apostar una vez por temporada. Si perdés, perdés las monedas apostadas.
+    </p>
+  </div>
+</div>
+
+<!-- ── Modal: Elegir método de pago ── -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal modal-payment">
+    <div class="modal-header">
+      <h3 class="modal-title">💳 Confirmar Recarga</h3>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <!-- Resumen del paquete -->
+    <div class="payment-pkg-summary" id="payment-pkg-summary">
+      <div class="payment-pkg-coins"><span class="coin-icon">🪙</span> <span id="pay-pkg-coins">—</span> WebCoins</div>
+      <div class="payment-pkg-name" id="pay-pkg-name">—</div>
+      <div class="payment-pkg-bonus hidden" id="pay-pkg-bonus-wrap">
+        🎁 Incluye <strong id="pay-pkg-bonus">0</strong>% bonus
+      </div>
+    </div>
+
+    <!-- Selector de método -->
+    <p style="font-size:.85rem;color:var(--text-dim);margin-bottom:1rem;text-align:center">Elegí cómo querés pagar:</p>
+
+    <div class="payment-methods">
+
+      <!-- MercadoPago -->
+      <button class="payment-method-btn" id="btn-pay-mp" onclick="startPayment('mp')">
+        <div class="pm-logo pm-logo-mp">
+          <svg viewBox="0 0 48 48" width="32" height="32" fill="none">
+            <circle cx="24" cy="24" r="24" fill="#00B1EA"/>
+            <path d="M10 24c0-7.73 6.27-14 14-14s14 6.27 14 14-6.27 14-14 14S10 31.73 10 24z" fill="#00B1EA"/>
+            <path d="M24 14c-5.52 0-10 4.48-10 10s4.48 10 10 10 10-4.48 10-10-4.48-10-10-10zm1 14.5h-2v-6h2v6zm0-8h-2v-2h2v2z" fill="white"/>
+          </svg>
+        </div>
+        <div class="pm-info">
+          <div class="pm-name">MercadoPago</div>
+          <div class="pm-desc">Tarjetas, débito, efectivo · <strong id="pay-price-ars">—</strong></div>
+        </div>
+        <div class="pm-arrow">→</div>
+      </button>
+
+      <!-- PayPal -->
+      <button class="payment-method-btn" id="btn-pay-pp" onclick="startPayment('paypal')">
+        <div class="pm-logo pm-logo-pp">
+          <svg viewBox="0 0 48 48" width="32" height="32">
+            <rect width="48" height="48" rx="8" fill="#003087"/>
+            <path d="M32.5 16.5c.5 3.5-2 7-6.5 7H23l-1.5 9H17l3.5-20h8c2.5 0 3.5 1.5 4 4z" fill="#009CDE"/>
+            <path d="M34 20c.5 3-1.5 6-5.5 6.5L26 27l-1.5 8.5H20l3.5-20h7c2.5 0 3.5 1.5 3.5 4.5z" fill="white" opacity=".6"/>
+          </svg>
+        </div>
+        <div class="pm-info">
+          <div class="pm-name">PayPal</div>
+          <div class="pm-desc">Tarjetas internacionales · <strong id="pay-price-usd">—</strong></div>
+        </div>
+        <div class="pm-arrow">→</div>
+      </button>
+
+    </div>
+
+    <p style="font-size:.75rem;color:var(--text-muted);text-align:center;margin-top:1.25rem">
+      🔒 Pago seguro · Las monedas se acreditan automáticamente al confirmar el pago
+    </p>
+  </div>
+</div>
+
+<!-- ── Modal: Procesando pago ── -->
+<div class="modal-overlay" id="modal-processing">
+  <div class="modal" style="text-align:center;padding:2.5rem">
+    <div class="spinner" style="margin:0 auto 1.5rem"></div>
+    <h3 style="margin-bottom:.5rem">Procesando pago…</h3>
+    <p class="text-muted" id="processing-msg">Esperá mientras confirmamos tu pago con PayPal.</p>
+  </div>
+</div>
+
+<!-- ── Página: Pago exitoso ── -->
+<div class="payment-result-overlay hidden" id="result-success">
+  <div class="payment-result-card">
+    <div class="result-icon result-ok">✅</div>
+    <h2>¡Pago Exitoso!</h2>
+    <p class="text-muted" id="result-success-msg">Tus monedas fueron acreditadas.</p>
+    <div class="result-coins-box">
+      🪙 <span id="result-coins-amount">—</span> WebCoins acreditadas
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="closePaymentResult()">Ir a la Tienda 🛒</button>
+  </div>
+</div>
+
+<!-- ── Página: Pago fallido ── -->
+<div class="payment-result-overlay hidden" id="result-failure">
+  <div class="payment-result-card">
+    <div class="result-icon result-fail">❌</div>
+    <h2>Pago no completado</h2>
+    <p class="text-muted">El pago fue cancelado o rechazado. No se realizó ningún cobro.</p>
+    <button class="btn btn-secondary btn-lg" onclick="closePaymentResult()" style="margin-top:1.5rem">Volver a intentar</button>
+  </div>
+</div>
+
+<!-- ── Página: Pago pendiente ── -->
+<div class="payment-result-overlay hidden" id="result-pending">
+  <div class="payment-result-card">
+    <div class="result-icon result-pending">⏳</div>
+    <h2>Pago en revisión</h2>
+    <p class="text-muted">Tu pago está siendo procesado. Las monedas se acreditarán automáticamente cuando se confirme.</p>
+    <button class="btn btn-secondary btn-lg" onclick="closePaymentResult()" style="margin-top:1.5rem">Entendido</button>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ================================================================
+     SCRIPTS
+     ================================================================ -->
+<!-- DevTools protection — must load before app scripts -->
+<script>
+(function(){
+  // 1. Deshabilitar click derecho
+  document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+  // 2. Bloquear atajos de teclado de DevTools
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'F12') { e.preventDefault(); return false; }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) { e.preventDefault(); return false; }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) { e.preventDefault(); return false; }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'C' || e.key === 'c')) { e.preventDefault(); return false; }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) { e.preventDefault(); return false; }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
+  });
+
+  // 3. Silenciar consola
+  var noop = function(){};
+  var methods = ['log','warn','error','info','debug','table','trace','dir','dirxml','group','groupEnd','time','timeEnd','assert','profile','profileEnd'];
+  if (window.console) {
+    methods.forEach(function(m){ try{ console[m] = noop; }catch(e){} });
+  }
+
+  // 4. Detección de DevTools abierto (solo desktop — en móvil el UI del browser
+  //    puede generar diffs > 160px de altura y causar un loop de recargas)
+  var threshold = 160;
+  function detectDevTools() {
+    if (window.innerWidth <= 900) return; // ignorar en móvil/tablet
+    var widthDiff  = window.outerWidth  - window.innerWidth;
+    var heightDiff = window.outerHeight - window.innerHeight;
+    if (widthDiff > threshold || heightDiff > threshold) {
+      document.body.innerHTML = '';
+      window.location.href = window.location.href;
+    }
+  }
+  setInterval(detectDevTools, 1000);
+})();
+</script>
+
+<script src="assets/js/api.js?v=20260604h"></script>
+<script src="assets/js/main.js?v=20260604h"></script>
+<script>
+/* Extra funciones llamadas desde HTML inline */
+
+function newsFilter(type) {
+  document.querySelectorAll('#section-news .tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['', 'news', 'event', 'update'][i] === type);
+  });
+  document.getElementById('news-sidebar').innerHTML = '';
+  currentNewsFilter = type;
+  loadNews(true);
+}
+var currentNewsFilter = '';
+
+/* Beta popup countdown - 23 dias desde 2026-06-04 */
+(function() {
+  var betaEnd = new Date('2026-06-27T23:59:59').getTime();
+  var overlay = document.getElementById('beta-overlay');
+  if (!overlay) return;
+
+  function updateCountdown() {
+    var now = Date.now();
+    var diff = betaEnd - now;
+    if (diff <= 0) {
+      overlay.remove();
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('beta-days').textContent = String(d).padStart(2, '0');
+    document.getElementById('beta-hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('beta-mins').textContent = String(m).padStart(2, '0');
+    document.getElementById('beta-secs').textContent = String(s).padStart(2, '0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  document.getElementById('beta-enter-btn').addEventListener('click', function() {
+    overlay.classList.add('closing');
+    setTimeout(function() { overlay.remove(); }, 400);
+  });
+})();
+
+/* Social widget toggle */
+document.getElementById('social-toggle')?.addEventListener('click', () => {
+  document.getElementById('social-widget').classList.toggle('open');
+});
+
+function showPanelTab(tab) {
+  ['chars','account','history'].forEach(t => {
+    document.getElementById(`panel-tab-${t}`)?.classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('.sidebar-nav a').forEach((a, i) => {
+    a.classList.toggle('active', ['chars','account','history'][i] === tab);
+  });
+}
+
+async function loadUserShopHistory() {
+  const el = document.getElementById('shop-history');
+  if (!el) return;
+  el.innerHTML = '<div class="flex-center" style="padding:1rem"><div class="spinner"></div></div>';
+  try {
+    const rows = await api.getShopHistory();
+    if (!rows.length) { el.innerHTML = '<p class="text-muted">Sin compras aún.</p>'; return; }
+    el.innerHTML = `<div class="table-wrap" style="margin-top:1rem">
+      <table class="ranking-table"><thead><tr>
+        <th>Ítem</th><th>Personaje</th><th>Precio</th><th>Cantidad</th><th>Fecha</th>
+      </tr></thead><tbody>
+      ${rows.map(r=>`<tr>
+        <td>${escHtml(r.item_name)}</td>
+        <td>${escHtml(r.char_name)}</td>
+        <td class="text-gold">🪙 ${r.price_coins}</td>
+        <td>x${r.item_count}</td>
+        <td class="text-muted">${formatDate(r.created_at)}</td>
+      </tr>`).join('')}
+      </tbody></table></div>`;
+  } catch(err) { el.innerHTML = `<p class="text-red">Error: ${err.message}</p>`; }
+}
+
+async function loadPanelHistory() {
+  const el = document.getElementById('panel-history');
+  if (!el) return;
+  el.innerHTML = '<div class="flex-center" style="padding:1rem"><div class="spinner"></div></div>';
+  try {
+    const rows = await api.getShopHistory();
+    if (!rows.length) { el.innerHTML = '<p class="text-muted">Sin compras aún.</p>'; return; }
+    el.innerHTML = `<div class="table-wrap"><table class="ranking-table"><thead><tr>
+      <th>Ítem</th><th>Personaje</th><th>Costo</th><th>Fecha</th>
+    </tr></thead><tbody>
+    ${rows.map(r=>`<tr>
+      <td>${escHtml(r.item_name)}</td><td>${escHtml(r.char_name)}</td>
+      <td class="text-gold">🪙 ${r.price_coins}</td>
+      <td class="text-muted">${formatDate(r.created_at)}</td>
+    </tr>`).join('')}
+    </tbody></table></div>`;
+  } catch(err) { el.innerHTML = `<p class="text-red">${err.message}</p>`; }
+}
+
+// Actualizar online count
+async function refreshOnlineCount() {
+  try {
+    const res = await api.getServerStatus();
+    const count = res.online || 0;
+    document.getElementById('nav-online-count').textContent = count;
+    document.getElementById('home-pvpzone').textContent = res.pvpZone?.name || '—';
+    document.getElementById('ranking-pvpzone').textContent = res.pvpZone?.name || '—';
+  } catch {}
+}
+refreshOnlineCount();
+setInterval(refreshOnlineCount, 30000);
+
+// ── Sync username → nav mobile item ──────────────────────────────
+// Extiende updateAuthUI para mantener el username en el menú hamburger
+(function() {
+  var _orig = window.updateAuthUI;
+  if (typeof _orig === 'function') {
+    window.updateAuthUI = function() {
+      _orig.apply(this, arguments);
+      var u = document.getElementById('nav-username');
+      var m = document.getElementById('nav-username-mobile');
+      if (u && m) m.textContent = u.textContent;
+    };
+  }
+})();
+
+// ── Discord — sincronizar enlace popup → botón hero ───────────────
+// El enlace canónico vive en #discord-popup-btn (href).
+// El botón hero (#hero-discord-btn) lo copia al cargar para que
+// cambiar UNA sola URL actualice ambos elementos.
+(function syncDiscordLinks() {
+  const src  = document.getElementById('discord-popup-btn');
+  const hero = document.getElementById('hero-discord-btn');
+  if (src && hero) hero.href = src.href;
+})();
+
+// ── Discord Popup ─────────────────────────────────────────────────
+(function() {
+  const STORAGE_KEY = 'discord_popup_dismissed';
+  const popup    = document.getElementById('discord-popup');
+  const overlay  = document.getElementById('discord-popup-overlay');
+  const btnClose = document.getElementById('discord-popup-close');
+  const btnSkip  = document.getElementById('discord-popup-skip');
+
+  function closePopup() {
+    popup.classList.remove('discord-popup--visible');
+    overlay.classList.remove('discord-popup-overlay--visible');
+  }
+
+  function dismissForever() {
+    localStorage.setItem(STORAGE_KEY, '1');
+    closePopup();
+  }
+
+  // Mostrar sólo si el usuario no lo descartó permanentemente
+  if (!localStorage.getItem(STORAGE_KEY)) {
+    setTimeout(() => {
+      popup.classList.add('discord-popup--visible');
+      overlay.classList.add('discord-popup-overlay--visible');
+    }, 1200); // Aparece 1.2s después de cargar la página
+  }
+
+  btnClose.addEventListener('click', closePopup);
+  overlay.addEventListener('click', closePopup);
+  btnSkip.addEventListener('click', dismissForever);
+
+  // ESC cierra el popup
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePopup();
+  });
+})();
+</script>
+
+<a href="https://l2.hopzone.net/site/vote/107424/1" style="position:fixed;bottom:calc(50% + 4px);right:0;z-index:99999;display:block"><img src="https://l2.hopzone.net/assets/img/banners/vote_banners/banner_2.png" alt="Vote for LINEAGE2ZONAZERO.COM" title="L2.HOPZONE.NET - Lineage 2 Servers ranking" style="border:0;width:140px;height:120px;display:block"></a><a href="https://top.l2jbrasil.com/index.php?a=in&u=L2ZonaZeroPvP" target="_blank" style="position:fixed;top:calc(50% + 4px);right:0;z-index:9999;display:block;width:140px;background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #c8a84b;border-right:none;border-radius:8px 0 0 8px;padding:10px 8px;text-align:center;text-decoration:none;box-shadow:-2px 0 12px rgba(200,168,75,0.3);"><div style="color:#c8a84b;font-size:10px;font-weight:700;letter-spacing:1px;font-family:sans-serif;margin-bottom:4px;">TOP L2JBRASIL</div><div style="color:#f0d060;font-size:18px;margin-bottom:4px;">&#9650;</div><div style="color:#e0d8c8;font-size:9px;font-family:sans-serif;line-height:1.3;">Votar por<br>nosotros</div></a>
+</body>
+</html>

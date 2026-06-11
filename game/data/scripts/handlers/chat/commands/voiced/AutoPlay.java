@@ -23,9 +23,13 @@ package handlers.chat.commands.voiced;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
 
+import org.l2jmobius.commons.threads.ThreadPool;
 import org.l2jmobius.commons.util.StringUtil;
 import org.l2jmobius.gameserver.cache.HtmCache;
 import org.l2jmobius.gameserver.config.custom.AutoPlayConfig;
@@ -33,6 +37,8 @@ import org.l2jmobius.gameserver.data.xml.ItemData;
 import org.l2jmobius.gameserver.data.xml.OptionData;
 import org.l2jmobius.gameserver.data.xml.PetSkillData;
 import org.l2jmobius.gameserver.data.xml.SkillData;
+import org.l2jmobius.gameserver.handler.IItemHandler;
+import org.l2jmobius.gameserver.handler.ItemHandler;
 import org.l2jmobius.gameserver.handler.IVoicedCommandHandler;
 import org.l2jmobius.gameserver.model.actor.Player;
 import org.l2jmobius.gameserver.model.actor.Summon;
@@ -65,13 +71,22 @@ public class AutoPlay implements IVoicedCommandHandler
 {
 	private static final int PAGE_LIMIT = 7;
 	private static final Integer AUTO_ATTACK_ACTION = 2;
-	
+
+	// MP auto-potion: item IDs eligible for selection as MP potion.
+	private static final Set<Integer> MP_POTION_ITEM_IDS = Set.of(728);
+	private static final int MP_POTION_DEFAULT_PERCENT = 80;
+	private static final int MP_POTION_TASK_INTERVAL = 3000;
+	private static final Map<Integer, Integer> MP_POTION_ITEMS = new ConcurrentHashMap<>();
+	private static final Map<Integer, Integer> MP_POTION_PERCENTS = new ConcurrentHashMap<>();
+	private static final Map<Integer, ScheduledFuture<?>> MP_POTION_TASKS = new ConcurrentHashMap<>();
+
 	private static final String[] VOICED_COMMANDS =
 	{
 		"play",
 		"playskills",
 		"playitems",
-		"playpotion"
+		"playpotion",
+		"playmppotion"
 	};
 	
 	private static final Consumer<OnPlayerLogin> ON_PLAYER_LOGIN = event ->
@@ -92,7 +107,15 @@ public class AutoPlay implements IVoicedCommandHandler
 		player.getVariables().getIntegerList(PlayerVariables.AUTO_USE_SKILLS).forEach(id -> player.getAutoUseSettings().getAutoSkills().add(id));
 		player.getVariables().getIntegerList(PlayerVariables.AUTO_USE_ITEMS).forEach(id -> player.getAutoUseSettings().getAutoSupplyItems().add(id));
 		player.getAutoUseSettings().setAutoPotionItem(player.getVariables().getInt(PlayerVariables.AUTO_USE_POTION, 0));
-		
+
+		final int mpPotionId = player.getVariables().getInt("AUTO_MP_POTION_ID", 0);
+		if (mpPotionId > 0)
+		{
+			MP_POTION_ITEMS.put(player.getObjectId(), mpPotionId);
+			MP_POTION_PERCENTS.put(player.getObjectId(), player.getVariables().getInt("AUTO_MP_POTION_PERCENT", MP_POTION_DEFAULT_PERCENT));
+			startMpPotionTask(player);
+		}
+
 		final List<Integer> settings = player.getVariables().getIntegerList(PlayerVariables.AUTO_USE_SETTINGS);
 		if (settings.isEmpty())
 		{
@@ -142,6 +165,19 @@ public class AutoPlay implements IVoicedCommandHandler
 		{
 			player.getVariables().set(PlayerVariables.AUTO_USE_POTION, potionId);
 		}
+
+		final int mpPotionId = MP_POTION_ITEMS.remove(player.getObjectId());
+		if (mpPotionId > 0)
+		{
+			player.getVariables().set("AUTO_MP_POTION_ID", mpPotionId);
+			player.getVariables().set("AUTO_MP_POTION_PERCENT", MP_POTION_PERCENTS.getOrDefault(player.getObjectId(), MP_POTION_DEFAULT_PERCENT));
+		}
+		else
+		{
+			player.getVariables().remove("AUTO_MP_POTION_ID");
+		}
+		MP_POTION_PERCENTS.remove(player.getObjectId());
+		cancelMpPotionTask(player.getObjectId());
 		
 		final List<Integer> settings = new ArrayList<>(7);
 		settings.add(0, player.getAutoPlaySettings().getOptions());
@@ -240,6 +276,14 @@ public class AutoPlay implements IVoicedCommandHandler
 							}
 							break COMMAND;
 						}
+						case "mppercent":
+						{
+							if ((paramArray.length > 1) && StringUtil.isNumeric(paramArray[1]))
+							{
+								MP_POTION_PERCENTS.put(player.getObjectId(), Math.max(0, Math.min(100, Integer.parseInt(paramArray[1]))));
+							}
+							break COMMAND;
+						}
 						case "start":
 						{
 							AutoPlayTaskManager.getInstance().startAutoPlay(player);
@@ -272,6 +316,8 @@ public class AutoPlay implements IVoicedCommandHandler
 				content = content.replace("%item_button%", AutoPlayConfig.ENABLE_AUTO_ITEM ? "<br><table width=295><tr><td height=31><center><button action=\"bypass voice .playitems\" value=\"Select Supply Items\" width=200 height=31 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></center></td></tr></table>" : "");
 				content = content.replace("%potion_button%", AutoPlayConfig.ENABLE_AUTO_POTION ? "<br><table width=295><tr><td height=31><center><button action=\"bypass voice .playpotion\" value=\"Select Healing Potion\" width=200 height=31 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></center></td></tr><tr><td height=31><center><table width=150><tr><td width=120><font color=\"CDB67F\">HP Percent (%percent%)</font></td><td><edit var=\"percentbox\" width=30 height=15></td><td><button value=\"Apply\" action=\"bypass voice .play percent $percentbox\" width=45 height=21 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></td></tr></table></center></td></tr></table>" : "");
 				content = content.replace("%percent%", String.valueOf(player.getAutoPlaySettings().getAutoPotionPercent()));
+				content = content.replace("%mppotion_button%", AutoPlayConfig.ENABLE_AUTO_POTION ? "<br><table width=295><tr><td height=31><center><button action=\"bypass voice .playmppotion\" value=\"Select MP Potion\" width=200 height=31 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></center></td></tr><tr><td height=31><center><table width=150><tr><td width=120><font color=\"CDB67F\">MP Percent (%mppercent%)</font></td><td><edit var=\"mppercentbox\" width=30 height=15></td><td><button value=\"Apply\" action=\"bypass voice .play mppercent $mppercentbox\" width=45 height=21 back=\"L2UI_CT1.Button_DF_Down\" fore=\"L2UI_CT1.Button_DF\"></td></tr></table></center></td></tr></table>" : "");
+				content = content.replace("%mppercent%", String.valueOf(MP_POTION_PERCENTS.getOrDefault(player.getObjectId(), MP_POTION_DEFAULT_PERCENT)));
 				
 				if (player.isAutoPlaying())
 				{
@@ -698,8 +744,92 @@ public class AutoPlay implements IVoicedCommandHandler
 				player.sendPacket(html);
 				break;
 			}
+			case "playmppotion":
+			{
+				final NpcHtmlMessage html = new NpcHtmlMessage();
+				final String content = HtmCache.getInstance().getHtm(player, "data/html/mods/AutoPlay/Potion.htm");
+
+				// Build item list from inventory filtered to MP_POTION_ITEM_IDS.
+				List<ItemTemplate> items = new ArrayList<>();
+				for (Item item : player.getInventory().getItems())
+				{
+					final ItemTemplate template = item.getTemplate();
+					if (item.isEtcItem() && MP_POTION_ITEM_IDS.contains(item.getId()) && !items.contains(template))
+					{
+						items.add(template);
+					}
+				}
+
+				// Manage item activation.
+				final String[] paramArray = params == null ? new String[0] : params.split(" ");
+				if (paramArray.length > 1)
+				{
+					final int itemId = Integer.parseInt(paramArray[1]);
+					if (AutoPlayConfig.ENABLE_AUTO_POTION && items.contains(ItemData.getInstance().getTemplate(itemId)))
+					{
+						final int currentId = MP_POTION_ITEMS.getOrDefault(player.getObjectId(), 0);
+						if (currentId == itemId)
+						{
+							MP_POTION_ITEMS.remove(player.getObjectId());
+							cancelMpPotionTask(player.getObjectId());
+						}
+						else
+						{
+							MP_POTION_ITEMS.put(player.getObjectId(), itemId);
+							if (!MP_POTION_PERCENTS.containsKey(player.getObjectId()))
+							{
+								MP_POTION_PERCENTS.put(player.getObjectId(), MP_POTION_DEFAULT_PERCENT);
+							}
+							startMpPotionTask(player);
+						}
+					}
+				}
+
+				// Calculate page number.
+				final int max = HtmlUtil.countPageNumber(items.size(), PAGE_LIMIT);
+				int page = params == null ? 1 : Integer.parseInt(paramArray[0]);
+				if (page > max)
+				{
+					page = max;
+				}
+
+				// Cut items list up to page number.
+				final StringBuilder sb = new StringBuilder();
+				items = items.subList(Math.max(0, (page - 1) * PAGE_LIMIT), Math.min(page * PAGE_LIMIT, items.size()));
+				if (items.isEmpty())
+				{
+					sb.append("<center><br>No MP potions found.<br></center>");
+				}
+				else
+				{
+					int row = 0;
+					for (ItemTemplate template : items)
+					{
+						sb.append(((row % 2) == 0 ? "<table width=\"295\" bgcolor=\"000000\"><tr>" : "<table width=\"295\"><tr>"));
+						if (MP_POTION_ITEMS.getOrDefault(player.getObjectId(), 0) == template.getId())
+						{
+							sb.append("<td height=40 width=40><img src=\"" + template.getIcon() + "\" width=32 height=32></td><td width=190>" + template.getName() + "</td><td><button value=\" \" action=\"bypass voice .playmppotion " + page + " " + template.getId() + "\" width=32 height=32 back=\"L2UI_CH3.mapbutton_zoomout2\" fore=\"L2UI_CH3.mapbutton_zoomout1\"></td>");
+						}
+						else
+						{
+							sb.append("<td height=40 width=40><img src=\"" + template.getIcon() + "\" width=32 height=32></td><td width=190><font color=\"B09878\">" + template.getName() + "</font></td><td><button value=\" \" action=\"bypass voice .playmppotion " + page + " " + template.getId() + "\" width=32 height=32 back=\"L2UI_CH3.mapbutton_zoomin2\" fore=\"L2UI_CH3.mapbutton_zoomin1\"></td>");
+						}
+						sb.append("</tr></table><img src=\"L2UI.SquareGray\" width=295 height=1>");
+						row++;
+					}
+					sb.append("<br><img src=\"L2UI.SquareGray\" width=295 height=1><table width=\"100%\" bgcolor=000000><tr>");
+					sb.append("<td align=left width=70><font color=\"B09878\">Previous</font></td>");
+					sb.append("<td align=center width=100>Page " + page + " of " + max + "</td>");
+					sb.append("<td align=right width=70><font color=\"B09878\">Next</font></td>");
+					sb.append("</tr></table><img src=\"L2UI.SquareGray\" width=295 height=1>");
+				}
+
+				html.setHtml(content.replace("%items%", sb.toString()));
+				player.sendPacket(html);
+				break;
+			}
 		}
-		
+
 		return true;
 	}
 	
@@ -707,5 +837,48 @@ public class AutoPlay implements IVoicedCommandHandler
 	public String[] getCommandList()
 	{
 		return VOICED_COMMANDS;
+	}
+
+	private static void startMpPotionTask(Player player)
+	{
+		cancelMpPotionTask(player.getObjectId());
+		final ScheduledFuture<?> task = ThreadPool.scheduleAtFixedRate(() ->
+		{
+			if (!player.isOnline() || !player.isAutoPlaying())
+			{
+				return;
+			}
+			final int itemId = MP_POTION_ITEMS.getOrDefault(player.getObjectId(), 0);
+			if (itemId <= 0)
+			{
+				return;
+			}
+			final int mpPercent = MP_POTION_PERCENTS.getOrDefault(player.getObjectId(), MP_POTION_DEFAULT_PERCENT);
+			if ((player.getCurrentMp() * 100.0 / player.getMaxMp()) >= mpPercent)
+			{
+				return;
+			}
+			final Item item = player.getInventory().getItemByItemId(itemId);
+			if (item == null)
+			{
+				MP_POTION_ITEMS.remove(player.getObjectId());
+				return;
+			}
+			final IItemHandler handler = ItemHandler.getInstance().getHandler(item.getEtcItem());
+			if (handler != null)
+			{
+				handler.onItemUse(player, item, false);
+			}
+		}, MP_POTION_TASK_INTERVAL, MP_POTION_TASK_INTERVAL);
+		MP_POTION_TASKS.put(player.getObjectId(), task);
+	}
+
+	private static void cancelMpPotionTask(int objectId)
+	{
+		final ScheduledFuture<?> task = MP_POTION_TASKS.remove(objectId);
+		if (task != null)
+		{
+			task.cancel(false);
+		}
 	}
 }

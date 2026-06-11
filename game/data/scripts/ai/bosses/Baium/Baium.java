@@ -160,8 +160,8 @@ public class Baium extends Script
 	private Baium()
 	{
 		addFirstTalkId(ANGELIC_VORTEX_NPC_ID);
-		addTalkId(ANGELIC_VORTEX_NPC_ID, TELEPORT_CUBE_NPC_ID, BAIUM_STONE_NPC_ID);
-		addStartNpc(ANGELIC_VORTEX_NPC_ID, TELEPORT_CUBE_NPC_ID, BAIUM_STONE_NPC_ID);
+		addTalkId(ANGELIC_VORTEX_NPC_ID, TELEPORT_CUBE_NPC_ID);
+		addStartNpc(ANGELIC_VORTEX_NPC_ID, TELEPORT_CUBE_NPC_ID);
 		addAttackId(BAIUM_NPC_ID, ARCHANGEL_NPC_ID);
 		addKillId(BAIUM_NPC_ID);
 		addSpellFinishedId(BAIUM_NPC_ID);
@@ -188,7 +188,7 @@ public class Baium extends Script
 			}
 			case STATUS_ALIVE:
 			{
-				addSpawn(BAIUM_STONE_NPC_ID, LOCATION_BAIUM_SPAWN, false, 0);
+				// NPC 29025 (Baium stone) removido — no se spawna
 				break;
 			}
 			case STATUS_IN_FIGHT:
@@ -471,7 +471,7 @@ public class Baium extends Script
 				{
 					cancelQuestTimers(EVENT_SELECT_TARGET);
 					notifyEvent(EVENT_CLEAR_ZONE, null, null);
-					addSpawn(BAIUM_STONE_NPC_ID, LOCATION_BAIUM_SPAWN, false, 0);
+					// NPC 29025 (Baium stone) removido — no se spawna
 					setStatus(STATUS_ALIVE);
 				}
 				else if (npc != null)
@@ -492,7 +492,7 @@ public class Baium extends Script
 			case EVENT_CLEAR_STATUS:
 			{
 				setStatus(STATUS_ALIVE);
-				addSpawn(BAIUM_STONE_NPC_ID, LOCATION_BAIUM_SPAWN, false, 0);
+				// NPC 29025 (Baium stone) removido — no se spawna
 				break;
 			}
 			case EVENT_CLEAR_ZONE:
