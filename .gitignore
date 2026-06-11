@@ -44,3 +44,4 @@ game/data/html/CommunityBoard/Custom/banner_b64.txt
 # Draft de multisell mal ubicado (deberia ir en game/data/multisell/ si se usa)
 /game/data/32100.xml
 /vps/
+libs/GameServer.jar.bak
