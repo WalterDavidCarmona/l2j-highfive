@@ -221,6 +221,7 @@ import handlers.chat.commands.voiced.DressMe;
 import handlers.chat.commands.voiced.Noble;
 import handlers.chat.commands.voiced.Reward;
 import handlers.chat.commands.voiced.VoteReward;
+import handlers.chat.commands.voiced.Info;
 import handlers.chat.commands.voiced.ChangePassword;
 import handlers.chat.commands.voiced.ChatAdmin;
 import handlers.chat.commands.voiced.ExperienceGain;
@@ -571,6 +572,7 @@ public class MasterHandler
 			Noble.class,
 			Reward.class,
 			VoteReward.class,
+			Info.class,
 			BattleRoyaleVoice.class,
 		},
 		{
