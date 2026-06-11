@@ -164,8 +164,6 @@ public class BattleRoyale extends Event
 	private static ScheduledFuture<?> _zoneTask = null;
 	/** Task de inactividad (cada 30s) */
 	private static ScheduledFuture<?> _inactivityTask = null;
-	/** NPC de registro fijo en Giran */
-	private static Npc _brokerNpc = null;
 	/** true cuando el inicio fue forzado por GM — saltea el countdown de 60s pre-teleport */
 	private static volatile boolean _gmForced = false;
 	/** Instancia que aísla a los jugadores del evento del mundo principal */
@@ -246,8 +244,7 @@ public class BattleRoyale extends Event
 		// Registrar NPC de caja (se spawnea en la arena, al hablar entrega la Huge Box)
 		addTalkId(C_BOX_NPC_ID);
 		addFirstTalkId(C_BOX_NPC_ID);
-		// Spawnear NPC fijo en Giran
-		_brokerNpc = (Npc) addSpawn(C_NPC_ID, 82788, 147786, -3464, 0, false, 0);
+		// NPC de registro: su spawn se define por XML (spawnlist), no se fija aqui.
 
 		recoverPlayers();
 
