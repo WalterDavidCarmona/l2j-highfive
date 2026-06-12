@@ -166,8 +166,8 @@ public class AutoPlay implements IVoicedCommandHandler
 			player.getVariables().set(PlayerVariables.AUTO_USE_POTION, potionId);
 		}
 
-		final int mpPotionId = MP_POTION_ITEMS.remove(player.getObjectId());
-		if (mpPotionId > 0)
+		final Integer mpPotionId = MP_POTION_ITEMS.remove(player.getObjectId());
+		if (mpPotionId != null && mpPotionId > 0)
 		{
 			player.getVariables().set("AUTO_MP_POTION_ID", mpPotionId);
 			player.getVariables().set("AUTO_MP_POTION_PERCENT", MP_POTION_PERCENTS.getOrDefault(player.getObjectId(), MP_POTION_DEFAULT_PERCENT));
@@ -882,3 +882,4 @@ public class AutoPlay implements IVoicedCommandHandler
 		}
 	}
 }
+

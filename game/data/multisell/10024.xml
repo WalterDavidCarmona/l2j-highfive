@@ -3,7 +3,7 @@
 <!-- A Armor -->
 <!-- © 2010 by mathuza -->
 
-<list maintainEnchantment="true">
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd" maintainEnchantment="true">
 
   <!-- Dark Crystal Breastplate -->
   <item id="1">

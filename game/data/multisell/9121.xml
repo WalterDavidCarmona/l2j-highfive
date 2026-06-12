@@ -3,7 +3,9 @@
 <!-- C-Grade Weapons -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Homunkulus's Sword [Acumen] -->
   <item id="1">
     <production id="6313" count="1"/>

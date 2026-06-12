@@ -72,6 +72,11 @@
 		<current enchant="20-65535" chance="0" />
 	</enchantRateGroup>
 
+
+	<!-- Divine Crystal: 100% success all enchant levels -->
+	<enchantRateGroup name="DIVINE_GROUP">
+		<current enchant="0-65535" chance="100" />
+	</enchantRateGroup>
 	<!-- Default scrolls enchanting route line. -->
 	<enchantScrollGroup id="0">
 		<!-- Bind armor group to all item slots except full armor. -->
@@ -104,11 +109,6 @@
 		</enchantRate>
 	</enchantScrollGroup>
 
-	<!-- Blessed Scrolls enchanting route (scrollGroupId="1"). -->
-	<!-- Divine Crystal: 100% success all enchant levels -->
-	<enchantRateGroup name="DIVINE_GROUP">
-		<current enchant="0-65535" chance="100" />
-	</enchantRateGroup>
 
 	<enchantScrollGroup id="2">
 		<enchantRate group="DIVINE_GROUP">

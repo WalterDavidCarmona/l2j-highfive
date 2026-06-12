@@ -547,7 +547,7 @@ public class PvpZone extends Script
 
 		// Initialize scoreboard for this player and send current state
 		SCOREBOARD.put(player, 0);
-		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.INITIALIZE, buildRealNameScoreboard(), true));
+		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.INITIALIZE, SCOREBOARD));
 
 		// Activate duel HP bar UI (will be updated by the periodic task once a target is found)
 		player.sendPacket(ExDuelReady.PLAYER_DUEL);
@@ -765,15 +765,14 @@ public class PvpZone extends Script
 
 		// Close scoreboard for this player and remove from tracking
 		SCOREBOARD.remove(player);
-		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.FINISH, buildRealNameScoreboard(), true));
+		player.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.FINISH, SCOREBOARD));
 		// Dismiss the ExPVPMatchCCRecord window on the client side
 		player.sendPacket(ExPVPMatchCCRetire.STATIC);
 
 		// Actualizar el ranking para los participantes que siguen en la zona
-		final Map<String, Integer> updatedScores = buildRealNameScoreboard();
 		for (Player participant : PARTICIPANTS)
 		{
-			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
+			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, SCOREBOARD));
 		}
 
 		// Clear timer UI
@@ -956,10 +955,9 @@ public class PvpZone extends Script
 
 					// Update scoreboard for all participants
 					SCOREBOARD.put(killer, totalKills);
-					final Map<String, Integer> updatedScores = buildRealNameScoreboard();
 					for (Player participant : PARTICIPANTS)
 					{
-						participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, updatedScores, true));
+						participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.UPDATE, SCOREBOARD));
 					}
 				}
 
@@ -1087,10 +1085,9 @@ public class PvpZone extends Script
 		announceTopKiller(oldZone.name);
 
 		// Close scoreboard (FINISH) and clear timer for all participants
-		final Map<String, Integer> finalScores = buildRealNameScoreboard();
 		for (Player participant : PARTICIPANTS)
 		{
-			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.FINISH, finalScores, true));
+			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.FINISH, SCOREBOARD));
 			participant.sendPacket(new ExSendUIEvent(participant, true, true, 0, 0, ""));
 		}
 
@@ -1155,10 +1152,9 @@ public class PvpZone extends Script
 		}
 
 		// Send fresh scoreboard (INITIALIZE) to all participants after the loop
-		final Map<String, Integer> freshScores = buildRealNameScoreboard();
 		for (Player participant : PARTICIPANTS)
 		{
-			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.INITIALIZE, freshScores, true));
+			participant.sendPacket(new ExPVPMatchCCRecord(ExPVPMatchCCRecord.INITIALIZE, SCOREBOARD));
 		}
 
 		scheduleCountdown();
@@ -1788,3 +1784,4 @@ public class PvpZone extends Script
 		new PvpZone();
 	}
 }
+

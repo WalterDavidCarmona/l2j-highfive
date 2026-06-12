@@ -3,7 +3,9 @@
 <!-- B-Grade Weapons -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Sword of Damascus [Focus] -->
   <item id="1">
     <production id="4717" count="1"/>

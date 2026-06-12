@@ -1,42 +1,67 @@
 <?xml version='1.0' encoding='utf-8'?>
 <!-- Items Premium - Divine Enchant Crystals -->
 <!-- Acceso exclusivo para cuentas Premium -->
-<list maintainEnchantment="false" enchantmentLevel="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/multisell.xsd">
-
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd" maintainEnchantment="false" enchantmentLevel="false">
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
 	<!-- Divine Weapon Enchant Crystal (B-Grade) -->
-	<item id="1">
+	<item>
 		<production id="22018" count="1" />
-		<ingredient id="10639" count="100" />
+		<ingredient id="10639" count="1000" />
 	</item>
 
 	<!-- Divine Weapon Enchant Crystal (A-Grade) -->
-	<item id="2">
+	<item>
 		<production id="22019" count="1" />
-		<ingredient id="10639" count="100" />
+		<ingredient id="10639" count="1000" />
 	</item>
 
 	<!-- Divine Weapon Enchant Crystal (S-Grade) -->
-	<item id="3">
+	<item>
 		<production id="20521" count="1" />
-		<ingredient id="10639" count="100" />
+		<ingredient id="10639" count="1000" />
 	</item>
 
 	<!-- Divine Armor Enchant Crystal (B-Grade) -->
-	<item id="4">
+	<item>
 		<production id="22020" count="1" />
-		<ingredient id="10639" count="100" />
+		<ingredient id="10639" count="1000" />
 	</item>
 
 	<!-- Divine Armor Enchant Crystal (A-Grade) -->
-	<item id="5">
+	<item>
 		<production id="22021" count="1" />
-		<ingredient id="10639" count="100" />
+		<ingredient id="10639" count="1000" />
 	</item>
 
 	<!-- Divine Armor Enchant Crystal (S-Grade) -->
-	<item id="6">
+	<item>
 		<production id="20522" count="1" />
-		<ingredient id="10639" count="100" />
+		<ingredient id="10639" count="1000" />
 	</item>
-
+		<item>
+		<production id="9558" count="1" />
+		<ingredient id="10639" count="10000" />
+	</item>
+	<item>
+		<production id="9559" count="1" />
+		<ingredient id="10639" count="10000" />
+	</item>
+		<item>
+		<production id="9560" count="1" />
+		<ingredient id="10639" count="10000" />
+	</item>
+		<item>
+		<production id="9561" count="1" />
+		<ingredient id="10639" count="10000" />
+	</item>
+		<item>
+		<production id="9562" count="1" />
+		<ingredient id="10639" count="10000" />
+	</item>
+			<item>
+		<production id="9563" count="1" />
+		<ingredient id="10639" count="10000" />
+	</item>
 </list>

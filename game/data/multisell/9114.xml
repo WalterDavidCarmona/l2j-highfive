@@ -3,7 +3,9 @@
 <!-- D-Grade Armors -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Brigandine Heavy Armor -->
   <item id="1">
     <production id="352" count="1"/>

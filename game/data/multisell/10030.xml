@@ -3,7 +3,7 @@
 <!-- Exchange -->
 <!-- © 2010 by mathuza -->
 
-<list maintainEnchantment="true">
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd" maintainEnchantment="true">
 <npcs>
 		<npc>-1</npc> <!-- CB -->
 	</npcs>
@@ -27,7 +27,7 @@
 	
   <!-- 2-->
   <item>
-    <production id="10639" count="1000"/>
+    <production id="10639" count="10000"/>
 	<ingredient id="9143" count="1"/>
   </item>
 

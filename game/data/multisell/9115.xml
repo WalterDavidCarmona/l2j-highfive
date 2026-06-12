@@ -3,7 +3,9 @@
 <!-- C-Grade Armors -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Full Plate Heavy Armor -->
   <item id="1">
     <production id="356" count="1"/>

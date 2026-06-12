@@ -47,7 +47,7 @@
 				<run ground="0" />
 			</speed>
 		</stats>
-		<status attackable="true" canMove="false" isAggressive="false" undying="false" showName="true" targetable="true" />
+		<status attackable="true" canMove="false" undying="false" showName="true" targetable="true" />
 		<ai type="BALANCED" aggroRange="0" />
 		<skillList>
 			<skill id="4045" level="1" /> <!-- Resist Full Magic Attack -->
@@ -80,7 +80,7 @@
 				<run ground="0" />
 			</speed>
 		</stats>
-		<status attackable="true" canMove="false" isAggressive="false" undying="false" showName="true" targetable="true" />
+		<status attackable="true" canMove="false" undying="false" showName="true" targetable="true" />
 		<ai type="BALANCED" aggroRange="0" />
 		<skillList>
 			<skill id="4045" level="1" /> <!-- Resist Full Magic Attack -->
@@ -92,3 +92,4 @@
 	</npc>
 
 </list>
+

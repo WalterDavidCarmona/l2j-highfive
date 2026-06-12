@@ -3,7 +3,9 @@
 <!-- B-Grade Armors -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Blue Wolf Heavy Armor -->
   <item id="1">
     <production id="358" count="1"/>

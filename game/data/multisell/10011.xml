@@ -3,7 +3,7 @@
 <!-- Dynasty Jewels -->
 <!-- © 2010 by mathuza -->
 
-<list maintainEnchantment="true">
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd" maintainEnchantment="true">
 
   <!-- Dynasty Earrings -->
   <item id="1">

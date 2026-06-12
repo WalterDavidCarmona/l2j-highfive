@@ -3,9 +3,11 @@
 <!-- A Weapon -->
 <!-- © 2010 by mathuza -->
 
-<list maintainEnchantment="true">
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd" maintainEnchantment="true">
 
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Barakiel's Axe - Health -->
   <item id="1">
     <production id="8794" count="1"/>

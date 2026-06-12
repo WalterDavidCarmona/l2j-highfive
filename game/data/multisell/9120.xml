@@ -3,7 +3,9 @@
 <!-- D-Grade Weapons -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Elven Long Sword -->
   <item id="1">
     <production id="2499" count="1"/>

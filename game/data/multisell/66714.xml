@@ -3,7 +3,7 @@
 <!-- Accessory -->
 <!-- © 2011 by 007Florin -->
 
-<list maintainEnchantment="true">
+<list xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/multisell.xsd" maintainEnchantment="true">
 
   <!-- valakas slayer -->
   <item id="18">

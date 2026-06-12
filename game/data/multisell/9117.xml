@@ -3,7 +3,9 @@
 <!-- A-Grade Armors -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Majestic Heavy Armor -->
   <item id="1">
     <production id="2383" count="1"/>

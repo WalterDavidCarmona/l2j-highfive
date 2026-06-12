@@ -3,7 +3,9 @@
 <!-- S-Grade Armors -->
 
 <list>
-
+<npcs>
+		<npc>-1</npc> <!-- CB -->
+	</npcs>
   <!-- Draconic Leather Armor -->
   <item id="1">
     <production id="6379" count="1"/>
